@@ -1,3 +1,10 @@
+//
+//  PathTests.swift
+//  Codex
+//
+//  Created by Kevin Wooten on 1/31/25.
+//
+
 import Testing
 @testable import Codex
 
@@ -326,8 +333,8 @@ struct PathQueryTests {
       4,
       6
     ]))
-    try check(#"$..o"#, value, .value(["j" : 1, "k": 2]))
-    try check(#"$..o[*, *]"#, value, .nodelist([1, 2, 1, 2]))
+    try check(#"$..o"#, value, .nodelist([["j" : 1, "k": 2]]))
+    try check(#"$.o..[*, *]"#, value, .nodelist([1, 2, 1, 2]))
     try check(#"$.a..[0, 1]"#, value, .nodelist([5, 3, ["j": 4], ["k": 6]]))
   }
 
