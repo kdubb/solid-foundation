@@ -89,6 +89,13 @@ extension Pointer {
       .map { try ReferenceToken(validating: String($0)) }
   }
 
+  public init(valid string: String) {
+    guard let pointer = Pointer(encoded: string) else {
+      fatalError("Invalid pointer")
+    }
+    self = pointer
+  }
+
 }
 
 extension Pointer : ExpressibleByStringLiteral {
