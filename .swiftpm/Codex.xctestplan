@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "35E77E69-09F5-4C93-BF29-59133FE42436",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CodexTests",
+        "name" : "CodexTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -16,13 +16,13 @@ internal extension PathQuery {
 
     func rootContext() -> Self {
       var copy = self
-      copy.current = .value(root)
+      copy.current = .value(root, path: .root)
       return copy
     }
 
-    func withCurrent(_ value: Value) -> Self {
+    func withCurrent(_ value: Value, path: Path) -> Self {
       var copy = self
-      copy.current = .value(value)
+      copy.current = .value(value, path: path)
       return copy
     }
 
@@ -44,11 +44,17 @@ internal extension PathQuery {
 
   static func query(segments: [Path.Segment], context ctx: Context) -> Result {
 
-    var currentResult: Result = ctx.current
+    var currentResult: Result = .nothing
 
     for segment in segments {
 
       switch segment {
+
+      case .root:
+        currentResult = ctx.rootContext().current
+
+      case .current:
+        currentResult = ctx.current
 
       case .child(let selectors):
         currentResult = selectChildren(of: selectors, context: ctx.withCurrent(currentResult))
@@ -80,8 +86,8 @@ internal extension PathQuery {
     let children = selectChildren(of: selectors, context: ctx)
     result = result.joining(children)
 
-    for child in ctx.current.children {
-      let descendants = selectDescendants(of: selectors, context: ctx.withCurrent(child))
+    for (childValue, childPath) in ctx.current.children {
+      let descendants = selectDescendants(of: selectors, context: ctx.withCurrent(childValue, path: childPath))
       result = result.joining(descendants)
     }
 
@@ -111,19 +117,19 @@ internal extension PathQuery {
 
   static func selectName(_ name: String, context ctx: Context) -> Result {
 
-    guard case .value(.object(let object)) = ctx.current else {
+    guard case .value(.object(let object), let path) = ctx.current else {
       return .nothing
     }
 
-    return .value(object[.string(name)])
+    return .value(object[.string(name)], path: path.appending(name: name))
   }
 
   static func selectWildcard(context ctx: Context) -> Result {
     switch ctx.current {
-    case .value(.object(let object)):
-      return .nodelist(Array(object.values))
-    case .value(.array(let array)):
-      return .nodelist(array)
+    case .value(.object(let object), let path):
+      return .nodelist(object.map { ($0.value, path.appending(name: $0.key.stringified)) })
+    case .value(.array(let array), let path):
+      return .nodelist(array.enumerated().map { (index, value) in (value, path.appending(index: index)) })
     default:
       return .nothing
     }
@@ -132,17 +138,17 @@ internal extension PathQuery {
   static func selectIndex(_ index: Int, context ctx: Context) -> Result {
     guard
       case .nodelist(let nodes) = selectSlice(.init(start: index, end: index + 1, step: 1), context: ctx),
-      let value = nodes.first
+      let (value, path) = nodes.first
     else {
       return .nothing
     }
 
-    return .value(value)
+    return .value(value, path: path)
   }
 
   static func selectSlice(_ slice: Path.Selector.Slice, context ctx: Context) -> Result {
 
-    guard case .value(.array(let array)) = ctx.current else {
+    guard case .value(.array(let array), let path) = ctx.current else {
       return .nodelist([])
     }
 
@@ -151,18 +157,18 @@ internal extension PathQuery {
     let end = slice.end ?? (step >= 0 ? array.count : -array.count - 1)
     let (lower, upper) = bounds(start, end, step, array.count)
 
-    var selected: Value.Array = []
+    var selected: [(Value, Path)] = []
     if step > 0 {
       var i = lower
       while i < upper {
-        selected.append(array[i])
+        selected.append((array[i], path.appending(index: i)))
         i += step
       }
     }
     else {
       var i = upper
       while lower < i {
-        selected.append(array[i])
+        selected.append((array[i], path.appending(index: i)))
         i += step
       }
     }
@@ -203,13 +209,13 @@ internal extension PathQuery {
       return .empty
     }
 
-    var selected: [Value] = []
-    for child in children {
+    var selected: [(Value, Path)] = []
+    for (childValue, childPath) in children {
 
-      switch evaluateExpression(filter, context: ctx.withCurrent(child)) {
+      switch evaluateExpression(filter, context: ctx.withCurrent(childValue, path: childPath)) {
 
-      case .value(.bool(let value)) where value == true:
-        selected.append(child)
+      case .value(.bool(let value), _) where value == true:
+        selected.append((childValue, childPath))
 
       case .nodelist(let values) where !values.isEmpty:
         selected.append(contentsOf: values)
@@ -224,11 +230,11 @@ internal extension PathQuery {
 
   static func evaluateExpression(_ expression: Path.Selector.Expression, context ctx: Context) -> Result {
     return switch expression {
-    case .singularQuery(segments: let segments, type: let type):
-      querySingular(segments, type: type, context: ctx)
+    case .singularQuery(segments: let segments):
+      query(segments: segments, context: ctx)
 
-    case .query(segments: let segments, type: let type):
-      query(segments, type: type, context: ctx)
+    case .query(segments: let segments):
+      query(segments: segments, context: ctx)
 
     case .logical(operator: let op, expressions: let expressions):
       evaluateLogical(op, expressions: expressions, context: ctx)
@@ -243,7 +249,7 @@ internal extension PathQuery {
       evaluateFunction(name, argumentExpressions: arguments, context: ctx)
 
     case .literal(let value):
-        .value(value)
+        .value(value, path: .empty)
     }
   }
 
@@ -255,41 +261,20 @@ internal extension PathQuery {
     case .query, .singularQuery:
       // Test if there are any results
       let value = result.values.isEmpty == (negated ? true : false)
-      return .value(.bool(value))
+      return .value(.bool(value), path: .empty)
 
     case .function:
       switch result {
-      case .value(.bool(let value)):
-        return .value(.bool(negated ? value == false : value == true))
+      case .value(.bool(let value), _):
+        return .value(.bool(negated ? value == false : value == true), path: .empty)
       case .nodelist(let list):
-        return .value(.bool(negated ? list.isEmpty : !list.isEmpty))
+        return .value(.bool(negated ? list.isEmpty : !list.isEmpty), path: .empty)
       default:
         return .nothing
       }
 
     default:
       return .nothing
-    }
-  }
-
-  static func querySingular(
-    _ segments: [Path.Segment],
-    type: Path.Selector.Expression.QueryType,
-    context ctx: Context
-  ) -> Result {
-    // Parser should have ensured that there is a single result query
-    return query(segments, type: type, context: ctx)
-  }
-
-  static func query(
-    _ segments: [Path.Segment],
-    type: Path.Selector.Expression.QueryType,
-    context ctx: Context
-  ) -> Result {
-    if type == .absolute {
-      return query(segments: segments, context: ctx.rootContext())
-    } else {
-      return query(segments: segments, context: ctx)
     }
   }
 
@@ -305,28 +290,28 @@ internal extension PathQuery {
 
       let pass = expressions.lazy
         .map { evaluateExpression($0, context: ctx) }
-        .allSatisfy { $0 == .value(.bool(true)) }
+        .allSatisfy { $0.comparable() == .value(.bool(true), path: .empty) }
 
-      return .value(.bool(pass))
+      return .value(.bool(pass), path: .empty)
 
     case .or:
 
       let pass = expressions.lazy
         .map { evaluateExpression($0, context: ctx) }
-        .contains { $0 == .value(.bool(true)) }
+        .contains { $0.comparable() == .value(.bool(true), path: .empty) }
 
-      return .value(.bool(pass))
+      return .value(.bool(pass), path: .empty)
 
     case .not:
 
       guard
         let expression = expressions.first,
-        case .value(.bool(let boolVal)) = selectFilter(expression, context: ctx)
+        case .value(.bool(let boolVal), let path) = selectFilter(expression, context: ctx)
       else {
         return .nothing
       }
 
-      return .value(.bool(!boolVal))
+      return .value(.bool(!boolVal), path: path)
     }
   }
 
@@ -342,28 +327,28 @@ internal extension PathQuery {
 
     switch op {
     case .eq:
-      return .value(.bool(evaluateEqual(l, r)))
+      return .value(.bool(evaluateEqual(l, r)), path: .empty)
     case .ne:
-      return .value(.bool(evaluateEqual(l, r) == false))
+      return .value(.bool(evaluateEqual(l, r) == false), path: .empty)
     case .lt:
-      return .value(.bool(evaluateLessThan(l, r)))
+      return .value(.bool(evaluateLessThan(l, r)), path: .empty)
     case .le:
-      return .value(.bool(evaluateLessThan(l, r) || evaluateEqual(l, r)))
+      return .value(.bool(evaluateLessThan(l, r) || evaluateEqual(l, r)), path: .empty)
     case .gt:
-      return .value(.bool(evaluateLessThan(r, l)))
+      return .value(.bool(evaluateLessThan(r, l)), path: .empty)
     case .ge:
-      return .value(.bool(evaluateLessThan(r, l) || evaluateEqual(l, r)))
+      return .value(.bool(evaluateLessThan(r, l) || evaluateEqual(l, r)), path: .empty)
     }
   }
 
   static func evaluateEqual(_ l: Result, _ r: Result) -> Bool {
     switch (l.comparable(), r.comparable()) {
-    case (.nothing, .nothing), (.nothing, .nodelist([])), (.nodelist([]), .nothing):
+    case (.nothing, .nothing), (.nothing, .empty), (.empty, .nothing):
       return true
-    case (.value(let lVal), .value(let rVal)):
+    case (.value(let lVal, _), .value(let rVal, _)):
       return lVal == rVal
     case (.nodelist(let lVal), .nodelist(let rVal)):
-      return lVal == rVal
+      return lVal.map(\.value) == rVal.map(\.value)
     default:
       return false
     }
@@ -371,11 +356,11 @@ internal extension PathQuery {
 
   static func evaluateLessThan(_ l: Result, _ r: Result) -> Bool {
     switch (l.comparable(), r.comparable()) {
-    case (.nothing, _), (_, .nothing), (.nodelist([]), _), (_, .nodelist([])):
+    case (.nothing, _), (_, .nothing), (.empty, _), (_, .empty):
       return false
-    case (.value(.number(let lVal)), .value(.number(let rVal))):
+    case (.value(.number(let lVal), _), .value(.number(let rVal), _)):
       return lVal.decimal < rVal.decimal
-    case (.value(.string(let lVal)), .value(.string(let rVal))):
+    case (.value(.string(let lVal), _), .value(.string(let rVal), _)):
       return lVal < rVal
     default:
       return false
@@ -399,10 +384,10 @@ internal extension PathQuery {
       let argumentResult = evaluateExpression(argumentExpressions[argumentIndex], context: ctx)
       switch (argumentType, argumentResult) {
 
-      case (.value, .value(let value)):
-        arguments.append(.value(value))
+      case (.value, .value(let value, let path)):
+        arguments.append(.value(value, path: path))
 
-      case (.logical, .value(.bool(let value))):
+      case (.logical, .value(.bool(let value), _)):
         arguments.append(.logical(value))
 
       case (.logical, .nodelist(let nodes)):
@@ -426,13 +411,13 @@ internal extension PathQuery {
 
     return switch function.execute(arguments) {
     case .nothing:
-        .nothing
-    case .value(let value):
-        .value(value)
+      .nothing
+    case .value(let value, let path):
+      .value(value, path: path)
     case .logical(let value):
-        .value(.bool(value))
+      .value(.bool(value), path: .empty)
     case .nodes(let nodes):
-        .nodelist(nodes)
+      .nodelist(nodes)
     }
   }
 
@@ -441,28 +426,35 @@ internal extension PathQuery {
 private extension PathQuery.Result {
 
   func comparable() -> Self {
-    guard case .nodelist(let list) = self, list.count == 1 else {
+    switch self {
+    case .value(let value, _):
+      return .value(value, path: .empty)
+    case .nodelist(let list) where list.count == 1:
+      return .value(list[0].value, path: .empty)
+    case .nodelist(let list):
+      return .nodelist(list.map { ($0.value, .empty) })
+    default:
       return self
     }
-    return .value(list[0])
   }
 
   func argument() -> PathQuery.Function.Argument {
     switch self {
     case .nothing:
       return .nothing
-    case .value(let value):
-      return .value(value)
+    case .value(let value, let path):
+      return .value(value, path: path)
     case .nodelist(let list):
       return .nodes(list)
     }
   }
-  var children: [Value] {
+
+  var children: [(Value, Path)] {
     switch self {
-    case .value(.object(let object)):
-      return Array(object.values)
-    case .value(.array(let array)):
-      return array
+    case .value(.object(let object), let path):
+      return object.map { (key, value) in (value, path.appending(name: key.stringified)) }
+    case .value(.array(let array), let path):
+      return array.enumerated().map { (index, value) in (value, path.appending(index: index)) }
     case .nodelist(let list):
       return list
     default:
@@ -474,19 +466,18 @@ private extension PathQuery.Result {
     switch (self, result) {
     case (.nothing, .nothing):
       return .nothing
-    case (.nothing, .value(let value)), (.value(let value), .nothing):
-      return .value(value)
+    case (.nothing, .value(let value, let path)), (.value(let value, let path), .nothing):
+      return .value(value, path: path)
     case (.nothing, .nodelist(let list)), (.nodelist(let list), .nothing):
       return .nodelist(list)
-    case (.value(let l), .value(let r)):
-      return .nodelist([l, r])
-    case (.value(let l), .nodelist(let r)):
-      return .nodelist([l] + r)
-    case (.nodelist(let l), .value(let r)):
-      return .nodelist(l + [r])
+    case (.value(let l, let lp), .value(let r, let rp)):
+      return .nodelist([(l, lp), (r, rp)])
+    case (.value(let l, let lp), .nodelist(let r)):
+      return .nodelist([(l, lp)] + r)
+    case (.nodelist(let l), .value(let r, let rp)):
+      return .nodelist(l + [(r, rp)])
     case (.nodelist(let l), .nodelist(let r)):
       return .nodelist(l + r)
     }
-
   }
 }

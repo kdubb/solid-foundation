@@ -1,4 +1,4 @@
-// Generated from Sources/Codex/PathParsing/Path.g4 by ANTLR 4.13.2
+// Generated from Sources/Codex/Path/Parsing/Path.g4 by ANTLR 4.13.2
 @preconcurrency import Antlr4
 
 open class PathLexer: Lexer {

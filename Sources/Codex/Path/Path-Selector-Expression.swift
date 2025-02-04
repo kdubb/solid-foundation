@@ -30,8 +30,8 @@ extension Path.Selector {
     }
 
     case literal(Value)
-    case singularQuery(segments: [Path.Segment], type: QueryType)
-    case query(segments: [Path.Segment], type: QueryType)
+    case singularQuery(segments: [Path.Segment])
+    case query(segments: [Path.Segment])
     case function(name: String, arguments: [Expression])
     case logical(operator: LogicalOperator, expressions: [Expression])
     case comparison(left: Expression, operator: ComparisonOperator, right: Expression)
@@ -54,20 +54,10 @@ extension Path.Selector.Expression : CustomStringConvertible {
     switch self {
     case .literal(let value):
       return "\(value)"
-    case .singularQuery(let segments, let type):
-      switch type {
-      case .absolute:
-        return "$.\(segments)"
-      case .relative:
-        return "@.\(segments)"
-      }
-    case .query(let segments, let type):
-      switch type {
-      case .absolute:
-        return "$.\(segments)"
-      case .relative:
-        return "@.\(segments)"
-      }
+    case .singularQuery(let segments):
+      return segments.codexDescription
+    case .query(let segments):
+      return segments.codexDescription
     case .function(let name, let arguments):
       return "\(name)(\(arguments.map(\.description).joined(separator: ", ")))"
     case .logical(let op, let expressions):

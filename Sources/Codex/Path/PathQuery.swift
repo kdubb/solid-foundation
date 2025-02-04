@@ -8,7 +8,7 @@
 public struct PathQuery {
 
   public static func query(path: Path, from value: Value, functions: [PathQuery.Function] = [], delegate: Delegate? = nil) -> Result {
-    let context = Context(root: value, current: .value(value), delegate: delegate)
+    let context = Context(root: value, current: .value(value, path: .root), delegate: delegate)
       .withFunctions(functions)
     return query(segments: path.segments, context: context)
   }

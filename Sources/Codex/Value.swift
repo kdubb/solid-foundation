@@ -15,6 +15,7 @@ public enum Value {
   case string(String)
   case array(Array)
   case object(Object)
+
 }
 
 extension Value: Sendable {}
@@ -89,6 +90,29 @@ extension Value: CustomStringConvertible {
       return "[\(value.map { $0.description }.joined(separator: ", "))]"
     case .object(let value):
       return "{\(value.map { "\($0.description): \($1.description)" }.joined(separator: ", "))}"
+    case .bytes(let value):
+      return value.base64EncodedString()
+    }
+  }
+
+}
+
+extension Value {
+
+  public var stringified: String {
+    switch self {
+    case .null:
+      return "null"
+    case .bool(let value):
+      return value.description
+    case .number(let value):
+      return value.description
+    case .string(let value):
+      return value
+    case .array(let value):
+      return "[\(value.map { $0.stringified }.joined(separator: ", "))]"
+    case .object(let value):
+      return "{\(value.map { "\($0.stringified): \($1.stringified)" }.joined(separator: ", "))}"
     case .bytes(let value):
       return value.base64EncodedString()
     }

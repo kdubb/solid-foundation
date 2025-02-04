@@ -197,9 +197,9 @@ functionExpr
 
 functionArgument
   : literal
+  | functionExpr
   | filterQuery
   | logicalExpr
-  | functionExpr
   ;
 
 s : BLANK* ;

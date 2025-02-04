@@ -1,4 +1,4 @@
-// Generated from Sources/Codex/PathParsing/Path.g4 by ANTLR 4.13.2
+// Generated from Sources/Codex/Path/Parsing/Path.g4 by ANTLR 4.13.2
 @preconcurrency import Antlr4
 
 open class PathParser: Parser {
@@ -2998,16 +2998,16 @@ open class PathParser: Parser {
 				return getRuleContext(LiteralContext.self, 0)
 			}
 			open
+			func functionExpr() -> FunctionExprContext? {
+				return getRuleContext(FunctionExprContext.self, 0)
+			}
+			open
 			func filterQuery() -> FilterQueryContext? {
 				return getRuleContext(FilterQueryContext.self, 0)
 			}
 			open
 			func logicalExpr() -> LogicalExprContext? {
 				return getRuleContext(LogicalExprContext.self, 0)
-			}
-			open
-			func functionExpr() -> FunctionExprContext? {
-				return getRuleContext(FunctionExprContext.self, 0)
 			}
 		override open
 		func getRuleIndex() -> Int {
@@ -3047,19 +3047,19 @@ open class PathParser: Parser {
 		 	case 2:
 		 		try enterOuterAlt(_localctx, 2)
 		 		setState(325)
-		 		try filterQuery()
+		 		try functionExpr()
 
 		 		break
 		 	case 3:
 		 		try enterOuterAlt(_localctx, 3)
 		 		setState(326)
-		 		try logicalExpr()
+		 		try filterQuery()
 
 		 		break
 		 	case 4:
 		 		try enterOuterAlt(_localctx, 4)
 		 		setState(327)
-		 		try functionExpr()
+		 		try logicalExpr()
 
 		 		break
 		 	default: break
@@ -3236,7 +3236,7 @@ open class PathParser: Parser {
 		44,0,313,315,1,0,0,0,314,309,1,0,0,0,315,318,1,0,0,0,316,314,1,0,0,0,316,
 		317,1,0,0,0,317,320,1,0,0,0,318,316,1,0,0,0,319,308,1,0,0,0,319,320,1,
 		0,0,0,320,321,1,0,0,0,321,322,3,90,45,0,322,323,5,12,0,0,323,87,1,0,0,
-		0,324,329,3,56,28,0,325,329,3,50,25,0,326,329,3,36,18,0,327,329,3,86,43,
+		0,324,329,3,56,28,0,325,329,3,86,43,0,326,329,3,50,25,0,327,329,3,36,18,
 		0,328,324,1,0,0,0,328,325,1,0,0,0,328,326,1,0,0,0,328,327,1,0,0,0,329,
 		89,1,0,0,0,330,332,5,26,0,0,331,330,1,0,0,0,332,335,1,0,0,0,333,331,1,
 		0,0,0,333,334,1,0,0,0,334,91,1,0,0,0,335,333,1,0,0,0,27,99,104,110,112,

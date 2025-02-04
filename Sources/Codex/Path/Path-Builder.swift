@@ -267,7 +267,7 @@ extension Path {
         guard let segments = segmentsStack.popLast() else {
           throw Error.internal("singular query")
         }
-        addExpressions([.singularQuery(segments: segments, type: .relative)])
+        addExpressions([.singularQuery(segments: [.current] + segments)])
       }
     }
 
@@ -276,7 +276,7 @@ extension Path {
         guard let segments = segmentsStack.popLast() else {
           throw Error.internal("singular query")
         }
-        addExpressions([.singularQuery(segments: segments, type: .absolute)])
+        addExpressions([.singularQuery(segments: [.root] + segments)])
       }
     }
 
@@ -290,7 +290,7 @@ extension Path {
           guard let segments = segmentsStack.popLast() else {
             throw Error.internal("path query")
           }
-          addExpressions([.query(segments: segments, type: .absolute)])
+          addExpressions([.query(segments: [.root] + segments)])
         }
       }
     }
@@ -304,7 +304,7 @@ extension Path {
         guard let segments = segmentsStack.popLast() else {
           throw Error.internal("relative query")
         }
-        addExpressions([.query(segments: segments, type: .relative)])
+        addExpressions([.query(segments: [.current] + segments)])
       }
     }
 

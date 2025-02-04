@@ -39,3 +39,18 @@ extension Path.Selector : CustomStringConvertible {
     }
   }
 }
+
+extension Array where Element == Path.Selector {
+
+  internal var codexDescription: String {
+    switch count {
+    case 0:
+      "<invalid>"
+    case 1:
+      self[0].description
+    default:
+      "[\(self.map(\.description).joined(separator: ", "))]"
+    }
+  }
+
+}
