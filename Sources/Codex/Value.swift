@@ -112,7 +112,7 @@ extension Value {
     case .array(let value):
       return "[\(value.map { $0.stringified }.joined(separator: ", "))]"
     case .object(let value):
-      return "{\(value.map { "\($0.stringified): \($1.stringified)" }.joined(separator: ", "))}"
+      return "{\(value.map { "\($0): \($1.stringified)" }.joined(separator: ", "))}"
     case .bytes(let value):
       return value.base64EncodedString()
     }
@@ -152,7 +152,7 @@ extension Value : ExpressibleByStringLiteral {
 
 extension Value : ExpressibleByArrayLiteral {
   public init(arrayLiteral elements: Value...) {
-    self = .array(Array(elements))
+    self = .array(elements)
   }
 }
 
