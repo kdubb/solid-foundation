@@ -19,7 +19,7 @@ public struct Pointer {
     self.tokens = tokens
   }
 
-  var parent: Pointer {
+  public var parent: Pointer {
     dropping(count: 1)
   }
 
@@ -43,6 +43,13 @@ public struct Pointer {
     appending(pointer: try Pointer(validating: string))
   }
 
+  public func descend() -> (ReferenceToken, Pointer)? {
+    guard let token = tokens.first else {
+      return nil
+    }
+    return (token, Pointer(tokens: tokens.dropFirst()))
+  }
+
   public static let root = Pointer(tokens: [])
 
 }
@@ -52,11 +59,14 @@ extension Pointer : Sendable {}
 extension Pointer : Hashable {}
 extension Pointer : Equatable {}
 
-extension Pointer : CustomStringConvertible {
+extension Pointer : CustomStringConvertible, CustomDebugStringConvertible {
 
-  public var description: String {
-    "/\(tokens.map(\.description).joined(separator: "/"))"
+  public var description: String { encoded }
+
+  public var debugDescription: String {
+    "\(tokens.map { "/\($0.description)" }.joined(separator: ""))"
   }
+
 }
 
 extension Pointer {
@@ -77,7 +87,7 @@ extension Pointer {
   }
 
   public var encoded: String {
-    "/\(tokens.map(\.encoded).joined(separator: "/"))"
+    "\(tokens.map { "/\($0.encoded)" }.joined(separator: ""))"
   }
 
 }
@@ -131,4 +141,24 @@ extension Pointer : Sequence {
 
 public func /(lhs: Pointer, rhs: Pointer) -> Pointer {
   Pointer(tokens: lhs.tokens + rhs.tokens)
+}
+
+public func /=(lhs: inout Pointer, rhs: Pointer) {
+  lhs = Pointer(tokens: lhs.tokens + rhs.tokens)
+}
+
+public func /(lhs: Pointer, rhs: Pointer.ReferenceToken) -> Pointer {
+  Pointer(tokens: lhs.tokens + [rhs])
+}
+
+public func /=(lhs: inout Pointer, rhs: Pointer.ReferenceToken) {
+  lhs = Pointer(tokens: lhs.tokens + [rhs])
+}
+
+public func /(lhs: Pointer.ReferenceToken, rhs: Pointer) -> Pointer {
+  Pointer(tokens: [lhs] + rhs.tokens)
+}
+
+public func /(lhs: Pointer.ReferenceToken, rhs: Pointer.ReferenceToken) -> Pointer {
+  Pointer(tokens: [lhs, rhs])
 }

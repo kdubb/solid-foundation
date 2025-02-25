@@ -83,7 +83,15 @@ struct PointerTests {
     try #require(Pointer(validating: "/foo").description == "/foo")
     try #require(Pointer(validating: "/foo/0").description == "/foo/0")
     try #require(Pointer(validating: "/foo/-").description == "/foo/-")
-    try #require(Pointer(validating: "/foo~1bar/-").description == #"/"foo/bar"/-"#)
+    try #require(Pointer(validating: "/foo~1bar/-").description == #"/foo~1bar/-"#)
+  }
+
+  @Test func debugDescription() throws {
+
+    try #require(Pointer(validating: "/foo").debugDescription == "/foo")
+    try #require(Pointer(validating: "/foo/0").debugDescription == "/foo/0")
+    try #require(Pointer(validating: "/foo/-").debugDescription == "/foo/-")
+    try #require(Pointer(validating: "/foo~1bar/-").debugDescription == #"/"foo/bar"/-"#)
   }
 
   @Test func encoded() throws {
