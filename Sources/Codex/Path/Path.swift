@@ -9,6 +9,14 @@ public struct Path {
 
   public let segments: [Segment]
 
+  public init?(_ path: String) {
+    do {
+      self = try Path.parse(path)
+    } catch {
+      return nil
+    }
+  }
+
   private init(explicit segments: [Segment] = []) {
     self.segments = segments
   }

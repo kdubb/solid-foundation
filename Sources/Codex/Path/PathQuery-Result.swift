@@ -22,7 +22,7 @@ extension PathQuery {
 
     public static var empty: Result { .nodelist([]) }
 
-    public var values: [(value: Value, path: Path?)] {
+    public var values: [(value: Value, path: Path)] {
       switch self {
       case .value(let value, let path):
         return [(value, path)]

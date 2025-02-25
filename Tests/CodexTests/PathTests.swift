@@ -387,8 +387,12 @@ struct PathQueryTests {
 
   @Test func customFunctions() throws {
 
-//    try check(#"$[?key(@) == "a"]"#, ["a": 0, "b": 1], .nodelist([(value: 0, path: .normal("a"))]))
+    try check(#"$[?key(@) == "a"]"#, ["a": 0, "b": 1], .nodelist([(value: 0, path: .normal("a"))]))
     try check(#"$[?match(key(@), "a")]"#, ["a": 0], .nodelist([(value: 0, path: .normal("a"))]))
+    try check(#"$['b', ?key(@) == "a"]"#, ["a": 0, "b": 1], .nodelist([
+      (value: 1, path: .normal("b")),
+      (value: 0, path: .normal("a")),
+    ]))
     try check(#"$[?test(@) == 1]"#, [1], .nodelist([(1, path: .normal(0))]), functions: [
       PathQuery.function(name: "test", arguments: .value) { _ in .value(1, path: .empty) }
     ])
