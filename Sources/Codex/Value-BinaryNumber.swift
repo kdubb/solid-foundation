@@ -31,20 +31,6 @@ extension Value.BinaryNumber : Sendable {}
 
 extension Value.BinaryNumber : Value.Number {
 
-  public var integer: BInt {
-    switch self {
-    case .int8(let value): BInt(value)
-    case .int16(let value): BInt(value)
-    case .int32(let value): BInt(value)
-    case .int64(let value): BInt(value)
-    case .uint8(let value): BInt(value)
-    case .uint16(let value): BInt(value)
-    case .uint32(let value): BInt(value)
-    case .uint64(let value): BInt(value)
-    default: decimal.digits
-    }
-  }
-
   public var decimal: BigDecimal {
     switch self {
     case .int8(let value): BigDecimal(value)
@@ -86,6 +72,42 @@ extension Value.BinaryNumber : Value.Number {
     case .float64(let value): value.isInfinite
     default: false
     }
+  }
+
+  public var isNegative: Bool {
+    return decimal.isNegative
+  }
+
+  public func asInteger() -> BInt? {
+    switch self {
+    case .int8(let value): BInt(value)
+    case .int16(let value): BInt(value)
+    case .int32(let value): BInt(value)
+    case .int64(let value): BInt(value)
+    case .uint8(let value): BInt(value)
+    case .uint16(let value): BInt(value)
+    case .uint32(let value): BInt(value)
+    case .uint64(let value): BInt(value)
+    default: decimal.digits
+    }
+  }
+
+  public func asInt() -> Int? {
+    switch self {
+    case .int8(let value): Int(value)
+    case .int16(let value): Int(value)
+    case .int32(let value): Int(value)
+    case .int64(let value): Int(value)
+    case .uint8(let value): Int(value)
+    case .uint16(let value): Int(value)
+    case .uint32(let value): Int(value)
+    case .uint64(let value): if value < Int64.max { Int(value) } else { nil }
+    default: decimal.asInt()
+    }
+  }
+
+  public func asDouble() -> Double {
+    decimal.asDouble()
   }
 
 }

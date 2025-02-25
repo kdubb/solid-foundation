@@ -13,10 +13,20 @@ extension Value {
 
   public struct TextNumber {
 
-    public var text: String
+    public let text: String
+    public let decimal: BigDecimal
+
+    private init(text: String, decimal: BigDecimal) {
+      self.text = text
+      self.decimal = decimal
+    }
 
     public init(text: String) {
-      self.text = text
+      self = Self(text: text, decimal: BigDecimal(text))
+    }
+
+    public init(decimal: BigDecimal) {
+      self = Self(text: decimal.asString(), decimal: decimal)
     }
   }
 
@@ -26,31 +36,38 @@ extension Value.TextNumber : Sendable {}
 
 extension Value.TextNumber: Value.Number {
 
-  nonisolated(unsafe) private static let nanRegex = /^[+-]?nan$/.ignoresCase()
-  nonisolated(unsafe) private static let infRegex = /^[+-]?inf$/.ignoresCase()
-  nonisolated(unsafe) private static let floatRegex = /[.e]/
-
-  public var integer: BInt {
-    guard let int = BInt(text, radix: 10) else {
-      return .zero
-    }
-    return int
-  }
-
-  public var decimal: BigDecimal {
-    return BigDecimal(text.lowercased())
-  }
-
   public var isInteger: Bool {
-    return !text.contains(Self.floatRegex)
+    let decimal = self.decimal
+    return decimal.rounded() == decimal
+  }
+
+  public func asDouble() -> Double {
+    return decimal.asDouble()
+  }
+
+  public func asInteger() -> BInt? {
+    let decimal = self.decimal
+    let rounded = decimal.rounded()
+    guard rounded == decimal else {
+      return nil
+    }
+    return rounded.digits
+  }
+
+  public func asInt() -> Int? {
+    return asInteger()?.asInt()
   }
 
   public var isNaN: Bool {
-    return text.starts(with: Self.nanRegex)
+    return decimal.isNaN
   }
 
   public var isInfinity: Bool {
-    return text.starts(with: Self.infRegex)
+    return decimal.isInfinite
+  }
+
+  public var isNegative: Bool {
+    return decimal.sign == .minus
   }
 
 }

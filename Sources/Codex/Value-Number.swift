@@ -11,11 +11,15 @@ import BigDecimal
 extension Value {
 
   public protocol Number : CustomStringConvertible, Sendable {
-    var integer: BInt { get }
     var decimal: BigDecimal { get }
     var isInteger: Bool { get }
     var isInfinity: Bool { get }
     var isNaN: Bool { get }
+    var isNegative: Bool { get }
+
+    func asDouble() -> Double
+    func asInteger() -> BInt?
+    func asInt() -> Int?
   }
 
 }
