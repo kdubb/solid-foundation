@@ -99,6 +99,62 @@ extension Value: CustomStringConvertible {
 
 extension Value {
 
+  public var isNull: Bool {
+    guard case .null = self else {
+      return false
+    }
+    return true
+  }
+
+  public var array: Array? {
+    guard case .array(let array) = self else {
+      return nil
+    }
+    return array
+  }
+
+  public var object: Object? {
+    guard case .object(let object) = self else {
+      return nil
+    }
+    return object
+  }
+
+  public var bool: Bool? {
+    guard case .bool(let bool) = self else {
+      return nil
+    }
+    return bool
+  }
+
+  public var number: Number? {
+    guard case .number(let number) = self else {
+      return nil
+    }
+    return number
+  }
+
+  public var integer: BInt? {
+    guard let number else {
+      return nil
+    }
+    return number.asInteger()
+  }
+
+  public var int: Int? {
+    guard let integer else {
+      return nil
+    }
+    return integer.asInt()
+  }
+
+  public var string: String? {
+    guard case .string(let string) = self else {
+      return nil
+    }
+    return string
+  }
+
   public var stringified: String {
     switch self {
     case .null:
@@ -229,6 +285,26 @@ extension Value {
   public static func number(_ value: String) -> Value {
     assert(!BigDecimal(value).isNaN, "Invalid numeric string")
     return .number(Value.TextNumber(text: value))
+  }
+
+}
+
+extension Value {
+
+  public subscript(value: Value) -> Value? {
+    get {
+      guard case .object(let object) = self else {
+        return nil
+      }
+      return object[value]
+    }
+    set {
+      guard case .object(var object) = self else {
+        return
+      }
+      object[value] = newValue
+      self = .object(object)
+    }
   }
 
 }
