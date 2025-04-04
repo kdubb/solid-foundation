@@ -115,7 +115,6 @@ extension MetaSchema {
       formatTypeLocator: FormatTypes(),
       contentMediaTypeLocator: ContentMediaTypeTypes(),
       contentEncodingLocator: ContentEncodingTypes(),
-      contentSchemaLocator: ContentSchemaTypes(),
       collectAnnotations: .none
     ))
 
@@ -569,7 +568,6 @@ extension MetaSchema {
         formatTypeLocator: FormatTypes(),
         contentMediaTypeLocator: ContentMediaTypeTypes(),
         contentEncodingLocator: ContentEncodingTypes(),
-        contentSchemaLocator: ContentSchemaTypes(),
         collectAnnotations: .none
       )
     }

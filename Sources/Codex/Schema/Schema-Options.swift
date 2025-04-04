@@ -30,7 +30,6 @@ extension Schema {
         formatTypeLocator: FormatTypes(),
         contentMediaTypeLocator: ContentMediaTypeTypes(),
         contentEncodingLocator: ContentEncodingTypes(),
-        contentSchemaLocator: ContentSchemaTypes(),
         collectAnnotations: .none,
         trace: false
       )
@@ -63,7 +62,6 @@ extension Schema {
     public let formatTypeLocator: FormatTypeLocator
     public let contentMediaTypeLocator: ContentMediaTypeLocator
     public let contentEncodingLocator: ContentEncodingLocator
-    public let contentSchemaLocator: ContentSchemaLocator
     public let collectAnnotations: CollectAnnotations
     public let trace: Bool
 
@@ -76,7 +74,6 @@ extension Schema {
       formatTypeLocator: FormatTypeLocator,
       contentMediaTypeLocator: ContentMediaTypeLocator,
       contentEncodingLocator: ContentEncodingLocator,
-      contentSchemaLocator: ContentSchemaLocator,
       collectAnnotations: CollectAnnotations,
       trace: Bool = false
     ) {
@@ -88,7 +85,6 @@ extension Schema {
       self.formatTypeLocator = formatTypeLocator
       self.contentMediaTypeLocator = contentMediaTypeLocator
       self.contentEncodingLocator = contentEncodingLocator
-      self.contentSchemaLocator = contentSchemaLocator
       self.collectAnnotations = collectAnnotations
       self.trace = trace
     }
@@ -102,7 +98,6 @@ extension Schema {
       formatTypeLocator: FormatTypeLocator? = nil,
       contentMediaTypeLocator: ContentMediaTypeLocator? = nil,
       contentEncodingLocator: ContentEncodingLocator? = nil,
-      contentSchemaLocator: ContentSchemaLocator? = nil,
       collectAnnotations: CollectAnnotations? = nil,
       trace: Bool? = nil
     ) -> Self {
@@ -115,7 +110,6 @@ extension Schema {
         formatTypeLocator: formatTypeLocator ?? self.formatTypeLocator,
         contentMediaTypeLocator: contentMediaTypeLocator ?? self.contentMediaTypeLocator,
         contentEncodingLocator: contentEncodingLocator ?? self.contentEncodingLocator,
-        contentSchemaLocator: contentSchemaLocator ?? self.contentSchemaLocator,
         collectAnnotations: collectAnnotations ?? self.collectAnnotations,
         trace: trace ?? self.trace
       )
