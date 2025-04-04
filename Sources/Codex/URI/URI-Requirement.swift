@@ -10,18 +10,18 @@ extension URI {
   public enum Requirement {
 
     public enum Kind {
-      case relative
-      case absolute
-      case name
+      case uri
+      case uriReference
+      case relativeReference
 
       public func isSatisfied(by uri: URI) -> Bool {
         switch self {
-        case .relative:
-          return uri.isRelative
-        case .absolute:
+        case .uriReference:
+          return uri.isAbsolute || uri.isRelativeReference
+        case .uri:
           return uri.isAbsolute
-        case .name:
-          return uri.isName
+        case .relativeReference:
+          return uri.isRelativeReference
         }
       }
     }

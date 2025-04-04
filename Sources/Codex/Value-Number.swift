@@ -18,7 +18,7 @@ extension Value {
     var isNegative: Bool { get }
 
     func asDouble() -> Double
-    func asInteger() -> BInt?
+    func asInteger() -> BInt
     func asInt() -> Int?
   }
 

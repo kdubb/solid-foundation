@@ -13,16 +13,15 @@ public struct URITests {
 
   @Test("Check satisfied `kind` requirements")
   func satisfiedKindRequirements() async throws {
-    #expect(URI(encoded: "https://example.com", requirements: .kind(.absolute)) != nil)
-    #expect(URI(encoded: "test#foo", requirements: .kind(.relative)) != nil)
-    #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#foo", requirements: .kind(.name)) != nil)
+    #expect(URI(encoded: "https://example.com", requirements: .kind(.uri)) != nil)
+    #expect(URI(encoded: "test#foo", requirements: .kind(.relativeReference)) != nil)
+    #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#foo", requirements: .kind(.uri)) != nil)
   }
 
   @Test("Check unsatisfied `kind` requirements fail initializer")
   func unsatisfiedKindRequirements() async throws {
-    #expect(URI(encoded: "https://example.com", requirements: .kind(.relative)) == nil)
-    #expect(URI(encoded: "test#foo", requirements: .kind(.absolute)) == nil)
-    #expect(URI(encoded: "test#foo", requirements: .kind(.name)) == nil)
+    #expect(URI(encoded: "https://example.com", requirements: .kind(.relativeReference)) == nil)
+    #expect(URI(encoded: "test#foo", requirements: .kind(.uri)) == nil)
   }
 
   @Test("Check satisfied `fragment` requirements")
@@ -160,7 +159,7 @@ public struct URITests {
     let abs = try #require(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed"))
     let rel = try #require(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#/foo"))
 
-    #expect(rel.relative(to: abs).description == "#/foo")
+    #expect(rel.relative(to: abs).description == ".#/foo")
   }
 
   @Test func appendFragment() throws {

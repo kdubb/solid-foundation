@@ -106,6 +106,11 @@ extension Schema {
     // Format
     public static let format = Self(rawValue: "format")
 
+    // - MARK: Legacy
+
+    public static let definitions = Self(rawValue: "definitions")
+    public static let dependencies = Self(rawValue: "dependencies")
+
     // - MARK: Custom
 
     // Bytes

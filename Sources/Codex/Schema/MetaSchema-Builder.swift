@@ -27,6 +27,7 @@ extension MetaSchema {
       return MetaSchema(
         id: schema.id,
         vocabularies: vocabularies,
+        keywordBehaviors: [:],
         schemaLocator: schema
       )
 

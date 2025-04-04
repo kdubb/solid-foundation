@@ -78,7 +78,7 @@ extension Value.BinaryNumber : Value.Number {
     return decimal.isNegative
   }
 
-  public func asInteger() -> BInt? {
+  public func asInteger() -> BInt {
     switch self {
     case .int8(let value): BInt(value)
     case .int16(let value): BInt(value)

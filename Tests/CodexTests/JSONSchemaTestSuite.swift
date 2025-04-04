@@ -20,79 +20,55 @@ public struct JSONSchemaTestSuite {
     LocalDirectorySchemaContainer(for: resourcesDirectoryURL.appending(path: "/remotes")).neverNil()
   }()
 
-  @Suite("Drafts")
-  struct Draft2020_12 {
-
-    @Test("Specific Test Case") func specificTestCase() throws {
-      let testCasesURL = try #require(
-        Bundle.module.url(
-          forResource: "dynamicRef",
-          withExtension: "json",
-          subdirectory: "tests/draft2020-12"
-        )
+  @Test("Specific Test Case") func specificTestCase() throws {
+    let testCasesURL = try #require(
+      Bundle.module.url(
+        forResource: "dynamicRef",
+        withExtension: "json",
+        subdirectory: "tests/draft2020-12"
       )
-      var testCases = try JSONValueReader(data: Data(contentsOf: testCasesURL))
-        .readValue()
-        .decode(as: \.array)
-        .map(JSONSchemaTestSuite.TestCase.init)
-//      testCases = testCases
-//        .filter { $0.description == "A $dynamicRef to an $anchor in the same schema resource behaves like a normal $ref to an $anchor" }
-      try #require(!testCases.isEmpty)
-      for testCase in testCases {
-        print("🧩 \(testCase.description)")
-        let tests = testCase.tests
-//        let tests = testCase.tests.filter { $0.description == "An array of strings is valid" }
-        try #require(!tests.isEmpty)
-        for test in tests {
-          print("  🧩 \(test.description)")
-          let options = Schema.Options.default.schemaLocator(remoteSchemas)
-          let schema = try Schema.Builder.build(from: testCase.schema, options: options)
-          let result = try schema.validate(
-            instance: test.data,
-            options: .default.trace().schemaLocator(remoteSchemas)
-          )
-          let valid = result.isValid == test.valid
-          if valid {
-            print("    ✅ Expected \(test.valid ? "valid" : "invalid")")
-          } else {
-            print("    ⚠️ Expected \(test.valid ? "valid" : "invalid")")
-            print(result.description)
-          }
-          #expect(valid, "\(test.description)")
+    )
+    var testCases = try JSONValueReader(data: Data(contentsOf: testCasesURL))
+      .readValue()
+      .decode(as: \.array)
+      .map(JSONSchemaTestSuite.TestCase.init)
+    //      testCases = testCases
+    //        .filter { $0.description == "A $dynamicRef to an $anchor in the same schema resource behaves like a normal $ref to an $anchor" }
+    try #require(!testCases.isEmpty)
+    for testCase in testCases {
+      print("🧩 \(testCase.description)")
+      let tests = testCase.tests
+      //        let tests = testCase.tests.filter { $0.description == "An array of strings is valid" }
+      try #require(!tests.isEmpty)
+      for test in tests {
+        print("  🧩 \(test.description)")
+        let options = Schema.Options.default.schemaLocator(Self.remoteSchemas)
+        let schema = try Schema.Builder.build(from: testCase.schema, options: options)
+        let (result, annotations) = try Schema.Validator.validate(
+          instance: test.data,
+          using: schema,
+          options: .default.schemaLocator(Self.remoteSchemas).collectAnnotations(.matching(.keywords([.properties])))
+        )
+        let valid = result.isValid == test.valid
+        if valid {
+          print("    ✅ Expected \(test.valid ? "valid" : "invalid")")
+        } else {
+          print("    ⚠️ Expected \(test.valid ? "valid" : "invalid")")
+          print(result.description)
         }
-      }
-    }
-
-    @Suite("anchor")
-    struct Anchor {
-
-      let testCases: [TestCase]
-
-      public init() throws {
-        let testCasesURL = try #require(Bundle.module.url(forResource: "anchor", withExtension: "json", subdirectory: "tests/draft2020-12"))
-        let data = try Data(contentsOf: testCasesURL)
-        let value = try JSONValueReader(data: data).readValue()
-        testCases = try value.decode(as: \.array).map(TestCase.init)
-      }
-
-      @Test("Test Cases") func execTestCases() throws {
-        for testCase in testCases {
-          let schema: Schema
-          do {
-            schema = try Schema.Builder.build(from: testCase.schema)
-          } catch {
-            #expect(Bool(false), "Failed to parse schema for test case '\(testCase.description)': \(error)\n\(testCase.schema)")
-            continue
-          }
-          for test in testCase.tests {
-            #expect(try schema.validate(instance: test.data).isValid == test.valid, "\(test.description)")
+        if !annotations.isEmpty {
+          print("    Annotations:")
+          for annotation in annotations {
+            print("    - \(annotation.description.split(separator: "\n").joined(separator: "\n      "))")
           }
         }
+        #expect(valid, "\(test.description)")
       }
     }
   }
 
-  @Test("Draft 2020-12", arguments: drafts["draft2020-12"]!.groups) func draft2020_12(group: TestGroup) throws {
+  @Test("Draft 2020-12", arguments: drafts["draft2020-12"]!.groups)
+  func draft2020_12(group: TestGroup) throws {
     for testCase in group.testCases {
       print("🧩 \(testCase.description)")
       let options = Schema.Options.default.schemaLocator(JSONSchemaTestSuite.remoteSchemas)

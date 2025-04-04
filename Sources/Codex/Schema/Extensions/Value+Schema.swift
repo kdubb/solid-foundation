@@ -75,18 +75,11 @@ extension Value {
     self = .object(object)
   }
 
-  internal var schemaNormalizedURI: URI? {
+  internal func schemaURI(requirements: URI.Requirement...) -> URI? {
     guard case .string(let string) = self else {
       return nil
     }
-    return URI(encoded: string, requirements: .kind(.absolute), .normalized)
-  }
-
-  internal var schemaURIReference: URI? {
-    guard case .string(let string) = self else {
-      return nil
-    }
-    return URI(encoded: string, requirements: .kinds(.absolute, .relative))
+    return URI(encoded: string, requirements: Set(requirements))
   }
 
 }

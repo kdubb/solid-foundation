@@ -9,7 +9,7 @@ import Atomics
 
 extension Schema {
 
-  // A placeholder for a schema reference that has could not be resolved.
+  // A placeholder for a schema reference that could not be resolved.
   public final class UnresolvedSubSchema: SubSchema {
 
     public let id: URI

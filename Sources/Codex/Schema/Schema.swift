@@ -45,30 +45,14 @@ public final class Schema {
     options: Schema.Options = .default
   ) throws -> Validator.Result {
 
-    let schemaLocator = CompositeSchemaLocator.from(locators: [
-      schema.schemaLocator,
-      options.schemaLocator
-    ].compactMap(\.self))
-
-    let metaSchemaLocator = CompositeMetaSchemaLocator(locators: [
-      options.metaSchemaLocator,
-      MetaSchemaContainer(schemaLocator: schemaLocator)
-    ])
-
-    let validatorOptions = options
-      .schemaLocator(schemaLocator)
-      .metaSchemaLocator(metaSchemaLocator)
-
-    var context = Validator.Context.root(
+    let (result, _) = try Validator.validate(
       instance: instance,
-      schema: self,
+      using: self,
       outputFormat: outputFormat,
-      options: validatorOptions
+      options: options
     )
 
-    let validation = validate(instance: instance, context: &context)
-
-    return context.result(validation: validation)
+    return result
   }
 
 }

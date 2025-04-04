@@ -45,17 +45,12 @@ extension Value.TextNumber: Value.Number {
     return decimal.asDouble()
   }
 
-  public func asInteger() -> BInt? {
-    let decimal = self.decimal
-    let rounded = decimal.rounded()
-    guard rounded == decimal else {
-      return nil
-    }
-    return rounded.digits
+  public func asInteger() -> BInt {
+    return decimal.withExponent(0, .towardZero).digits
   }
 
   public func asInt() -> Int? {
-    return asInteger()?.asInt()
+    return asInteger().asInt()
   }
 
   public var isNaN: Bool {

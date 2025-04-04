@@ -13,7 +13,7 @@ extension Schema.Validator {
 
     public typealias Annotation = Schema.Annotation
 
-    public final class Scope: @unchecked Sendable {
+    public struct Scope: @unchecked Sendable {
 
       public let metaSchema: MetaSchema
       public let schema: Schema.SubSchema
@@ -65,6 +65,14 @@ extension Schema.Validator {
         parentAbsoluteKeywordLocation / relativeKeywordLocation
       }
 
+      public var absoluteKeywordLocationURI: URI? {
+        if absoluteKeywordLocation == keywordLocation {
+          return nil
+        }
+        let id = id ?? baseId
+        return id.appending(fragmentPointer: absoluteKeywordLocation)
+      }
+
       public var relativeInstanceLocation: Pointer {
         Pointer(tokens: relativeInstanceTokens.map(\.pointerToken))
       }
@@ -73,23 +81,35 @@ extension Schema.Validator {
         parentInstanceLocation / relativeInstanceLocation
       }
 
-      public func pushKeywordLocation(_ token: KeywordLocationToken) {
+      public mutating func pushKeywordLocation(_ token: KeywordLocationToken) {
         relativeKeywordTokens.append(token)
       }
 
-      public func popKeywordLocation() {
+      public mutating func popKeywordLocation() {
         relativeKeywordTokens.removeLast()
       }
 
-      public func pushInstanceLocation(_ token: LocationToken) {
+      public mutating func pushInstanceLocation(_ token: LocationToken) {
         relativeInstanceTokens.append(token)
       }
 
-      public func popInstanceLocation() {
+      public mutating func popInstanceLocation() {
         relativeInstanceTokens.removeLast()
       }
 
-      public func mergeInstanceAnnotations(from scope: Scope) {
+      public mutating func addAnnotation(_ value: Value, for keyword: Schema.Keyword) -> Annotation {
+        let annotation = Annotation(
+          keyword: keyword,
+          value: value,
+          instanceLocation: instanceLocation,
+          keywordLocation: keywordLocation,
+          absoluteKeywordLocation: absoluteKeywordLocationURI
+        )
+        siblingAnnotations[keyword] = annotation
+        return annotation
+      }
+
+      public mutating func mergeInstanceAnnotations(from scope: Scope) {
         guard scope.instanceLocation == instanceLocation else {
           return
         }
@@ -112,6 +132,7 @@ extension Schema.Validator {
     public fileprivate(set) var scopes: [Scope] = []
     public fileprivate(set) var instanceLocation: Pointer = .root
     public fileprivate(set) var resultBuilder: AnyResultBuilder
+    public fileprivate(set) var annotations: [Annotation]
     private var resourceSchemaCache: [URI: Schema] = [:]
 
     private init(
@@ -123,6 +144,7 @@ extension Schema.Validator {
       self.options = options
       self.rootInstance = instance
       self.resultBuilder = outputFormat.resultBuilder()
+      self.annotations = []
     }
 
     public static func root(
@@ -223,7 +245,23 @@ extension Schema.Validator {
     }
 
     public var isCollecting: Bool {
-      return outputFormat == .detailed || outputFormat == .verbose
+      return options.collectAnnotations != .none || outputFormat == .detailed || outputFormat == .verbose
+    }
+
+    public mutating func collect(_ annotation: Annotation) {
+      switch options.collectAnnotations {
+      case .none:
+        break
+      case .all:
+        annotations.append(annotation)
+      case .matching(let filter):
+        switch filter {
+        case .keywords(let keywords):
+          if keywords.contains(annotation.keyword) {
+            annotations.append(annotation)
+          }
+        }
+      }
     }
 
     public mutating func siblingAnnotation<K>(
@@ -286,8 +324,8 @@ extension Schema.Validator {
       let validation = keywordBehavior.apply(instance: instanceSpec.instance, context: &self)
 
       if case .annotation(let value) = validation {
-        let scope = self.currentScope
-        scope.siblingAnnotations[keyword] = Annotation(value: value, location: scope.keywordLocation)
+        let annotation = currentScope.addAnnotation(value, for: keyword)
+        collect(annotation)
       }
 
       tracePost(validation: validation)

@@ -10,8 +10,7 @@ import Foundation
 public enum URI {
 
   case absolute(Absolute)
-  case relative(Relative)
-  case name(Name)
+  case relativeReference(RelativeReference)
 
   public init?(encoded string: String, requirements: Set<Requirement> = []) {
     guard let components = URLComponents(string: string) else {
@@ -50,28 +49,19 @@ public enum URI {
   public var encoded: String {
     switch self {
     case .absolute(let absolute): absolute.encoded
-    case .relative(let relative): relative.encoded
-    case .name(let name): name.encoded
+    case .relativeReference(let relative): relative.encoded
     }
   }
 
   public var isAbsolute: Bool {
     switch self {
     case .absolute: true
-    case .relative: false
-    case .name: true
+    case .relativeReference: false
     }
   }
 
-  public var isRelative: Bool {
-    guard case .relative = self else {
-      return false
-    }
-    return true
-  }
-
-  public var isName: Bool {
-    guard case .name = self else {
+  public var isRelativeReference: Bool {
+    guard case .relativeReference = self else {
       return false
     }
     return true
@@ -80,56 +70,49 @@ public enum URI {
   public var isNormalized: Bool {
     switch self {
     case .absolute(let absolute): absolute.isNormalized
-    case .relative(let relative): relative.isNormalized
-    case .name: true
+    case .relativeReference(let relative): relative.isNormalized
     }
   }
 
   public func normalized() -> URI {
     switch self {
     case .absolute(let absolute): .absolute(absolute.normalized())
-    case .relative(let relative): .relative(relative.normalized())
-    case .name: self
+    case .relativeReference(let relative): .relativeReference(relative.normalized())
     }
   }
 
   public var scheme: String? {
     switch self {
     case .absolute(let absolute): absolute.scheme
-    case .relative: nil
-    case .name(let name): name.scheme
+    case .relativeReference: nil
     }
   }
 
   public var query: [QueryItem] {
     switch self {
     case .absolute(let absolute): absolute.query
-    case .relative(let relative): relative.query
-    case .name(let name): name.query
+    case .relativeReference(let relative): relative.query
     }
   }
 
   public var fragment: String? {
     switch self {
     case .absolute(let absolute): absolute.fragment
-    case .relative(let relative): relative.fragment
-    case .name(let name): name.fragment
+    case .relativeReference(let relative): relative.fragment
     }
   }
 
   public var url: URL {
     switch self {
     case .absolute(let absolute): absolute.url
-    case .relative(let relative): relative.url
-    case .name(let name): name.url
+    case .relativeReference(let relative): relative.url
     }
   }
 
   public func replacing(fragment: String) -> URI {
     switch self {
     case .absolute(let absolute): absolute.replacing(fragment: fragment)
-    case .relative(let relative): relative.replacing(fragment: fragment)
-    case .name(let name): name.replacing(fragment: fragment)
+    case .relativeReference(let relative): relative.replacing(fragment: fragment)
     }
   }
 
@@ -144,8 +127,7 @@ public enum URI {
   public func appending(fragmentPointer pointer: Pointer) -> URI? {
     switch self {
     case .absolute(let absolute): absolute.appending(fragmentPointer: pointer)
-    case .relative(let relative): relative.appending(fragmentPointer: pointer)
-    case .name(let name): name.appending(fragmentPointer: pointer)
+    case .relativeReference(let relative): relative.appending(fragmentPointer: pointer)
     }
   }
 
@@ -160,8 +142,7 @@ public enum URI {
   public func updating(_ components: Set<Component>) -> URI {
     switch self {
     case .absolute(let absolute): absolute.updating(Set(components))
-    case .relative(let relative): relative.updating(Set(components))
-    case .name(let name): name.updating(components)
+    case .relativeReference(let relative): relative.updating(Set(components))
     }
   }
 
@@ -172,8 +153,7 @@ public enum URI {
   public func removing(_ components: some Sequence<Component.Kind>) -> URI {
     switch self {
     case .absolute(let absolute): absolute.removing(parts: components)
-    case .relative(let relative): relative.removing(parts: components)
-    case .name(let name): name.removing(parts: components)
+    case .relativeReference(let relative): relative.removing(parts: components)
     }
   }
 
@@ -185,7 +165,7 @@ public enum URI {
 
   public func relative(pathStyle: RelativePathStyle = .directory) -> URI {
     switch self {
-    case .relative:
+    case .relativeReference:
       return self
     case .absolute(let absolute):
       let path = switch pathStyle {
@@ -198,16 +178,13 @@ public enum URI {
         query: absolute.query,
         fragment: absolute.fragment
       )
-    case .name(let name):
-      return .relative(path: [], query: name.query, fragment: name.fragment)
     }
   }
 
   public func resolved(against base: URI) -> URI {
     switch (self, base) {
     case (.absolute, .absolute): self
-    case (.relative(let rel), .absolute(let abs)): rel.resolved(against: abs)
-    case (.relative(let rel), .name(let name)): rel.resolved(against: name)
+    case (.relativeReference(let rel), .absolute(let abs)): rel.resolved(against: abs)
     default: self
     }
   }
@@ -222,7 +199,6 @@ public enum URI {
   public func relative(to absolute: URI) -> URI {
     switch (self, absolute) {
     case (.absolute(let specific), .absolute(let base)): specific.relative(to: base)
-    case (.name(let a), .name(let b)): a.relative(to: b)
     default: self
     }
   }
@@ -244,7 +220,7 @@ extension URI {
 
   public static func absolute(
     scheme: String,
-    authority: URI.Absolute.Authority,
+    authority: URI.Authority,
     path: [URI.PathItem] = [],
     query: [URI.QueryItem] = [],
     fragment: String? = nil
@@ -257,7 +233,7 @@ extension URI {
     query: [URI.QueryItem] = [],
     fragment: String? = nil
   ) -> Self {
-    .relative(.init(path: path, query: query, fragment: fragment))
+    .relativeReference(.init(path: path, query: query, fragment: fragment))
   }
 
   public static func relative(
@@ -265,16 +241,7 @@ extension URI {
     query: [URI.QueryItem] = [],
     fragment: String? = nil
   ) -> Self {
-    .relative(.init(path: .from(encoded: encodedPath, absolute: false), query: query, fragment: fragment))
-  }
-
-  public static func name(
-    scheme: String,
-    path: String,
-    query: [URI.QueryItem] = [],
-    fragment: String? = nil
-  ) -> Self {
-    .name(.init(scheme: scheme, path: path, query: query, fragment: fragment))
+    .relativeReference(.init(path: .from(encoded: encodedPath, absolute: false), query: query, fragment: fragment))
   }
 
 }

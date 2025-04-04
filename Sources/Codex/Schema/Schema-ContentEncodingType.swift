@@ -13,9 +13,8 @@ extension Schema {
 
     var identifier: String { get }
 
-    func decode(_ data: Data) throws -> Value
-
-    func encode(_ value: Value) throws -> Data
+    func encode(_ value: Value) throws -> String
+    func decode(_ string: String) throws -> Value
 
   }
 

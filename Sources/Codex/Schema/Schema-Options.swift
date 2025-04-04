@@ -7,7 +7,7 @@
 
 extension Schema {
 
-  public struct Options: Sendable {
+  public struct Options {
 
     public static let defaultMetaSchemaLocators: [MetaSchemaLocator] = [
       MetaSchema.Draft2020_12.instance,
@@ -31,11 +31,23 @@ extension Schema {
         contentMediaTypeLocator: ContentMediaTypeTypes(),
         contentEncodingLocator: ContentEncodingTypes(),
         contentSchemaLocator: ContentSchemaTypes(),
+        collectAnnotations: .none,
         trace: false
       )
     }()
 
-    public enum UnknownKeywords: Sendable {
+    public enum CollectAnnotations {
+
+      public enum Filter {
+        case keywords([Keyword])
+      }
+
+      case none
+      case all
+      case matching(Filter)
+    }
+
+    public enum UnknownKeywords {
       case annotate
       case ignore
       case fail
@@ -52,6 +64,7 @@ extension Schema {
     public let contentMediaTypeLocator: ContentMediaTypeLocator
     public let contentEncodingLocator: ContentEncodingLocator
     public let contentSchemaLocator: ContentSchemaLocator
+    public let collectAnnotations: CollectAnnotations
     public let trace: Bool
 
     public init(
@@ -64,6 +77,7 @@ extension Schema {
       contentMediaTypeLocator: ContentMediaTypeLocator,
       contentEncodingLocator: ContentEncodingLocator,
       contentSchemaLocator: ContentSchemaLocator,
+      collectAnnotations: CollectAnnotations,
       trace: Bool = false
     ) {
       self.defaultSchema = defaultSchema
@@ -75,6 +89,7 @@ extension Schema {
       self.contentMediaTypeLocator = contentMediaTypeLocator
       self.contentEncodingLocator = contentEncodingLocator
       self.contentSchemaLocator = contentSchemaLocator
+      self.collectAnnotations = collectAnnotations
       self.trace = trace
     }
 
@@ -88,6 +103,7 @@ extension Schema {
       contentMediaTypeLocator: ContentMediaTypeLocator? = nil,
       contentEncodingLocator: ContentEncodingLocator? = nil,
       contentSchemaLocator: ContentSchemaLocator? = nil,
+      collectAnnotations: CollectAnnotations? = nil,
       trace: Bool? = nil
     ) -> Self {
       Self(
@@ -100,6 +116,7 @@ extension Schema {
         contentMediaTypeLocator: contentMediaTypeLocator ?? self.contentMediaTypeLocator,
         contentEncodingLocator: contentEncodingLocator ?? self.contentEncodingLocator,
         contentSchemaLocator: contentSchemaLocator ?? self.contentSchemaLocator,
+        collectAnnotations: collectAnnotations ?? self.collectAnnotations,
         trace: trace ?? self.trace
       )
     }
@@ -142,6 +159,10 @@ extension Schema {
       copy(unknownKeywords: .custom(handler))
     }
 
+    public func collectAnnotations(_ value: CollectAnnotations = .all) -> Self {
+      copy(collectAnnotations: value)
+    }
+
     public func trace(_ value: Bool = true) -> Self {
       copy(trace: value)
     }
@@ -149,3 +170,15 @@ extension Schema {
   }
 
 }
+
+extension Schema.Options: Sendable {}
+
+extension Schema.Options.CollectAnnotations.Filter: Sendable {}
+extension Schema.Options.CollectAnnotations.Filter: Hashable {}
+extension Schema.Options.CollectAnnotations.Filter: Equatable {}
+
+extension Schema.Options.CollectAnnotations: Sendable {}
+extension Schema.Options.CollectAnnotations: Hashable {}
+extension Schema.Options.CollectAnnotations: Equatable {}
+
+extension Schema.Options.UnknownKeywords: Sendable {}

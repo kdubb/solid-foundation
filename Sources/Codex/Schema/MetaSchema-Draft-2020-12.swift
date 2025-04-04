@@ -18,6 +18,7 @@ extension MetaSchema {
       Draft2020_12.Vocabularies.content,
       Draft2020_12.Vocabularies.metadata
     ],
+    keywordBehaviors: [:],
     schemaLocator: Draft2020_12.instance
   )
 
@@ -114,7 +115,8 @@ extension MetaSchema {
       formatTypeLocator: FormatTypes(),
       contentMediaTypeLocator: ContentMediaTypeTypes(),
       contentEncodingLocator: ContentEncodingTypes(),
-      contentSchemaLocator: ContentSchemaTypes()
+      contentSchemaLocator: ContentSchemaTypes(),
+      collectAnnotations: .none
     ))
 
     public enum Vocabularies: SchemaLocator, VocabularyLocator {
@@ -166,11 +168,11 @@ extension MetaSchema {
         types: [],
         keywordBehaviors: [
           Schema.Identifiers.Id$.self,
-          Schema.Identifiers.Anchor$.self,
-          Schema.Identifiers.DynamicAnchor$.self,
           Schema.Identifiers.Schema$.self,
           Schema.References.Ref$.self,
+          Schema.Identifiers.Anchor$.self,
           Schema.References.DynamicRef$.self,
+          Schema.Identifiers.DynamicAnchor$.self,
           Schema.Identifiers.Vocabulary$.self,
           Schema.Reservations.Comment$.self,
           Schema.Reservations.Defs$.self,
@@ -567,7 +569,8 @@ extension MetaSchema {
         formatTypeLocator: FormatTypes(),
         contentMediaTypeLocator: ContentMediaTypeTypes(),
         contentEncodingLocator: ContentEncodingTypes(),
-        contentSchemaLocator: ContentSchemaTypes()
+        contentSchemaLocator: ContentSchemaTypes(),
+        collectAnnotations: .none
       )
     }
   }

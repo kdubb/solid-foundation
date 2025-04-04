@@ -8,20 +8,47 @@
 extension Schema {
 
   public struct Annotation {
+    public var keyword: Keyword
     public var value: Value
-    public var location: Pointer
+    public var instanceLocation: Pointer
+    public var keywordLocation: Pointer
+    public var absoluteKeywordLocation: URI?
 
-    public init(value: Value, location: Pointer) {
+    public init(
+      keyword: Keyword,
+      value: Value,
+      instanceLocation: Pointer,
+      keywordLocation: Pointer,
+      absoluteKeywordLocation: URI?
+    ) {
+      self.keyword = keyword
       self.value = value
-      self.location = location
+      self.instanceLocation = instanceLocation
+      self.keywordLocation = keywordLocation
+      self.absoluteKeywordLocation = absoluteKeywordLocation
     }
   }
 
 }
 
-extension Schema.Annotation : Sendable {}
-extension Schema.Annotation : Hashable {}
-extension Schema.Annotation : Equatable {}
+extension Schema.Annotation: Sendable {}
+extension Schema.Annotation: Hashable {}
+extension Schema.Annotation: Equatable {}
+
+extension Schema.Annotation: CustomStringConvertible {
+
+  public var description: String {
+    """
+    Keyword: \(keyword)
+    Value: \(value)
+    Instance Location: '\(instanceLocation == .root ? "" : instanceLocation.description)'
+    Absolute Keyword Location: \(keywordLocation)\(
+      absoluteKeywordLocation.map { "\nAbsolute Keyword Location: \($0)" } ?? ""
+    )
+    """
+  }
+
+}
 
 extension Schema.Annotation {
 

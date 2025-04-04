@@ -18,16 +18,7 @@ internal extension URLComponents {
   }
 
   var uri: URI {
-    return if isURN {
-      .name(
-        URI.Name(
-          scheme: scheme!,
-          path: path,
-          query: queryItems?.compactMap { .from(name: $0.name, value: $0.value) } ?? [],
-          fragment: fragment
-        )
-      )
-    } else if isAbsolute {
+    return if isAbsolute {
       .absolute(
         URI.Absolute(
           scheme: scheme!,
@@ -38,8 +29,8 @@ internal extension URLComponents {
         )
       )
     } else {
-      .relative(
-        URI.Relative(
+      .relativeReference(
+        URI.RelativeReference(
           path: .from(encoded: path, absolute: false),
           query: queryItems?.compactMap { URI.QueryItem(name: $0.name, value: $0.value) } ?? [],
           fragment: fragment
@@ -49,16 +40,7 @@ internal extension URLComponents {
   }
 
   var lexicalUri: URI {
-    return if isURN {
-      .name(
-        URI.Name(
-          scheme: scheme!,
-          path: path,
-          query: queryItems?.compactMap { .from(name: $0.name, value: $0.value) } ?? [],
-          fragment: fragment
-        )
-      )
-    } else if isAbsolute {
+    return if isAbsolute {
       .absolute(
         URI.Absolute(
           scheme: scheme!,
@@ -70,8 +52,8 @@ internal extension URLComponents {
         )
       )
     } else {
-      .relative(
-        URI.Relative(
+      .relativeReference(
+        URI.RelativeReference(
           path: .from(encoded: path, absolute: false),
           query: queryItems?.compactMap { URI.QueryItem(name: $0.name, value: $0.value) } ?? [],
           fragment: fragment,

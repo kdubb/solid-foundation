@@ -23,18 +23,18 @@ public struct JSONTokenWriter {
   func writeToken(_ token: JSONToken) {
 
     switch token {
-
+      
     case .scalar(.string(let value)): writeString(value)
     case .scalar(.number(let value)): writeNumber(value)
     case .scalar(.bool(let value)): writeBool(value)
     case .scalar(.null): writeNull()
-
+      
     case .beginArray: writeASCII(JSONStructure.beginArray)
     case .endArray: writeASCII(JSONStructure.endArray)
-
+      
     case .beginObject: writeASCII(JSONStructure.beginObject)
     case .endObject: writeASCII(JSONStructure.endObject)
-
+      
     case .elementSeparator: writeASCII(JSONStructure.elementSeparator)
     case .pairSeparator: writeASCII(JSONStructure.pairSeparator)
     }

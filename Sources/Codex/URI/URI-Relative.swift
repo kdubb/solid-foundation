@@ -9,8 +9,9 @@ import Foundation
 
 extension URI {
 
-  public struct Relative {
+  public struct RelativeReference {
 
+    public var authority: Authority?
     public var path: [PathItem]
     public var query: [QueryItem]
     public var fragment: String?
@@ -37,11 +38,11 @@ extension URI {
 
 }
 
-extension URI.Relative: Sendable {}
-extension URI.Relative: Hashable {}
-extension URI.Relative: Equatable {}
+extension URI.RelativeReference: Sendable {}
+extension URI.RelativeReference: Hashable {}
+extension URI.RelativeReference: Equatable {}
 
-extension URI.Relative {
+extension URI.RelativeReference {
 
   public func copy(
     path: [URI.PathItem]? = nil,
@@ -100,7 +101,7 @@ extension URI.Relative {
         break
       }
     }
-    return .relative(copy)
+    return .relativeReference(copy)
   }
 
   public func removing(parts: some Sequence<URI.Component.Kind>) -> URI {
@@ -117,11 +118,11 @@ extension URI.Relative {
         break
       }
     }
-    return .relative(copy)
+    return .relativeReference(copy)
   }
 
   public func replacing(fragment: String) -> URI {
-    .relative(copy(fragment: fragment))
+    .relativeReference(copy(fragment: fragment))
   }
 
   public func appending(fragmentPointer pointer: Pointer) -> URI? {
@@ -129,7 +130,7 @@ extension URI.Relative {
       return nil
     }
     let fragmentPointer = baseFragmentPointer / pointer
-    return .relative(copy(fragment: fragmentPointer.encoded))
+    return .relativeReference(copy(fragment: fragmentPointer.encoded))
   }
 
   public func resolved(against base: URI.Absolute) -> URI {
@@ -170,12 +171,6 @@ extension URI.Relative {
         fragment: fragment
       )
     )
-  }
-
-  public func resolved(against base: URI.Name) -> URI {
-    let query = self.query.nilIfEmpty() ?? base.query
-    let fragment = self.fragment ?? base.fragment
-    return .name(base.copy(query: query, fragment: fragment))
   }
 
 }

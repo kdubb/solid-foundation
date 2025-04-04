@@ -21,7 +21,12 @@ public final class MetaSchema {
   public let identifierKeywords: OrderedSet<Keyword>
   public let applicatorKeywords: OrderedSet<Keyword>
 
-  public init(id: URI, vocabularies: [Vocabulary], schemaLocator: SchemaLocator) {
+  public init(
+    id: URI,
+    vocabularies: [Vocabulary],
+    keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>,
+    schemaLocator: SchemaLocator
+  ) {
     self.id = id
     self.vocabularies = vocabularies
     self.types = OrderedSet(vocabularies.flatMap { Array($0.types) })

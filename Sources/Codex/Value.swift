@@ -1,3 +1,10 @@
+//
+//  Value.swift
+//  Codex
+//
+//  Created by Kevin Wooten on 1/28/25.
+//
+
 import Foundation
 import BigInt
 import BigDecimal
@@ -153,6 +160,13 @@ extension Value {
       return nil
     }
     return string
+  }
+
+  public var bytes: Data? {
+    guard case .bytes(let bytes) = self else {
+      return nil
+    }
+    return bytes
   }
 
   public var stringified: String {
