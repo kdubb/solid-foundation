@@ -21,10 +21,14 @@ public struct JSONValueReader {
   }
 
   public func readValue() throws -> Value {
-    return try tokenReader.readValue(converter: Converter.instance)
+    return try tokenReader.readValue(converter: ValueConverter.instance)
   }
 
-  enum Converter: JSONTokenConverter {
+  public func validateValue() throws {
+    try tokenReader.readValue(converter: NullConverter.instance)
+  }
+
+  enum ValueConverter: JSONTokenConverter {
 
     case instance
 
@@ -49,6 +53,29 @@ public struct JSONValueReader {
 
     func convertNull() -> Value {
       return .null
+    }
+  }
+
+  enum NullConverter: JSONTokenConverter {
+
+    case instance
+
+    typealias ValueType = Void
+
+    func convertScalar(_ value: JSONToken.Scalar) throws -> Void {
+      return
+    }
+
+    func convertArray(_ value: [Void]) throws -> Void {
+      return
+    }
+
+    func convertObject(_ value: [String : Void]) throws -> Void {
+      return
+    }
+
+    func convertNull() -> Void {
+      return
     }
   }
 }

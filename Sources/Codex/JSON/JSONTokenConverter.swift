@@ -7,7 +7,7 @@
 
 protocol JSONTokenConverter {
 
-  associatedtype ValueType: Hashable
+  associatedtype ValueType
 
   func convertScalar(_ value: JSONToken.Scalar) throws -> ValueType
   func convertArray(_ value: [ValueType]) throws -> ValueType
