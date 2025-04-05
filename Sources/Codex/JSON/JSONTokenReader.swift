@@ -288,7 +288,7 @@ struct JSONTokenReader {
     if try !consumeASCIISequence("\\u") {
       throw Error.invalidData(.invalidEscapeSequence, location: start)
     }
-    
+
     guard let trailCodeUnit = try parseCodeUnit(), UTF16.isTrailSurrogate(trailCodeUnit) else {
       throw Error.invalidData(.invalidEscapeSequence, location: start)
     }
@@ -304,7 +304,7 @@ struct JSONTokenReader {
 
   func parseCodeUnit() throws -> UTF16.CodeUnit? {
     let hexParser = takeMatching(isHexChr)
-    guard 
+    guard
       let result = try hexParser([]).flatMap(hexParser).flatMap(hexParser).flatMap(hexParser),
       let value = Int(String(result), radix: 16)
     else {
@@ -417,10 +417,6 @@ struct JSONTokenReader {
       while try nextASCII() {
         guard Self.allDigits.contains(ascii) else { return false } // Invalid exponent character
         exponent = (exponent * 10) + Int(ascii - Self.zero)
-        if exponent > 324 {
-          // Exponent is too large to store in a Double
-          return false
-        }
       }
       return true
     }
