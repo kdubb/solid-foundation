@@ -7,128 +7,117 @@
 
 import Foundation
 import Testing
+import BigInt
 @testable import Codex
 
 struct ValueTextNumberTests {
 
   @Test func intFromIntegerZero() throws {
 
-    let zero = Value.TextNumber(text: "0")
+    let number = Value.TextNumber(text: "0")
 
-    #expect(zero.asInteger() == .zero)
-    #expect(zero.asInteger() == 0)
-    #expect(zero.asInt() == 0)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt.zero)
+    #expect(number.asInt() == 0)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromInteger() throws {
 
-    let zero = Value.TextNumber(text: "123")
+    let number = Value.TextNumber(text: "123")
 
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInt() == 123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(123))
+    #expect(number.asInt() == 123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromNegativeInteger() throws {
 
-    let zero = Value.TextNumber(text: "-123")
+    let number = Value.TextNumber(text: "-123")
 
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInt() == -123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(-123))
+    #expect(number.asInt() == -123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromDecimalZero() throws {
 
-    let zero = Value.TextNumber(text: "0.0")
+    let number = Value.TextNumber(text: "0.0")
 
-    #expect(zero.asInteger() == .zero)
-    #expect(zero.asInteger() == 0)
-    #expect(zero.asInt() == 0)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt.zero)
+    #expect(number.asInt() == 0)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromDecimalZeroExtraPrecision() throws {
 
-    let zero = Value.TextNumber(text: "0.000")
+    let number = Value.TextNumber(text: "0.000")
 
-    #expect(zero.asInteger() == .zero)
-    #expect(zero.asInteger() == 0)
-    #expect(zero.asInt() == 0)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt.zero)
+    #expect(number.asInt() == 0)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromDecimalZeroExtraDigits() throws {
 
-    let zero = Value.TextNumber(text: "000.000")
+    let number = Value.TextNumber(text: "000.000")
 
-    #expect(zero.asInteger() == .zero)
-    #expect(zero.asInteger() == 0)
-    #expect(zero.asInt() == 0)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt.zero)
+    #expect(number.asInt() == 0)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromDecimalInteger() throws {
 
-    let zero = Value.TextNumber(text: "123.0")
+    let number = Value.TextNumber(text: "123.0")
 
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInt() == 123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(123))
+    #expect(number.asInt() == 123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromDecimalIntegerExtraPrecision() throws {
 
-    let zero = Value.TextNumber(text: "123.000")
+    let number = Value.TextNumber(text: "123.000")
 
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInt() == 123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(123))
+    #expect(number.asInt() == 123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromDecimalIntegerExtraDigits() throws {
 
-    let zero = Value.TextNumber(text: "00123.000")
+    let number = Value.TextNumber(text: "00123.000")
 
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInteger() == 123)
-    #expect(zero.asInt() == 123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(123))
+    #expect(number.asInt() == 123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromNegativeDecimalInteger() throws {
 
-    let zero = Value.TextNumber(text: "-123.0")
+    let number = Value.TextNumber(text: "-123.0")
 
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInt() == -123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(-123))
+    #expect(number.asInt() == -123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromNegativeDecimalIntegerExtraPrecision() throws {
 
-    let zero = Value.TextNumber(text: "-123.000")
+    let number = Value.TextNumber(text: "-123.000")
 
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInt() == -123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(-123))
+    #expect(number.asInt() == -123)
+    #expect(number.isInteger == true)
   }
 
   @Test func intFromNegativeDecimalIntegerExtraDigits() throws {
 
-    let zero = Value.TextNumber(text: "-00123.000")
+    let number = Value.TextNumber(text: "-00123.000")
 
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInteger() == -123)
-    #expect(zero.asInt() == -123)
-    #expect(zero.isInteger == true)
+    #expect(number.asInteger() == BInt(-123))
+    #expect(number.asInt() == -123)
+    #expect(number.isInteger == true)
   }
 
 }
