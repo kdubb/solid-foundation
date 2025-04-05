@@ -10,7 +10,7 @@ import BigDecimal
 extension BigDecimal {
 
   var isSchemaInteger: Bool {
-    rounded() == self
+    !isNaN && !isInfinite && rounded() == self
   }
 
   func asSchemaInt() -> Int? {
