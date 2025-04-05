@@ -38,7 +38,7 @@ extension Value.TextNumber: Value.Number {
 
   public var isInteger: Bool {
     let decimal = self.decimal
-    return decimal.rounded() == decimal
+    return decimal.rounded() == decimal && !decimal.isNaN && !decimal.isInfinite
   }
 
   public func asDouble() -> Double {
@@ -76,7 +76,7 @@ extension Value.TextNumber: CustomStringConvertible {
 extension Value.TextNumber: Hashable {
 
   public func hash(into hasher: inout Hasher) {
-    hasher.combine(text)
+    hasher.combine(decimal)
   }
 
 }
@@ -84,7 +84,7 @@ extension Value.TextNumber: Hashable {
 extension Value.TextNumber: Equatable {
 
   public static func ==(lhs: Value.TextNumber, rhs: Value.TextNumber) -> Bool {
-    lhs.text == rhs.text
+    lhs.decimal == rhs.decimal
   }
 
 }
