@@ -97,6 +97,20 @@ extension Schema {
         try context.keywordBehavior(for: idKeywordBehaviorType)
       }
 
+      let reservedKeywords   = unappliedKeywords.intersection(context.schema.reservedKeywords)
+      for reservedKeyword in reservedKeywords {
+
+        guard unappliedKeywords.remove(reservedKeyword) != nil else {
+          continue
+        }
+
+        guard let reservedKeywordBehaviorType = context.schema.keywordBehavior(for: reservedKeyword) else {
+          continue
+        }
+
+        try context.keywordBehavior(for: reservedKeywordBehaviorType)
+      }
+
       // Apply all other keywords
 
       var unknownKeywords: [Keyword: KeywordBehavior] = [:]
