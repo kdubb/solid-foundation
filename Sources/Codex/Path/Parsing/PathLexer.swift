@@ -3,16 +3,18 @@
 
 open class PathLexer: Lexer {
 
-  internal static var _decisionToDFA: [DFA] = {
-    var decisionToDFA = [DFA]()
-    let length = PathLexer._ATN.getNumberOfDecisions()
+  // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
+  internal static func createDecisionToDFA(_ atn: ATN) -> [DFA] {
+    var decisionToDFA: [DFA] = []
+    let length = atn.getNumberOfDecisions()
     for i in 0..<length {
-      decisionToDFA.append(DFA(PathLexer._ATN.getDecisionState(i)!, i))
+      decisionToDFA.append(DFA(atn.getDecisionState(i)!, i))
     }
     return decisionToDFA
-  }()
+  }
 
-  internal static let _sharedContextCache = PredictionContextCache()
+
+  // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
 
   public
     static let ROOT = 1, CURRENT = 2, MEMBER_ACC = 3, DESC_ACC = 4, WILDCARD = 5, FILTER = 6,
@@ -70,12 +72,21 @@ open class PathLexer: Lexer {
     return PathLexer.VOCABULARY
   }
 
+  // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
+  private let _atn = try! ATNDeserializer().deserialize(_serializedATN)
+  // ꜛꜛꜛꜛꜛ DO NOT CHANGE/REMOVE ꜛꜛꜛꜛꜛ
+
   public
     required init(_ input: CharStream)
   {
     RuntimeMetaData.checkVersion("4.13.2", RuntimeMetaData.VERSION)
     super.init(input)
-    _interp = LexerATNSimulator(self, PathLexer._ATN, PathLexer._decisionToDFA, PathLexer._sharedContextCache)
+    // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
+    // ANTLR 4.13.2 Lexers are not thread-safe, even when using a dedicated instance per thread.
+    let decisionToDFA = Self.createDecisionToDFA(_atn)
+    let cache = PredictionContextCache()
+    _interp = LexerATNSimulator(self, _atn, decisionToDFA, cache)
+    // ꜛꜛꜛꜛꜛ DO NOT CHANGE/REMOVE ꜛꜛꜛꜛꜛ
   }
 
   override open
@@ -100,7 +111,7 @@ open class PathLexer: Lexer {
 
   override open
     func getATN() -> ATN
-  { return PathLexer._ATN }
+  { return _atn }
 
   static let _serializedATN: [Int] = [
     4, 0, 35, 345, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7, 4, 2, 5, 7, 5, 2, 6, 7,
@@ -219,7 +230,4 @@ open class PathLexer: Lexer {
     22, 0, 186, 192, 195, 202, 205, 208, 214, 218, 223, 231, 261, 272, 282, 290, 296, 301, 305,
     315, 321, 334, 340, 0,
   ]
-
-  public
-    static let _ATN: ATN = try! ATNDeserializer().deserialize(_serializedATN)
 }

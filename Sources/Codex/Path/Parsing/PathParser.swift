@@ -3,16 +3,18 @@
 
 open class PathParser: Parser {
 
-  internal static var _decisionToDFA: [DFA] = {
-    var decisionToDFA = [DFA]()
-    let length = PathParser._ATN.getNumberOfDecisions()
+  // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
+  internal static func createDecisionToDFA(_ atn: ATN) -> [DFA] {
+    var decisionToDFA: [DFA] = []
+    let length = atn.getNumberOfDecisions()
     for i in 0..<length {
-      decisionToDFA.append(DFA(PathParser._ATN.getDecisionState(i)!, i))
+      decisionToDFA.append(DFA(atn.getDecisionState(i)!, i))
     }
     return decisionToDFA
-  }()
+  }
 
-  internal static let _sharedContextCache = PredictionContextCache()
+
+  // ꜛꜛꜛꜛꜛ DO NOT CHANGE/REMOVE ꜛꜛꜛꜛꜛ
 
   public
     enum Tokens: Int
@@ -88,7 +90,7 @@ open class PathParser: Parser {
 
   override open
     func getATN() -> ATN
-  { return PathParser._ATN }
+  { return _atn }
 
 
   override open
@@ -97,12 +99,21 @@ open class PathParser: Parser {
     return PathParser.VOCABULARY
   }
 
+  // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
+  private let _atn = try! ATNDeserializer().deserialize(PathParser._serializedATN)
+  // ꜛꜛꜛꜛꜛ DO NOT CHANGE/REMOVE ꜛꜛꜛꜛꜛ
+
   override public
     init(_ input: TokenStream) throws
   {
     RuntimeMetaData.checkVersion("4.13.2", RuntimeMetaData.VERSION)
     try super.init(input)
-    _interp = ParserATNSimulator(self, PathParser._ATN, PathParser._decisionToDFA, PathParser._sharedContextCache)
+    // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
+    // ANTLR 4.13.2 Parsers are not thread-safe, even when using a dedicated instance per thread.
+    let decisionToDFA = Self.createDecisionToDFA(_atn)
+    let cache = PredictionContextCache()
+    _interp = ParserATNSimulator(self, _atn, decisionToDFA, cache)
+    // ꜛꜛꜛꜛꜛ DO NOT CHANGE/REMOVE ꜛꜛꜛꜛꜛ
   }
 
 
@@ -3482,7 +3493,4 @@ open class PathParser: Parser {
     118, 125, 146, 153, 159, 177, 193, 204, 210, 215, 228, 232, 236, 252, 265, 271, 282, 286,
     295, 316, 319, 328, 333,
   ]
-
-  public
-    static let _ATN = try! ATNDeserializer().deserialize(_serializedATN)
 }
