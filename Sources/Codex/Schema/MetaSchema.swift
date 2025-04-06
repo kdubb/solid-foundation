@@ -20,6 +20,7 @@ public final class MetaSchema {
   public let keywords: OrderedSet<Keyword>
   public let identifierKeywords: OrderedSet<Keyword>
   public let applicatorKeywords: OrderedSet<Keyword>
+  public let reservedKeywords: OrderedSet<Keyword>
 
   public init(
     id: URI,
@@ -38,10 +39,13 @@ public final class MetaSchema {
     }
     self.schemaLocator = schemaLocator
     self.identifierKeywords = OrderedSet(
-      keywordBehaviors.filter { $0.value is Schema.IdentifierBehavior.Type }.map { $0.key }
+        self.keywordBehaviors.filter { $0.value is Schema.IdentifierBehavior.Type }.map { $0.key }
     )
     self.applicatorKeywords = OrderedSet(
-      keywordBehaviors.filter { $0.value is Schema.ApplicatorBehavior.Type }.map { $0.key }
+      self.keywordBehaviors.filter { $0.value is Schema.ApplicatorBehavior.Type }.map { $0.key }
+    )
+    self.reservedKeywords = OrderedSet(
+      self.keywordBehaviors.filter { $0.value is Schema.ReservedBehavior.Type }.map { $0.key }
     )
   }
 
