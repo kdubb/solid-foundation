@@ -21,6 +21,7 @@ let package = Package(
     .package(url: "https://github.com/mgriebling/BigDecimal.git", from: "3.0.2"),
     .package(url: "https://github.com/SwiftScream/URITemplate.git", from: "5.0.1"),
     .package(url: "https://github.com/antlr/antlr4.git", from: "4.13.2"),
+    .package(url: "https://github.com/StarLard/SwiftFormatPlugins.git", from: "1.1.1"),
   ],
   targets: [
     .target(
@@ -38,6 +39,9 @@ let package = Package(
         "Path/Parsing/Path.tokens",
         "Path/Parsing/PathLexer.interp",
         "Path/Parsing/PathLexer.tokens",
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins"),
       ]
     ),
     .testTarget(
@@ -47,6 +51,9 @@ let package = Package(
         .copy("../JSONTestSuite/tests"),
         .copy("../JSONTestSuite/output-tests"),
         .copy("../JSONTestSuite/remotes"),
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins"),
       ]
     ),
   ]

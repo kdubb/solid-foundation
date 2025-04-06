@@ -1,7 +1,7 @@
 // Generated from Sources/Codex/Path/Parsing/Path.g4 by ANTLR 4.13.2
+@preconcurrency import Antlr4
 
-import Antlr4
-
+// swift-format-ignore-file: AllPublicDeclarationsHaveDocumentation, BeginDocumentationCommentWithOneLineSummary, NoLeadingUnderscores, NeverForceUnwrap, NeverUseForceTry
 
 /**
  * This class provides an empty implementation of {@link PathListener},

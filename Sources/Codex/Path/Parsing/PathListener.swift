@@ -1,5 +1,7 @@
 // Generated from Sources/Codex/Path/Parsing/Path.g4 by ANTLR 4.13.2
-import Antlr4
+@preconcurrency import Antlr4
+
+// swift-format-ignore-file: AllPublicDeclarationsHaveDocumentation, BeginDocumentationCommentWithOneLineSummary, NoLeadingUnderscores, NeverForceUnwrap, NeverUseForceTry
 
 /**
  * This interface defines a complete listener for a parse tree produced by

@@ -1,5 +1,9 @@
 grammar Path;
 
+@header {
+// swift-format-ignore-file: AllPublicDeclarationsHaveDocumentation, BeginDocumentationCommentWithOneLineSummary, NoLeadingUnderscores, NeverForceUnwrap, NeverUseForceTry
+}
+
 pathQuery : ROOT segments EOF;
 
 segments

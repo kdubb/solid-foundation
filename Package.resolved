@@ -1,5 +1,5 @@
 {
-  "originHash" : "8d3e2c5dec0e1c5589416ccf717f7e4ee96a6bf194dff176870708529e9ab64a",
+  "originHash" : "80e1565156f37ed68ddb55034a42bd13069a51cc9d62bbd064800abeac9dc4e6",
   "pins" : [
     {
       "identity" : "antlr4",
@@ -62,6 +62,15 @@
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
+      }
+    },
+    {
+      "identity" : "swiftformatplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/StarLard/SwiftFormatPlugins.git",
+      "state" : {
+        "revision" : "8b7fe1b899d82e1abbe4a88d7593645e06669467",
+        "version" : "1.1.1"
       }
     },
     {

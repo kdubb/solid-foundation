@@ -37,8 +37,14 @@ final class RFC6531InternationalizedMailboxAddressTests {
   func validAsciiEmails(local: String, domain: String, description: String) throws {
     let email = "\(local)@\(domain)"
     let mailbox = try #require(RFC6531.Mailbox.parse(string: email))
-    #expect(mailbox.local == local, "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'")
-    #expect(mailbox.domain == domain, "Domain mismatch for \(description): expected '\(domain)', got '\(mailbox.domain)'")
+    #expect(
+      mailbox.local == local,
+      "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'"
+    )
+    #expect(
+      mailbox.domain == domain,
+      "Domain mismatch for \(description): expected '\(domain)', got '\(mailbox.domain)'"
+    )
   }
 
   @Test(
@@ -59,8 +65,14 @@ final class RFC6531InternationalizedMailboxAddressTests {
   func validInternationalizedEmails(local: String, domain: String, description: String) throws {
     let email = "\(local)@\(domain)"
     let mailbox = try #require(RFC6531.Mailbox.parse(string: email))
-    #expect(mailbox.local == local, "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'")
-    #expect(mailbox.domain == domain, "Domain mismatch for \(description): expected '\(domain)', got '\(mailbox.domain)'")
+    #expect(
+      mailbox.local == local,
+      "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'"
+    )
+    #expect(
+      mailbox.domain == domain,
+      "Domain mismatch for \(description): expected '\(domain)', got '\(mailbox.domain)'"
+    )
   }
 
   @Test(
@@ -108,7 +120,13 @@ final class RFC6531InternationalizedMailboxAddressTests {
   func emailComponents(local: String, domain: String, description: String) throws {
     let email = "\(local)@\(domain)"
     let mailbox = try #require(RFC6531.Mailbox.parse(string: email))
-    #expect(mailbox.local == local, "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'")
-    #expect(mailbox.domain == domain, "Domain mismatch for \(description): expected '\(domain)', got '\(mailbox.domain)'")
+    #expect(
+      mailbox.local == local,
+      "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'"
+    )
+    #expect(
+      mailbox.domain == domain,
+      "Domain mismatch for \(description): expected '\(domain)', got '\(mailbox.domain)'"
+    )
   }
 }

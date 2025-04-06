@@ -1,6 +1,8 @@
 // Generated from Sources/Codex/Path/Parsing/Path.g4 by ANTLR 4.13.2
 @preconcurrency import Antlr4
 
+// swift-format-ignore-file: AllPublicDeclarationsHaveDocumentation, BeginDocumentationCommentWithOneLineSummary, NoLeadingUnderscores, NeverForceUnwrap, NeverUseForceTry
+
 open class PathLexer: Lexer {
 
   // ꜜꜜꜜꜜꜜ DO NOT CHANGE/REMOVE ꜜꜜꜜꜜꜜ
