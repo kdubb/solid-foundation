@@ -9,6 +9,7 @@ import Foundation
 import Testing
 @testable import Codex
 
+@Suite("JSON Schema Test")
 public struct JSONSchemaTestSuite {
 
   public let drafts = ["2020-12"]
@@ -23,7 +24,7 @@ public struct JSONSchemaTestSuite {
   @Test("Specific Test Case") func specificTestCase() throws {
     let testCasesURL = try #require(
       Bundle.module.url(
-        forResource: "dynamicRef",
+        forResource: "ref",
         withExtension: "json",
         subdirectory: "tests/draft2020-12"
       )
@@ -32,22 +33,24 @@ public struct JSONSchemaTestSuite {
       .readValue()
       .decode(as: \.array)
       .map(JSONSchemaTestSuite.TestCase.init)
-    //      testCases = testCases
-    //        .filter { $0.description == "A $dynamicRef to an $anchor in the same schema resource behaves like a normal $ref to an $anchor" }
+    testCases =
+      testCases
+      .filter { $0.description == "ref with absolute-path-reference" }
     try #require(!testCases.isEmpty)
     for testCase in testCases {
       print("🧩 \(testCase.description)")
-      let tests = testCase.tests
-      //        let tests = testCase.tests.filter { $0.description == "An array of strings is valid" }
+      // let tests = testCase.tests
+      let tests = testCase.tests.filter { $0.description == "a string is valid" }
       try #require(!tests.isEmpty)
       for test in tests {
         print("  🧩 \(test.description)")
-        let options = Schema.Options.default.schemaLocator(Self.remoteSchemas)
+        let options = Schema.Options.default.schemaLocator(Self.remoteSchemas).trace()
         let schema = try Schema.Builder.build(from: testCase.schema, options: options)
         let (result, annotations) = try Schema.Validator.validate(
           instance: test.data,
           using: schema,
           options: .default.schemaLocator(Self.remoteSchemas).collectAnnotations(.matching(.keywords([.properties])))
+            .trace()
         )
         let valid = result.isValid == test.valid
         if valid {
@@ -84,7 +87,10 @@ public struct JSONSchemaTestSuite {
         print("  🧪 \(test.description)")
         do {
           let testValid = try schema.validate(instance: test.data, options: options).isValid == test.valid
-          #expect(testValid, "\(testCase.description) - \(test.description), expected \(test.valid ? "valid" : "invalid")")
+          #expect(
+            testValid,
+            "\(testCase.description) - \(test.description), expected \(test.valid ? "valid" : "invalid")"
+          )
           if testValid {
             print("    ✅ Expected \(test.valid ? "valid" : "invalid")")
           }
@@ -106,11 +112,13 @@ public struct JSONSchemaTestSuite {
     }
     do {
       var drafts: [String: Draft] = [:]
-      let dirs = try FileManager.default.contentsOfDirectory(
-        at: testsDir,
-        includingPropertiesForKeys: [.isDirectoryKey],
-        options: [.skipsHiddenFiles, .skipsPackageDescendants, .skipsSubdirectoryDescendants]
-      ).filter { try $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true }
+      let dirs = try FileManager.default
+        .contentsOfDirectory(
+          at: testsDir,
+          includingPropertiesForKeys: [.isDirectoryKey],
+          options: [.skipsHiddenFiles, .skipsPackageDescendants, .skipsSubdirectoryDescendants]
+        )
+        .filter { try $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true }
       for dir in dirs {
         let draft = try Draft(directory: dir)
         drafts[dir.lastPathComponent] = draft
@@ -132,11 +140,13 @@ public struct JSONSchemaTestSuite {
     }
 
     public init(directory: URL) throws {
-      let files = try FileManager.default.contentsOfDirectory(
-        at: directory,
-        includingPropertiesForKeys: [.isRegularFileKey],
-        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants, .skipsPackageDescendants]
-      ).filter { $0.pathExtension == "json" }
+      let files = try FileManager.default
+        .contentsOfDirectory(
+          at: directory,
+          includingPropertiesForKeys: [.isRegularFileKey],
+          options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants, .skipsPackageDescendants]
+        )
+        .filter { $0.pathExtension == "json" }
 
       self.init(
         description: directory.lastPathComponent,

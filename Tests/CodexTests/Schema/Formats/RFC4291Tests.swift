@@ -3,7 +3,7 @@ import Foundation
 @testable import Codex
 
 @Suite("RFC4291 IPv6 Address Tests")
-final class RFC4291Tests {
+final class RFC4291IPv6AddressTests {
 
   @Test("Parse standard IPv6 addresses")
   func parseStandardIPv6Addresses() async throws {
@@ -24,15 +24,15 @@ final class RFC4291Tests {
   @Test("Reject invalid IPv6 addresses")
   func rejectInvalidIPv6Addresses() async throws {
     #expect(RFC4291.IPv6Address.parse(string: "") == nil)
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8::1::2") == nil) // Multiple :: not allowed
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:00000:0000:8a2e:0370:7334") == nil) // Too many digits
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:1234") == nil) // Too many groups
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370") == nil) // Too few groups
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil) // Trailing colon
-    #expect(RFC4291.IPv6Address.parse(string: ":2001:db8:85a3:0:0:8a2e:370:7334") == nil) // Leading colon
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil) // Trailing colon
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil) // Trailing colon
-    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil) // Trailing colon
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8::1::2") == nil)    // Multiple :: not allowed
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:00000:0000:8a2e:0370:7334") == nil)    // Too many digits
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:1234") == nil)    // Too many groups
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370") == nil)    // Too few groups
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil)    // Trailing colon
+    #expect(RFC4291.IPv6Address.parse(string: ":2001:db8:85a3:0:0:8a2e:370:7334") == nil)    // Leading colon
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil)    // Trailing colon
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil)    // Trailing colon
+    #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334:") == nil)    // Trailing colon
   }
 
   @Test("Verify group values after parsing")
@@ -78,8 +78,8 @@ final class RFC4291Tests {
       #expect(address.groups[3] == 0x0000)
       #expect(address.groups[4] == 0x0000)
       #expect(address.groups[5] == 0xffff)
-      #expect(address.groups[6] == 0xc0a8) // 192.168
-      #expect(address.groups[7] == 0x0101) // 1.1
+      #expect(address.groups[6] == 0xc0a8)    // 192.168
+      #expect(address.groups[7] == 0x0101)    // 1.1
     }
   }
 
@@ -88,14 +88,14 @@ final class RFC4291Tests {
     // Link-local addresses
     #expect(RFC4291.IPv6Address.parse(string: "fe80::1") != nil)
     #expect(RFC4291.IPv6Address.parse(string: "fe80::1234:5678:9abc:def0") != nil)
-    
+
     // Multicast addresses
-    #expect(RFC4291.IPv6Address.parse(string: "ff02::1") != nil) // All nodes
-    #expect(RFC4291.IPv6Address.parse(string: "ff02::2") != nil) // All routers
-    
+    #expect(RFC4291.IPv6Address.parse(string: "ff02::1") != nil)    // All nodes
+    #expect(RFC4291.IPv6Address.parse(string: "ff02::2") != nil)    // All routers
+
     // Deprecated site-local addresses
     #expect(RFC4291.IPv6Address.parse(string: "fec0::1") != nil)
-    
+
     // IPv6-compatible IPv4 addresses (deprecated)
     #expect(RFC4291.IPv6Address.parse(string: "::192.168.1.1") != nil)
   }
@@ -111,13 +111,13 @@ final class RFC4291Tests {
   func parseIPv6AddressesWithEdgeCases() async throws {
     // Maximum digits in a group (4)
     #expect(RFC4291.IPv6Address.parse(string: "2001:0db8:85a3:0000:0000:8a2e:0370:7334") != nil)
-    
+
     // Minimum digits in a group (1)
     #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0:0:8a2e:370:7334") != nil)
-    
+
     // All zeros in a group
     #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:0000:0000:8a2e:370:7334") != nil)
-    
+
     // All ones in a group
     #expect(RFC4291.IPv6Address.parse(string: "2001:db8:85a3:ffff:ffff:8a2e:370:7334") != nil)
   }
@@ -147,4 +147,4 @@ final class RFC4291Tests {
       }
     }
   }
-} 
+}

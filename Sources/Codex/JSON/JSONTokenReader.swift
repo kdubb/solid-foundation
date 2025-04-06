@@ -39,10 +39,10 @@ struct JSONTokenReader {
   }
 
   private static let whitespaceASCII: [UInt8] = [
-    0x09, // Horizontal tab
-    0x0A, // Line feed or New line
-    0x0D, // Carriage return
-    0x20, // Space
+    0x09,    // Horizontal tab
+    0x0A,    // Line feed or New line
+    0x0D,    // Carriage return
+    0x20,    // Space
   ]
 
   typealias Index = Int
@@ -75,15 +75,14 @@ struct JSONTokenReader {
     }
 
     func skip(count: Int) throws {
-      for idx in 0 ..< count {
+      for idx in 0..<count {
         try checkNext()
         offset += 1
         if offset >= buffer.endIndex {
-          if idx == count - 1 {
-            return
-          } else {
+          guard idx == count - 1 else {
             throw Error.unexpectedEndOfStream
           }
+          return
         }
         let ascii = buffer[offset]
         if ascii == 0x0A || ascii == 0x0D {
@@ -155,10 +154,8 @@ struct JSONTokenReader {
   }
 
   func consumeASCIISequence(_ sequence: String) throws -> Bool {
-    for scalar in sequence.unicodeScalars {
-      if try !consumeASCII(UInt8(scalar.value)) {
-        return false
-      }
+    for scalar in sequence.unicodeScalars where try !consumeASCII(UInt8(scalar.value)) {
+      return false
     }
     return true
   }
@@ -193,28 +190,31 @@ struct JSONTokenReader {
         try source.skip(count: copy + 1)
         guard var result = output else {
           // if we don't have an output string we create a new string
-          return try makeString(at: stringStart ..< stringStart + copy, start: start)
+          return try makeString(at: stringStart..<stringStart + copy, start: start)
         }
         // if we have an output string we append
-        result += try makeString(at: stringStart ..< stringStart + copy, start: start)
+        result += try makeString(at: stringStart..<stringStart + copy, start: start)
         return result
 
-      case 0 ... 31:
+      case 0...31:
         // All Unicode characters may be placed within the
         // quotation marks, except for the characters that must be escaped:
         // quotation mark, reverse solidus, and the control characters (U+0000
         // through U+001F).
         var string = output ?? ""
         let errorIndex = source.offset + copy
-        string += try makeString(at: stringStart ... errorIndex, start: start)
-        throw Error.invalidData(.unescapedControlCharacterInString(ascii: byte, in: string, index: errorIndex), location: start)
+        string += try makeString(at: stringStart...errorIndex, start: start)
+        throw Error.invalidData(
+          .unescapedControlCharacterInString(ascii: byte, in: string, index: errorIndex),
+          location: start
+        )
 
       case UInt8(ascii: "\\"):
         try source.skip(count: copy + 1)
         if output != nil {
-          output! += try makeString(at: stringStart ..< stringStart + copy, start: start)
+          output! += try makeString(at: stringStart..<stringStart + copy, start: start)
         } else {
-          output = try makeString(at: stringStart ..< stringStart + copy, start: start)
+          output = try makeString(at: stringStart..<stringStart + copy, start: start)
         }
 
         let escaped = try parseEscapeSequence(start: source.location.advanced(by: copy))
@@ -250,12 +250,12 @@ struct JSONTokenReader {
     case 0x22: output = "\""
     case 0x5C: output = "\\"
     case 0x2F: output = "/"
-    case 0x62: output = "\u{08}" // \b
-    case 0x66: output = "\u{0C}" // \f
-    case 0x6E: output = "\u{0A}" // \n
-    case 0x72: output = "\u{0D}" // \r
-    case 0x74: output = "\u{09}" // \t
-    case 0x75: output = try parseUnicodeSequence(start: start) // \u
+    case 0x62: output = "\u{08}"    // \b
+    case 0x66: output = "\u{0C}"    // \f
+    case 0x6E: output = "\u{0A}"    // \n
+    case 0x72: output = "\u{0D}"    // \r
+    case 0x74: output = "\u{09}"    // \t
+    case 0x75: output = try parseUnicodeSequence(start: start)    // \u
     default:
       throw Error.invalidData(.invalidEscapeSequence, location: start)
     }
@@ -298,8 +298,8 @@ struct JSONTokenReader {
 
   func isHexChr(_ byte: UInt8) -> Bool {
     return (byte >= 0x30 && byte <= 0x39)
-    || (byte >= 0x41 && byte <= 0x46)
-    || (byte >= 0x61 && byte <= 0x66)
+      || (byte >= 0x41 && byte <= 0x46)
+      || (byte >= 0x61 && byte <= 0x66)
   }
 
   func parseCodeUnit() throws -> UTF16.CodeUnit? {
@@ -323,11 +323,11 @@ struct JSONTokenReader {
   private static let lowerExponent = UInt8(ascii: "e")
   private static let upperExponent = UInt8(ascii: "E")
   private static let decimalSeparator = UInt8(ascii: ".")
-  private static let allDigits = (zero ... nine)
-  private static let oneToNine = (one ... nine)
+  private static let allDigits = (zero...nine)
+  private static let oneToNine = (one...nine)
 
   private static let numberCodePoints: [UInt8] = {
-    var numberCodePoints = Array(zero ... nine)
+    var numberCodePoints = Array(zero...nine)
     numberCodePoints.append(contentsOf: [decimalSeparator, minus, plus, lowerExponent, upperExponent])
     return numberCodePoints
   }()
@@ -341,7 +341,7 @@ struct JSONTokenReader {
     var string = ""
     var isInteger = true
     var exponent = 0
-    var ascii: UInt8 = 0 // set by nextASCII()
+    var ascii: UInt8 = 0    // set by nextASCII()
 
     /// Validate the input is a valid JSON number, also gather the following
     /// about the input: isNegative, isInteger, the exponent and if it is +/-,
@@ -382,13 +382,11 @@ struct JSONTokenReader {
         ascii = char
         if [Self.decimalSeparator, Self.lowerExponent, Self.upperExponent].contains(ascii) {
           guard try nextASCII()
-          else { return false } // There should be at least one char as readDigits didn't remove the '.eE'
+          else { return false }    // There should be at least one char as readDigits didn't remove the '.eE'
         }
-      }
-      else if ascii == Self.zero {
+      } else if ascii == Self.zero {
         guard try nextASCII() else { return true }
-      }
-      else {
+      } else {
         throw Error.invalidData(.invalidNumber, location: start)
       }
 
@@ -396,8 +394,7 @@ struct JSONTokenReader {
         isInteger = false
         guard try readDigits() != nil else { return true }
         guard try nextASCII() else { return true }
-      }
-      else if Self.allDigits.contains(ascii) {
+      } else if Self.allDigits.contains(ascii) {
         throw Error.invalidData(.invalidNumber, location: start)
       }
 
@@ -415,7 +412,7 @@ struct JSONTokenReader {
       guard Self.allDigits.contains(ascii) else { return false }
       exponent = Int(ascii - Self.zero)
       while try nextASCII() {
-        guard Self.allDigits.contains(ascii) else { return false } // Invalid exponent character
+        guard Self.allDigits.contains(ascii) else { return false }    // Invalid exponent character
         exponent = (exponent * 10) + Int(ascii - Self.zero)
       }
       return true
@@ -475,8 +472,7 @@ struct JSONTokenReader {
         return false
       }
       return true
-    }
-    catch {
+    } catch {
       source.offset = start
       throw error
     }
@@ -553,8 +549,10 @@ struct JSONTokenReader {
     case .beginObject: return try readObject()
     case .scalar(let scalar): return try converter.convertScalar(scalar)
     case let token:
-      throw Error.invalidData(.unexpectedToken(expected: [.beginArray, .beginObject, .scalar], found: token.kind),
-                              location: source.location)
+      throw Error.invalidData(
+        .unexpectedToken(expected: [.beginArray, .beginObject, .scalar], found: token.kind),
+        location: source.location
+      )
     }
 
     func readArray() throws -> C.ValueType {
@@ -580,7 +578,10 @@ struct JSONTokenReader {
       while true {
         let keyScalar = try readScalar()
         guard case .string(let key) = keyScalar else {
-          throw Error.invalidData(.unexpectedValue(expected: [.string], found: keyScalar.kind), location: source.location)
+          throw Error.invalidData(
+            .unexpectedValue(expected: [.string], found: keyScalar.kind),
+            location: source.location
+          )
         }
 
         try readToken(matching: [.pairSeparator])

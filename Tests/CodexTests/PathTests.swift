@@ -8,7 +8,8 @@
 import Testing
 @testable import Codex
 
-struct PathParseTests {
+@Suite("Path Parsing Tests")
+struct PathParsingTests {
 
   typealias Seg = Path.Segment
   typealias Sel = Path.Selector
@@ -110,7 +111,7 @@ struct PathParseTests {
 
 }
 
-
+@Suite("Path Query Tests")
 struct PathQueryTests {
 
   func check(
@@ -125,11 +126,8 @@ struct PathQueryTests {
     column: Int = #column
   ) throws {
     let loc = SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column)
-    let path = try #require(try Path.parse(path), sourceLocation: loc)
-    let result = try #require(
-      PathQuery.query(path: path, from: value, functions: functions, delegate: delegate),
-      sourceLocation: loc
-    )
+    let path = try Path.parse(path)
+    let result = PathQuery.query(path: path, from: value, functions: functions, delegate: delegate)
     #expect(result == expected, sourceLocation: loc)
   }
 
@@ -156,27 +154,43 @@ struct PathQueryTests {
 
   @Test func wildcardSelector() throws {
 
-    let value: Value = ["o": ["j" : 1, "k": 2], "a": [5, 3]]
+    let value: Value = ["o": ["j": 1, "k": 2], "a": [5, 3]]
 
     // RFC
-    try check("$[*]", value, .nodelist([
-      (["j" : 1, "k": 2], path: .normal("o")),
-      ([5, 3], path: .normal("a")),
-    ]))
-    try check("$.o[*]", value, .nodelist([
-      (1, path: .normal("o", "j")),
-      (2, path: .normal("o", "k")),
-    ]))
-    try check("$.o[*, *]", value, .nodelist([
-      (1, path: .normal("o", "j")),
-      (2, path: .normal("o", "k")),
-      (1, path: .normal("o", "j")),
-      (2, path: .normal("o", "k")),
-    ]))
-    try check("$.a[*]", value, .nodelist([
-      (5, path: .normal("a", 0)),
-      (3, path: .normal("a", 1)),
-    ]))
+    try check(
+      "$[*]",
+      value,
+      .nodelist([
+        (["j": 1, "k": 2], path: .normal("o")),
+        ([5, 3], path: .normal("a")),
+      ])
+    )
+    try check(
+      "$.o[*]",
+      value,
+      .nodelist([
+        (1, path: .normal("o", "j")),
+        (2, path: .normal("o", "k")),
+      ])
+    )
+    try check(
+      "$.o[*, *]",
+      value,
+      .nodelist([
+        (1, path: .normal("o", "j")),
+        (2, path: .normal("o", "k")),
+        (1, path: .normal("o", "j")),
+        (2, path: .normal("o", "k")),
+      ])
+    )
+    try check(
+      "$.a[*]",
+      value,
+      .nodelist([
+        (5, path: .normal("a", 0)),
+        (3, path: .normal("a", 1)),
+      ])
+    )
 
     // Extra
     try check("$.b[*]", value, .nothing)
@@ -202,31 +216,51 @@ struct PathQueryTests {
     let value: Value = ["a", "b", "c", "d", "e", "f", "g"]
 
     // RFC
-    try check("$[1:3]", value, .nodelist([
-      ("b", path: .normal(1)),
-      ("c", path: .normal(2)),
-    ]))
-    try check("$[5:]", value, .nodelist([
-      ("f", path: .normal(5)),
-      ("g", path: .normal(6)),
-    ]))
-    try check("$[1:5:2]", value, .nodelist([
-      ("b", path: .normal(1)),
-      ("d", path: .normal(3)),
-    ]))
-    try check("$[5:1:-2]", value, .nodelist([
-      ("f", path: .normal(5)),
-      ("d", path: .normal(3))
-    ]))
-    try check("$[::-1]", value, .nodelist([
-      ("g", path: .normal(6)),
-      ("f", path: .normal(5)),
-      ("e", path: .normal(4)),
-      ("d", path: .normal(3)),
-      ("c", path: .normal(2)),
-      ("b", path: .normal(1)),
-      ("a", path: .normal(0))
-    ]))
+    try check(
+      "$[1:3]",
+      value,
+      .nodelist([
+        ("b", path: .normal(1)),
+        ("c", path: .normal(2)),
+      ])
+    )
+    try check(
+      "$[5:]",
+      value,
+      .nodelist([
+        ("f", path: .normal(5)),
+        ("g", path: .normal(6)),
+      ])
+    )
+    try check(
+      "$[1:5:2]",
+      value,
+      .nodelist([
+        ("b", path: .normal(1)),
+        ("d", path: .normal(3)),
+      ])
+    )
+    try check(
+      "$[5:1:-2]",
+      value,
+      .nodelist([
+        ("f", path: .normal(5)),
+        ("d", path: .normal(3)),
+      ])
+    )
+    try check(
+      "$[::-1]",
+      value,
+      .nodelist([
+        ("g", path: .normal(6)),
+        ("f", path: .normal(5)),
+        ("e", path: .normal(4)),
+        ("d", path: .normal(3)),
+        ("c", path: .normal(2)),
+        ("b", path: .normal(1)),
+        ("a", path: .normal(0)),
+      ])
+    )
 
     // Extra
     try check("$[10:]", value, .empty)
@@ -280,82 +314,138 @@ struct PathQueryTests {
   @Test func filterSelector() throws {
 
     let value: Value = [
-      "a": [3, 5, 1, 2, 4 , 6, ["b": "j"], ["b": "k"], ["b": [:]], ["b": "kilo"]],
+      "a": [3, 5, 1, 2, 4, 6, ["b": "j"], ["b": "k"], ["b": [:]], ["b": "kilo"]],
       "o": ["p": 1, "q": 2, "r": 3, "s": 5, "t": ["u": 6]],
       "e": "f",
     ]
 
     // RFC
-    try check(#"$.a[?@.b == 'kilo']"#, value, .nodelist([
-      (["b": "kilo"], path: .normal("a", 9)),
-    ]))
-    try check(#"$.a[?(@.b == 'kilo')]"#, value, .nodelist([
-      (["b": "kilo"], path: .normal("a", 9)),
-    ]))
-    try check(#"$.a[?@>3.5]"#, value, .nodelist([
-      (5, path: .normal("a", 1)),
-      (4, path: .normal("a", 4)),
-      (6, path: .normal("a", 5)),
-    ]))
-    try check(#"$.a[?@.b]"#, value, .nodelist([
-      (["b": "j"], path: .normal("a", 6)),
-      (["b": "k"], path: .normal("a", 7)),
-      (["b": [:]], path: .normal("a", 8)),
-      (["b": "kilo"], path: .normal("a", 9)),
-    ]))
-    try check(#"$[?@.*]"#, value, .nodelist([
-      ([3, 5, 1, 2, 4, 6, ["b": "j"], ["b": "k"], ["b": [:]], ["b": "kilo"]], path: .normal("a")),
-      (["p": 1, "q": 2, "r": 3, "s": 5, "t": ["u": 6]], path: .normal("o")),
-    ]))
-    try check(#"$[?@[?@.b]]"#, value, .nodelist([
-      ([3, 5, 1, 2, 4, 6, ["b": "j"], ["b": "k"], ["b": [:]], ["b": "kilo"]], path: .normal("a"))
-    ]))
-    try check(#"$.o[?@<3, ?@<3]"#, value, .nodelist([
-      (1, path: .normal("o", "p")),
-      (2, path: .normal("o", "q")),
-      (1, path: .normal("o", "p")),
-      (2, path: .normal("o", "q")),
-    ]))
-    try check(#"$.a[?@<2 || @.b == "k"]"#, value, .nodelist([
-      (1, path: .normal("a", 2)),
-      (["b": "k"], path: .normal("a", 7)),
-    ]))
-    try check(#"$.a[?match(@.b, "[jk]")]"#, value, .nodelist([
-      (["b": "j"], path: .normal("a", 6)),
-      (["b": "k"], path: .normal("a", 7)),
-    ]))
-    try check(#"$.a[?search(@.b, "[jk]")]"#, value, .nodelist([
-      (["b": "j"], path: .normal("a", 6)),
-      (["b": "k"], path: .normal("a", 7)),
-      (["b": "kilo"], path: .normal("a", 9)),
-    ]))
-    try check(#"$.o[?@>1 && @<4]"#, value, .nodelist([
-      (2, path: .normal("o", "q")),
-      (3, path: .normal("o", "r")),
-    ]))
-    try check(#"$.o[?@.u || @.x]"#, value, .nodelist([
-      (["u": 6], path: .normal("o", "t")),
-    ]))
-    try check(#"$.a[?@.b == $.x]"#, value, .nodelist([
-      (3, path: .normal("a", 0)),
-      (5, path: .normal("a", 1)),
-      (1, path: .normal("a", 2)),
-      (2, path: .normal("a", 3)),
-      (4, path: .normal("a", 4)),
-      (6, path: .normal("a", 5)),
-    ]))
-    try check(#"$.a[?@ == @]"#, value, .nodelist([
-      (3, path: .normal("a", 0)),
-      (5, path: .normal("a", 1)),
-      (1, path: .normal("a", 2)),
-      (2, path: .normal("a", 3)),
-      (4, path: .normal("a", 4)),
-      (6, path: .normal("a", 5)),
-      (["b": "j"], path: .normal("a", 6)),
-      (["b": "k"], path: .normal("a", 7)),
-      (["b": [:]], path: .normal("a", 8)),
-      (["b": "kilo"], path: .normal("a", 9)),
-    ]))
+    try check(
+      #"$.a[?@.b == 'kilo']"#,
+      value,
+      .nodelist([
+        (["b": "kilo"], path: .normal("a", 9))
+      ])
+    )
+    try check(
+      #"$.a[?(@.b == 'kilo')]"#,
+      value,
+      .nodelist([
+        (["b": "kilo"], path: .normal("a", 9))
+      ])
+    )
+    try check(
+      #"$.a[?@>3.5]"#,
+      value,
+      .nodelist([
+        (5, path: .normal("a", 1)),
+        (4, path: .normal("a", 4)),
+        (6, path: .normal("a", 5)),
+      ])
+    )
+    try check(
+      #"$.a[?@.b]"#,
+      value,
+      .nodelist([
+        (["b": "j"], path: .normal("a", 6)),
+        (["b": "k"], path: .normal("a", 7)),
+        (["b": [:]], path: .normal("a", 8)),
+        (["b": "kilo"], path: .normal("a", 9)),
+      ])
+    )
+    try check(
+      #"$[?@.*]"#,
+      value,
+      .nodelist([
+        ([3, 5, 1, 2, 4, 6, ["b": "j"], ["b": "k"], ["b": [:]], ["b": "kilo"]], path: .normal("a")),
+        (["p": 1, "q": 2, "r": 3, "s": 5, "t": ["u": 6]], path: .normal("o")),
+      ])
+    )
+    try check(
+      #"$[?@[?@.b]]"#,
+      value,
+      .nodelist([
+        ([3, 5, 1, 2, 4, 6, ["b": "j"], ["b": "k"], ["b": [:]], ["b": "kilo"]], path: .normal("a"))
+      ])
+    )
+    try check(
+      #"$.o[?@<3, ?@<3]"#,
+      value,
+      .nodelist([
+        (1, path: .normal("o", "p")),
+        (2, path: .normal("o", "q")),
+        (1, path: .normal("o", "p")),
+        (2, path: .normal("o", "q")),
+      ])
+    )
+    try check(
+      #"$.a[?@<2 || @.b == "k"]"#,
+      value,
+      .nodelist([
+        (1, path: .normal("a", 2)),
+        (["b": "k"], path: .normal("a", 7)),
+      ])
+    )
+    try check(
+      #"$.a[?match(@.b, "[jk]")]"#,
+      value,
+      .nodelist([
+        (["b": "j"], path: .normal("a", 6)),
+        (["b": "k"], path: .normal("a", 7)),
+      ])
+    )
+    try check(
+      #"$.a[?search(@.b, "[jk]")]"#,
+      value,
+      .nodelist([
+        (["b": "j"], path: .normal("a", 6)),
+        (["b": "k"], path: .normal("a", 7)),
+        (["b": "kilo"], path: .normal("a", 9)),
+      ])
+    )
+    try check(
+      #"$.o[?@>1 && @<4]"#,
+      value,
+      .nodelist([
+        (2, path: .normal("o", "q")),
+        (3, path: .normal("o", "r")),
+      ])
+    )
+    try check(
+      #"$.o[?@.u || @.x]"#,
+      value,
+      .nodelist([
+        (["u": 6], path: .normal("o", "t"))
+      ])
+    )
+    try check(
+      #"$.a[?@.b == $.x]"#,
+      value,
+      .nodelist([
+        (3, path: .normal("a", 0)),
+        (5, path: .normal("a", 1)),
+        (1, path: .normal("a", 2)),
+        (2, path: .normal("a", 3)),
+        (4, path: .normal("a", 4)),
+        (6, path: .normal("a", 5)),
+      ])
+    )
+    try check(
+      #"$.a[?@ == @]"#,
+      value,
+      .nodelist([
+        (3, path: .normal("a", 0)),
+        (5, path: .normal("a", 1)),
+        (1, path: .normal("a", 2)),
+        (2, path: .normal("a", 3)),
+        (4, path: .normal("a", 4)),
+        (6, path: .normal("a", 5)),
+        (["b": "j"], path: .normal("a", 6)),
+        (["b": "k"], path: .normal("a", 7)),
+        (["b": [:]], path: .normal("a", 8)),
+        (["b": "kilo"], path: .normal("a", 9)),
+      ])
+    )
   }
 
   @Test func functions() throws {
@@ -389,13 +479,22 @@ struct PathQueryTests {
 
     try check(#"$[?key(@) == "a"]"#, ["a": 0, "b": 1], .nodelist([(value: 0, path: .normal("a"))]))
     try check(#"$[?match(key(@), "a")]"#, ["a": 0], .nodelist([(value: 0, path: .normal("a"))]))
-    try check(#"$['b', ?key(@) == "a"]"#, ["a": 0, "b": 1], .nodelist([
-      (value: 1, path: .normal("b")),
-      (value: 0, path: .normal("a")),
-    ]))
-    try check(#"$[?test(@) == 1]"#, [1], .nodelist([(1, path: .normal(0))]), functions: [
-      PathQuery.function(name: "test", arguments: .value) { _ in .value(1, path: .empty) }
-    ])
+    try check(
+      #"$['b', ?key(@) == "a"]"#,
+      ["a": 0, "b": 1],
+      .nodelist([
+        (value: 1, path: .normal("b")),
+        (value: 0, path: .normal("a")),
+      ])
+    )
+    try check(
+      #"$[?test(@) == 1]"#,
+      [1],
+      .nodelist([(1, path: .normal(0))]),
+      functions: [
+        PathQuery.function(name: "test", arguments: .value) { _ in .value(1, path: .empty) }
+      ]
+    )
   }
 
   @Test func childSegment() throws {
@@ -403,65 +502,101 @@ struct PathQueryTests {
     let value: Value = ["a", "b", "c", "d", "e", "f", "g"]
 
     // RFC
-    try check(#"$[0, 3]"#, value, .nodelist([
-      ("a", path: .normal(0)),
-      ("d", path: .normal(3))
-    ]))
-    try check(#"$[0:2, 5]"#, value, .nodelist([
-      ("a", path: .normal(0)),
-      ("b", path: .normal(1)),
-      ("f", path: .normal(5))
-    ]))
-    try check(#"$[0, 0]"#, value, .nodelist([
-      ("a", path: .normal(0)),
-      ("a", path: .normal(0)),
-    ]))
+    try check(
+      #"$[0, 3]"#,
+      value,
+      .nodelist([
+        ("a", path: .normal(0)),
+        ("d", path: .normal(3)),
+      ])
+    )
+    try check(
+      #"$[0:2, 5]"#,
+      value,
+      .nodelist([
+        ("a", path: .normal(0)),
+        ("b", path: .normal(1)),
+        ("f", path: .normal(5)),
+      ])
+    )
+    try check(
+      #"$[0, 0]"#,
+      value,
+      .nodelist([
+        ("a", path: .normal(0)),
+        ("a", path: .normal(0)),
+      ])
+    )
   }
 
   @Test func descendantSegment() async throws {
 
     let value: Value = [
-      "o": ["j" : 1, "k": 2],
-      "a": [5, 3, [["j" : 4], ["k": 6]]],
+      "o": ["j": 1, "k": 2],
+      "a": [5, 3, [["j": 4], ["k": 6]]],
     ]
 
     // RFC
-    try check(#"$..j"#, value, .nodelist([
-      (1, path: .normal("o", "j")),
-      (4, path: .normal("a", 2, 0, "j")),
-    ]))
-    try check(#"$..[0]"#, value, .nodelist([
-      (5, path: .normal("a", 0)),
-      (["j": 4], path: .normal("a", 2, 0)),
-    ]))
-    try check(#"$..*"#, value, .nodelist([
-      (["j" : 1, "k": 2], path: .normal("o")),
-      ([5, 3, [["j" : 4], ["k": 6]]], path: .normal("a")),
-      (1, path: .normal("o", "j")),
-      (2, path: .normal("o", "k")),
-      (5, path: .normal("a", 0)),
-      (3, path: .normal("a", 1)),
-      ([["j": 4], ["k": 6]], path: .normal("a", 2)),
-      (["j": 4], path: .normal("a", 2, 0)),
-      (["k": 6], path: .normal("a", 2, 1)),
-      (4, path: .normal("a", 2, 0, "j")),
-      (6, path: .normal("a", 2, 1, "k")),
-    ]))
-    try check(#"$..o"#, value, .nodelist([
-      (["j" : 1, "k": 2], path: .normal("o")),
-    ]))
-    try check(#"$.o..[*, *]"#, value, .nodelist([
-      (1, path: .normal("o", "j")),
-      (2, path: .normal("o", "k")),
-      (1, path: .normal("o", "j")),
-      (2, path: .normal("o", "k")),
-    ]))
-    try check(#"$.a..[0, 1]"#, value, .nodelist([
-      (5, path: .normal("a", 0)),
-      (3, path: .normal("a", 1)),
-      (["j": 4], path: .normal("a", 2, 0)),
-      (["k": 6], path: .normal("a", 2, 1)),
-    ]))
+    try check(
+      #"$..j"#,
+      value,
+      .nodelist([
+        (1, path: .normal("o", "j")),
+        (4, path: .normal("a", 2, 0, "j")),
+      ])
+    )
+    try check(
+      #"$..[0]"#,
+      value,
+      .nodelist([
+        (5, path: .normal("a", 0)),
+        (["j": 4], path: .normal("a", 2, 0)),
+      ])
+    )
+    try check(
+      #"$..*"#,
+      value,
+      .nodelist([
+        (["j": 1, "k": 2], path: .normal("o")),
+        ([5, 3, [["j": 4], ["k": 6]]], path: .normal("a")),
+        (1, path: .normal("o", "j")),
+        (2, path: .normal("o", "k")),
+        (5, path: .normal("a", 0)),
+        (3, path: .normal("a", 1)),
+        ([["j": 4], ["k": 6]], path: .normal("a", 2)),
+        (["j": 4], path: .normal("a", 2, 0)),
+        (["k": 6], path: .normal("a", 2, 1)),
+        (4, path: .normal("a", 2, 0, "j")),
+        (6, path: .normal("a", 2, 1, "k")),
+      ])
+    )
+    try check(
+      #"$..o"#,
+      value,
+      .nodelist([
+        (["j": 1, "k": 2], path: .normal("o"))
+      ])
+    )
+    try check(
+      #"$.o..[*, *]"#,
+      value,
+      .nodelist([
+        (1, path: .normal("o", "j")),
+        (2, path: .normal("o", "k")),
+        (1, path: .normal("o", "j")),
+        (2, path: .normal("o", "k")),
+      ])
+    )
+    try check(
+      #"$.a..[0, 1]"#,
+      value,
+      .nodelist([
+        (5, path: .normal("a", 0)),
+        (3, path: .normal("a", 1)),
+        (["j": 4], path: .normal("a", 2, 0)),
+        (["k": 6], path: .normal("a", 2, 1)),
+      ])
+    )
   }
 
   @Test func null() throws {
@@ -481,4 +616,3 @@ struct PathQueryTests {
   }
 
 }
-

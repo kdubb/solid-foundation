@@ -39,7 +39,7 @@ public final class MetaSchema {
     }
     self.schemaLocator = schemaLocator
     self.identifierKeywords = OrderedSet(
-        self.keywordBehaviors.filter { $0.value is Schema.IdentifierBehavior.Type }.map { $0.key }
+      self.keywordBehaviors.filter { $0.value is Schema.IdentifierBehavior.Type }.map { $0.key }
     )
     self.applicatorKeywords = OrderedSet(
       self.keywordBehaviors.filter { $0.value is Schema.ApplicatorBehavior.Type }.map { $0.key }
@@ -67,7 +67,7 @@ extension MetaSchema: Hashable {
 
 extension MetaSchema: Equatable {
 
-  public static func ==(lhs: MetaSchema, rhs: MetaSchema) -> Bool {
+  public static func == (lhs: MetaSchema, rhs: MetaSchema) -> Bool {
     return lhs.id == rhs.id
   }
 

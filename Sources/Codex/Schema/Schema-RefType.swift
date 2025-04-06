@@ -33,9 +33,9 @@ extension Schema {
 
 }
 
-extension Schema.RefType : Sendable {}
-extension Schema.RefType : Hashable {}
-extension Schema.RefType : Equatable {}
+extension Schema.RefType: Sendable {}
+extension Schema.RefType: Hashable {}
+extension Schema.RefType: Equatable {}
 
 extension Schema.RefTypes {
 

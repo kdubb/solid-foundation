@@ -36,15 +36,14 @@ extension Schema {
         var maxIndexApplied: Int = -1
 
         for (prefixIndex, prefixSubSchema) in prefixSubSchemas.enumerated() {
-          if prefixIndex < arrayInstance.count {
-            let prefixInstance = arrayInstance[prefixIndex]
-            let validation = context.validate(instance: .using(prefixInstance, at: prefixIndex), using: prefixSubSchema)
-            validations.append(validation)
-            if validation.isValid {
-              maxIndexApplied = prefixIndex
-            }
-          } else {
+          guard prefixIndex < arrayInstance.count else {
             break
+          }
+          let prefixInstance = arrayInstance[prefixIndex]
+          let validation = context.validate(instance: .using(prefixInstance, at: prefixIndex), using: prefixSubSchema)
+          validations.append(validation)
+          if validation.isValid {
+            maxIndexApplied = prefixIndex
           }
         }
 
@@ -82,10 +81,9 @@ extension Schema {
 
         var valid = true
 
-        for (itemIndex, itemInstance) in suffixItems.enumerated() {
-          if !context.validate(instance: .using(itemInstance, at: itemIndex), using: itemSubSchema).isValid {
-            valid = false
-          }
+        for (itemIndex, itemInstance) in suffixItems.enumerated()
+        where !context.validate(instance: .using(itemInstance, at: itemIndex), using: itemSubSchema).isValid {
+          valid = false
         }
 
         return valid ? .annotation(.bool(!suffixItems.isEmpty)) : .invalid
@@ -104,7 +102,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let minItems: Int = minItemsInstance.asInt()  else {
+        guard let minItems: Int = minItemsInstance.asInt() else {
           try context.invalidValue("Must be an integer")
         }
 
@@ -251,17 +249,15 @@ extension Schema {
 
         var validIndices = Set<Int>()
 
-        for (itemIndex, itemInstance) in arrayInstance.enumerated() {
-          if context.validate(instance: .using(itemInstance, at: itemIndex), using: containsSubSchema).isValid {
-            validIndices.insert(itemIndex)
-          }
+        for (itemIndex, itemInstance) in arrayInstance.enumerated()
+        where context.validate(instance: .using(itemInstance, at: itemIndex), using: containsSubSchema).isValid {
+          validIndices.insert(itemIndex)
         }
 
-        if !validIndices.isEmpty || !required {
-          return .annotation(.array(validIndices.map { .number($0) }))
-        } else {
+        guard !validIndices.isEmpty || !required else {
           return .invalid("Must contain at least one item matching '\(Keyword.contains)'")
         }
+        return .annotation(.array(validIndices.map { .number($0) }))
       }
     }
 
@@ -389,7 +385,9 @@ extension Schema {
 
         let unevaluatedIndices: Set<Int>
 
-        if prefixItemsMaxIndexAnns.isEmpty && itemsAnns.isEmpty && containsAnns.isEmpty && unevaluatedItemsAnns.isEmpty {
+        if prefixItemsMaxIndexAnns.isEmpty && itemsAnns.isEmpty
+          && containsAnns.isEmpty && unevaluatedItemsAnns.isEmpty
+        {
 
           unevaluatedIndices = Set(array.indices)
 

@@ -19,4 +19,3 @@ extension Schema {
   }
 
 }
-

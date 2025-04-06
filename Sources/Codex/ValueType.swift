@@ -15,11 +15,11 @@ public enum ValueType: String, CaseIterable {
   case object
 }
 
-extension ValueType : Sendable {}
-extension ValueType : Hashable {}
-extension ValueType : Equatable {}
+extension ValueType: Sendable {}
+extension ValueType: Hashable {}
+extension ValueType: Equatable {}
 
-extension ValueType : CustomStringConvertible {
+extension ValueType: CustomStringConvertible {
 
   public var description: String {
     switch self {

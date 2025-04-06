@@ -28,7 +28,8 @@ private extension Array where Element == String {
 
     var commonPrefixCount = 0
     while commonPrefixCount < Swift.min(pathStandardized.count, otherStandardized.count),
-          self[commonPrefixCount] == other[commonPrefixCount] {
+      self[commonPrefixCount] == other[commonPrefixCount]
+    {
       commonPrefixCount += 1
     }
 

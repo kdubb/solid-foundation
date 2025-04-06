@@ -54,12 +54,12 @@ public struct Pointer {
 
 }
 
-extension Pointer : Sendable {}
+extension Pointer: Sendable {}
 
-extension Pointer : Hashable {}
-extension Pointer : Equatable {}
+extension Pointer: Hashable {}
+extension Pointer: Equatable {}
 
-extension Pointer : CustomStringConvertible, CustomDebugStringConvertible {
+extension Pointer: CustomStringConvertible, CustomDebugStringConvertible {
 
   public var description: String { encoded }
 
@@ -108,7 +108,7 @@ extension Pointer {
 
 }
 
-extension Pointer : ExpressibleByStringLiteral {
+extension Pointer: ExpressibleByStringLiteral {
 
   public init(stringLiteral value: String) {
     if value.contains("/") {
@@ -123,7 +123,7 @@ extension Pointer : ExpressibleByStringLiteral {
 
 }
 
-extension Pointer : ExpressibleByIntegerLiteral {
+extension Pointer: ExpressibleByIntegerLiteral {
 
   public init(integerLiteral value: Int) {
     self = Pointer(tokens: [.index(value)])
@@ -131,7 +131,7 @@ extension Pointer : ExpressibleByIntegerLiteral {
 
 }
 
-extension Pointer : Sequence {
+extension Pointer: Sequence {
 
   public func makeIterator() -> ReferenceTokens.Iterator {
     tokens.makeIterator()
@@ -139,26 +139,26 @@ extension Pointer : Sequence {
 
 }
 
-public func /(lhs: Pointer, rhs: Pointer) -> Pointer {
+public func / (lhs: Pointer, rhs: Pointer) -> Pointer {
   Pointer(tokens: lhs.tokens + rhs.tokens)
 }
 
-public func /=(lhs: inout Pointer, rhs: Pointer) {
+public func /= (lhs: inout Pointer, rhs: Pointer) {
   lhs = Pointer(tokens: lhs.tokens + rhs.tokens)
 }
 
-public func /(lhs: Pointer, rhs: Pointer.ReferenceToken) -> Pointer {
+public func / (lhs: Pointer, rhs: Pointer.ReferenceToken) -> Pointer {
   Pointer(tokens: lhs.tokens + [rhs])
 }
 
-public func /=(lhs: inout Pointer, rhs: Pointer.ReferenceToken) {
+public func /= (lhs: inout Pointer, rhs: Pointer.ReferenceToken) {
   lhs = Pointer(tokens: lhs.tokens + [rhs])
 }
 
-public func /(lhs: Pointer.ReferenceToken, rhs: Pointer) -> Pointer {
+public func / (lhs: Pointer.ReferenceToken, rhs: Pointer) -> Pointer {
   Pointer(tokens: [lhs] + rhs.tokens)
 }
 
-public func /(lhs: Pointer.ReferenceToken, rhs: Pointer.ReferenceToken) -> Pointer {
+public func / (lhs: Pointer.ReferenceToken, rhs: Pointer.ReferenceToken) -> Pointer {
   Pointer(tokens: [lhs, rhs])
 }

@@ -59,7 +59,7 @@ extension Value: Hashable {
 
 extension Value: Equatable {
 
-  public static func ==(lhs: Value, rhs: Value) -> Bool {
+  public static func == (lhs: Value, rhs: Value) -> Bool {
     switch (lhs, rhs) {
     case (.null, .null):
       return true
@@ -190,43 +190,43 @@ extension Value {
 
 }
 
-extension Value : ExpressibleByNilLiteral {
+extension Value: ExpressibleByNilLiteral {
   public init(nilLiteral: ()) {
     self = .null
   }
 }
 
-extension Value : ExpressibleByBooleanLiteral {
+extension Value: ExpressibleByBooleanLiteral {
   public init(booleanLiteral value: Bool) {
     self = .bool(value)
   }
 }
 
-extension Value : ExpressibleByIntegerLiteral {
+extension Value: ExpressibleByIntegerLiteral {
   public init(integerLiteral value: Int64) {
     self = .number(Value.BinaryNumber.int64(value))
   }
 }
 
-extension Value : ExpressibleByFloatLiteral {
+extension Value: ExpressibleByFloatLiteral {
   public init(floatLiteral value: Float64) {
     self = .number(Value.BinaryNumber.float64(value))
   }
 }
 
-extension Value : ExpressibleByStringLiteral {
+extension Value: ExpressibleByStringLiteral {
   public init(stringLiteral value: String) {
     self = .string(value)
   }
 }
 
-extension Value : ExpressibleByArrayLiteral {
+extension Value: ExpressibleByArrayLiteral {
   public init(arrayLiteral elements: Value...) {
     self = .array(elements)
   }
 }
 
-extension Value : ExpressibleByDictionaryLiteral {
+extension Value: ExpressibleByDictionaryLiteral {
   public init(dictionaryLiteral elements: (Value, Value)...) {
     self = .object(Object(uniqueKeysWithValues: elements))
   }

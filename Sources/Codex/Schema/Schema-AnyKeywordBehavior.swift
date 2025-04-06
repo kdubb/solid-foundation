@@ -19,7 +19,7 @@ extension Schema {
     public var keyword: Keyword { wrapped.keyword }
 
     public func prepare(parent: SubSchema, context: inout Builder.Context) throws {
-//      try wrapped.prepare(parent: parent, context: &context)
+      // try wrapped.prepare(parent: parent, context: &context)
     }
 
     public func apply(instance: Value, context: inout Validator.Context) -> Validation {
@@ -28,5 +28,3 @@ extension Schema {
   }
 
 }
-
-

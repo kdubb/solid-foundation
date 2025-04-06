@@ -17,12 +17,12 @@ extension Path {
 
 }
 
-extension Path.Selector : Sendable {}
+extension Path.Selector: Sendable {}
 
-extension Path.Selector : Hashable {}
-extension Path.Selector : Equatable {}
+extension Path.Selector: Hashable {}
+extension Path.Selector: Equatable {}
 
-extension Path.Selector : CustomStringConvertible {
+extension Path.Selector: CustomStringConvertible {
 
   public var description: String {
     switch self {

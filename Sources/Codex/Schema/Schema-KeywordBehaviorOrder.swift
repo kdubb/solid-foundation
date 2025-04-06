@@ -10,10 +10,10 @@ extension Schema {
   public struct KeywordBehaviorOrder: RawRepresentable {
 
     public static let identifiers = Self(-1000)
-    public static let references =  Self(-600)
-    public static let composites =  Self(-500)
+    public static let references = Self(-600)
+    public static let composites = Self(-500)
     public static let applicators = Self(-400)
-    public static let `default` =   Self(0)
+    public static let `default` = Self(0)
     public static let unevaluated = Self(1000)
 
     public var rawValue: Int

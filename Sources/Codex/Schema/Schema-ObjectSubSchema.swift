@@ -84,11 +84,7 @@ extension Schema {
       // Apply identifier keywords (determined by current schema) first
 
       let presentIdentifierKeywords = unappliedKeywords.intersection(context.schema.identifierKeywords)
-      for identifierKeyword in presentIdentifierKeywords {
-
-        guard unappliedKeywords.remove(identifierKeyword) != nil else {
-          continue
-        }
+      for identifierKeyword in presentIdentifierKeywords where unappliedKeywords.remove(identifierKeyword) != nil {
 
         guard let idKeywordBehaviorType = context.schema.keywordBehavior(for: identifierKeyword) else {
           continue
@@ -97,12 +93,8 @@ extension Schema {
         try context.keywordBehavior(for: idKeywordBehaviorType)
       }
 
-      let reservedKeywords   = unappliedKeywords.intersection(context.schema.reservedKeywords)
-      for reservedKeyword in reservedKeywords {
-
-        guard unappliedKeywords.remove(reservedKeyword) != nil else {
-          continue
-        }
+      let reservedKeywords = unappliedKeywords.intersection(context.schema.reservedKeywords)
+      for reservedKeyword in reservedKeywords where unappliedKeywords.remove(reservedKeyword) != nil {
 
         guard let reservedKeywordBehaviorType = context.schema.keywordBehavior(for: reservedKeyword) else {
           continue
@@ -154,11 +146,10 @@ extension Schema {
             let keywordLocation = context.instanceLocation / keyword
 
             // Determine custom behavior for unknown keyword, ignoring if nil is returned
-            if let customKeywordBehavior = try handler(keyword, keywordInstance, keywordLocation) {
-              unknownKeywords[keyword] = customKeywordBehavior
-            } else {
+            guard let customKeywordBehavior = try handler(keyword, keywordInstance, keywordLocation) else {
               continue
             }
+            unknownKeywords[keyword] = customKeywordBehavior
           }
         }
       }
@@ -209,7 +200,7 @@ extension Schema {
 
 extension Schema.ObjectSubSchema: Schema.SubSchemaLocator {
 
-  public func locate(fragment: String, allowing  refTypes: Schema.RefTypes) -> (any Schema.SubSchema)? {
+  public func locate(fragment: String, allowing refTypes: Schema.RefTypes) -> (any Schema.SubSchema)? {
 
     if isReferencingFragment(fragment, allowing: refTypes) {
       return self

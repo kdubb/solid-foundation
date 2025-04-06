@@ -59,11 +59,10 @@ extension URI.QueryItem {
 
   public var encoded: String {
     let name = encodedName
-    if let value = encodedValue {
-      return "\(name)=\(value)"
-    } else {
+    guard let value = encodedValue else {
       return name
     }
+    return "\(name)=\(value)"
   }
 
 }

@@ -263,9 +263,10 @@ extension Schema.Builder {
       for schemaInstances: Value.Array,
       at relLocation: KeywordLocationToken...
     ) throws -> [Schema.SubSchema] {
-      try schemaInstances.enumerated().map { schemaIdx, schemaInstance in
-        try subSchema(for: schemaInstance, at: relLocation + [schemaIdx])
-      }
+      try schemaInstances.enumerated()
+        .map { schemaIdx, schemaInstance in
+          try subSchema(for: schemaInstance, at: relLocation + [schemaIdx])
+        }
     }
 
     public mutating func subSchemas<K: Hashable>(
@@ -308,9 +309,13 @@ extension Schema.Builder {
     }
 
     public func invalidValue<S: Collection, T: CustomStringConvertible>(
-      options: S, at relativeLocation: KeywordLocationToken...
+      options: S,
+      at relativeLocation: KeywordLocationToken...
     ) throws -> Never where S.Element == T {
-      throw Error.invalidValue(options.joinedToList(prefix: "Must be one of"), location: instanceLocation / relativeLocation)
+      throw Error.invalidValue(
+        options.joinedToList(prefix: "Must be one of"),
+        location: instanceLocation / relativeLocation
+      )
     }
 
     public func locate(vocabularyId: URI) throws -> MetaSchema.Vocabulary? {

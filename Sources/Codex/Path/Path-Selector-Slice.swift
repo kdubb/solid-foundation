@@ -15,12 +15,12 @@ extension Path.Selector {
 
 }
 
-extension Path.Selector.Slice : Sendable {}
+extension Path.Selector.Slice: Sendable {}
 
-extension Path.Selector.Slice : Hashable {}
-extension Path.Selector.Slice : Equatable {}
+extension Path.Selector.Slice: Hashable {}
+extension Path.Selector.Slice: Equatable {}
 
-extension Path.Selector.Slice : CustomStringConvertible {
+extension Path.Selector.Slice: CustomStringConvertible {
 
   public var description: String {
     var desc = ""

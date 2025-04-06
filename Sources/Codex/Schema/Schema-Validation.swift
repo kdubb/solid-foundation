@@ -29,4 +29,3 @@ extension Schema {
 extension Schema.Validation: Sendable {}
 extension Schema.Validation: Equatable {}
 extension Schema.Validation: Hashable {}
-

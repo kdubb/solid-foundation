@@ -117,7 +117,7 @@ public struct RFC3339 {
       } else {
         // Parse offset in the format ±HH:MM.
         let tzSign: Int = tzOffsetStr.first == "-" ? -1 : 1
-        let tzOffsetBody = tzOffsetStr.dropFirst()  // Remove the sign.
+        let tzOffsetBody = tzOffsetStr.dropFirst()    // Remove the sign.
         let tzComponents = tzOffsetBody.split(separator: ":")
         guard
           tzComponents.count == 2,
@@ -238,7 +238,8 @@ public struct RFC3339 {
       //
       // Lookahead (?=(?:\d+[YMD]|T(?:\d+[HMS]))
       // ensures that if the weeks alternative is not taken, at least one designator is present.
-      let regex = /^P(?:(?<weeks>\d+)W|(?=(?:\d+[YMD]|T(?:\d+[HMS])))(?:(?<years>\d+)Y)?(?:(?<months>\d+)M)?(?:(?<days>\d+)D)?(?:T(?:(?<hours>\d+)H)?(?:(?<minutes>\d+)M)?(?:(?<seconds>\d+(?:\.\d+)?)S)?)?)$/
+      let regex =
+        /^P(?:(?<weeks>\d+)W|(?=(?:\d+[YMD]|T(?:\d+[HMS])))(?:(?<years>\d+)Y)?(?:(?<months>\d+)M)?(?:(?<days>\d+)D)?(?:T(?:(?<hours>\d+)H)?(?:(?<minutes>\d+)M)?(?:(?<seconds>\d+(?:\.\d+)?)S)?)?)$/
 
       guard let match = string.wholeMatch(of: regex) else {
         return nil
@@ -252,28 +253,32 @@ public struct RFC3339 {
       if let weeksStr = output.weeks {
         period = .weeks(Int(weeksStr) ?? 0)
       } else {
-        let years: Int? = if let yearsStr = output.years {
-          Int(yearsStr)
-        } else {
-          nil
-        }
-        let months: Int? = if let monthsStr = output.months {
-          Int(monthsStr)
-        } else {
-          nil
-        }
-        let days: Int? = if let daysStr = output.days {
-          Int(daysStr)
-        } else {
-          nil
-        }
+        let years: Int? =
+          if let yearsStr = output.years {
+            Int(yearsStr)
+          } else {
+            nil
+          }
+        let months: Int? =
+          if let monthsStr = output.months {
+            Int(monthsStr)
+          } else {
+            nil
+          }
+        let days: Int? =
+          if let daysStr = output.days {
+            Int(daysStr)
+          } else {
+            nil
+          }
 
-        period = if years != nil || months != nil || days != nil {
-          // If any date component is provided, create a Period instance.
-          .date(years: years, months: months, days: days)
-        } else {
-          nil
-        }
+        period =
+          if years != nil || months != nil || days != nil {
+            // If any date component is provided, create a Period instance.
+            .date(years: years, months: months, days: days)
+          } else {
+            nil
+          }
       }
 
       var hours: Int?
@@ -290,11 +295,12 @@ public struct RFC3339 {
       }
 
       // If any time component is provided, create a Time instance.
-      let time: Time? = if hours != nil || minutes != nil || seconds != nil {
-        Time(hours: hours, minutes: minutes, seconds: seconds)
-      } else {
-        nil
-      }
+      let time: Time? =
+        if hours != nil || minutes != nil || seconds != nil {
+          Time(hours: hours, minutes: minutes, seconds: seconds)
+        } else {
+          nil
+        }
 
       return Duration(period: period, time: time)
     }

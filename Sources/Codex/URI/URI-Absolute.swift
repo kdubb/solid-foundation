@@ -175,14 +175,13 @@ extension URI.Absolute {
   }
 
   public func appending(fragmentPointer pointer: Pointer) -> URI? {
-    if let fragment {
-      guard let fragmentPointer = Pointer(encoded: fragment) else {
-        return nil
-      }
-      return .absolute(copy(fragment: (fragmentPointer / pointer).encoded))
-    } else {
+    guard let fragment else {
       return replacing(fragmentPointer: pointer)
     }
+    guard let fragmentPointer = Pointer(encoded: fragment) else {
+      return nil
+    }
+    return .absolute(copy(fragment: (fragmentPointer / pointer).encoded))
   }
 
   public func relative(to other: URI.Absolute) -> URI {
@@ -200,7 +199,8 @@ extension URI.Absolute {
 
     var commonPrefixCount = 0
     while commonPrefixCount < min(selfPath.count, otherPath.count),
-          selfPath[commonPrefixCount] == otherPath[commonPrefixCount] {
+      selfPath[commonPrefixCount] == otherPath[commonPrefixCount]
+    {
       commonPrefixCount += 1
     }
 

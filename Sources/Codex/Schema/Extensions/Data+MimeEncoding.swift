@@ -12,7 +12,7 @@ extension Data {
   public init?(mimeQuotedPrintableEncodedString string: String) {
     // Remove soft line breaks ("=\r\n") from the encoded string
     let cleanedString = string.replacingOccurrences(of: "=\r\n", with: "")
-    var byteArray = [UInt8]()
+    var byteArray: [UInt8] = []
     var index = cleanedString.startIndex
 
     while index < cleanedString.endIndex {
@@ -20,9 +20,10 @@ extension Data {
       if char == "=" {
         // Expect two hexadecimal digits following '='
         let hexStart = cleanedString.index(after: index)
-        let hexEnd = cleanedString.index(hexStart, offsetBy: 2, limitedBy: cleanedString.endIndex) ?? cleanedString.endIndex
+        let hexEnd =
+          cleanedString.index(hexStart, offsetBy: 2, limitedBy: cleanedString.endIndex) ?? cleanedString.endIndex
         if cleanedString.distance(from: hexStart, to: hexEnd) < 2 {
-          return nil // Not enough hex digits
+          return nil    // Not enough hex digits
         }
         let hexDigits = cleanedString[hexStart..<hexEnd]
         guard let byte = UInt8(hexDigits, radix: 16) else {
@@ -66,7 +67,7 @@ extension Data {
       let strByte: String
       // Allowed printable ASCII are 33–60 and 62–126. The equals sign (61) must be encoded.
       if (byte >= 33 && byte <= 60) || (byte >= 62 && byte <= 126) {
-        if byte == 61 { // '=' character
+        if byte == 61 {    // '=' character
           strByte = String(format: "=%02X", byte)
         } else {
           strByte = String(UnicodeScalar(byte))

@@ -23,15 +23,14 @@ extension PathQuery {
 
 extension PathQuery.Delegate {
 
-    public func functionArgumentTypeMismatch(
-      function: PathQuery.Function,
-      argumentIndex: Int,
-      expectedType: PathQuery.Function.ArgumentType,
-      actual: PathQuery.Function.Argument
-    ) {
-    }
-  
+  public func functionArgumentTypeMismatch(
+    function: PathQuery.Function,
+    argumentIndex: Int,
+    expectedType: PathQuery.Function.ArgumentType,
+    actual: PathQuery.Function.Argument
+  ) {
+  }
+
   public func functionEvaluationFailed(function: PathQuery.Function, arguments: [PathQuery.Function.Argument]) {
   }
 }
-

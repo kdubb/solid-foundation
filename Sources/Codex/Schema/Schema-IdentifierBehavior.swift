@@ -21,7 +21,7 @@ extension Schema.IdentifierBehavior {
     try process(from: keywordInstance, context: &context)
     return nil
   }
-  
+
   public func prepare(parent: any Schema.SubSchema, context: inout Schema.Builder.Context) throws {}
 
   public func apply(instance: Value, context: inout Schema.Validator.Context) -> Schema.Validation {

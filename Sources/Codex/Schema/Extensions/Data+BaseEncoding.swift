@@ -112,11 +112,21 @@ extension Data {
     }
 
     public func strictPadding(_ enabled: Bool = true) -> Self {
-      return Self(alphabet: alphabet, padding: paddingCharacter, strictPadding: enabled, caseInsensitive: caseInsensitive)
+      return Self(
+        alphabet: alphabet,
+        padding: paddingCharacter,
+        strictPadding: enabled,
+        caseInsensitive: caseInsensitive
+      )
     }
 
     public func lenientPadding(_ enabled: Bool = true) -> Self {
-      return Self(alphabet: alphabet, padding: paddingCharacter, strictPadding: !enabled, caseInsensitive: caseInsensitive)
+      return Self(
+        alphabet: alphabet,
+        padding: paddingCharacter,
+        strictPadding: !enabled,
+        caseInsensitive: caseInsensitive
+      )
     }
 
     public func caseInsensitive(_ enabled: Bool = true) -> Self {
@@ -124,7 +134,12 @@ extension Data {
     }
 
     public func caseSensitive(_ enabled: Bool = true) -> Self {
-      return Self(alphabet: alphabet, padding: paddingCharacter, strictPadding: strictPadding, caseInsensitive: !enabled)
+      return Self(
+        alphabet: alphabet,
+        padding: paddingCharacter,
+        strictPadding: strictPadding,
+        caseInsensitive: !enabled
+      )
     }
 
     public func encode(data: Data) -> String {
@@ -174,23 +189,23 @@ extension Data {
         let expectedPaddedLength = ((totalChars + (8 / bitsPerChar) - 1) / (8 / bitsPerChar)) * (8 / bitsPerChar)
 
         if totalChars != expectedPaddedLength {
-          return nil // Padding doesn't match expected length
+          return nil    // Padding doesn't match expected length
         }
         if (unpaddedInput.count * bitsPerChar) % 8 != 0 {
-          return nil // Not a full byte
+          return nil    // Not a full byte
         }
         if paddingCount > (8 / bitsPerChar) {
-          return nil // Too much padding
+          return nil    // Too much padding
         }
       }
 
       var buffer: UInt32 = 0
       var bufferBits = 0
-      var output = [UInt8]()
+      var output: [UInt8] = []
 
       for char in unpaddedInput {
         guard let value = reverseLookup[char] else {
-          return nil // Invalid character
+          return nil    // Invalid character
         }
 
         buffer = (buffer << bitsPerChar) | UInt32(value)
@@ -206,7 +221,7 @@ extension Data {
       if bufferBits > 0 {
         let leftover = buffer & ((1 << bufferBits) - 1)
         if leftover != 0 {
-          return nil // Invalid trailing bits
+          return nil    // Invalid trailing bits
         }
       }
 

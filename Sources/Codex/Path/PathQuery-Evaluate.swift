@@ -164,8 +164,7 @@ internal extension PathQuery {
         selected.append((array[i], path.appending(index: i)))
         i += step
       }
-    }
-    else {
+    } else {
       var i = upper
       while lower < i {
         selected.append((array[i], path.appending(index: i)))
@@ -179,25 +178,21 @@ internal extension PathQuery {
       let nStart = normalize(start, len)
       let nEnd = normalize(end, len)
 
-      if step >= 0 {
-        let lower = min(max(nStart, 0), len)
-        let upper = min(max(nEnd, 0), len)
-        return (lower, upper)
-      }
-      else {
+      guard step >= 0 else {
         let upper = min(max(nStart, -1), len - 1)
         let lower = min(max(nEnd, -1), len - 1)
         return (lower, upper)
       }
+      let lower = min(max(nStart, 0), len)
+      let upper = min(max(nEnd, 0), len)
+      return (lower, upper)
     }
 
     func normalize(_ i: Int, _ len: Int) -> Int {
-      if i >= 0 {
-        return i
-      }
-      else {
+      guard i >= 0 else {
         return len + i
       }
+      return i
     }
   }
 
@@ -249,7 +244,7 @@ internal extension PathQuery {
       evaluateFunction(name, argumentExpressions: arguments, context: ctx)
 
     case .literal(let value):
-        .value(value, path: .empty)
+      .value(value, path: .empty)
     }
   }
 
@@ -398,12 +393,13 @@ internal extension PathQuery {
 
       default:
 
-        ctx.delegate?.functionArgumentTypeMismatch(
-          function: function,
-          argumentIndex: argumentIndex,
-          expectedType: argumentType,
-          actual: argumentResult.argument()
-        )
+        ctx.delegate?
+          .functionArgumentTypeMismatch(
+            function: function,
+            argumentIndex: argumentIndex,
+            expectedType: argumentType,
+            actual: argumentResult.argument()
+          )
 
         return .nothing
       }

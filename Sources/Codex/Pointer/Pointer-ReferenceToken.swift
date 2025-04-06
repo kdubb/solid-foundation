@@ -15,12 +15,12 @@ extension Pointer {
 
 }
 
-extension Pointer.ReferenceToken : Sendable {}
+extension Pointer.ReferenceToken: Sendable {}
 
-extension Pointer.ReferenceToken : Hashable {}
-extension Pointer.ReferenceToken : Equatable {}
+extension Pointer.ReferenceToken: Hashable {}
+extension Pointer.ReferenceToken: Equatable {}
 
-extension Pointer.ReferenceToken : CustomStringConvertible {
+extension Pointer.ReferenceToken: CustomStringConvertible {
 
   public var description: String {
     switch self {
@@ -79,7 +79,7 @@ extension Pointer.ReferenceToken {
 
 }
 
-extension Pointer.ReferenceToken : ExpressibleByStringLiteral {
+extension Pointer.ReferenceToken: ExpressibleByStringLiteral {
 
   public init(stringLiteral value: String) {
     guard let token = Self(encoded: value) else {
@@ -89,7 +89,7 @@ extension Pointer.ReferenceToken : ExpressibleByStringLiteral {
   }
 }
 
-extension Pointer.ReferenceToken : ExpressibleByIntegerLiteral {
+extension Pointer.ReferenceToken: ExpressibleByIntegerLiteral {
 
   public init(integerLiteral value: Int) {
     self = .index(value)

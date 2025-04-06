@@ -31,26 +31,25 @@ extension Schema.Pattern {
 
 }
 
-extension Schema.Pattern : Sendable {}
+extension Schema.Pattern: Sendable {}
 
-extension Schema.Pattern : Hashable {
+extension Schema.Pattern: Hashable {
 
   public func hash(into hasher: inout Hasher) {
     hasher.combine(value)
   }
 }
 
-extension Schema.Pattern : Equatable {
+extension Schema.Pattern: Equatable {
 
-  public static func ==(lhs: Schema.Pattern, rhs: Schema.Pattern) -> Bool {
+  public static func == (lhs: Schema.Pattern, rhs: Schema.Pattern) -> Bool {
     return lhs.value == rhs.value
   }
 }
 
-extension Schema.Pattern : CustomStringConvertible {
+extension Schema.Pattern: CustomStringConvertible {
 
   public var description: String {
     return "\(value)"
   }
 }
-

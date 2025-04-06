@@ -8,19 +8,15 @@
 extension Sequence {
 
   func anySatisfy(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-    for element in self {
-      if try predicate(element) {
-        return true
-      }
+    for element in self where try predicate(element) {
+      return true
     }
     return false
   }
 
   func noneSatisfy(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-    for element in self {
-      if try predicate(element) {
-        return false
-      }
+    for element in self where try predicate(element) {
+      return false
     }
     return true
   }
@@ -38,4 +34,3 @@ extension Sequence where Element: Hashable {
   }
 
 }
-

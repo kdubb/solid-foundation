@@ -77,7 +77,7 @@ extension Schema {
 
         return Self(maxLength: maxLength)
       }
-      
+
       public func prepare(parent: any SubSchema, context: inout Builder.Context) throws {
 
         if let minLength = parent.behavior(MinLength.self)?.minLength {

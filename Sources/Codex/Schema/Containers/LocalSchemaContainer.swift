@@ -22,7 +22,7 @@ public final class LocalSchemaContainer: SchemaLocator {
     lock.withLock { schemasStorage }
   }
 
-  public init(schemas: [URI : Schema] = [:]) {
+  public init(schemas: [URI: Schema] = [:]) {
     self.schemasStorage = schemas
   }
 

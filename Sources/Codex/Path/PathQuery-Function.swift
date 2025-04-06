@@ -119,7 +119,7 @@ extension PathQuery {
         return .nothing
       }
       return .value(.string(key), path: .empty)
-    }
+    },
   ]
 
 }
@@ -137,7 +137,7 @@ extension PathQuery.Function: Hashable {
 
 extension PathQuery.Function: Equatable {
 
-  public static func ==(lhs: PathQuery.Function, rhs: PathQuery.Function) -> Bool {
+  public static func == (lhs: PathQuery.Function, rhs: PathQuery.Function) -> Bool {
     lhs.name == rhs.name && lhs.arguments == rhs.arguments
   }
 
@@ -169,7 +169,7 @@ extension PathQuery.Function.Argument: Hashable {
 
 extension PathQuery.Function.Argument: Equatable {
 
-  public static func ==(lhs: PathQuery.Function.Argument, rhs: PathQuery.Function.Argument) -> Bool {
+  public static func == (lhs: PathQuery.Function.Argument, rhs: PathQuery.Function.Argument) -> Bool {
     switch (lhs, rhs) {
     case (.nothing, .nothing): true
     case (.logical(let lbool), .logical(let rbool)): lbool == rbool

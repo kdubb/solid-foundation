@@ -10,7 +10,7 @@ import OrderedCollections
 extension Schema {
 
   public enum Applicators {
-    
+
     public struct AllOf: CompositeApplicatorBehavior, BuildableKeywordBehavior {
 
       public static let keyword: Keyword = .allOf
@@ -26,8 +26,8 @@ extension Schema {
 
       public func combine(validations: [Validation], context: inout Validator.Context) -> Validation {
         return validations.allSatisfy(\.isValid)
-        ? .valid
-        : .invalid("Must match all of the subschemas, \(validations.count { !$0.isValid }) did not match")
+          ? .valid
+          : .invalid("Must match all of the subschemas, \(validations.count { !$0.isValid }) did not match")
       }
     }
 
@@ -46,8 +46,8 @@ extension Schema {
 
       public func combine(validations: [Validation], context: inout Validator.Context) -> Validation {
         return validations.anySatisfy(\.isValid)
-        ? .valid
-        : .invalid("Must match at least one of the subschemas, none matched")
+          ? .valid
+          : .invalid("Must match at least one of the subschemas, none matched")
       }
     }
 
@@ -66,8 +66,8 @@ extension Schema {
 
       public func combine(validations: [Validation], context: inout Validator.Context) -> Validation {
         return validations.count(where: \.isValid) == 1
-        ? .valid
-        : .invalid("Must match exactly one of the subschemas, \(validations.count(where: \.isValid)) matched")
+          ? .valid
+          : .invalid("Must match exactly one of the subschemas, \(validations.count(where: \.isValid)) matched")
       }
     }
 
@@ -85,8 +85,8 @@ extension Schema {
 
       public func apply(instance: Value, context: inout Validator.Context) -> Validation {
         subSchema.validate(instance: instance, context: &context).isValid
-        ? .invalid("Must not match the subschema")
-        : .valid
+          ? .invalid("Must not match the subschema")
+          : .valid
       }
     }
 
@@ -186,16 +186,14 @@ extension Schema {
           return .valid
         }
         var invalidKeys: [String] = []
-        for (subSchemaKey, subSchema) in subSchemas {
-          if objectInstanceKeys.contains(subSchemaKey) {
-            if !context.validate(instance: .inPlace(instance), using: subSchema, at: subSchemaKey).isValid {
-              invalidKeys.append(subSchemaKey)
-            }
+        for (subSchemaKey, subSchema) in subSchemas where objectInstanceKeys.contains(subSchemaKey) {
+          if !context.validate(instance: .inPlace(instance), using: subSchema, at: subSchemaKey).isValid {
+            invalidKeys.append(subSchemaKey)
           }
         }
         return invalidKeys.isEmpty
-        ? .valid
-        : .invalid("Failed to validate dependent schemas for keys: \(invalidKeys.joined(separator: ", "))")
+          ? .valid
+          : .invalid("Failed to validate dependent schemas for keys: \(invalidKeys.joined(separator: ", "))")
       }
     }
   }

@@ -24,7 +24,7 @@ public enum URI {
     self = uri.normalized()
   }
 
-  public init? (encoded string: String, requirements: Requirement...) {
+  public init?(encoded string: String, requirements: Requirement...) {
     self.init(encoded: string, requirements: Set(requirements))
   }
 
@@ -168,11 +168,12 @@ public enum URI {
     case .relativeReference:
       return self
     case .absolute(let absolute):
-      let path = switch pathStyle {
-      case .absolute: absolute.path.absolute
-      case .relative: absolute.path.relative
-      case .directory: absolute.path.directoryRelative
-      }
+      let path =
+        switch pathStyle {
+        case .absolute: absolute.path.absolute
+        case .relative: absolute.path.relative
+        case .directory: absolute.path.directoryRelative
+        }
       return .relative(
         path: path,
         query: absolute.query,

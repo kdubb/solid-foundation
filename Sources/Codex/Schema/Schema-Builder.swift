@@ -21,7 +21,7 @@ extension Schema {
 
       let schemaLocator = CompositeSchemaLocator.from(locators: [
         options.defaultSchema.schemaLocator,
-        options.schemaLocator
+        options.schemaLocator,
       ])
 
       let buildOptions = options.schemaLocator(schemaLocator)
@@ -41,30 +41,30 @@ extension Schema {
 
     internal static func build(from schemaInstance: Value, context: inout Context) throws -> SubSchema {
 
-      let subSchema: SubSchema = switch schemaInstance {
-      case .bool:
-        try BooleanSubSchema.build(from: schemaInstance, context: &context)
-      case .object:
-        try ObjectSubSchema.build(from: schemaInstance, context: &context)
-      default:
-        try context.invalidValue(options: [Schema.InstanceType.object, Schema.InstanceType.boolean])
-      }
+      let subSchema: SubSchema =
+        switch schemaInstance {
+        case .bool:
+          try BooleanSubSchema.build(from: schemaInstance, context: &context)
+        case .object:
+          try ObjectSubSchema.build(from: schemaInstance, context: &context)
+        default:
+          try context.invalidValue(options: [Schema.InstanceType.object, Schema.InstanceType.boolean])
+        }
 
-      if context.isResourceRoot || context.isRootScope {
-        // Schema defines an `id`, which implies it's a resource schema
-        return Schema(
-          id: context.canonicalId,
-          keywordLocation: context.instanceLocation,
-          anchor: context.anchor,
-          dynamicAnchor: context.dynamicAnchor,
-          schema: context.schema,
-          instance: context.instance,
-          subSchema: subSchema,
-          resources: context.resources
-        )
-      } else {
+      guard context.isResourceRoot || context.isRootScope else {
         return subSchema
       }
+      // Schema defines an `id`, which implies it's a resource schema
+      return Schema(
+        id: context.canonicalId,
+        keywordLocation: context.instanceLocation,
+        anchor: context.anchor,
+        dynamicAnchor: context.dynamicAnchor,
+        schema: context.schema,
+        instance: context.instance,
+        subSchema: subSchema,
+        resources: context.resources
+      )
 
     }
   }

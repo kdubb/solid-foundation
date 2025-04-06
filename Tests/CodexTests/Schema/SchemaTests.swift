@@ -8,6 +8,7 @@
 import Testing
 @testable import Codex
 
+@Suite("Schema Tests")
 public struct SchemaTests {
 
   @Test func detailedType() throws {
@@ -18,27 +19,27 @@ public struct SchemaTests {
         "point": [
           "type": "object",
           "properties": [
-            "x": [ "type": "number" ],
-            "y": [ "type": "number" ]
+            "x": ["type": "number"],
+            "y": ["type": "number"],
           ],
           "additionalProperties": false,
-          "required": [ "x", "y" ]
+          "required": ["x", "y"],
         ]
       ],
       "title": "Polygon",
       "type": "array",
-      "items": [ "$ref": "#/$defs/point" ],
-      "minItems": 3
+      "items": ["$ref": "#/$defs/point"],
+      "minItems": 3,
     ]
     let instance: Value = [
       [
         "x": 2.5,
-        "y": 1.3
+        "y": 1.3,
       ],
       [
         "x": 1,
-        "z": 6.7
-      ]
+        "z": 6.7,
+      ],
     ]
 
     let schema = try Schema.Builder.build(from: schemaInstance)
@@ -61,30 +62,30 @@ public struct SchemaTests {
             "a": [
               "type": "string",
               "maxLength": 20,
-            ],
+            ]
           ],
           "minProperties": 1,
           "if": [
             "properties": [
-              "a": [ "const": "Testing 1..2..3.." ]
-            ],
+              "a": ["const": "Testing 1..2..3.."]
+            ]
           ],
           "then": [
             "required": ["b"],
             "properties": [
-              "b": [ "$ref": "#/$defs/Test" ],
-            ]
+              "b": ["$ref": "#/$defs/Test"]
+            ],
           ],
           "else": [
-            "required": ["c"],
+            "required": ["c"]
           ],
         ]
       ],
       "$defs": [
         "Test": [
-          "const": "yo1",
+          "const": "yo1"
         ]
-      ]
+      ],
     ]
 
     let schema = try Schema.Builder.build(from: schemaInstance)

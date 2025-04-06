@@ -65,7 +65,8 @@ public enum RFC2673 {
     ///
     /// - Parameter string: The IPv4 address string in dotted-quad format.
     public static func parse(string: String) -> IPv4Address? {
-      let pattern = #/^(?<a>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<b>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<c>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<d>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/#
+      let pattern =
+        #/^(?<a>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<b>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<c>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<d>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/#
 
       // Ensure the entire input matches the pattern.
       guard let match = string.wholeMatch(of: pattern) else {

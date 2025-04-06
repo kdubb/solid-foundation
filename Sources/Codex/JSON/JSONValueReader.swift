@@ -47,7 +47,7 @@ public struct JSONValueReader {
       return .array(value)
     }
 
-    func convertObject(_ value: [String : Value]) throws -> Value {
+    func convertObject(_ value: [String: Value]) throws -> Value {
       return .object(Value.Object(uniqueKeysWithValues: value.map { (.string($0.key), $0.value) }))
     }
 
@@ -70,7 +70,7 @@ public struct JSONValueReader {
       return
     }
 
-    func convertObject(_ value: [String : Void]) throws -> Void {
+    func convertObject(_ value: [String: Void]) throws -> Void {
       return
     }
 

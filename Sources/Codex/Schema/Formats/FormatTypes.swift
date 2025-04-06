@@ -310,7 +310,7 @@ extension FormatTypes {
     public func validate(_ value: Value) -> Bool {
       guard case .string(let string) = value else {
         return false
-      }    
+      }
       return RelativePointer(encoded: string) != nil
     }
   }

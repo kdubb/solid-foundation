@@ -1,8 +1,8 @@
 import Testing
 @testable import Codex
 
-@Suite("RFC5890 Tests")
-final class RFC5890Tests {
+@Suite("RFC5890 Internationalized Domain Names for Applications (IDNA) Tests")
+final class RFC5890IDNATests {
 
   // MARK: - Basic Validation Tests
 
@@ -102,20 +102,27 @@ final class RFC5890Tests {
 
   // MARK: - Parameterized Tests
 
-  @Test("Valid hostname lengths", arguments: [
-    "a.b",
-    String(repeating: "a", count: 63) + "." + String(repeating: "b", count: 63) + "." + String(repeating: "c", count: 63) + "." + String(repeating: "d", count: 63) + ".com"
-  ])
+  @Test(
+    "Valid hostname lengths",
+    arguments: [
+      "a.b",
+      String(repeating: "a", count: 63) + "." + String(repeating: "b", count: 63) + "."
+        + String(repeating: "c", count: 63) + "." + String(repeating: "d", count: 63) + ".com",
+    ]
+  )
   func validHostnameLengths(hostname: String) throws {
     let result = RFC5890.IDNHostname.parse(string: hostname)
     let value = try #require(result?.value, "Failed for hostname: \(hostname)")
     #expect(value == hostname, "Value mismatch for hostname: \(hostname)")
   }
 
-  @Test("Valid label lengths", arguments: [
-    "a.example.com",
-    String(repeating: "a", count: 63) + ".com"
-  ])
+  @Test(
+    "Valid label lengths",
+    arguments: [
+      "a.example.com",
+      String(repeating: "a", count: 63) + ".com",
+    ]
+  )
   func validLabelLengths(hostname: String) throws {
     let result = RFC5890.IDNHostname.parse(string: hostname)
     let value = try #require(result?.value, "Failed for hostname: \(hostname)")
@@ -164,6 +171,9 @@ final class RFC5890Tests {
     #expect(RFC5890.IDNHostname.parse(string: "xn--.example") == nil, "Should reject empty A-label")
     #expect(RFC5890.IDNHostname.parse(string: "xn---.example") == nil, "Should reject A-label with only hyphen")
     #expect(RFC5890.IDNHostname.parse(string: "xn--a-.example") == nil, "Should reject A-label ending with hyphen")
-    #expect(RFC5890.IDNHostname.parse(string: "xn--a--b.example") == nil, "Should reject A-label with consecutive hyphens")
+    #expect(
+      RFC5890.IDNHostname.parse(string: "xn--a--b.example") == nil,
+      "Should reject A-label with consecutive hyphens"
+    )
   }
 }

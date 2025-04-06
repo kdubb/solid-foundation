@@ -27,9 +27,9 @@ extension Value {
 
 }
 
-extension Value.BinaryNumber : Sendable {}
+extension Value.BinaryNumber: Sendable {}
 
-extension Value.BinaryNumber : Value.Number {
+extension Value.BinaryNumber: Value.Number {
 
   public var decimal: BigDecimal {
     switch self {
@@ -166,7 +166,7 @@ extension Value.BinaryNumber: Hashable {
 
 extension Value.BinaryNumber: Equatable {
 
-  public static func ==(lhs: Value.BinaryNumber, rhs: Value.BinaryNumber) -> Bool {
+  public static func == (lhs: Value.BinaryNumber, rhs: Value.BinaryNumber) -> Bool {
     switch (lhs, rhs) {
     case (.int8(let l), .int8(let r)):
       return l == r

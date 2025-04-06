@@ -1,8 +1,8 @@
 import Testing
 @testable import Codex
 
-@Suite("RFC2673 Tests")
-final class RFC2673Tests {
+@Suite("RFC2673 IPv4 Address Tests")
+final class RFC2673IPv4AddressTests {
 
   // MARK: - Initialization Tests
 
@@ -34,7 +34,7 @@ final class RFC2673Tests {
     "255.255.255.255",
     "10.0.0.1",
     "172.16.0.1",
-    "1.1.1.1"
+    "1.1.1.1",
   ])
   func testParseValidIPv4Address(_ string: String) {
     #expect(RFC2673.IPv4Address.parse(string: string) != nil)
@@ -52,7 +52,7 @@ final class RFC2673Tests {
     ("192.168.1.01", "Leading zero"),
     ("192.168.1. 1", "Space in octet"),
     ("192.168.1.1 ", "Trailing space"),
-    (" 192.168.1.1", "Leading space")
+    (" 192.168.1.1", "Leading space"),
   ])
   func testParseInvalidIPv4Address(_ string: String, _ description: String) {
     #expect(RFC2673.IPv4Address.parse(string: string) == nil)
@@ -94,4 +94,4 @@ final class RFC2673Tests {
     #expect(mutableAddress.c == 0)
     #expect(mutableAddress.d == 1)
   }
-} 
+}

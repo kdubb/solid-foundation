@@ -9,6 +9,7 @@ import Foundation
 import Testing
 @testable import Codex
 
+@Suite("URI Tests")
 public struct URITests {
 
   @Test("Check satisfied `kind` requirements")
@@ -42,13 +43,19 @@ public struct URITests {
     #expect(URI(encoded: "example#", requirements: .fragment(.optional)) != nil)
     #expect(URI(encoded: "example#foo", requirements: .fragment(.optional)) != nil)
 
-    #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#foo", requirements: .fragment(.required)) != nil)
+    #expect(
+      URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#foo", requirements: .fragment(.required)) != nil
+    )
     #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#", requirements: .fragment(.required)) != nil)
     #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed", requirements: .fragment(.disallowed)) != nil)
-    #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#", requirements: .fragment(.disallowedOrEmpty)) != nil)
+    #expect(
+      URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#", requirements: .fragment(.disallowedOrEmpty)) != nil
+    )
     #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed", requirements: .fragment(.optional)) != nil)
     #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#", requirements: .fragment(.optional)) != nil)
-    #expect(URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#foo", requirements: .fragment(.optional)) != nil)
+    #expect(
+      URI(encoded: "urn:uuid:deadbeef-1234-ffff-ffff-4321feebdaed#foo", requirements: .fragment(.optional)) != nil
+    )
   }
 
   @Test("Check unsatisfied `fragment` requirements fail initializer")

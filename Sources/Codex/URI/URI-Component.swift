@@ -67,7 +67,7 @@ extension Set where Element == URI.Component.Kind {
     .password,
     .path,
     .query,
-    .fragment
+    .fragment,
   ]
 
 }

@@ -111,7 +111,9 @@ extension Schema {
         return DynamicRef$(schemaId: schemaId, isAnchorFragment: isAnchorFragment)
       }
 
-      public func resolve(context: inout Validator.Context) -> (hasLocalDynamicAnchor: Bool, subSchema: Schema.SubSchema) {
+      public func resolve(context: inout Validator.Context) -> (
+        hasLocalDynamicAnchor: Bool, subSchema: Schema.SubSchema
+      ) {
         resolveLock.withLock {
           guard !resolved else {
             return (self.hasLocalDynamicAnchor, self.lexicalSubSchema.neverNil())
@@ -182,7 +184,9 @@ extension Schema {
 
             } catch {
 
-              return .invalid("Error resolving dynamic schema reference '\(uriReference)': \(error.localizedDescription)")
+              return .invalid(
+                "Error resolving dynamic schema reference '\(uriReference)': \(error.localizedDescription)"
+              )
             }
           }
         }

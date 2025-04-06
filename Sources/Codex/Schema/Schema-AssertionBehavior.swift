@@ -14,7 +14,7 @@ extension Schema {
     public static func invalid(requiredType: Schema.InstanceType) -> Self {
       .invalid("Must be of type '\(requiredType)'")
     }
-    
+
     public static func invalid<S: Collection, T: CustomStringConvertible>(options: S) -> Self where S.Element == T {
       return .invalid(options.joinedToList(prefix: "Must be one of"))
     }

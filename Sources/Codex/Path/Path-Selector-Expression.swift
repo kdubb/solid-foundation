@@ -40,15 +40,15 @@ extension Path.Selector {
 
 }
 
-extension Path.Selector.Expression.LogicalOperator : Sendable {}
-extension Path.Selector.Expression.ComparisonOperator : Sendable {}
-extension Path.Selector.Expression.QueryType : Sendable {}
-extension Path.Selector.Expression : Sendable {}
+extension Path.Selector.Expression.LogicalOperator: Sendable {}
+extension Path.Selector.Expression.ComparisonOperator: Sendable {}
+extension Path.Selector.Expression.QueryType: Sendable {}
+extension Path.Selector.Expression: Sendable {}
 
-extension Path.Selector.Expression : Hashable {}
-extension Path.Selector.Expression : Equatable {}
+extension Path.Selector.Expression: Hashable {}
+extension Path.Selector.Expression: Equatable {}
 
-extension Path.Selector.Expression : CustomStringConvertible {
+extension Path.Selector.Expression: CustomStringConvertible {
 
   public var description: String {
     switch self {

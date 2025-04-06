@@ -10,7 +10,7 @@ import BigDecimal
 
 extension Value {
 
-  public protocol Number : CustomStringConvertible, Sendable {
+  public protocol Number: CustomStringConvertible, Sendable {
     var decimal: BigDecimal { get }
     var isInteger: Bool { get }
     var isInfinity: Bool { get }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class LocalDirectorySchemaContainer : SchemaLocator {
+public final class LocalDirectorySchemaContainer: SchemaLocator {
 
   public let directory: URI
   private nonisolated(unsafe) var cache: [URI: Schema] = [:]

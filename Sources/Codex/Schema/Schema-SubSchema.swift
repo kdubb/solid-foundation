@@ -69,10 +69,10 @@ extension Schema.SubSchema {
   ///  - refTypes: The reference types to consider.
   ///  - Returns: `true` if the fragment is referencing this schema, otherwise `false`.
   public func isReferencingFragment(_ fragment: String, allowing refTypes: Schema.RefTypes) -> Bool {
-    (refTypes.contains(.canonical) && fragment == (self.id.fragment ?? "")) ||
-    (refTypes.contains(.keywordLocation) && fragment == self.keywordLocation.encoded) ||
-    (refTypes.contains(.anchor) && fragment == self.anchor) ||
-    (refTypes.contains(.dynamicAnchor) && fragment == self.dynamicAnchor)
+    (refTypes.contains(.canonical) && fragment == (self.id.fragment ?? ""))
+      || (refTypes.contains(.keywordLocation) && fragment == self.keywordLocation.encoded)
+      || (refTypes.contains(.anchor) && fragment == self.anchor)
+      || (refTypes.contains(.dynamicAnchor) && fragment == self.dynamicAnchor)
   }
 
   /// Check if the given fragment is referencing this schema, considering the standard reference types.

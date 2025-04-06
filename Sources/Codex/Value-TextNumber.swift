@@ -32,7 +32,7 @@ extension Value {
 
 }
 
-extension Value.TextNumber : Sendable {}
+extension Value.TextNumber: Sendable {}
 
 extension Value.TextNumber: Value.Number {
 
@@ -83,7 +83,7 @@ extension Value.TextNumber: Hashable {
 
 extension Value.TextNumber: Equatable {
 
-  public static func ==(lhs: Value.TextNumber, rhs: Value.TextNumber) -> Bool {
+  public static func == (lhs: Value.TextNumber, rhs: Value.TextNumber) -> Bool {
     lhs.decimal == rhs.decimal
   }
 

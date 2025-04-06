@@ -77,7 +77,7 @@ extension Schema: Equatable {
 
 extension Schema: Schema.SubSchema {
 
-  public func behavior<K>(_ type: K.Type) -> K? where K : KeywordBehavior & BuildableKeywordBehavior {
+  public func behavior<K>(_ type: K.Type) -> K? where K: KeywordBehavior & BuildableKeywordBehavior {
     subSchema.behavior(type)
   }
 

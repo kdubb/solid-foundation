@@ -87,7 +87,7 @@ public enum RFC4291 {
       // Split on "::" (which may occur at most once).
       let parts = addressPart.split(separator: "::", omittingEmptySubsequences: false)
       if parts.count > 2 {
-        return nil // More than one "::" is not allowed.
+        return nil    // More than one "::" is not allowed.
       }
 
       var head: [String] = []

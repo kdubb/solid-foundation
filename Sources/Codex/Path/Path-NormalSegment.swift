@@ -14,12 +14,12 @@ extension Path {
 
 }
 
-extension Path.NormalSegment : Sendable {}
+extension Path.NormalSegment: Sendable {}
 
-extension Path.NormalSegment : Hashable {}
-extension Path.NormalSegment : Equatable {}
+extension Path.NormalSegment: Hashable {}
+extension Path.NormalSegment: Equatable {}
 
-extension Path.NormalSegment : CustomStringConvertible {
+extension Path.NormalSegment: CustomStringConvertible {
 
   public var description: String {
     switch self {
@@ -31,14 +31,14 @@ extension Path.NormalSegment : CustomStringConvertible {
   }
 }
 
-extension Path.NormalSegment : ExpressibleByStringLiteral {
+extension Path.NormalSegment: ExpressibleByStringLiteral {
 
   public init(stringLiteral value: String) {
     self = .name(value)
   }
 }
 
-extension Path.NormalSegment : ExpressibleByIntegerLiteral {
+extension Path.NormalSegment: ExpressibleByIntegerLiteral {
 
   public init(integerLiteral value: Int) {
     self = .index(value)
@@ -48,12 +48,14 @@ extension Path.NormalSegment : ExpressibleByIntegerLiteral {
 extension Path {
 
   public init(normal normalSegments: [NormalSegment]) {
-    self.init(segments: normalSegments.map { token in
-      switch token {
-      case .name(let name): .child([.name(name)])
-      case .index(let index): .child([.index(index)])
+    self.init(
+      segments: normalSegments.map { token in
+        switch token {
+        case .name(let name): .child([.name(name)])
+        case .index(let index): .child([.index(index)])
+        }
       }
-    })
+    )
   }
 
   public static func normal(_ normalSegments: NormalSegment...) -> Path {

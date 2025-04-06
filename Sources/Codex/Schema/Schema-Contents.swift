@@ -35,7 +35,7 @@ extension Schema {
 
       public let contentMediaEncoding: String
 
-      public static func build(from keywordInstance: Value, context: inout Builder.Context) throws-> Self? {
+      public static func build(from keywordInstance: Value, context: inout Builder.Context) throws -> Self? {
 
         guard let stringInstance = keywordInstance.string else {
           try context.invalidType(requiredType: .string)
@@ -55,7 +55,7 @@ extension Schema {
 
       public let subSchema: SubSchema
 
-      public static func build(from keywordInstance: Value, context: inout Builder.Context) throws-> Self? {
+      public static func build(from keywordInstance: Value, context: inout Builder.Context) throws -> Self? {
 
         let subschema = try context.subSchema(for: keywordInstance)
 

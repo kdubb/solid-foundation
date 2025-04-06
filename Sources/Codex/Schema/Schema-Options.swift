@@ -10,11 +10,11 @@ extension Schema {
   public struct Options {
 
     public static let defaultMetaSchemaLocators: [MetaSchemaLocator] = [
-      MetaSchema.Draft2020_12.instance,
+      MetaSchema.Draft2020_12.instance
     ]
 
     public static let defaultVocabularyLocators: [VocabularyLocator] = [
-      MetaSchema.Draft2020_12.Vocabularies.instance,
+      MetaSchema.Draft2020_12.Vocabularies.instance
     ]
 
     public static let `default`: Self = {

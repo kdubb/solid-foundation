@@ -41,7 +41,9 @@ extension Path {
       for child in ctx.children ?? [] {
         if let childCtx = child as? ParserRuleContext, let exc = childCtx.exception {
           let token = exc.getOffendingToken()
-          errors.append(Error.recognition(token: token.getText() ?? "", location: (token.getLine(), token.getCharPositionInLine())))
+          errors.append(
+            Error.recognition(token: token.getText() ?? "", location: (token.getLine(), token.getCharPositionInLine()))
+          )
         }
       }
       guard errors.isEmpty else {

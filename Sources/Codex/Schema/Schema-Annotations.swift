@@ -169,7 +169,7 @@ extension Schema {
 
         guard case .string(let format) = keywordInstance else {
           try context.invalidType(requiredType: .string)
-        }        
+        }
 
         return Self(format: format)
       }

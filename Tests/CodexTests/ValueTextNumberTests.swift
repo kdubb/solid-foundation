@@ -10,6 +10,7 @@ import Testing
 import BigInt
 @testable import Codex
 
+@Suite("Value Number (Text) Tests")
 struct ValueTextNumberTests {
 
   @Test func intFromIntegerZero() throws {

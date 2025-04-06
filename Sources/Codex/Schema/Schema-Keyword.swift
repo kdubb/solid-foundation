@@ -125,6 +125,6 @@ extension Schema.Keyword: CustomStringConvertible {
 
 }
 
-internal func /(lhs: Pointer, rhs: Schema.Keyword) -> Pointer {
+internal func / (lhs: Pointer, rhs: Schema.Keyword) -> Pointer {
   lhs.appending(tokens: .name(rhs.rawValue))
 }

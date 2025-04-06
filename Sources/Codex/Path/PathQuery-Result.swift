@@ -36,9 +36,9 @@ extension PathQuery {
 
 }
 
-extension PathQuery.Result : Sendable {}
+extension PathQuery.Result: Sendable {}
 
-extension PathQuery.Result : Hashable {
+extension PathQuery.Result: Hashable {
 
   public func hash(into hasher: inout Hasher) {
     switch self {
@@ -57,20 +57,22 @@ extension PathQuery.Result : Hashable {
 
 }
 
-extension PathQuery.Result : Equatable {
+extension PathQuery.Result: Equatable {
 
-  public static func ==(lhs: PathQuery.Result, rhs: PathQuery.Result) -> Bool {
+  public static func == (lhs: PathQuery.Result, rhs: PathQuery.Result) -> Bool {
     switch (lhs, rhs) {
     case (.nothing, .nothing):
       true
     case (.value(value: let lvalue, path: let lpath), .value(value: let rvalue, path: let rpath)):
       lvalue == rvalue && lpath == rpath
     case (.nodelist(let llist), .nodelist(let rlist)):
-      llist.count == rlist.count && llist.enumerated().allSatisfy { (i, r) in
-        guard i < rlist.count else { return false }
-        let l = rlist[i]
-        return l.value == r.value && l.path == r.path
-      }
+      llist.count == rlist.count
+        && llist.enumerated()
+          .allSatisfy { (i, r) in
+            guard i < rlist.count else { return false }
+            let l = rlist[i]
+            return l.value == r.value && l.path == r.path
+          }
     default:
       false
     }
@@ -78,7 +80,7 @@ extension PathQuery.Result : Equatable {
 
 }
 
-extension PathQuery.Result : CustomStringConvertible {
+extension PathQuery.Result: CustomStringConvertible {
 
   public var description: String {
     switch self {

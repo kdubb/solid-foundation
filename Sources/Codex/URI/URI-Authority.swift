@@ -69,11 +69,10 @@ extension URI.Authority {
 
   public var encoded: String {
     let hostPort = "\(encodedHost)\(port.map { ":\($0)" } ?? "")"
-    if let userInfo = userInfo {
-      return "\(userInfo.encoded)@\(hostPort)"
-    } else {
+    guard let userInfo = userInfo else {
       return hostPort
     }
+    return "\(userInfo.encoded)@\(hostPort)"
   }
 
 }
@@ -95,7 +94,8 @@ extension URI.Authority.UserInfo {
     Self(
       user: user ?? self.user,
       password: password ?? self.password
-    ).emptyToNil
+    )
+    .emptyToNil
   }
 
   public static func user(_ user: String) -> Self {

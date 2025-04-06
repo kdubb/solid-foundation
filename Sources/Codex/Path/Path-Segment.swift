@@ -16,12 +16,12 @@ extension Path {
 
 }
 
-extension Path.Segment : Sendable {}
+extension Path.Segment: Sendable {}
 
-extension Path.Segment : Hashable {}
-extension Path.Segment : Equatable {}
+extension Path.Segment: Hashable {}
+extension Path.Segment: Equatable {}
 
-extension Path.Segment : CustomStringConvertible {
+extension Path.Segment: CustomStringConvertible {
 
   public var description: String {
     switch self {

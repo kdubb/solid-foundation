@@ -179,7 +179,7 @@ struct PointerValueTests {
 
     var copy = value
     copy[try Pointer(validating: "/foo/baz")] = "qux"
-    try #require(copy == ["foo": ["bar": "baz", "baz":"qux"], "bar": [0, 2]])
+    try #require(copy == ["foo": ["bar": "baz", "baz": "qux"], "bar": [0, 2]])
   }
 
   @Test func setIndex() throws {
@@ -339,7 +339,7 @@ struct PointerValueTests {
   @Test func setRoot() throws {
 
     let value: Value = [
-      ["bar": "baz"],
+      ["bar": "baz"]
     ]
 
     var copy = value

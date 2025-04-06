@@ -40,12 +40,13 @@ extension Schema {
           try context.invalidType(requiredType: .string)
         }
 
-        let types = try typeStrings.enumerated().compactMap { (idx, typeString) in
-          guard let type = context.schema.types.first(where: { $0.keyword.rawValue == typeString }) else {
-            try context.invalidValue(options: context.schema.types, at: idx)
+        let types = try typeStrings.enumerated()
+          .compactMap { (idx, typeString) in
+            guard let type = context.schema.types.first(where: { $0.keyword.rawValue == typeString }) else {
+              try context.invalidValue(options: context.schema.types, at: idx)
+            }
+            return type
           }
-          return type
-        }
 
         return Self(types: Set(types))
       }

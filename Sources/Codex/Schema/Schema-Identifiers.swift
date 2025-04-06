@@ -25,7 +25,9 @@ extension Schema {
 
         guard
           let idRef = keywordInstance.schemaURI(
-            requirements: .kind(.uriReference), .fragment(.disallowedOrEmpty), .normalized
+            requirements: .kind(.uriReference),
+            .fragment(.disallowedOrEmpty),
+            .normalized
           )
         else {
           try context.invalidValue("Must be a valid, normalized, URI-Reference")
@@ -161,7 +163,8 @@ extension Schema {
           } else if required {
             try context.invalidValue(
               "Required vocabulary '\(vocabularyId)' unresolved",
-              at: vocabularyIdx, vocabularyId.encoded
+              at: vocabularyIdx,
+              vocabularyId.encoded
             )
           }
         }

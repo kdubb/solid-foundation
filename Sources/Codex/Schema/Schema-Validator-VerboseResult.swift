@@ -109,23 +109,29 @@ extension Schema.Validator.VerboseResult: Sendable {}
 extension Schema.Validator.VerboseResult: CustomStringConvertible {
 
   public var description: String {
-    let entry = switch validation {
-    case .valid: ""
-    case .invalid(let error): error.map { "\nerror: \($0)" }
-    case .annotation(let ann): "\nannotation: \(ann)"
-    }
+    let entry =
+      switch validation {
+      case .valid: ""
+      case .invalid(let error): error.map { "\nerror: \($0)" }
+      case .annotation(let ann): "\nannotation: \(ann)"
+      }
     let parent = [
       "\(isValid ? "✓ valid" : "✘ invalid")",
       "keywordLocation: \(keywordLocation == .root ? "''" : keywordLocation.description)",
       absoluteKeywordLocation.map { "absoluteKeywordLocation: '\($0)'" },
       "instanceLocation: \(instanceLocation == .root ? "''" : instanceLocation.description)",
-      entry
-    ].compactMap(\.self).joined(separator: "\n")
-    let children = if results.isEmpty {
-      ""
-    } else {
-      results.map { "\n->  \($0.description.split(separator: "\n").joined(separator: "\n    "))" }.joined(separator: "")
-    }
+      entry,
+    ]
+    .compactMap(\.self).joined(separator: "\n")
+    let children =
+      if results.isEmpty {
+        ""
+      } else {
+        results.map { "\n->  \($0.description.split(separator: "\n").joined(separator: "\n    "))" }
+          .joined(
+            separator: ""
+          )
+      }
     return "\(parent)\(children)"
   }
 

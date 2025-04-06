@@ -12,7 +12,7 @@ extension Schema {
 
   public enum Objects {
 
-    public struct Properties : ApplicatorBehavior, BuildableKeywordBehavior {
+    public struct Properties: ApplicatorBehavior, BuildableKeywordBehavior {
 
       public static let keyword: Keyword = .properties
 
@@ -48,16 +48,18 @@ extension Schema {
             continue
           }
 
-          let validation = context.validate(instance: .using(propertyInstance, at: propertyKey), using: propertySubSchema)
+          let validation = context.validate(
+            instance: .using(propertyInstance, at: propertyKey),
+            using: propertySubSchema
+          )
           validations[propertyKey] = validation
         }
 
-        if validations.allSatisfy(\.value.isValid) {
-          let validPropertyKeys = validations.filter { $0.value.isValid }.keys
-          return .annotation(.array(validPropertyKeys.map { .string($0) }))
-        } else {
+        guard validations.allSatisfy(\.value.isValid) else {
           return .invalid
         }
+        let validPropertyKeys = validations.filter { $0.value.isValid }.keys
+        return .annotation(.array(validPropertyKeys.map { .string($0) }))
       }
     }
 
@@ -124,12 +126,11 @@ extension Schema {
           }
         }
 
-        if validations.allSatisfy(\.isValid) {
-          let validPropertyKeys = validKeys.subtracting(invalidKeys)
-          return .annotation(.array(validPropertyKeys.map { .string($0) }))
-        } else {
+        guard validations.allSatisfy(\.isValid) else {
           return .invalid
         }
+        let validPropertyKeys = validKeys.subtracting(invalidKeys)
+        return .annotation(.array(validPropertyKeys.map { .string($0) }))
       }
     }
 
@@ -174,16 +175,15 @@ extension Schema {
           validations[propertyKey] = validation
         }
 
-        if validations.allSatisfy(\.value.isValid) {
-          let validPropertyKeys = validations.filter { $0.value.isValid }.keys
-          return .annotation(.array(validPropertyKeys.map { .string($0) }))
-        } else {
+        guard validations.allSatisfy(\.value.isValid) else {
           return .invalid(
             validations.count == 1
-            ? "Additional property \(validations.keys.map { "'\($0)'" }.joined()) not valid"
-            : "Additional properties \(validations.keys.map { "'\($0)'" }.joined(separator: ", ")) not valid"
+              ? "Additional property \(validations.keys.map { "'\($0)'" }.joined()) not valid"
+              : "Additional properties \(validations.keys.map { "'\($0)'" }.joined(separator: ", ")) not valid"
           )
         }
+        let validPropertyKeys = validations.filter { $0.value.isValid }.keys
+        return .annotation(.array(validPropertyKeys.map { .string($0) }))
       }
     }
 
@@ -223,11 +223,10 @@ extension Schema {
         let missing = properties.subtracting(objectInstance.keys.compactMap(\.string))
         if !missing.isEmpty {
 
-          if missing.count == 1 {
-            return .invalid("Missing required property '\(missing.first!)'")
-          } else {
+          guard missing.count == 1 else {
             return .invalid("Missing required properties \(missing.map { "'\($0)'" }.joined(separator: ","))")
           }
+          return .invalid("Missing required property '\(missing.first!)'")
 
         }
 
@@ -235,7 +234,7 @@ extension Schema {
       }
     }
 
-    public struct DependentRequired : AssertionBehavior, BuildableKeywordBehavior {
+    public struct DependentRequired: AssertionBehavior, BuildableKeywordBehavior {
 
       public static let keyword: Keyword = .dependentRequired
 
@@ -286,19 +285,17 @@ extension Schema {
 
         var invalid = 0
 
-        for (dependencyProperty, requiredProperties) in dependentRequired {
+        for (dependencyProperty, requiredProperties) in dependentRequired
+        where objectKeys.contains(dependencyProperty) {
 
-          if objectKeys.contains(dependencyProperty) {
-
-            let missing = requiredProperties.subtracting(objectKeys)
-            if !missing.isEmpty {
-              invalid += 1
-              let missingProperties = missing.map { "'\($0)'" }.joined(separator: ",")
-              context.invalid(
-                "Property '\(dependencyProperty)' requires properties \(missingProperties) to be present",
-                at: dependencyProperty
-              )
-            }
+          let missing = requiredProperties.subtracting(objectKeys)
+          if !missing.isEmpty {
+            invalid += 1
+            let missingProperties = missing.map { "'\($0)'" }.joined(separator: ",")
+            context.invalid(
+              "Property '\(dependencyProperty)' requires properties \(missingProperties) to be present",
+              at: dependencyProperty
+            )
           }
         }
 
@@ -336,11 +333,10 @@ extension Schema {
           valid = valid && result.isValid
         }
 
-        if valid {
-          return .valid
-        } else {
+        guard valid else {
           return .invalid("Properties names must match '\(Keyword.propertyNames)'")
         }
+        return .valid
       }
     }
 
@@ -444,7 +440,8 @@ extension Schema {
         let unevaluatedPropertyKeys: Set<String>
 
         if propertiesAnns.isEmpty && patternPropertiesAnns.isEmpty
-            && additionalPropertiesAnns.isEmpty && unevaluatedPropertiesAnns.isEmpty {
+          && additionalPropertiesAnns.isEmpty && unevaluatedPropertiesAnns.isEmpty
+        {
 
           unevaluatedPropertyKeys = Set(objectInstance.keys.compactMap(\.string))
 
@@ -472,12 +469,11 @@ extension Schema {
           validations[propertyKey] = validation
         }
 
-        if validations.allSatisfy(\.value.isValid) {
-          let validPropertyKeys = validations.filter { $0.value.isValid }.keys
-          return .annotation(.array(validPropertyKeys.map { .string($0) }))
-        } else {
+        guard validations.allSatisfy(\.value.isValid) else {
           return .invalid
         }
+        let validPropertyKeys = validations.filter { $0.value.isValid }.keys
+        return .annotation(.array(validPropertyKeys.map { .string($0) }))
       }
 
       public static func build(from keywordInstance: Value, context: inout Builder.Context) throws -> Self? {

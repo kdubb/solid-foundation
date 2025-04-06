@@ -16,17 +16,21 @@ extension Schema {
       options: Schema.Options = .default
     ) throws -> (result: Validator.Result, annotations: [Schema.Annotation]) {
 
-      let schemaLocator = CompositeSchemaLocator.from(locators: [
-        schema.schema.schemaLocator,
-        options.schemaLocator
-      ].compactMap(\.self))
+      let schemaLocator = CompositeSchemaLocator.from(
+        locators: [
+          schema.schema.schemaLocator,
+          options.schemaLocator,
+        ]
+        .compactMap(\.self)
+      )
 
       let metaSchemaLocator = CompositeMetaSchemaLocator(locators: [
         options.metaSchemaLocator,
-        MetaSchemaContainer(schemaLocator: schemaLocator)
+        MetaSchemaContainer(schemaLocator: schemaLocator),
       ])
 
-      let validatorOptions = options
+      let validatorOptions =
+        options
         .schemaLocator(schemaLocator)
         .metaSchemaLocator(metaSchemaLocator)
 
