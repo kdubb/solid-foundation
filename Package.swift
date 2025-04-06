@@ -45,8 +45,7 @@ let package = Package(
     .testTarget(
       name: "CodexTests",
       dependencies: ["Codex"],
-      // Reference directory with no Swift/C files to remove SPM warnings
-      sources: ["JSONTestSuite/bin"],
+      exclude: ["JSONTestSuite"],
       resources: [
         .copy("JSONTestSuite/tests"),
         .copy("JSONTestSuite/output-tests"),
