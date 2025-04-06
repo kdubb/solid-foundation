@@ -1,5 +1,4 @@
 // swift-tools-version: 6.0
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
@@ -9,13 +8,12 @@ let package = Package(
     .macOS("13.3"),
     .iOS("16.3"),
     .tvOS("16.3"),
-    .watchOS("9.3")
+    .watchOS("9.3"),
   ],
   products: [
-    // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
       name: "Codex",
-      targets: ["Codex"]),
+      targets: ["Codex"])
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
@@ -45,11 +43,11 @@ let package = Package(
     .testTarget(
       name: "CodexTests",
       dependencies: ["Codex"],
-      exclude: ["JSONTestSuite"],
       resources: [
-        .copy("JSONTestSuite/tests"),
-        .copy("JSONTestSuite/output-tests"),
-        .copy("JSONTestSuite/remotes"),
-      ]),
+        .copy("../JSONTestSuite/tests"),
+        .copy("../JSONTestSuite/output-tests"),
+        .copy("../JSONTestSuite/remotes"),
+      ]
+    ),
   ]
 )
