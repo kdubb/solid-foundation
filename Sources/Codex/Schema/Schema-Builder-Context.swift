@@ -202,13 +202,17 @@ extension Schema.Builder {
 
     @discardableResult
     public mutating func keywordBehavior<K: Schema.KeywordBehaviorBuilder>(
-      for providerType: K.Type,
+      for behaviorType: K.Type,
       at keyword: Schema.Keyword? = nil
     ) throws -> K.Behavior? {
 
-      let keyword = keyword ?? providerType.keyword
+      let keyword = keyword ?? behaviorType.keyword
       let prevLocation = pushLocation([keyword])
-      defer { popLocation(prevLocation) }
+      tracePre()
+      defer {
+        tracePost()
+        popLocation(prevLocation)
+      }
 
       if let keywordBehavior = currentScope.keywordBehaviors[keyword] as? K.Behavior {
         return keywordBehavior
@@ -320,6 +324,16 @@ extension Schema.Builder {
     public func locate(schemaId: URI) throws -> Schema.SubSchema? {
       try options.schemaLocator.locate(schemaId: schemaId.removing(.fragment), options: options)?
         .locate(fragment: schemaId.fragment ?? "", allowing: .standard)
+    }
+
+    internal func tracePre() {
+      guard options.trace else {
+        return
+      }
+      print("Building \(currentScope.instanceLocation / currentScope.relativeInstanceLocation)")
+    }
+
+    internal func tracePost() {
     }
   }
 }
