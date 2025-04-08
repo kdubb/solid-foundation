@@ -9,6 +9,10 @@ import Foundation
 
 extension Data {
 
+  /// Initializes a `Data` object from a MIME quoted-printable encoded string.
+  ///
+  /// - Parameter string: The MIME quoted-printable encoded string.
+  ///
   public init?(mimeQuotedPrintableEncodedString string: String) {
     // Remove soft line breaks ("=\r\n") from the encoded string
     let cleanedString = string.replacingOccurrences(of: "=\r\n", with: "")
@@ -43,6 +47,11 @@ extension Data {
     self.init(byteArray)
   }
 
+  /// Encodes the data into a MIME quoted-printable format.
+  ///
+  /// - Parameter maxLineLength: The maximum line length for the encoded output. Default is 76 characters.
+  /// - Returns: A MIME quoted-printable encoded string.
+  ///
   public func mimeQuotedPrintableEncoded(maxLineLength: Int = 76) -> String {
     var result = ""
     var currentLine = ""

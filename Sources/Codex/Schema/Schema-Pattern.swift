@@ -29,6 +29,15 @@ extension Schema.Pattern {
     self.regex = try Regex(pattern)
   }
 
+  public init(valid: String) {
+    do {
+      self.value = valid
+      self.regex = try Regex(valid)
+    } catch {
+      fatalError("Invalid regex pattern: \(valid)")
+    }
+  }
+
 }
 
 extension Schema.Pattern: Sendable {}

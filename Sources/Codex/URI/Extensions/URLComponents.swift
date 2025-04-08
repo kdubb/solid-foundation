@@ -21,7 +21,7 @@ internal extension URLComponents {
     return if isAbsolute {
       .absolute(
         URI.Absolute(
-          scheme: scheme!,
+          scheme: scheme.neverNil("Should have been validated by isAbsolute"),
           authority: .from(host: host ?? "", port: port, userInfo: .from(user: user, password: password)),
           path: .from(encoded: path, absolute: true),
           query: queryItems?.compactMap { .from(name: $0.name, value: $0.value) } ?? [],
@@ -31,6 +31,7 @@ internal extension URLComponents {
     } else {
       .relativeReference(
         URI.RelativeReference(
+          authority: .from(host: host, port: port, userInfo: .from(user: user, password: password)),
           path: .from(encoded: path, absolute: false),
           query: queryItems?.compactMap { URI.QueryItem(name: $0.name, value: $0.value) } ?? [],
           fragment: fragment
@@ -43,7 +44,7 @@ internal extension URLComponents {
     return if isAbsolute {
       .absolute(
         URI.Absolute(
-          scheme: scheme!,
+          scheme: scheme.neverNil("Should have been validated by isAbsolute"),
           authority: .from(host: host ?? "", port: port, userInfo: .from(user: user, password: password)),
           path: .from(encoded: path, absolute: true),
           query: queryItems?.compactMap { .from(name: $0.name, value: $0.value) } ?? [],
@@ -54,6 +55,7 @@ internal extension URLComponents {
     } else {
       .relativeReference(
         URI.RelativeReference(
+          authority: .from(host: host, port: port, userInfo: .from(user: user, password: password)),
           path: .from(encoded: path, absolute: false),
           query: queryItems?.compactMap { URI.QueryItem(name: $0.name, value: $0.value) } ?? [],
           fragment: fragment,

@@ -7,13 +7,25 @@
 
 extension URI {
 
+  /// A requirement that a URI must satisfy.
+  ///
+  /// Requirements can be used to validate URIs during creation or to ensure
+  /// they meet specific criteria for a particular use case.
   public enum Requirement {
 
+    /// The kind of URI that is required.
     public enum Kind {
+      /// Requires an absolute URI with a scheme
       case uri
+      /// Allows either an absolute URI or a relative reference
       case uriReference
+      /// Requires a relative reference without a scheme
       case relativeReference
 
+      /// Checks if a URI satisfies this required kind.
+      ///
+      /// - Parameter uri: The URI to check
+      /// - Returns: true if the URI satisfies the requirement, false otherwise
       public func isSatisfied(by uri: URI) -> Bool {
         switch self {
         case .uriReference:
@@ -26,27 +38,48 @@ extension URI {
       }
     }
 
+    /// Requirements for the fragment component of a URI.
     public enum Fragment {
+      /// The URI must have a non-empty fragment
       case required
+      /// The URI must not have a fragment, with an option to consider an empty fragment as valid.
       case disallowed(ignoreEmpty: Bool)
+      /// The URI may or may not have a fragment
       case optional
 
+      /// A requirement that disallows any fragment.
       public static let disallowed: Self = .disallowed(ignoreEmpty: false)
+      /// A requirement that disallows non-empty fragments.
       public static let disallowedOrEmpty: Self = .disallowed(ignoreEmpty: true)
     }
 
+    /// Requires the URI to be one of a provided kinds
     case kinds(Set<Kind>)
+    /// Requires the URI to meet the fragment requirements
     case fragment(Fragment)
+    /// Requires the URI to be in normalized form
     case normalized
 
+    /// Creates a requirement for a specific kind of URI.
+    ///
+    /// - Parameter kind: The kind of URI required
+    /// - Returns: A requirement for the specified kind
     public static func kind(_ kind: Kind) -> Self {
       .kinds([kind])
     }
 
+    /// Creates a requirement for a set of kinds of URIs.
+    ///
+    /// - Parameter kinds: The kinds of URIs required
+    /// - Returns: A requirement for the specified kinds
     public static func kinds(_ kinds: Kind...) -> Self {
       .kinds(Set(kinds))
     }
 
+    /// Checks if the given URI satisfies this requirement.
+    ///
+    /// - Parameter uri: The URI to check
+    /// - Returns: true if the given URI satisfies this requirement, false otherwise
     public func isSatisfied(by uri: URI) -> Bool {
       switch self {
       case .kinds(let kinds):

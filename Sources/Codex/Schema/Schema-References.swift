@@ -47,7 +47,7 @@ extension Schema {
           }
 
           do {
-            if let subSchema = try context.locate(schemaId: schemaId, allowing: .dynamic) {
+            if let subSchema = try context.locate(schemaId: schemaId, allowing: .standardAndDynamic) {
               self.resolvedSubSchema = subSchema
             } else {
               self.resolvedSubSchema = UnresolvedSubSchema(schemaId: schemaId)
@@ -56,7 +56,7 @@ extension Schema {
             self.resolvedSubSchema = UnresolvedSubSchema(schemaId: schemaId)
           }
 
-          return self.resolvedSubSchema!
+          return self.resolvedSubSchema.neverNil()
         }
       }
 
@@ -78,7 +78,7 @@ extension Schema {
       /// URI to the dynamic anchor in the local schema resource.
       public let schemaId: URI
 
-      /// Is the fragment a valid JSON Schema anchor? As opposed to a JSON pointer fragment.
+      /// Is the fragment a valid JSON Schema anchor, as opposed to a JSON pointer fragment.
       public let isAnchorFragment: Bool
 
       /// Is the fragment referring to a `$dynamicAnchor` defined in the local schema resource?
@@ -162,7 +162,7 @@ extension Schema {
 
           for scope in context.scopes {
 
-            let scopeSchemaResourceId = uriReference.resolved(against: scope.baseId)
+            let scopeSchemaResourceId = uriReference.resolved(against: scope.schema.id)
 
             do {
 
@@ -207,7 +207,7 @@ extension Schema {
         return try context.locate(schemaId: schemaId, allowing: .dynamicOnly) != nil
       }
 
-      /// Check if the URI reference is a valid JSON Schema anchor
+      /// Check if the URI reference is a valid JSON Schema anchor.
       private static func isAnchorFragment(for uriReference: URI) -> Bool {
         guard let fragment = uriReference.fragment, Identifiers.anchorRegex.matches(fragment) else {
           return false

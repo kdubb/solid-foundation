@@ -47,7 +47,7 @@ extension Schema.RefTypes {
   /// The standard set of reference types to consider when locating a dynamic sub-schema.
   ///
   /// This set includes all of ``Schema/RefTypes/standard`` plus ``Schema/RefType/dynamicAnchor``.
-  public static let dynamic: Self = standard.union([.dynamicAnchor])
+  public static let standardAndDynamic: Self = standard.union([.dynamicAnchor])
 
   /// Only considers the ``Schema/RefType/dynamicAnchor`` reference type.
   public static let dynamicOnly: Self = [.dynamicAnchor]

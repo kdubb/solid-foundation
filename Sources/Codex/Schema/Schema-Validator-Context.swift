@@ -461,7 +461,9 @@ extension Schema.Validator.Context {
       return nil
     }
 
-    return resourceSchema.locate(fragment: schemaId.fragment ?? "", allowing: refTypes)
+    let fragmentRefTypes = refTypes.subtracting([.canonical])
+
+    return resourceSchema.locate(fragment: schemaId.fragment ?? "", allowing: fragmentRefTypes)
   }
 
 }

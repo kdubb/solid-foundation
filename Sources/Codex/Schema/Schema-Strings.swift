@@ -134,11 +134,18 @@ extension Schema {
       }
     }
 
-    public struct Format: AnnotationBehavior, BuildableKeywordBehavior {
+    public struct Format: KeywordBehavior, BuildableKeywordBehavior {
+
+      public enum Mode: Sendable {
+        case annotate
+        case assert
+        case convert
+      }
 
       public static let keyword: Keyword = .format
 
       public let formatType: FormatType
+      public let mode: Mode
 
       public static func build(from schemaInstance: Value, context: inout Builder.Context) throws -> Self? {
 
@@ -146,16 +153,41 @@ extension Schema {
           try context.invalidType(requiredType: .string)
         }
 
+        let mode = context.schema.value(forOption: MetaSchema.Draft2020_12.Options.formatMode) ?? .annotate
+
         do {
           let formatType = try context.options.formatTypeLocator.locate(formatType: format)
-          return Self(formatType: formatType)
+          return Self(formatType: formatType, mode: mode)
         } catch {
           try context.invalidValue("Unrecognized format '\(format)'")
         }
       }
 
-      public func annotate(context: inout Validator.Context) -> Value? {
-        return .string(formatType.identifier)
+      public func apply(instance: Value, context: inout Schema.Validator.Context) -> Schema.Validation {
+
+        guard case .string = instance else {
+          return .valid
+        }
+
+        switch mode {
+        case .annotate:
+          return .annotation(.string(formatType.identifier))
+
+        case .assert:
+          let valid = formatType.validate(instance)
+          return valid
+            ? .annotation(.string(formatType.identifier))
+            : .invalid("Must be a valid \(formatType.identifier)")
+
+        case .convert:
+          guard let converted = formatType.convert(instance) else {
+            return .invalid("Must be a valid \(formatType.identifier)")
+          }
+          return .annotation([
+            "format": .string(formatType.identifier),
+            "result": converted,
+          ])
+        }
       }
     }
   }

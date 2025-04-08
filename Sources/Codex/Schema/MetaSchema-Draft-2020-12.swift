@@ -7,6 +7,8 @@
 
 extension MetaSchema {
 
+  /// The JSON Schema Draft 2020-12 meta-schema.
+  ///
   public static let v2020_12 = MetaSchema(
     id: Draft2020_12.id,
     vocabularies: [
@@ -14,7 +16,7 @@ extension MetaSchema {
       Draft2020_12.Vocabularies.applicator,
       Draft2020_12.Vocabularies.validation,
       Draft2020_12.Vocabularies.unevaluated,
-      Draft2020_12.Vocabularies.formatAnnotation,
+      Draft2020_12.Vocabularies.formatAssertion,
       Draft2020_12.Vocabularies.content,
       Draft2020_12.Vocabularies.metadata,
     ],
@@ -22,11 +24,40 @@ extension MetaSchema {
     schemaLocator: Draft2020_12.instance
   )
 
+  /// Namespace for the JSON Schema Draft 2020-12 schema & meta-shema.
+  ///
   public enum Draft2020_12: MetaSchemaLocator, SchemaLocator {
     case instance
 
+    /// The URI of the JSON Schema Draft 2020-12 meta-schema.
     public static let id = URI(valid: "https://json-schema.org/draft/2020-12/schema")
 
+    /// Options for the JSON Schema Draft 2020-12 meta-schema.
+    public enum Options {
+
+      /// Mode for format assertion.
+      ///
+      /// Format modes determine the behavior of format assertions:
+      /// - ``Schema/Strings/Format/Mode/assert``: Validates the format and asserts it is valid.
+      /// - ``Schema/Strings/Format/Mode/convert``: Converts the value to a related type. If
+      /// successful, the result is annotated with the the format and the converted value. Otherwise,
+      /// it records a failing assertion.
+      ///
+      public static let formatMode = MetaSchema.option(
+        baseId: id,
+        name: "formatMode",
+        type: Schema.Strings.Format.Mode.self
+      )
+    }
+
+    /// Locator for the JSON Schema Draft 2020-12 meta-schema.
+    ///
+    /// - Parameters:
+    ///   - id: The URI of the meta-schema to locate. Must be equal ``MetaSchema/Draft2020_12/id``.
+    ///   - options: The options to use when locating the meta-schema. These are ignored for this locator.
+    /// - Returns: The meta-schema for the JSON Schema Draft 2020-12 schema, or `nil` if the id is not
+    ///   equal to ``MetaSchema/Draft2020_12/id``.
+    ///
     public func locate(metaSchemaId id: URI, options: Schema.Options) -> MetaSchema? {
       if id == Self.id {
         return .v2020_12
@@ -34,6 +65,14 @@ extension MetaSchema {
       return nil
     }
 
+    /// Locator for the JSON Schema Draft 2020-12 schema.
+    ///
+    /// - Parameters:
+    ///   - id: The URI of the schema to locate. Must be equal ``MetaSchema/Draft2020_12/id``.
+    ///   - options: The options to use when locating the schema. These are ignored for this locator.
+    /// - Returns: The schema for the JSON Schema Draft 2020-12 schema, or `nil` if the id is not
+    ///  equal to ``MetaSchema/Draft2020_12/id``.
+    ///
     public func locate(schemaId id: URI, options: Schema.Options) -> Schema? {
 
       if id.removing(.fragment) == Self.id.removing(.fragment),
@@ -45,8 +84,9 @@ extension MetaSchema {
       return Vocabularies.instance.locate(schemaId: id, options: options)
     }
 
-    public static let metaSchema = try! Schema.Builder.build(
-      from: [
+    /// Schema for the JSON Schema Draft 2020-12 meta-schema.
+    public static let metaSchema = Schema.Builder.build(
+      constant: [
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": "https://json-schema.org/draft/2020-12/schema",
         "$vocabulary": [
@@ -122,9 +162,12 @@ extension MetaSchema {
       )
     )
 
+    /// Namespace for the JSON Schema Draft 2020-12 vocabularies.
+    ///
     public enum Vocabularies: SchemaLocator, VocabularyLocator {
       case instance
 
+      /// All of the vocabularies in the JSON Schema Draft 2020-12 specification.
       public static let all = [
         Self.core,
         Self.applicator,
@@ -136,6 +179,7 @@ extension MetaSchema {
         Self.metadata,
       ]
 
+      /// Schemas for all of the vocabularies in the JSON Schema Draft 2020-12 specification.
       public static let allSchemas = [
         Self.coreSchema,
         Self.applicatorSchema,
@@ -147,6 +191,15 @@ extension MetaSchema {
         Self.metadataSchema,
       ]
 
+      /// Locators for vocabulary schemas in the JSON Schema Draft 2020-12 specification.
+      ///
+      /// - Parameters:
+      ///   - id: The URI of the vocabulary to locate. Must be equal to one of the vocabulary IDs in the
+      ///   JSON Schema Draft 2020-12 specification.
+      ///   - options: The options to use when locating the vocabulary. These are ignored for this locator.
+      /// - Returns: The vocabulary for the JSON Schema Draft 2020-12 specification, or `nil` if the id is not
+      ///  equal to one of the vocabulary IDs in the JSON Schema Draft 2020-12 specification.
+      ///
       public func locate(schemaId id: URI, options: Schema.Options) -> Schema? {
         for vocab in Self.allSchemas {
           if let schema = vocab.locate(schemaId: id, options: options) {
@@ -156,6 +209,15 @@ extension MetaSchema {
         return nil
       }
 
+      /// Locator for vocabulary schemas in the JSON Schema Draft 2020-12 specification.
+      ///
+      /// - Parameters:
+      ///   - id: The URI of the vocabulary to locate. Must be equal to one of the vocabulary IDs in the
+      ///   JSON Schema Draft 2020-12 specification.
+      ///   - options: The options to use when locating the vocabulary. These are ignored for this locator.
+      /// - Returns: The vocabulary for the JSON Schema Draft 2020-12 specification, or `nil` if the id is not
+      /// equal to one of the vocabulary IDs in the JSON Schema Draft 2020-12 specification.
+      ///
       public func locate(vocabularyId id: URI, options: Schema.Options) -> Vocabulary? {
         for vocabulary in Self.all where vocabulary.id == id {
           return vocabulary
@@ -163,6 +225,7 @@ extension MetaSchema {
         return nil
       }
 
+      /// The JSON Schema Draft 2020-12 **core** vocabulary.
       public static let core = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/core"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/core"),
@@ -180,8 +243,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let coreSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **core** vocabulary schema.
+      public static let coreSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/core",
           "$dynamicAnchor": "meta",
@@ -232,6 +296,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **applicator** vocabulary.
       public static let applicator = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/applicator"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/applicator"),
@@ -255,8 +320,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let applicatorSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **applicator** vocabulary schema.
+      public static let applicatorSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/applicator",
           "$dynamicAnchor": "meta",
@@ -304,6 +370,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **validation** vocabulary.
       public static let validation = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/validation"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/validation"),
@@ -332,8 +399,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let validationSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **validation** vocabulary schema.
+      public static let validationSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/validation",
           "$dynamicAnchor": "meta",
@@ -431,6 +499,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **unevaluated** vocabulary.
       public static let unevaluated = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/unevaluated"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/unevaluated"),
@@ -441,8 +510,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let unevaluatedSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **unevaluated** vocabulary schema.
+      public static let unevaluatedSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/unevaluated",
           "$dynamicAnchor": "meta",
@@ -457,6 +527,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **format annotation** vocabulary.
       public static let formatAnnotation = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/format-annotation"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/format-annotation"),
@@ -466,8 +537,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let formatAnnotationSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **format annotation** vocabulary schema.
+      public static let formatAnnotationSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/format-annotation",
           "$dynamicAnchor": "meta",
@@ -481,6 +553,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **format assertion** vocabulary.
       public static let formatAssertion = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/format-assertion"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/format-assertion"),
@@ -490,8 +563,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let formatAssertionSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **format assertion** vocabulary schema.
+      public static let formatAssertionSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/format-assertion",
           "$dynamicAnchor": "meta",
@@ -505,6 +579,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **content** vocabulary.
       public static let content = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/content"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/content"),
@@ -516,8 +591,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let contentSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **content** vocabulary schema.
+      public static let contentSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/content",
           "$dynamicAnchor": "meta",
@@ -533,6 +609,7 @@ extension MetaSchema {
         options: options
       )
 
+      /// The JSON Schema Draft 2020-12 **meta-data** vocabulary.
       public static let metadata = Vocabulary(
         id: URI(valid: "https://json-schema.org/draft/2020-12/vocab/meta-data"),
         schemaId: URI(valid: "https://json-schema.org/draft/2020-12/meta/meta-data"),
@@ -548,8 +625,9 @@ extension MetaSchema {
         ]
       )
 
-      public static let metadataSchema = try! Schema.Builder.build(
-        from: [
+      /// The JSON Schema Draft 2020-12 **meta-data** vocabulary schema.
+      public static let metadataSchema = Schema.Builder.build(
+        constant: [
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "https://json-schema.org/draft/2020-12/meta/meta-data",
           "$dynamicAnchor": "meta",

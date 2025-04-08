@@ -7,11 +7,23 @@
 
 extension Path {
 
+  /// Selects values from the current value being processed.
+  ///
   public enum Selector {
-    case name(String)
+
+    /// Selects values by name from `object` values.
+    case name(String, quote: Character? = nil)
+
+    /// Selects all values from arrays or objects.
     case wildcard
+
+    /// Selects a range of values from an array.
     case slice(Slice)
+
+    /// Selects  that selects a specific value from an array.
     case index(Int)
+
+    /// Selects a values that pass the filter expressions.
     case filter(Expression)
   }
 
@@ -19,15 +31,76 @@ extension Path {
 
 extension Path.Selector: Sendable {}
 
-extension Path.Selector: Hashable {}
-extension Path.Selector: Equatable {}
+extension Path.Selector: Hashable {
+
+  /// Hashes the essential components of the selector.
+  ///
+  /// - Note: `quote` property for ``name(_:quote:)`` selectors are not considered.
+  ///
+  /// - Parameters:
+  ///  - hasher: The hasher to use for hashing the selector.
+  ///
+  public func hash(into hasher: inout Hasher) {
+    switch self {
+    case .name(let name, quote: _):
+      hasher.combine(0)
+      hasher.combine(name)
+    case .wildcard:
+      hasher.combine(1)
+    case .slice(let slice):
+      hasher.combine(2)
+      hasher.combine(slice)
+    case .index(let index):
+      hasher.combine(3)
+      hasher.combine(index)
+    case .filter(let expression):
+      hasher.combine(4)
+      hasher.combine(expression)
+    }
+  }
+}
+
+extension Path.Selector: Equatable {
+
+  /// Compares two selectors for equality.
+  ///
+  /// - Note: `quote` property for ``name(_:quote:)`` selectors are not considered.
+  ///
+  /// - Parameters:
+  ///   - lhs: The left-hand side selector.
+  ///   - rhs: The right-hand side selector.
+  /// - Returns: `true` if the selectors are equal, `false` otherwise.
+  ///
+  public static func == (lhs: Path.Selector, rhs: Path.Selector) -> Bool {
+    switch (lhs, rhs) {
+    case (.name(let lhsName, quote: _), .name(let rhsName, quote: _)):
+      return lhsName == rhsName
+    case (.wildcard, .wildcard):
+      return true
+    case (.slice(let lhsSlice), .slice(let rhsSlice)):
+      return lhsSlice == rhsSlice
+    case (.index(let lhsIndex), .index(let rhsIndex)):
+      return lhsIndex == rhsIndex
+    case (.filter(let lhsExpression), .filter(let rhsExpression)):
+      return lhsExpression == rhsExpression
+    default:
+      return false
+    }
+  }
+}
 
 extension Path.Selector: CustomStringConvertible {
 
+  /// A description of the selector.
+  ///
   public var description: String {
     switch self {
-    case .name(let name):
-      return name
+    case .name(let name, quote: let quote):
+      return if let quote = quote {
+        "\(String(quote))\(name.escaped(quote))\(String(quote))"
+      } else {
+        name
+      }
     case .wildcard:
       return "*"
     case .slice(let slice):
@@ -35,7 +108,7 @@ extension Path.Selector: CustomStringConvertible {
     case .index(let index):
       return index.description
     case .filter(let expression):
-      return expression.description
+      return "?\(expression.description)"
     }
   }
 }
@@ -43,14 +116,19 @@ extension Path.Selector: CustomStringConvertible {
 extension Array where Element == Path.Selector {
 
   internal var codexDescription: String {
-    switch count {
-    case 0:
-      "<invalid>"
-    case 1:
-      self[0].description
-    default:
-      "[\(self.map(\.description).joined(separator: ", "))]"
+    "\(self.map(\.description).joined(separator: ", "))"
+  }
+
+}
+
+extension String {
+
+  internal func escaped(_ quote: Character) -> String {
+    var string = self
+    for match in string.matches(of: quote == "'" ? #/'/# : #/"/#) {
+      string.replaceSubrange(match.range, with: #"\\#(quote)"#)
     }
+    return string
   }
 
 }

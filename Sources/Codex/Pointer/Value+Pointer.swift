@@ -8,6 +8,14 @@
 
 extension Value {
 
+  /// Gets or sets the value associated with the specified ``Pointer``.
+  ///
+  /// Traverses this value using the specified ``Pointer`` and either
+  /// returns the value at that location or sets to the specified value.
+  ///
+  /// - Parameter pointer: The pointer to apply to this value.
+  /// - Returns: The value at the location associated with the pointer.
+  ///
   public subscript(pointer: Pointer) -> Value? {
     get {
       var current: Value? = self

@@ -7,6 +7,8 @@
 
 import Foundation
 
+/// Namespace for RFC-2673 related types and functions.
+///
 public enum RFC2673 {
 
   /// A structure representing an IPv4 address as four 8‑bit octets.
@@ -64,6 +66,7 @@ public enum RFC2673 {
     /// and validates each to be in the range 0–255, rejecting leading zeros.
     ///
     /// - Parameter string: The IPv4 address string in dotted-quad format.
+    /// - Returns: An IPv4Address instance if the input is valid; otherwise, nil.
     public static func parse(string: String) -> IPv4Address? {
       let pattern =
         #/^(?<a>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<b>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<c>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<d>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/#

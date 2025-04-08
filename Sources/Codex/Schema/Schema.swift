@@ -112,6 +112,7 @@ extension Schema: SchemaLocator {
 
 
   public func locate(fragment: String, allowing refTypes: RefTypes) -> SubSchema? {
+    assert(!refTypes.contains(.canonical), "Canonical reference type not allowed for fragment lookup")
 
     if isReferencingFragment(fragment, allowing: refTypes) {
       return self

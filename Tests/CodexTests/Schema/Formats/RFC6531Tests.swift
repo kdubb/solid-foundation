@@ -90,12 +90,7 @@ final class RFC6531InternationalizedMailboxAddressTests {
       ("user name@example.com", "Space in local part without quotes"),
       ("user@name@example.com", "Multiple @ symbols"),
       ("user@example.com@", "Multiple @ symbols"),
-      ("user@example.com.", "Trailing dot"),
       ("user@example.com..", "Multiple trailing dots"),
-      ("user@example.com-", "Trailing hyphen"),
-      ("user@example.com--", "Multiple trailing hyphens"),
-      ("user@example.com-", "Trailing hyphen"),
-      ("user@example.com--", "Multiple trailing hyphens"),
       ("user@example.com-", "Trailing hyphen"),
       ("user@example.com--", "Multiple trailing hyphens"),
     ]

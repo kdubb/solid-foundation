@@ -18,9 +18,8 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
     .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.1.4")),
-    .package(url: "https://github.com/mgriebling/BigDecimal.git", from: "3.0.2"),
+    .package(url: "https://github.com/kdubb/BigDecimal.git", branch: "main"),
     .package(url: "https://github.com/SwiftScream/URITemplate.git", from: "5.0.1"),
-    .package(url: "https://github.com/antlr/antlr4.git", from: "4.13.2"),
     .package(url: "https://github.com/StarLard/SwiftFormatPlugins.git", from: "1.1.1"),
   ],
   targets: [
@@ -31,14 +30,9 @@ let package = Package(
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "BigDecimal", package: "BigDecimal"),
         .product(name: "ScreamURITemplate", package: "uritemplate"),
-        .product(name: "Antlr4", package: "Antlr4"),
       ],
       exclude: [
-        "Path/Parsing/Path.g4",
-        "Path/Parsing/Path.interp",
-        "Path/Parsing/Path.tokens",
-        "Path/Parsing/PathLexer.interp",
-        "Path/Parsing/PathLexer.tokens",
+        "Path/Path.g4",
       ],
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins"),

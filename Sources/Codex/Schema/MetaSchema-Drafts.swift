@@ -7,6 +7,7 @@
 
 extension MetaSchema {
 
+  /// The list of drafts that are currently supported.
   public static let drafts: [MetaSchema] = [
     .v2020_12
   ]

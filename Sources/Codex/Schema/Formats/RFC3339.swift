@@ -7,6 +7,8 @@
 
 import BigDecimal
 
+/// Namespace for RFC-3339 related types and functions.
+///
 public struct RFC3339 {
 
   /// Represents a full date (YYYY-MM-DD).
@@ -18,7 +20,13 @@ public struct RFC3339 {
     /// Day of the month (DD).
     public var day: Int
 
-    public init(year: Int, month: Int, day: Int) {
+    /// Initializes a FullDate with the given year, month, and day.
+    ///
+    /// - Parameters:
+    ///   - year: The year (YYYY).
+    ///   - month: The month (MM).
+    ///   - day: The day of the month (DD).
+    public init?(year: Int, month: Int, day: Int) {
       self.year = year
       self.month = month
       self.day = day
@@ -26,7 +34,7 @@ public struct RFC3339 {
 
     /// Parses a `full-date` string (YYYY-MM-DD) per RFC3339.
     ///
-    /// - Parameter input: The full-date string.
+    /// - Parameter string: The full-date string.
     /// - Returns: A FullDate instance if valid; otherwise, nil.
     public static func parse(string: String) -> FullDate? {
       // Swift regex literal for full-date with named capture groups.
@@ -83,6 +91,14 @@ public struct RFC3339 {
     /// Time offset from UTC in seconds.
     public var tzOffset: Int
 
+    /// Initializes a FullTime with the given hour, minute, second, and timezone offset.
+    ///
+    /// - Parameters:
+    ///  - hour: The hour (HH).
+    ///  - minute: The minute (MM).
+    ///  - second: The second (SS[.SSSSSSSSS]).
+    ///  - tzOffset: The timezone offset from UTC in seconds.
+    ///
     public init(hour: Int, minute: Int, second: BigDecimal, tzOffset: Int) {
       self.hour = hour
       self.minute = minute
@@ -92,7 +108,7 @@ public struct RFC3339 {
 
     /// Parses a `full-time` string (HH:MM:SS[.fraction](Z|[+-]HH:MM)) per RFC3339.
     ///
-    /// - Parameter input: The full-time string.
+    /// - Parameter string: The full-time string.
     /// - Returns: A FullTime instance if valid; otherwise, nil.
     public static func parse(string: String) -> FullTime? {
       // Swift regex literal for full-time with named capture groups.
@@ -163,6 +179,12 @@ public struct RFC3339 {
     /// The full time component.
     public var time: FullTime
 
+    /// Initializes a DateTime with the given date and time components.
+    ///
+    /// - Parameters:
+    ///   - date: The full date component.
+    ///   - time: The full time component.
+    ///
     public init(date: FullDate, time: FullTime) {
       self.date = date
       self.time = time
@@ -170,8 +192,9 @@ public struct RFC3339 {
 
     /// Parses a complete `date-time` string (full-date "T" full-time) per RFC3339.
     ///
-    /// - Parameter input: The date-time string.
+    /// - Parameter string: The date-time string.
     /// - Returns: A DateTime instance if valid; otherwise, nil.
+    ///
     public static func parse(string: String) -> DateTime? {
       // Split the input at the literal "T" to separate the date and time.
       let parts = string.split(separator: "T", maxSplits: 1)
@@ -189,6 +212,22 @@ public struct RFC3339 {
       }
 
       return DateTime(date: date, time: time)
+    }
+
+    public func asValue() -> Value {
+      return [
+        "date": [
+          "year": .number(date.year),
+          "month": .number(date.month),
+          "day": .number(date.day),
+        ],
+        "time": [
+          "hour": .number(time.hour),
+          "minute": .number(time.minute),
+          "second": .number(time.second),
+          "tzOffset": .number(time.tzOffset),
+        ],
+      ]
     }
   }
 
@@ -217,6 +256,12 @@ public struct RFC3339 {
     /// The time component of the duration.
     public var time: Time?
 
+    /// Initializes a Duration with the given period and time components.
+    ///
+    /// - Parameters:
+    ///  - period: The period component.
+    ///  - time: The time component.
+    ///
     public init(period: Period?, time: Time?) {
       self.period = period
       self.time = time

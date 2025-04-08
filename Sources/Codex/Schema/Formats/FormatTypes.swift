@@ -9,15 +9,24 @@ import Foundation
 import BigDecimal
 import ScreamURITemplate
 
+/// Local fprmat type registry.
+///
 public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
 
+  /// Errors related to format types.
   public enum Error: Swift.Error {
+
+    /// The format type is unknown.
     case unknownFormat(String)
   }
 
-  public private(set) var formats: [String: Schema.FormatType] = [:]
+  private var formats: [String: Schema.FormatType] = [:]
   private let lock = NSLock()
 
+  /// Initializes the type registry with the default format types.
+  ///
+  /// - Note: This initializer registers the default format types.
+  ///
   public init() {
     // Register the draft 2020-12 formats
     register(format: FormatTypes.DateTimeType.instance)
@@ -41,6 +50,12 @@ public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
     register(format: FormatTypes.RegexType.instance)
   }
 
+  /// Locates a format by type identifier.
+  ///
+  /// - Parameter id: The identifier of the format type to locate.
+  /// - Returns: The format type associated with the identifier.
+  /// - Throws: An error if the format type is unknown.
+  ///
   public func locate(formatType id: String) throws -> Schema.FormatType {
     try lock.withLock {
       guard let format = formats[id] else {
@@ -50,6 +65,10 @@ public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
     }
   }
 
+  /// Registers a format type.
+  ///
+  /// - Parameter format: The format type to register.
+  ///
   public func register(format: Schema.FormatType) {
     lock.withLock {
       formats[format.identifier] = format
@@ -60,6 +79,7 @@ public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
 
 extension FormatTypes {
 
+  /// RFC 3339 date-time format type.
   public enum DateTimeType: Schema.FormatType {
     case instance
 
@@ -71,8 +91,19 @@ extension FormatTypes {
       }
       return RFC3339.DateTime.parse(string: string) != nil
     }
+
+    public func convert(_ value: Value) -> Value? {
+      guard case .string(let string) = value else {
+        return nil
+      }
+      guard let value = RFC3339.DateTime.parse(string: string) else {
+        return nil
+      }
+      return value.asValue()
+    }
   }
 
+  /// RFC 3339 date format type.
   public enum DateType: Schema.FormatType {
     case instance
 
@@ -92,6 +123,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 3339 time format type.
   public enum TimeType: Schema.FormatType {
     case instance
 
@@ -113,6 +145,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 3339 duration format type.
   public enum DurationType: Schema.FormatType {
     case instance
 
@@ -126,6 +159,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 5321 email format type.
   public enum EmailType: Schema.FormatType {
     case instance
 
@@ -139,6 +173,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 6531 IDN email format type.
   public enum IdnEmailType: Schema.FormatType {
     case instance
 
@@ -152,6 +187,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 1123 hostname format type.
   public enum HostnameType: Schema.FormatType {
     case instance
 
@@ -165,6 +201,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 5890 IDN hostname format type.
   public enum IdnHostnameType: Schema.FormatType {
     case instance
 
@@ -178,6 +215,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 2673 IPv4 address format type.
   public enum Ipv4Type: Schema.FormatType {
     case instance
 
@@ -191,6 +229,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 4291 IPv6 address format type.
   public enum Ipv6Type: Schema.FormatType {
     case instance
 
@@ -204,6 +243,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 3986 URI format type.
   public enum URIType: Schema.FormatType {
     case instance
 
@@ -217,10 +257,11 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 3986 URI reference format type.
   public enum URIReferenceType: Schema.FormatType {
     case instance
 
-    public var identifier: String { "uri" }
+    public var identifier: String { "uri-reference" }
 
     public func validate(_ value: Value) -> Bool {
       guard case .string(let string) = value else {
@@ -233,7 +274,7 @@ extension FormatTypes {
   public enum IRIType: Schema.FormatType {
     case instance
 
-    public var identifier: String { "uri" }
+    public var identifier: String { "iri" }
 
     public func validate(_ value: Value) -> Bool {
       guard case .string(let string) = value else {
@@ -247,7 +288,7 @@ extension FormatTypes {
   public enum IRIReferenceType: Schema.FormatType {
     case instance
 
-    public var identifier: String { "uri" }
+    public var identifier: String { "iri-reference" }
 
     public func validate(_ value: Value) -> Bool {
       guard case .string(let string) = value else {
@@ -258,6 +299,7 @@ extension FormatTypes {
     }
   }
 
+  /// UUID format type.
   public enum UUIDType: Schema.FormatType {
     case instance
 
@@ -271,6 +313,7 @@ extension FormatTypes {
     }
   }
 
+  /// RFC 6570 URI template format type.
   public enum URITemplateType: Schema.FormatType {
     case instance
 
@@ -289,6 +332,7 @@ extension FormatTypes {
     }
   }
 
+  /// JSON Pointer format type.
   public enum JSONPointerType: Schema.FormatType {
     case instance
 
@@ -302,6 +346,7 @@ extension FormatTypes {
     }
   }
 
+  /// Relative JSON Pointer format type.
   public enum RelativeJSONPointerType: Schema.FormatType {
     case instance
 
@@ -315,6 +360,7 @@ extension FormatTypes {
     }
   }
 
+  /// Regular expression format type.
   public enum RegexType: Schema.FormatType {
     case instance
 

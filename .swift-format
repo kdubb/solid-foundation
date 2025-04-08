@@ -11,7 +11,7 @@
   "respectsExistingLineBreaks" : true,
   "spacesBeforeEndOfLineComments" : 4,
   "rules" : {
-    "AllPublicDeclarationsHaveDocumentation" : true,
+    "AllPublicDeclarationsHaveDocumentation" : false,
     "AlwaysUseLiteralForEmptyCollectionInit" : true,
     "BeginDocumentationCommentWithOneLineSummary" : true,
     "IdentifiersMustBeASCII" : false,

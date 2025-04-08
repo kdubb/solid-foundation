@@ -223,10 +223,10 @@ extension Schema {
         let missing = properties.subtracting(objectInstance.keys.compactMap(\.string))
         if !missing.isEmpty {
 
-          guard missing.count == 1 else {
+          guard let firstMissing = missing.first, missing.count == 1 else {
             return .invalid("Missing required properties \(missing.map { "'\($0)'" }.joined(separator: ","))")
           }
-          return .invalid("Missing required property '\(missing.first!)'")
+          return .invalid("Missing required property '\(firstMissing)'")
 
         }
 

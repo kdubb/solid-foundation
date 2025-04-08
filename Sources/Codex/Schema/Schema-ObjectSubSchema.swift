@@ -158,7 +158,7 @@ extension Schema {
 
       return ObjectSubSchema(
         id: context.canonicalId,
-        keywordLocation: context.instanceLocation,
+        keywordLocation: context.schemaInstanceLocation,
         anchor: context.anchor,
         dynamicAnchor: context.dynamicAnchor,
         instance: schemaInstance,
@@ -201,13 +201,20 @@ extension Schema {
 extension Schema.ObjectSubSchema: Schema.SubSchemaLocator {
 
   public func locate(fragment: String, allowing refTypes: Schema.RefTypes) -> (any Schema.SubSchema)? {
+    assert(!refTypes.contains(.canonical), "Canonical reference type not allowed for fragment lookup")
 
     if isReferencingFragment(fragment, allowing: refTypes) {
       return self
     }
 
     for subSchema in subSchemas {
-      if let located = subSchema.locate(fragment: fragment, allowing: refTypes) {
+
+      // Resources are included in sub-schemas to allow them to be located. For scoped searches (e.g.,
+      // anchor and dynamicAnchor) resources are "out of scope" and must not be considered.
+
+      let subSchemaRefTypes = subSchema is Schema ? refTypes.subtracting([.anchor, .dynamicAnchor]) : refTypes
+
+      if let located = subSchema.locate(fragment: fragment, allowing: subSchemaRefTypes) {
         return located
       }
     }

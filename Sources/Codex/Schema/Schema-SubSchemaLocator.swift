@@ -7,9 +7,9 @@
 
 extension Schema {
 
-  /// Locator for ``Schema/SubSchema``s by fragment identifier.
+  /// Locator for ``Schema/SubSchema-swift.protocol`` s by fragment identifier.
   ///
-  /// This protocol defines a locator for a sub-schema by their fragment identifier. The method allows for determining the
+  /// Locates a sub-schema by their fragment identifier. The method allows for determining the
   /// types of fragment identifiers that are considered during location.
   ///
   public protocol SubSchemaLocator: Sendable {

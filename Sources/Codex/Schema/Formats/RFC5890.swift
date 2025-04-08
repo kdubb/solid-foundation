@@ -8,6 +8,8 @@
 import Foundation
 import RegexBuilder
 
+/// Namespace for RFC-5890 related types and functions.
+///
 public enum RFC5890 {
 
   /// A structure representing a validated hostname.

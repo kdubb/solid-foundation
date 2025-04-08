@@ -14,6 +14,18 @@ extension Schema {
     public typealias Keyword = Schema.Keyword
 
     public static func build(
+      constant schemaInstance: Value,
+      resourceId: URI = defaultId,
+      options: Schema.Options = .default
+    ) -> Schema {
+      do {
+        return try build(from: schemaInstance, resourceId: resourceId, options: options)
+      } catch {
+        fatalError("Failed to build schema: \(error)")
+      }
+    }
+
+    public static func build(
       from schemaInstance: Value,
       resourceId: URI = defaultId,
       options: Schema.Options = .default

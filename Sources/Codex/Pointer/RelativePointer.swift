@@ -94,6 +94,11 @@ public struct RelativePointer: Equatable, Hashable, CustomStringConvertible {
     }
   }
 
+  /// Applies this pointer to the given pointer to produce a new absolute pointer.
+  ///
+  /// - Parameter pointer: The pointer to which this relative pointer is applied.
+  /// - Returns: A new Pointer that represents the absolute location.
+  ///
   public func relative(to pointer: Pointer) -> Pointer? {
     var pointer: Pointer = pointer
     for _ in 0..<up {

@@ -44,6 +44,7 @@ extension Schema {
     /// adjacent keywords in sub-schemas.
     ///
     /// - Parameter type: The type of behavior to locate.
+    /// - Returns: The located behavior if found, otherwise `nil`.
     func behavior<K: KeywordBehavior & BuildableKeywordBehavior>(_ type: K.Type) -> K?
 
     /// Validates an instance against the schema.

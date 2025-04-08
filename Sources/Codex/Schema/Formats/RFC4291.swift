@@ -7,6 +7,8 @@
 
 import Foundation
 
+/// Namespace for RFC-3339 related types and functions.
+///
 public enum RFC4291 {
 
   /// A structure representing an IPv6 address as eight 16‑bit groups.
@@ -31,6 +33,7 @@ public enum RFC4291 {
     /// - Mixed notation: an embedded IPv4 address in the last 32 bits.
     ///
     /// - Parameter string: The IPv6 address string.
+    /// - Returns: An IPv6Address instance if the string is valid; otherwise, nil.
     public static func parse(string: String) -> IPv6Address? {
       // Handle empty string
       if string.isEmpty {

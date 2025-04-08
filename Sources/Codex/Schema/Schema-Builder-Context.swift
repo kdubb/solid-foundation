@@ -129,6 +129,15 @@ extension Schema.Builder {
         .neverNil("No instance at \(scope.relativeInstanceLocation)")
     }
 
+    public var schemaInstanceLocation: Pointer {
+      let scope = currentScope
+      return if scope.isResourceRoot {
+        scope.instanceLocation
+      } else {
+        scope.instanceLocation / scope.relativeInstanceLocation
+      }
+    }
+
     public var instanceLocation: Pointer {
       let scope = currentScope
       return if scope.isResourceRoot {
@@ -163,15 +172,15 @@ extension Schema.Builder {
     }
 
     public var locationId: URI {
-      baseId.replacing(fragment: instanceLocation.encoded)
+      baseId.updating(fragmentPointer: instanceLocation)
     }
 
     public var anchorId: URI? {
-      anchor.map { baseId.replacing(fragment: $0) }
+      anchor.map { baseId.updating(.fragment($0)) }
     }
 
     public var dynamicAnchorId: URI? {
-      dynamicAnchor.map { baseId.replacing(fragment: $0) }
+      dynamicAnchor.map { baseId.updating(.fragment($0)) }
     }
 
     public var canonicalId: URI {
@@ -245,9 +254,8 @@ extension Schema.Builder {
 
       if let schema = subSchema as? Schema {
         currentScope.resources.append(schema)
-      } else {
-        currentScope.subSchemas.append(subSchema)
       }
+      currentScope.subSchemas.append(subSchema)
 
       return subSchema
     }
@@ -328,7 +336,7 @@ extension Schema.Builder {
 
     public func locate(schemaId: URI) throws -> Schema.SubSchema? {
       try options.schemaLocator.locate(schemaId: schemaId.removing(.fragment), options: options)?
-        .locate(fragment: schemaId.fragment ?? "", allowing: .standard)
+        .locate(fragment: schemaId.fragment ?? "", allowing: .standard.subtracting([.canonical]))
     }
 
     internal func tracePre() {

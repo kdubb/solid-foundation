@@ -150,6 +150,11 @@ numLiteral
   : NUMBER
   ;
 
+stringLiteral
+  : SQ_STRING
+  | DQ_STRING
+  ;
+
 comparable
   : literal
   | singularQuery
@@ -184,11 +189,6 @@ nameSegment
 
 indexSegment
   : OPEN_BRACKET indexSelector CLOSE_BRACKET
-  ;
-
-stringLiteral
-  : SQ_STRING
-  | DQ_STRING
   ;
 
 functionName

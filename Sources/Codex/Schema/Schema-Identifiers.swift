@@ -9,7 +9,7 @@ extension Schema {
 
   public enum Identifiers {
 
-    public static let anchorRegex = try! Pattern(pattern: #"^[A-Za-z_][A-Za-z0-9._-]*$"#)
+    public static let anchorRegex = Pattern(valid: #"^[A-Za-z_][A-Za-z0-9._-]*$"#)
 
     public struct Id$: IdentifierBehavior, BuildableKeywordBehavior {
 
@@ -72,7 +72,7 @@ extension Schema {
             try context.invalidValue("Meta schema must be a root (resource or embedded) schema")
           }
 
-          context.schema = try MetaSchema.Builder.build(from: schema)
+          context.schema = MetaSchema.Builder.build(from: schema)
 
           return
 

@@ -6,15 +6,28 @@
 //
 import Foundation
 
+/// Namespace for RFC-6531 related types and functions.
+///
 public enum RFC6531 {
 
   /// A structure representing an Internationalized (IDN) email address.
   public struct Mailbox {
-    /// The local-part (before the "@").
+    /// Local identifier.
+    ///
+    /// The local identifier is before the "@" in a mailbox address and can consist of a dot-string or a quoted-string.
     public let local: String
-    /// The domain (after the "@"). Domain literals retain their enclosing brackets.
+
+    /// Mailbox domain.
+    ///
+    /// The domain is after the "@" in an address and can be a dot-string of labels or a domain-literal.
     public let domain: String
 
+    /// Initializes a Mailbox instance.
+    ///
+    /// - Parameters:
+    ///  - local: The local identifier of the mailbox.
+    ///  - domain: The domain of the mailbox.
+    ///
     public init(local: String, domain: String) {
       self.local = local
       self.domain = domain
@@ -55,6 +68,10 @@ public enum RFC6531 {
       return Mailbox(local: local, domain: domain)
     }
 
+    /// Validates the local part of an email address.
+    ///
+    /// - Parameter local: The local part of the email address.
+    /// - Returns: `true` if valid; otherwise, `false`.
     public static func validate(local: String) -> Bool {
 
       // Check max length of local part
@@ -72,11 +89,11 @@ public enum RFC6531 {
       return true
     }
 
-    public static func isQuotedString(_ string: String) -> Bool {
+    private static func isQuotedString(_ string: String) -> Bool {
       string.hasPrefix("\"") && string.hasSuffix("\"")
     }
 
-    public static func validate(quotedString: String) -> Bool {
+    private static func validate(quotedString: String) -> Bool {
 
       let content = quotedString.dropFirst().dropLast()
 
@@ -110,6 +127,10 @@ public enum RFC6531 {
       return true
     }
 
+    /// Validates the domain part of an email address.
+    ///
+    /// - Parameter domain: The domain part of the email address.
+    /// - Returns: `true` if valid; otherwise, `false`.
     public static func validate(domain: String) -> Bool {
       // If the domain is a literal, we need to validate the content
       if isDomainLiteral(domain) {
@@ -130,28 +151,28 @@ public enum RFC6531 {
       return true
     }
 
-    public static func isDomainLiteral(_ string: String) -> Bool {
+    private static func isDomainLiteral(_ string: String) -> Bool {
       string.hasPrefix("[") && string.hasSuffix("]")
     }
 
-    public static func validate(domainLiteral: String) -> Bool {
+    private static func validate(domainLiteral: String) -> Bool {
       let literalContent = String(domainLiteral.dropFirst().dropLast())
       return validateIPv4AddressLiteral(literalContent)
         || validateIPv6AddressLiteral(literalContent) || validateGeneralLiteral(literalContent)
     }
 
-    public static func validateIPv4AddressLiteral(_ string: String) -> Bool {
+    private static func validateIPv4AddressLiteral(_ string: String) -> Bool {
       RFC2673.IPv4Address.parse(string: string) != nil
     }
 
-    public static let ipv6LiteralPrefix = "IPv6:"
+    private static let ipv6LiteralPrefix = "IPv6:"
 
-    public static func validateIPv6AddressLiteral(_ string: String) -> Bool {
+    private static func validateIPv6AddressLiteral(_ string: String) -> Bool {
       string.hasPrefix(Self.ipv6LiteralPrefix)
         && RFC4291.IPv6Address.parse(string: String(string.trimmingPrefix(Self.ipv6LiteralPrefix))) != nil
     }
 
-    public static func validateGeneralLiteral(_ string: String) -> Bool {
+    private static func validateGeneralLiteral(_ string: String) -> Bool {
       let parts = string.split(separator: ":", maxSplits: 2)
       guard parts.count == 2 else {
         return false

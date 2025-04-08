@@ -9,6 +9,8 @@ import Foundation
 
 extension URL {
 
+  /// Returns a `URI` object equivalent to this URL, or `nil` if the URL is not a valid URI.
+  ///
   public var uri: URI? { URI(encoded: absoluteString) }
 
 }

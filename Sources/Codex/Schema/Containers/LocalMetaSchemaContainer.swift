@@ -35,7 +35,7 @@ public class MetaSchemaContainer: MetaSchemaLocator, @unchecked Sendable {
       return nil
     }
 
-    let metaSchema = try MetaSchema.Builder.build(from: metaSchemaInstance)
+    let metaSchema = MetaSchema.Builder.build(from: metaSchemaInstance)
 
     schemasLock.withLock {
       schemas[metaSchemaId] = metaSchema

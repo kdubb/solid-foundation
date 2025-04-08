@@ -8,6 +8,8 @@
 import Foundation
 import RegexBuilder
 
+/// Namespace for RFC-1123 related types and functions.
+///
 public enum RFC1123 {
 
   /// A structure representing a validated hostname.
