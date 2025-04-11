@@ -303,7 +303,7 @@ public struct JSONSchemaTestSuite {
 
       @Test(
         "Ecmascript Regex",
-        .disabled("Failing, uninvestigated"),
+        .disabled("Swift's regex engine is not compatible with ECMA regex syntax"),
         arguments: draft.tests(group: "optional/ecmascript-regex")
       )
       func ecmascriptRegex(testCase: TestCase, test: Test) throws {
