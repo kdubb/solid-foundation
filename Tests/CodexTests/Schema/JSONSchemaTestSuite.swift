@@ -318,7 +318,6 @@ public struct JSONSchemaTestSuite {
 
       @Test(
         "Format Assertion",
-        .disabled("Failing, uninvestigated"),
         arguments: draft.tests(group: "optional/format-assertion")
       )
       func formatAssertion(testCase: TestCase, test: Test) throws {

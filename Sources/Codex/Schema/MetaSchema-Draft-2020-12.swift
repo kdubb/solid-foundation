@@ -12,15 +12,17 @@ extension MetaSchema {
   public static let v2020_12 = MetaSchema(
     id: Draft2020_12.id,
     vocabularies: [
-      Draft2020_12.Vocabularies.core,
-      Draft2020_12.Vocabularies.applicator,
-      Draft2020_12.Vocabularies.validation,
-      Draft2020_12.Vocabularies.unevaluated,
-      Draft2020_12.Vocabularies.formatAssertion,
-      Draft2020_12.Vocabularies.content,
-      Draft2020_12.Vocabularies.metadata,
+      Draft2020_12.Vocabularies.core: true,
+      Draft2020_12.Vocabularies.applicator: true,
+      Draft2020_12.Vocabularies.validation: true,
+      Draft2020_12.Vocabularies.unevaluated: true,
+      Draft2020_12.Vocabularies.formatAssertion: true,
+      Draft2020_12.Vocabularies.content: true,
+      Draft2020_12.Vocabularies.metadata: true,
     ],
-    keywordBehaviors: [:],
+    keywordBehaviors: [
+      .dependencies: Schema.Objects.Dependencies.self,
+    ],
     schemaLocator: Draft2020_12.instance
   )
 

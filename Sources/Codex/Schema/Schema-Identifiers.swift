@@ -5,6 +5,8 @@
 //  Created by Kevin Wooten on 2/6/25.
 //
 
+import OrderedCollections
+
 extension Schema {
 
   public enum Identifiers {
@@ -129,7 +131,7 @@ extension Schema {
 
       public static let keyword: Schema.Keyword = .vocabulary$
 
-      public let vocabularies: [MetaSchema.Vocabulary]
+      public let vocabularies: OrderedDictionary<MetaSchema.Vocabulary, Bool>
 
       public static func build(from keywordInstance: Value, context: inout Builder.Context) throws -> Self? {
 
@@ -146,7 +148,7 @@ extension Schema {
           try context.invalidValue("'\(Keyword.vocabulary$)' may only be used in meta-schemas")
         }
 
-        var vocabularies: [MetaSchema.Vocabulary] = []
+        var vocabularies: OrderedDictionary<MetaSchema.Vocabulary, Bool> = [:]
 
         for (vocabularyIdx, (vocabularyIdInstance, requiredInstance)) in vocabularyIds.enumerated() {
 
@@ -159,7 +161,7 @@ extension Schema {
           }
 
           if let vocabulary = try context.locate(vocabularyId: vocabularyId) {
-            vocabularies.append(vocabulary)
+            vocabularies[vocabulary] = required
           } else if required {
             try context.invalidValue(
               "Required vocabulary '\(vocabularyId)' unresolved",

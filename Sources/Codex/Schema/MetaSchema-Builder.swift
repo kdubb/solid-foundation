@@ -17,7 +17,7 @@ extension MetaSchema {
   public struct Builder {
 
     private var id: URI?
-    private var vocabularies: [Vocabulary] = []
+    private var vocabularies: OrderedDictionary<Vocabulary, Bool> = [:]
     private var keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type> = [:]
     private var schemaLocator: SchemaLocator?
     private var options: [URI: any Sendable] = [:]
@@ -26,7 +26,7 @@ extension MetaSchema {
     ///
     public init() {
       self.id = URI(valid: "")
-      self.vocabularies = []
+      self.vocabularies = [:]
       self.keywordBehaviors = [:]
       self.schemaLocator = LocalSchemaContainer.empty
       self.options = [:]
@@ -60,7 +60,7 @@ extension MetaSchema {
     /// - Parameter vocabularies: The ``MetaSchema/vocabularies`` to set.
     /// - Returns: A new ``Builder`` instance with the ``MetaSchema/vocabularies`` set.
     ///
-    public func vocabularies(_ vocabularies: [Vocabulary]) -> Builder {
+    public func vocabularies(_ vocabularies: OrderedDictionary<Vocabulary, Bool>) -> Builder {
       var builder = self
       builder.vocabularies = vocabularies
       return builder
@@ -160,14 +160,21 @@ extension MetaSchema {
     ///
     public static func build(from schema: Schema) -> MetaSchema {
 
-      let vocabularies = schema.behavior(Schema.Identifiers.Vocabulary$.self)?.vocabularies ?? []
+      let vocabularies = schema.behavior(Schema.Identifiers.Vocabulary$.self)?.vocabularies ?? [:]
 
-      return Builder()
+      var builder = Builder()
         .id(schema.id)
         .vocabularies(vocabularies)
         .keywordBehaviors([:])
         .schemaLocator(schema)
-        .build()
+
+      if vocabularies[Draft2020_12.Vocabularies.formatAssertion] != nil {
+        builder = builder.option(Draft2020_12.Options.formatMode, value: .assert)
+      } else {
+        builder = builder.option(Draft2020_12.Options.formatMode, value: .annotate)
+      }
+
+      return builder.build()
     }
 
   }

@@ -45,7 +45,7 @@ public final class MetaSchema {
   /// Id of the meta schema.
   public let id: URI
   /// List of referenced vocabularies.
-  public let vocabularies: [Vocabulary]
+  public let vocabularies: OrderedDictionary<Vocabulary, Bool>
   /// Instance types for types defined locally by the meta-schema.
   public let types: OrderedSet<Schema.InstanceType>
   /// Keyword behaviors for keywords defined locally by the meta-schema.
@@ -74,21 +74,17 @@ public final class MetaSchema {
   ///
   public init(
     id: URI,
-    vocabularies: [Vocabulary],
+    vocabularies: OrderedDictionary<Vocabulary, Bool>,
     keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>,
     schemaLocator: SchemaLocator,
     options: [URI: any Sendable] = [:]
   ) {
     self.id = id
     self.vocabularies = vocabularies
-    self.types = OrderedSet(vocabularies.flatMap { Array($0.types) })
-    self.keywords = OrderedSet(vocabularies.flatMap(\.keywordBehaviors.keys))
+    self.types = OrderedSet(vocabularies.flatMap { Array($0.key.types) })
+    self.keywords = OrderedSet(vocabularies.flatMap { Array($0.key.keywordBehaviors.keys) })
     self.options = options
-    self.keywordBehaviors = vocabularies.reduce(into: [:]) { result, vocabulary in
-      for (keyword, behavior) in vocabulary.keywordBehaviors {
-        result[keyword] = behavior
-      }
-    }
+    self.keywordBehaviors = mergeBehaviors(local: keywordBehaviors, vocabularies: vocabularies.keys)
     self.schemaLocator = schemaLocator
     self.identifierKeywords = OrderedSet(
       self.keywordBehaviors.filter { $0.value is Schema.IdentifierBehavior.Type }.map { $0.key }
@@ -99,6 +95,16 @@ public final class MetaSchema {
     self.reservedKeywords = OrderedSet(
       self.keywordBehaviors.filter { $0.value is Schema.ReservedBehavior.Type }.map { $0.key }
     )
+
+    func mergeBehaviors(local: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>, vocabularies: OrderedSet<Vocabulary>) -> OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type> {
+      var all = local
+      for vocabulary in vocabularies {
+        for (keyword, behavior) in vocabulary.keywordBehaviors {
+          all[keyword] = behavior
+        }
+      }
+      return all
+    }
   }
 
   /// Finds the associated keyword behavior for the given keyword.
