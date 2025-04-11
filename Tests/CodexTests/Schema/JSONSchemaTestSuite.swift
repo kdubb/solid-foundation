@@ -290,7 +290,6 @@ public struct JSONSchemaTestSuite {
 
       @Test(
         "Dependencies Compatibility",
-        .disabled("Failing, uninvestigated"),
         arguments: draft.tests(group: "optional/dependencies-compatibility")
       )
       func dependenciesCompatibility(testCase: TestCase, test: Test) throws {

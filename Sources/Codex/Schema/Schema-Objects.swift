@@ -303,6 +303,55 @@ extension Schema {
       }
     }
 
+    public struct Dependencies: KeywordBehavior, BuildableKeywordBehavior {
+
+      public static let keyword: Keyword = .dependencies
+
+      public let behaviors: [KeywordBehavior]
+
+      public static func build(from keywordInstance: Value, context: inout Builder.Context) throws -> Self? {
+
+        guard let object = keywordInstance.object else {
+          try context.invalidType(requiredType: .object)
+        }
+
+        var behaviors: [KeywordBehavior] = []
+
+        for (key, value) in object {
+
+          if let valueArray = value.array {
+
+            let compat: Value = [key: .array(valueArray)]
+
+            if let behavior = try DependentRequired.build(from: compat, context: &context) {
+              behaviors.append(behavior)
+            }
+
+          } else if value.bool != nil || value.object != nil {
+
+            let compat: Value = [key: value]
+
+            if let behavior = try Applicators.DependentSchemas.build(from: compat, context: &context) {
+              behaviors.append(behavior)
+            }
+
+          }
+        }
+
+        return Self(behaviors: behaviors)
+      }
+
+      public func apply(instance: Value, context: inout Validator.Context) -> Validation {
+        for behavior in behaviors {
+          let result = behavior.apply(instance: instance, context: &context)
+          if !result.isValid {
+            return result
+          }
+        }
+        return .valid
+      }
+    }
+
     public struct PropertyNames: ApplicatorBehavior, BuildableKeywordBehavior {
 
       public static let keyword: Keyword = .propertyNames
