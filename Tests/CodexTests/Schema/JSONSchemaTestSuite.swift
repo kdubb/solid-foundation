@@ -333,18 +333,17 @@ public struct JSONSchemaTestSuite {
         executeTest(testCase: testCase, test: test)
       }
 
-      @Test("No BMP Regex", arguments: draft.tests(group: "optional/non-bmp-regex"))
+      @Test("Non BMP Regex", arguments: draft.tests(group: "optional/non-bmp-regex"))
       func noBmpRegex(testCase: TestCase, test: Test) throws {
         executeTest(testCase: testCase, test: test)
       }
 
       @Test(
         "Ref of Unknown Keyword",
-        .disabled("Failing, uninvestigated"),
         arguments: draft.tests(group: "optional/refOfUnknownKeyword")
       )
       func refOfUnknownKeyword(testCase: TestCase, test: Test) throws {
-        executeTest(testCase: testCase, test: test)
+        executeTest(testCase: testCase, test: test, trace: true)
       }
 
       @Test("Unknown Keyword", arguments: draft.tests(group: "optional/unknownKeyword"))

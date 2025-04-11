@@ -48,8 +48,15 @@ extension Schema {
 
           do {
             if let subSchema = try context.locate(schemaId: schemaId, allowing: .standardAndDynamic) {
+
               self.resolvedSubSchema = subSchema
+
+            } else if let fragmentSubSchema = try Builder.buildDynamicFragment(from: schemaId, context: &context) {
+
+              self.resolvedSubSchema = fragmentSubSchema
+
             } else {
+
               self.resolvedSubSchema = UnresolvedSubSchema(schemaId: schemaId)
             }
           } catch {

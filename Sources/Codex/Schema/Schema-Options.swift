@@ -23,7 +23,7 @@ extension Schema {
       let vocabularyLocator = CompositeVocabularyLocator(locators: defaultVocabularyLocators)
       return Self(
         defaultSchema: .v2020_12,
-        unknownKeywords: .ignore,
+        unknownKeywords: .annotate,
         schemaLocator: schemaLocator,
         metaSchemaLocator: metaSchemaLocator,
         vocabularyLocator: LocalVocabularyContainer(vocabularyLocator: vocabularyLocator),

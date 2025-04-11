@@ -79,5 +79,55 @@ extension Schema {
       )
 
     }
+
+    // Attempts to build a sub-schema from a fragment of a schema resource.
+    //
+    // Rules:
+    // 1. The URI fragment must be a valid, non-empty, pointer
+    // 2. The pointer must not resolve to an applicator keyword
+    // 3. The resource must exist and be a JSON object
+    // 4. The sub-schema cannot create a new scope (e.g., it cannot have an `id` keyword)
+    //
+    internal static func buildDynamicFragment(from schemaId: URI, context: inout Validator.Context) throws -> SubSchema? {
+
+      // Ensure it's a pointer fragment
+      guard let fragment = schemaId.fragment, fragment.count > 1, let pointer = Pointer(encoded: fragment) else {
+        return nil
+      }
+
+      // Ensure it's _not_ an applicator keyword
+      let applicatorKeywords = context.currentScope.metaSchema.applicatorKeywords
+      let pathKeyords = pointer.asArray().map { Keyword(rawValue: $0.description) }.asSet()
+      guard pathKeyords.intersection(applicatorKeywords).isEmpty else {
+        return nil
+      }
+
+      // Locate the resource schema, verify it's an object, and that it doesn't create a new scope
+      guard
+       let resourceSchema = try context.locateResource(schemaId: schemaId),
+       case .object(let subSchemaInstance) = resourceSchema.instance[pointer],
+        subSchemaInstance[Schema.Keyword.id$] == nil
+      else {
+        return nil
+      }
+
+      // Build the subschema
+      do {
+
+        var builderContext = Builder.Context(
+          instance: .object(subSchemaInstance),
+          baseId: context.baseId,
+          options: context.options
+        )
+
+        return try Schema.ObjectSubSchema.build(from: .object(subSchemaInstance), context: &builderContext)
+
+      } catch {
+        // TODO: Need to log failures like this as informational at least. This is a hail mary to locate
+        // a resource schema instead of just failing outright. In any case it would be nice to know
+        // what the failure was.
+        return nil
+      }
+    }
   }
 }

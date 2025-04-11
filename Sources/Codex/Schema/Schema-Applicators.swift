@@ -11,6 +11,26 @@ extension Schema {
 
   public enum Applicators {
 
+    public struct Unknown: ApplicatorBehavior {
+
+      public let keyword: Keyword
+      public let order: KeywordBehaviorOrder = .applicators
+
+      public let subSchema: Schema.SubSchema
+
+      public init(keyword: Keyword, subSchema: Schema.SubSchema) {
+        self.keyword = keyword
+        self.subSchema = subSchema
+      }
+
+      public func apply(instance: Value, context: inout Validator.Context) -> Validation {
+
+        let result = context.validate(instance: .inPlace(instance), using: subSchema)
+
+        return .annotation(.bool(result.isValid))
+      }
+    }
+
     public struct AllOf: CompositeApplicatorBehavior, BuildableKeywordBehavior {
 
       public static let keyword: Keyword = .allOf

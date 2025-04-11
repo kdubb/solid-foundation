@@ -117,44 +117,55 @@ extension Schema {
 
         } else {
 
-          // Handle unknown keywords based on schema options
+          if let unknownSchemaObject = schemaInstance[keyword]?.object {
 
-          switch context.options.unknownKeywords {
+            // Unknown keywords that are objects are treated as sub-schemas
 
-          case .ignore:
-            continue
+            let subSchema = try context.subSchema(for: .object(unknownSchemaObject), at: [keyword])
 
-          case .fail:
-            throw Error.unknownKeyword(keyword.rawValue, location: context.instanceLocation)
+            unknownKeywords[keyword] = Applicators.Unknown(keyword: keyword, subSchema: subSchema)
 
-          case .annotate:
+          } else {
 
-            guard let annotationInstance = context.instance[keyword] else {
-              // This should never happen, but just in case...
+            // Handle unknown keywords based on schema options
+
+            switch context.options.unknownKeywords {
+
+            case .ignore:
               continue
+
+            case .fail:
+              throw Error.unknownKeyword(keyword.rawValue, location: context.instanceLocation)
+
+            case .annotate:
+
+              guard let annotationInstance = context.instance[keyword] else {
+                // This should never happen, but just in case...
+                continue
+              }
+
+              unknownKeywords[keyword] = Annotations.Unknown(keyword: keyword, annotation: annotationInstance)
+
+            case .custom(let handler):
+
+              guard let keywordInstance = context.instance[keyword] else {
+                // This should never happen, but just in case...
+                continue
+              }
+
+              let keywordLocation = context.instanceLocation / keyword
+
+              // Determine custom behavior for unknown keyword, ignoring if nil is returned
+              guard let customKeywordBehavior = try handler(keyword, keywordInstance, keywordLocation) else {
+                continue
+              }
+              unknownKeywords[keyword] = customKeywordBehavior
             }
-
-            unknownKeywords[keyword] = Annotations.Unknown(keyword: keyword, annotation: annotationInstance)
-
-          case .custom(let handler):
-
-            guard let keywordInstance = context.instance[keyword] else {
-              // This should never happen, but just in case...
-              continue
-            }
-
-            let keywordLocation = context.instanceLocation / keyword
-
-            // Determine custom behavior for unknown keyword, ignoring if nil is returned
-            guard let customKeywordBehavior = try handler(keyword, keywordInstance, keywordLocation) else {
-              continue
-            }
-            unknownKeywords[keyword] = customKeywordBehavior
           }
         }
       }
 
-      let keywordBehaviors = context.keywordBehaviors.sorted { $0.value.order < $1.value.order }
+      let keywordBehaviors = context.keywordBehaviors.sorted { $0.value.order < $1.value.order } + unknownKeywords
 
       return ObjectSubSchema(
         id: context.canonicalId,
