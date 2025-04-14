@@ -129,17 +129,30 @@ extension Pointer {
   ///
   /// - Parameter string: The encoded string representation of the pointer
   ///
-  public init?(encoded string: String) {
+  public init?(encoded string: some StringProtocol) {
     var tokens: [ReferenceToken] = []
-    if string == "/" {
-      tokens = [.name("")]
-    } else {
-      for tokenString in string.split(separator: "/") {
-        guard let token = ReferenceToken(encoded: String(tokenString)) else {
-          return nil
-        }
-        tokens.append(token)
+    guard !string.isEmpty else {
+      self.tokens = []
+      return
+    }
+    var segmentStart = string.startIndex
+    let endIndex = string.endIndex
+    while segmentStart < endIndex {
+      guard string.first == "/" else {
+        return nil
       }
+      guard let tokenStart = string.index(segmentStart, offsetBy: 1, limitedBy: endIndex) else {
+        tokens.append(.name(""))
+        return nil
+      }
+      let remaining = string[tokenStart...]
+      let tokenEnd = remaining.firstIndex(of: "/") ?? remaining.endIndex
+      let token = remaining[..<tokenEnd]
+      guard let token = ReferenceToken(encoded: String(token)) else {
+        return nil
+      }
+      tokens.append(token)
+      segmentStart = tokenEnd
     }
     self.tokens = tokens
   }

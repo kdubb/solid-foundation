@@ -47,8 +47,12 @@ public final class MetaSchema {
   /// List of referenced vocabularies.
   public let vocabularies: OrderedDictionary<Vocabulary, Bool>
   /// Instance types for types defined locally by the meta-schema.
+  public let localTypes: OrderedSet<Schema.InstanceType>
+  /// Instance types for types defined locally and by the vocabularies referenced by the meta-schema.
   public let types: OrderedSet<Schema.InstanceType>
   /// Keyword behaviors for keywords defined locally by the meta-schema.
+  public let localKeywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>
+  /// Keyword behaviors for keywords defined locally and by the vocabularies referenced by the meta-schema.
   public let keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>
   /// Locator for schema instances associated with the meta-schema and vocabularies referenced by this meta-schema.
   public let schemaLocator: SchemaLocator
@@ -75,16 +79,19 @@ public final class MetaSchema {
   public init(
     id: URI,
     vocabularies: OrderedDictionary<Vocabulary, Bool>,
-    keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>,
+    localTypes: OrderedSet<Schema.InstanceType>,
+    localKeywordBehaviors: OrderedDictionary<Keyword, any Schema.KeywordBehaviorBuilder.Type>,
     schemaLocator: SchemaLocator,
     options: [URI: any Sendable] = [:]
   ) {
     self.id = id
     self.vocabularies = vocabularies
-    self.types = OrderedSet(vocabularies.flatMap { Array($0.key.types) })
-    self.keywords = OrderedSet(vocabularies.flatMap { Array($0.key.keywordBehaviors.keys) })
+    self.localTypes = localTypes
+    self.types = localTypes.union(OrderedSet(vocabularies.flatMap { Array($0.key.types) }))
+    self.localKeywordBehaviors = localKeywordBehaviors
+    self.keywordBehaviors = mergeBehaviors(local: localKeywordBehaviors, vocabularies: vocabularies.keys)
     self.options = options
-    self.keywordBehaviors = mergeBehaviors(local: keywordBehaviors, vocabularies: vocabularies.keys)
+    self.keywords = OrderedSet(keywordBehaviors.keys)
     self.schemaLocator = schemaLocator
     self.identifierKeywords = OrderedSet(
       self.keywordBehaviors.filter { $0.value is Schema.IdentifierBehavior.Type }.map { $0.key }
@@ -96,7 +103,10 @@ public final class MetaSchema {
       self.keywordBehaviors.filter { $0.value is Schema.ReservedBehavior.Type }.map { $0.key }
     )
 
-    func mergeBehaviors(local: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>, vocabularies: OrderedSet<Vocabulary>) -> OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type> {
+    func mergeBehaviors(
+      local: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>,
+      vocabularies: OrderedSet<Vocabulary>
+    ) -> OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type> {
       var all = local
       for vocabulary in vocabularies {
         for (keyword, behavior) in vocabulary.keywordBehaviors {

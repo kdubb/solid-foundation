@@ -30,15 +30,10 @@ public enum URI {
   ///   - requirements: A set of requirements that the URI must satisfy
   ///
   public init?(encoded string: String, requirements: Set<Requirement> = []) {
-    guard let components = URLComponents(string: string) else {
+    guard let uri = URI.parse(string: string, requirements: requirements) else {
       return nil
     }
-    let uri = components.lexicalUri
-    if !requirements.allSatisfy({ $0.isSatisfied(by: uri) }) {
-      return nil
-    }
-    // Normalize in case there is no normaliation requirement
-    self = uri.normalized()
+    self = uri
   }
 
   /// Creates a new URI from an encoded string, optionally applying validation requirements.
@@ -73,12 +68,15 @@ public enum URI {
 
   /// Creates a new URI from a URL.
   ///
-  /// - Parameter url: The URL to convert to a URI
-  public init?(url: URL) {
-    guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+  /// - Parameters:
+  ///   - url: The URL to convert to a URI
+  ///   - requirements: A set of requirements that the URI must satisfy
+  ///
+  public init?(url: URL, requirements: Set<Requirement> = []) {
+    guard let uri = URI.parse(string: url.absoluteString, requirements: requirements) else {
       return nil
     }
-    self = components.uri
+    self = uri
   }
 
   /// The encoded string representation of the URI.
@@ -102,6 +100,14 @@ public enum URI {
     }
   }
 
+  /// The absolute URI, if this is an absolute URI.
+  public var absolute: URI.Absolute? {
+    guard case .absolute(let absolute) = self else {
+      return nil
+    }
+    return absolute
+  }
+
   /// Indicates whether the URI is a relative reference.
   ///
   /// A relative reference does not begin with a scheme and colon.
@@ -110,6 +116,14 @@ public enum URI {
       return false
     }
     return true
+  }
+
+  /// The relative reference, if this is a relative reference.
+  public var relativeReference: URI.RelativeReference? {
+    guard case .relativeReference(let relative) = self else {
+      return nil
+    }
+    return relative
   }
 
   /// Indicates whether the URI is in its normalized form.
@@ -124,6 +138,19 @@ public enum URI {
     switch self {
     case .absolute(let absolute): absolute.isNormalized
     case .relativeReference(let relative): relative.isNormalized
+    }
+  }
+
+  /// Indicates whether the URI is properly percent encoded.
+  ///
+  /// A properly percent encoded URI has:
+  /// - All reserved characters percent encoded
+  /// - All non-ASCII characters percent encoded
+  /// - No invalid percent encoding sequences
+  public var isPercentEncoded: Bool {
+    switch self {
+    case .absolute(let absolute): absolute.isPercentEncoded
+    case .relativeReference(let relative): relative.isPercentEncoded
     }
   }
 
@@ -159,7 +186,7 @@ public enum URI {
   ///
   /// Query items are name-value pairs that appear after the question mark in the URI.
   ///
-  public var query: [QueryItem] {
+  public var query: [QueryItem]? {
     switch self {
     case .absolute(let absolute): absolute.query
     case .relativeReference(let relative): relative.query
@@ -426,7 +453,7 @@ extension URI {
     scheme: String,
     authority: URI.Authority,
     path: [URI.PathItem] = [],
-    query: [URI.QueryItem] = [],
+    query: [URI.QueryItem]? = nil,
     fragment: String? = nil
   ) -> Self {
     .absolute(.init(scheme: scheme, authority: authority, path: path, query: query, fragment: fragment))
@@ -443,7 +470,7 @@ extension URI {
   public static func relative(
     authority: URI.Authority? = nil,
     path: [URI.PathItem] = [],
-    query: [URI.QueryItem] = [],
+    query: [URI.QueryItem]? = nil,
     fragment: String? = nil
   ) -> Self {
     .relativeReference(.init(authority: authority, path: path, query: query, fragment: fragment))
@@ -459,7 +486,7 @@ extension URI {
   public static func relative(
     authority: URI.Authority? = nil,
     encodedPath: String,
-    query: [URI.QueryItem] = [],
+    query: [URI.QueryItem]? = nil,
     fragment: String? = nil
   ) -> Self {
     .relativeReference(

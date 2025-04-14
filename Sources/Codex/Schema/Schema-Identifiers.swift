@@ -27,7 +27,7 @@ extension Schema {
 
         guard
           let idRef = keywordInstance.schemaURI(
-            requirements: .kind(.uriReference),
+            requirements: .kinds(.absolute, .relativeReference),
             .fragment(.disallowedOrEmpty),
             .normalized
           )
@@ -55,7 +55,7 @@ extension Schema {
           try context.invalidValue("'\(Keyword.schema$)' must be in a resource root schema")
         }
 
-        guard let schemaId = keywordInstance.schemaURI(requirements: .kind(.uri), .normalized) else {
+        guard let schemaId = keywordInstance.schemaURI(requirements: .kind(.absolute), .normalized) else {
           try context.invalidValue("Must be a valid, normalized, absolute URI")
         }
 
@@ -152,7 +152,7 @@ extension Schema {
 
         for (vocabularyIdx, (vocabularyIdInstance, requiredInstance)) in vocabularyIds.enumerated() {
 
-          guard let vocabularyId = vocabularyIdInstance.schemaURI(requirements: .kind(.uri), .normalized) else {
+          guard let vocabularyId = vocabularyIdInstance.schemaURI(requirements: .kind(.absolute), .normalized) else {
             try context.invalidValue("Must be a valid, normalized, absolute URI", at: vocabularyIdx)
           }
 

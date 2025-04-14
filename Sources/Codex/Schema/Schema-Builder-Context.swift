@@ -234,7 +234,8 @@ extension Schema.Builder {
 
     public mutating func subSchema(
       for schemaInstance: Value,
-      at relLocation: [KeywordLocationToken]
+      at relLocation: [KeywordLocationToken],
+      isUnknown: Bool = false
     ) throws -> Schema.SubSchema {
 
       let prevLocation = pushLocation(relLocation)
@@ -244,7 +245,7 @@ extension Schema.Builder {
 
       let subSchema: Schema.SubSchema
       do {
-        subSchema = try Schema.Builder.build(from: instance, context: &self)
+        subSchema = try Schema.Builder.build(from: instance, context: &self, isUnknown: isUnknown)
       } catch {
         popScope()
         throw error

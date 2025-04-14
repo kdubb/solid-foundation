@@ -11,24 +11,70 @@ extension URI {
   ///
   /// Path items represent individual segments of a URI path,
   /// such as "users", "profile", or "settings" in "/users/profile/settings".
-  public struct PathItem {
-
-    /// The raw value of the path segment.
-    public var value: String
-
-    /// Creates a new path item with the given value.
+  public enum PathItem {
+    /// Empty path segment.
     ///
-    /// - Parameter value: The raw value of the path segment
-    public init(value: String) {
-      self.value = value
-    }
+    /// An empty path segment, such as in "/users//profile". The empty segment is
+    /// encoded as an empty string. Empty segments can appear anywhere in a path
+    /// but when it is the first segment, it represents the root, making it an absolute path.
+    ///
+    /// When normalized, empty segments are removed from the path, unless they are
+    /// the first segment (root) or the last segment. URI parsing *always* normalizes paths,
+    /// thereby removing empty segments.
+    ///
+    case empty
 
-    /// A path item representing the root path.
-    public static let root = PathItem(value: "")
-    /// A path item representing the current directory.
-    public static let current = PathItem(value: ".")
-    /// A path item representing the parent directory.
-    public static let parent = PathItem(value: "..")
+    /// Current directory segment.
+    ///
+    /// Represents the current directory in a path. It is encoded as a single dot ("."). For
+    /// example, in the path "/users/profile/.", the "." represents the current directory
+    /// (i.e., "profile").
+    ///
+    /// Currrent directory segments are primarily useful as the first segment in relative paths.
+    /// In this case, it ensures that a resolved absolute path is relative to the base path's last
+    /// segment. For example, if the relative path is "./profile/settings" and the base path is
+    /// "/root/users", the resolved path would be "/root/users/profile/settings". Without the
+    /// current directory segment (e.g.  "profile/settings"), the relative path becomes a sibling
+    /// of the base path, resulting in "/root/profile/settings".
+    ///
+    /// When normalized, current directory segments are removed from the path, unless they are
+    /// the first segment. URI parsing *always* normalizes paths, thereby removing current segments
+    /// not at the root of the path.
+    ///
+    case current
+
+    /// Parent directory segment.
+    ///
+    /// Represents the parent directory in a path. It is encoded as two dots (".."). For example,
+    /// in the path "/users/profile/..", the ".." represents the parent directory (i.e., "users").
+    ///
+    /// When normalized, parent directory segments are removed from the path, unless they are
+    /// the first segment. URI parsing *always* normalizes paths, thereby removing parent segments
+    /// not at the root of the path.
+    ///
+    case parent
+
+    /// Decoded path segment.
+    ///
+    /// Token segments are any valid segment of in the path that is not ``empty``, ``parent``, or
+    /// ``current``. Tokens are encoded using percent-encoding, which means that reserved characters
+    /// are replaced with their percent-encoded representation. For example, in the path "/users/profile/settings",
+    /// the "users", "profile", and "settings" segments are all token segments.
+    ///
+    /// Using separate case for token segments ensures that you cannot create a segment that gets encoded
+    /// as a special segment. For example, the token segment with ".." gets encoded as "%2E%2E", ensuring
+    /// that it is not interpreted as a parent directory segment.
+    ///
+    case decoded(String)
+
+    /// Name path segment.
+    ///
+    /// Represents a name segment that is not percent-encoded.
+    ///
+    /// > Note! This is a special case for URN style URIs where the path is not percent-encoded. For example,
+    /// > the path "urn:example:12345" would have a single path name segment of "example:12345".
+    ///
+    case name(String)
   }
 
 }
@@ -43,7 +89,30 @@ extension URI.PathItem {
   ///
   /// Characters that are not allowed in URI paths are percent-encoded.
   public var encoded: String {
-    value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+    switch self {
+    case .empty:
+      ""
+    case .current:
+      "."
+    case .parent:
+      ".."
+    case .decoded(let value):
+      if value == "." || value == ".." {
+        value.addingPercentEncoding(withAllowedCharacters: []) ?? ""
+      } else {
+        // Encode the token value using percent-encoding
+        value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+      }
+    case .name(let value):
+      value
+    }
+  }
+
+  public var decoded: String? {
+    guard case .decoded(let value) = self else {
+      return nil
+    }
+    return value
   }
 
 }
@@ -58,11 +127,24 @@ extension Array where Element == URI.PathItem {
   /// - Returns: An array of path items
   public static func from(encoded path: String, absolute: Bool) -> Self {
     let segmentStrings = path.split(separator: "/", omittingEmptySubsequences: false)
-    let prefix: [URI.PathItem] = absolute && segmentStrings.first != "" ? [.root] : []
+    let prefix: [URI.PathItem] = absolute && segmentStrings.first != "" ? [.empty] : []
     guard !segmentStrings.isEmpty && segmentStrings != [""] else {
       return prefix
     }
-    return prefix + segmentStrings.map { URI.PathItem(value: String($0)) }
+    return prefix
+      + segmentStrings.map { segmentString in
+        if segmentString == "." {
+          return .current
+        } else if segmentString == ".." {
+          return .parent
+        } else if segmentString.isEmpty {
+          return .empty
+        } else if let decoded = segmentString.removingPercentEncoding {
+          return .decoded(decoded)
+        } else {
+          return .decoded(String(segmentString))
+        }
+      }
   }
 
   /// Returns the encoded string representation of this path.
@@ -70,8 +152,10 @@ extension Array where Element == URI.PathItem {
   /// - Parameter relative: Whether the path should be treated as relative
   /// - Returns: The encoded path string
   public func encoded(relative: Bool) -> String {
-    if relative && first?.value.contains(":") == true {
+    if relative && first?.encoded.contains(":") == true {
       ([.current] + self).map(\.encoded).joined(separator: "/")
+    } else if count == 1 && first == .empty {
+      "/"
     } else {
       map(\.encoded).joined(separator: "/")
     }
@@ -89,24 +173,29 @@ extension Array where Element == URI.PathItem {
     var segments: [URI.PathItem] = []
     for (idx, segment) in enumerated() {
       switch segment {
-      case .root:
-        if idx == 0 || idx == self.endIndex - 1 {
-          segments.append(.root)
-        }
+      case .empty where idx == 0 || idx == endIndex - 1:
+        segments.append(.empty)
+      case .empty:
+        // skip empty segments not at the start or end
+        break
+      case .current where idx == 0:
+        segments.append(segment)
       case .current:
-        if idx == 0 {
-          segments.append(segment)
-        }
+        // skip current segments not at the start
         break
       case .parent:
+        // remove the last segment if it is not the root
         if !segments.isEmpty {
           segments.removeLast()
+        } else {
+          segments.append(segment)
         }
       default:
+        // add all other segments
         segments.append(segment)
       }
     }
-    return segments == [.root] ? [.root] : segments
+    return segments
   }
 
   /// Returns a new absolute path from this path.
@@ -114,8 +203,8 @@ extension Array where Element == URI.PathItem {
   /// - Returns: A new absolute path
   ///
   public var absolute: Self {
-    if first != .root {
-      return [.root] + self
+    if first != .empty {
+      return [.empty] + self
     }
     return self
   }
@@ -125,7 +214,7 @@ extension Array where Element == URI.PathItem {
   /// - Returns: A new relative path
   ///
   public var relative: Self {
-    if first == .root {
+    if first == .empty {
       return dropFirst().asArray()
     }
     return self

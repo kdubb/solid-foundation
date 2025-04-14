@@ -5,6 +5,7 @@
 //  Created by Kevin Wooten on 2/2/25.
 //
 
+import Algorithms
 import Foundation
 
 extension Schema.Validator {
@@ -185,6 +186,10 @@ extension Schema.Validator {
         }
         scopes[scopes.count - 1] = newValue
       }
+    }
+
+    public var scopeIds: some Sequence<URI> {
+      scopes.lazy.map(\.schema.id).uniqued()
     }
 
     @discardableResult

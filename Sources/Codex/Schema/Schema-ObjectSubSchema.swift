@@ -73,7 +73,11 @@ extension Schema {
     /// determined by the ``Schema/Options/unknownProperties(_:)`` and related convenience methods like
     /// ``Schema/Options/ignoreUnknownProperties()``.
     ///
-    public static func build(from schemaInstance: Value, context: inout Builder.Context) throws -> ObjectSubSchema {
+    public static func build(
+      from schemaInstance: Value,
+      context: inout Builder.Context,
+      isUnknown: Bool = false
+    ) throws -> ObjectSubSchema {
 
       guard let objectInstance = schemaInstance.object else {
         try context.invalidType(requiredType: .object)
@@ -85,6 +89,11 @@ extension Schema {
 
       let presentIdentifierKeywords = unappliedKeywords.intersection(context.schema.identifierKeywords)
       for identifierKeyword in presentIdentifierKeywords where unappliedKeywords.remove(identifierKeyword) != nil {
+
+        if isUnknown && identifierKeyword == .id$ {
+          // If this is an unknown context, we MUST NOT apply the id$ keyword
+          continue
+        }
 
         guard let idKeywordBehaviorType = context.schema.keywordBehavior(for: identifierKeyword) else {
           continue
@@ -121,7 +130,7 @@ extension Schema {
 
             // Unknown keywords that are objects are treated as sub-schemas
 
-            let subSchema = try context.subSchema(for: .object(unknownSchemaObject), at: [keyword])
+            let subSchema = try context.subSchema(for: .object(unknownSchemaObject), at: [keyword], isUnknown: true)
 
             unknownKeywords[keyword] = Applicators.Unknown(keyword: keyword, subSchema: subSchema)
 

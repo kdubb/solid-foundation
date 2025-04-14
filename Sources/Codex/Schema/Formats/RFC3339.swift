@@ -37,46 +37,47 @@ public struct RFC3339 {
     /// - Parameter string: The full-date string.
     /// - Returns: A FullDate instance if valid; otherwise, nil.
     public static func parse(string: String) -> FullDate? {
-      // Swift regex literal for full-date with named capture groups.
-      let regex = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/
+
+      let regex =
+        /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/
+        .asciiOnlyDigits()
+
       guard let match = string.wholeMatch(of: regex) else {
         return nil
       }
 
       guard
         let year = Int(match.output.year),
+        yearRange.contains(year),
         let month = Int(match.output.month),
-        let day = Int(match.output.day)
+        monthRange.contains(month),
+        let day = Int(match.output.day),
+        dayRange.contains(day)
       else {
         return nil
       }
 
-      // Validate month range.
-      guard (1...12).contains(month) else {
-        return nil
-      }
-
-      let daysInMonth: Int
-      switch month {
-      case 1, 3, 5, 7, 8, 10, 12:
-        daysInMonth = 31
-      case 4, 6, 9, 11:
-        daysInMonth = 30
-      case 2:
-        // Leap year check.
-        if (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) {
-          daysInMonth = 29
-        } else {
-          daysInMonth = 28
-        }
-      default:
-        return nil
-      }
+      let isLeapYear = isLeapYear(year)
+      let daysInMonth: Int = isLeapYear ? dayInMonthLeapYear[month - 1] : dayInMonth[month - 1]
       guard (1...daysInMonth).contains(day) else {
         return nil
       }
 
       return FullDate(year: year, month: month, day: day)
+    }
+
+    private static let yearRange = 1...9999
+    private static let monthRange = 1...12
+    private static let dayRange = 1...31
+    private static let dayInMonth = [
+      31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+    ]
+    private static let dayInMonthLeapYear = [
+      31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+    ]
+
+    private static func isLeapYear(_ year: Int) -> Bool {
+      (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
     }
   }
 
@@ -111,25 +112,36 @@ public struct RFC3339 {
     /// - Parameter string: The full-time string.
     /// - Returns: A FullTime instance if valid; otherwise, nil.
     public static func parse(string: String) -> FullTime? {
-      // Swift regex literal for full-time with named capture groups.
-      // Group "fraction" is optional.
-      let regex = /^(?<hour>\d{2}):(?<minute>\d{2}):(?<seconds>\d{2}(\.[0-9]{1,9})?)(?<offset>Z|[+\-]\d{2}:\d{2})$/
+
+      let regex =
+        /^(?<hour>[01]\d|2[0-3]):(?<minute>[0-5]\d):(?<seconds>([0-5]\d|60)(\.[0-9]{1,9})?)(?<offset>Z|[+\-](?:[012]\d):[0-5]\d)$/
+        .asciiOnlyDigits()
+        .asciiOnlyWordCharacters()
+        .ignoresCase()
+
       guard let match = string.wholeMatch(of: regex) else {
         return nil
       }
 
       guard
         let hour = Int(match.output.hour),
-        let minute = Int(match.output.minute)
+        hourRange.contains(hour),
+        let minute = Int(match.output.minute),
+        minuteRange.contains(minute),
+        let second = BigDecimal(string: String(match.output.seconds)),
+        secondRange.contains(second)
       else {
         return nil
       }
-      let second = BigDecimal(String(match.output.seconds))
 
       let tzOffsetStr = match.output.offset
-      var tzOffset: Int = 0
-      if tzOffsetStr == "Z" {
+      let tzOffset: Int
+      let zHour: Int
+      let zMinute: Int
+      if tzOffsetStr.caseInsensitiveCompare("Z") == .orderedSame {
         tzOffset = 0
+        zHour = hour
+        zMinute = minute
       } else {
         // Parse offset in the format ±HH:MM.
         let tzSign: Int = tzOffsetStr.first == "-" ? -1 : 1
@@ -137,39 +149,34 @@ public struct RFC3339 {
         let tzComponents = tzOffsetBody.split(separator: ":")
         guard
           tzComponents.count == 2,
-          let tzOffsetHour = Int(tzComponents[0]),
-          let tzOffsetMinute = Int(tzComponents[1]),
-          (0...14).contains(tzOffsetHour),
-          (0...59).contains(tzOffsetMinute)
+          let offsetHour = Int(tzComponents[0]),
+          let offsetMinute = Int(tzComponents[1]),
+          hourRange.contains(offsetHour),
+          minuteRange.contains(offsetMinute)
         else {
           return nil
         }
-        tzOffset = tzSign * (tzOffsetHour * 3600 + tzOffsetMinute * 60)
+        tzOffset = tzSign * (offsetHour * 3600 + offsetMinute * 60)
+        // Convert local time to UTC by applying the timezone offset
+        let timeSeconds = (((hour * 3600 + minute * 60 - tzOffset) % 86400) + 86400) % 86400
+        zHour = timeSeconds / 3600
+        zMinute = (timeSeconds % 3600) / 60
       }
 
-      // Validate time components.
-      guard
-        (0...23).contains(hour),
-        (0...59).contains(minute)
-      else {
-        return nil
-      }
-
-      // Special handling for leap seconds
-      if second == 60 {
-        // Leap seconds are only valid at 23:59:60Z
-        guard hour == 23 && minute == 59 && tzOffset == 0 else {
-          return nil
-        }
-      } else {
-        // Normal seconds must be in range 0-59
-        guard second >= 0 && second < 60 else {
+      // Validate seconds.
+      if second.truncate() == 60 {
+        // Leap seconds are only valid at 23:59:60
+        guard zHour == 23 && zMinute == 59 else {
           return nil
         }
       }
 
       return FullTime(hour: hour, minute: minute, second: second, tzOffset: tzOffset)
     }
+
+    private static let hourRange = 0...23
+    private static let minuteRange = 0...59
+    private static let secondRange = BigDecimal.zero...BigDecimal("60.999999999")
   }
 
   /// Represents a complete date-time: full-date, the letter "T", and full-time.
@@ -197,12 +204,26 @@ public struct RFC3339 {
     ///
     public static func parse(string: String) -> DateTime? {
       // Split the input at the literal "T" to separate the date and time.
-      let parts = string.split(separator: "T", maxSplits: 1)
+      // Make it case-insensitive by converting to uppercase first
+      let parts = string.uppercased().split(separator: "T", maxSplits: 1)
       guard parts.count == 2 else {
         return nil
       }
       let datePart = String(parts[0])
       let timePart = String(parts[1])
+
+      // Check for invalid trailing Z after timezone offset
+      if timePart.hasSuffix("Z") {
+        if timePart.contains("+") || timePart.contains("-") {
+          return nil
+        }
+      }
+
+      // Check for invalid timezone format
+      if timePart.contains("+") && timePart.contains("-") {
+        // Can't have both + and - in timezone
+        return nil
+      }
 
       guard
         let date = FullDate.parse(string: datePart),
@@ -212,22 +233,6 @@ public struct RFC3339 {
       }
 
       return DateTime(date: date, time: time)
-    }
-
-    public func asValue() -> Value {
-      return [
-        "date": [
-          "year": .number(date.year),
-          "month": .number(date.month),
-          "day": .number(date.day),
-        ],
-        "time": [
-          "hour": .number(time.hour),
-          "minute": .number(time.minute),
-          "second": .number(time.second),
-          "tzOffset": .number(time.tzOffset),
-        ],
-      ]
     }
   }
 
@@ -284,7 +289,9 @@ public struct RFC3339 {
       // Lookahead (?=(?:\d+[YMD]|T(?:\d+[HMS]))
       // ensures that if the weeks alternative is not taken, at least one designator is present.
       let regex =
-        /^P(?:(?<weeks>\d+)W|(?=(?:\d+[YMD]|T(?:\d+[HMS])))(?:(?<years>\d+)Y)?(?:(?<months>\d+)M)?(?:(?<days>\d+)D)?(?:T(?:(?<hours>\d+)H)?(?:(?<minutes>\d+)M)?(?:(?<seconds>\d+(?:\.\d+)?)S)?)?)$/
+        /^P(?:(?<weeks>\d+)W|(?=(?:\d+[YMD]|T(?:\d+[HMS])))(?:(?<years>\d+)Y)?(?:(?<months>\d+)M)?(?:(?<days>\d+)D)?(?:(?<time>T)(?:(?<hours>\d+)H)?(?:(?<minutes>\d+)M)?(?:(?<seconds>\d+(?:\.\d+)?)S)?)?)$/
+        .asciiOnlyDigits()
+        .asciiOnlyWordCharacters()
 
       guard let match = string.wholeMatch(of: regex) else {
         return nil
@@ -326,26 +333,30 @@ public struct RFC3339 {
           }
       }
 
-      var hours: Int?
-      if let hoursStr = output.hours {
-        hours = Int(hoursStr) ?? 0
-      }
-      var minutes: Int?
-      if let minutesStr = output.minutes {
-        minutes = Int(minutesStr) ?? 0
-      }
-      var seconds: BigDecimal?
-      if let secondsStr = output.seconds {
-        seconds = BigDecimal(String(secondsStr))
-      }
 
-      // If any time component is provided, create a Time instance.
-      let time: Time? =
-        if hours != nil || minutes != nil || seconds != nil {
-          Time(hours: hours, minutes: minutes, seconds: seconds)
-        } else {
-          nil
+      let time: Time?
+      if output.time != nil {
+        var hours: Int?
+        if let hoursStr = output.hours {
+          hours = Int(hoursStr) ?? 0
         }
+        var minutes: Int?
+        if let minutesStr = output.minutes {
+          minutes = Int(minutesStr) ?? 0
+        }
+        var seconds: BigDecimal?
+        if let secondsStr = output.seconds {
+          seconds = BigDecimal(String(secondsStr))
+        }
+
+        // If any time component is provided, create a Time instance.
+        guard hours != nil || minutes != nil || seconds != nil else {
+          return nil
+        }
+        time = Time(hours: hours, minutes: minutes, seconds: seconds)
+      } else {
+        time = nil
+      }
 
       return Duration(period: period, time: time)
     }

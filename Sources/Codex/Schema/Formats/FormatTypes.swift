@@ -57,9 +57,9 @@ public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
   /// - Throws: An error if the format type is unknown.
   ///
   public func locate(formatType id: String) throws -> Schema.FormatType {
-    try lock.withLock {
+    lock.withLock {
       guard let format = formats[id] else {
-        throw Error.unknownFormat(id)
+        return UnknownType.instance
       }
       return format
     }
@@ -79,6 +79,20 @@ public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
 
 extension FormatTypes {
 
+  public enum UnknownType: Schema.FormatType {
+    case instance
+
+    public var identifier: String { "" }
+
+    public func validate(_ value: Value) -> Bool {
+      return true
+    }
+
+    public func convert(_ value: Value) -> Value? {
+      return nil
+    }
+  }
+
   /// RFC 3339 date-time format type.
   public enum DateTimeType: Schema.FormatType {
     case instance
@@ -87,7 +101,7 @@ extension FormatTypes {
 
     public func validate(_ value: Value) -> Bool {
       guard case .string(let string) = value else {
-        return false
+        return true    // Non-string values are valid
       }
       return RFC3339.DateTime.parse(string: string) != nil
     }
@@ -99,7 +113,7 @@ extension FormatTypes {
       guard let value = RFC3339.DateTime.parse(string: string) else {
         return nil
       }
-      return value.asValue()
+      return nil
     }
   }
 
@@ -253,7 +267,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return URI(encoded: string, requirements: [.kinds(.uri)]) != nil
+      return URI(encoded: string, requirements: .uri) != nil
     }
   }
 
@@ -267,10 +281,12 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return URI(encoded: string, requirements: [.kinds(.uriReference)]) != nil
+      let uri = URI(encoded: string, requirements: .uriReference)
+      return uri != nil
     }
   }
 
+  /// RFC 3987 IRI format type.
   public enum IRIType: Schema.FormatType {
     case instance
 
@@ -280,11 +296,11 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      // TODO: Implement IRI validation
-      return URI(encoded: string, requirements: [.kinds(.uri)]) != nil
+      return URI(encoded: string, requirements: .iri) != nil
     }
   }
 
+  /// RFC 3987 IRI reference format type.
   public enum IRIReferenceType: Schema.FormatType {
     case instance
 
@@ -294,8 +310,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      // TODO: Implement IRI Reference validation
-      return URI(encoded: string, requirements: [.kinds(.uriReference)]) != nil
+      return URI(encoded: string, requirements: .iriReference) != nil
     }
   }
 
@@ -378,4 +393,5 @@ extension FormatTypes {
       }
     }
   }
+
 }

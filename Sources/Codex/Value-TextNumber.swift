@@ -38,7 +38,7 @@ extension Value.TextNumber: Value.Number {
 
   public var isInteger: Bool {
     let decimal = self.decimal
-    return decimal.rounded() == decimal && !decimal.isNaN && !decimal.isInfinite
+    return decimal.rounded(.towardZero) == decimal && !decimal.isNaN && !decimal.isInfinite
   }
 
   public func asDouble() -> Double {

@@ -22,7 +22,7 @@ extension URI {
     public var path: [PathItem]
 
     /// The query of the URI.
-    public var query: [QueryItem]
+    public var query: [QueryItem]?
 
     /// The fragment of the URI.
     public var fragment: String?
@@ -38,7 +38,7 @@ extension URI {
     public init(
       authority: Authority?,
       path: [PathItem],
-      query: [QueryItem],
+      query: [QueryItem]?,
       fragment: String?,
       normalized: Bool = true
     ) {
@@ -102,12 +102,12 @@ extension URI.RelativeReference {
   /// - Returns: The query item if found, nil otherwise
   ///
   public func query(named name: String) -> URI.QueryItem? {
-    query.first { $0.name == name }
+    query?.first { $0.name == name }
   }
 
   /// Whether the path is absolute.
   public var isAbsolutePath: Bool {
-    path.first == .root
+    path.first == .empty
   }
 
   /// The encoded path of the URI.
@@ -117,7 +117,7 @@ extension URI.RelativeReference {
 
   /// The encoded query of the URI.
   public var encodedQuery: String? {
-    query.nilIfEmpty()?.encoded
+    query?.encoded
   }
 
   /// The encoded fragment of the URI.
@@ -287,14 +287,14 @@ extension URI.RelativeReference {
 
     if selfPath.isEmpty {
       absPath = basePath
-    } else if basePath.isEmpty || (selfPath.count > 1 && selfPath.first == .root) {
-      absPath = selfPath.first != .root ? selfPath : [.root] + selfPath
+    } else if basePath.isEmpty || (selfPath.count > 1 && selfPath.first == .empty) {
+      absPath = selfPath.first != .empty ? selfPath : [.empty] + selfPath
     } else {
       var resPath: [URI.PathItem] = selfPath.first == .current ? basePath : basePath.dropLast()
       for component in selfPath {
         switch component {
         case .current:
-          if resPath.last == .root {
+          if resPath.last == .empty {
             resPath.removeLast()
           }
           break
@@ -307,7 +307,7 @@ extension URI.RelativeReference {
       absPath = resPath
     }
 
-    let query = self.query.nilIfEmpty() ?? base.query
+    let query = self.query ?? base.query
     let fragment = self.fragment ?? base.fragment
 
     return .absolute(
@@ -317,6 +317,29 @@ extension URI.RelativeReference {
         fragment: fragment
       )
     )
+  }
+
+  /// Indicates whether this URI reference is properly percent encoded.
+  ///
+  /// A properly percent encoded URI reference has:
+  /// - All reserved characters percent encoded
+  /// - All non-ASCII characters percent encoded
+  /// - No invalid percent encoding sequences
+  public var isPercentEncoded: Bool {
+    // Check authority if present
+    if let authority = authority {
+      guard authority.isPercentEncoded else { return false }
+    }
+
+    // Check query
+    guard query?.allSatisfy({ $0.isPercentEncoded }) ?? true else { return false }
+
+    // Check fragment
+    if let fragment = fragment {
+      guard fragment.rangeOfCharacter(from: .urlFragmentAllowed.inverted) == nil else { return false }
+    }
+
+    return true
   }
 
 }

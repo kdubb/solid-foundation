@@ -37,18 +37,25 @@ public struct RelativePointer: Equatable, Hashable, CustomStringConvertible {
   }
 
   /// The number of levels to go up from the current location.
-  public let up: Int
+  public let up: Int?
 
   /// The tail part of the relative pointer.
-  public let tail: Tail
+  public let tail: Tail?
 
   /// Returns the encoded relative pointer string.
   public var description: String {
+    guard let tail else {
+      guard let up else {
+        fatalError("Invalid relative pointer: \(self)")
+      }
+      return "\(up)"
+    }
+    let upString = up.map(String.init) ?? ""
     switch tail {
     case .keyIndicator:
-      return "\(up)#"
+      return "\(upString)#"
     case .pointer(let pointer):
-      return "\(up)\(pointer.encoded)"
+      return "\(upString)\(pointer.encoded)"
     }
   }
 
@@ -69,29 +76,54 @@ public struct RelativePointer: Equatable, Hashable, CustomStringConvertible {
   ///     "1/foo" represents 1 level up followed by the JSON pointer "/foo".
   ///
   /// - Parameter string: The encoded relative pointer string.
-  public init?(encoded string: String) {
-    let regex = #/^(?<up>\d+)(?<tail>#|/.*)$/#
+  public init?(encoded string: some StringProtocol) {
 
-    guard let match = string.wholeMatch(of: regex) else {
+    var up: Int? = nil
+    var tail: Tail? = nil
+
+    let startIndex = string.startIndex
+    let endIndex = string.endIndex
+    guard startIndex < endIndex else {
       return nil
     }
 
-    // Extract the 'up' count.
-    self.up = Int(match.output.up) ?? 0
-
-    // Extract the tail component.
-    let tailString = String(match.output.tail)
-    if tailString == "#" {
-      self.tail = .keyIndicator
-    } else {
-      // The tail must start with '/', as per the syntax.
-      guard tailString.first == "/" else { return nil }
-      // Use the existing Pointer initializer to parse the JSON pointer portion.
-      guard let pointer = Pointer(encoded: tailString) else {
+    var index = startIndex
+    parseLoop: while index < endIndex {
+      switch string[index] {
+      case "0" where up == nil && index == startIndex:
+        up = 0
+        index = string.index(after: index)
+      case "1"..."9" where up == nil && index == startIndex:
+        index = string.index(after: index)
+        intUpLoop: while index < endIndex {
+          switch string[index] {
+          case "0"..."9":
+            index = string.index(after: index)
+          case "/", "#":
+            break intUpLoop
+          default:
+            return nil
+          }
+        }
+        guard let count = Int(string[startIndex..<index]) else {
+          return nil
+        }
+        up = count
+      case "#" where up != nil && tail == nil:
+        tail = .keyIndicator
+        index = string.index(after: index)
+      case "/" where up != nil && tail == nil:
+        guard let pointer = Pointer(encoded: string[index...]) else {
+          return nil
+        }
+        tail = .pointer(pointer)
+        break parseLoop
+      default:
         return nil
       }
-      self.tail = .pointer(pointer)
     }
+    self.up = up
+    self.tail = tail
   }
 
   /// Applies this pointer to the given pointer to produce a new absolute pointer.
@@ -101,11 +133,14 @@ public struct RelativePointer: Equatable, Hashable, CustomStringConvertible {
   ///
   public func relative(to pointer: Pointer) -> Pointer? {
     var pointer: Pointer = pointer
-    for _ in 0..<up {
+    for _ in 0..<(up ?? 0) {
       pointer = pointer.parent
       if pointer.tokens.isEmpty {
         break
       }
+    }
+    guard let tail else {
+      return pointer
     }
     switch tail {
     case .keyIndicator:

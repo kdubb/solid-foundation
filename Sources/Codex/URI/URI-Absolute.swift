@@ -18,11 +18,11 @@ extension URI {
     /// The scheme component (e.g., "http", "https").
     public var scheme: String
     /// The authority component.
-    public var authority: Authority
+    public var authority: Authority?
     /// The path component.
     public var path: [PathItem]
     /// The query component.
-    public var query: [QueryItem]
+    public var query: [QueryItem]?
     /// The fragment component.
     public var fragment: String?
 
@@ -37,9 +37,9 @@ extension URI {
     ///   - normalized: Whether to normalize the path
     public init(
       scheme: String,
-      authority: Authority,
+      authority: Authority?,
       path: [PathItem],
-      query: [URI.QueryItem],
+      query: [URI.QueryItem]?,
       fragment: String?,
       normalized: Bool = true
     ) {
@@ -57,6 +57,30 @@ extension URI {
     /// - No trailing slash unless it's the root path
     public var isNormalized: Bool {
       path.isNormalized
+    }
+
+    /// Indicates whether this URI is properly percent encoded.
+    ///
+    /// A properly percent encoded URI has:
+    /// - All reserved characters percent encoded
+    /// - All non-ASCII characters percent encoded
+    /// - No invalid percent encoding sequences
+    public var isPercentEncoded: Bool {
+
+      // Check authority if present
+      if let authority = authority {
+        guard authority.isPercentEncoded else { return false }
+      }
+
+      // Check query
+      guard query?.allSatisfy({ $0.isPercentEncoded }) ?? true else { return false }
+
+      // Check fragment
+      if let fragment = fragment {
+        guard fragment.rangeOfCharacter(from: .urlFragmentAllowed.inverted) == nil else { return false }
+      }
+
+      return true
     }
 
     /// Returns a normalized version of this URI.
@@ -117,7 +141,7 @@ extension URI.Absolute {
   /// - Returns: The query item if found, nil otherwise
   ///
   public func query(named name: String) -> URI.QueryItem? {
-    query.first { $0.name == name }
+    query?.first { $0.name == name }
   }
 
   /// The encoded scheme.
@@ -132,8 +156,8 @@ extension URI.Absolute {
   ///
   /// - Returns: The encoded authority
   ///
-  public var encodedAuthority: String {
-    authority.encoded
+  public var encodedAuthority: String? {
+    authority?.encoded
   }
 
   /// The encoded path.
@@ -149,7 +173,7 @@ extension URI.Absolute {
   /// - Returns: The encoded query, or `nil` if the query is empty
   ///
   public var encodedQuery: String? {
-    query.nilIfEmpty()?.encoded
+    query?.encoded
   }
 
   /// The encoded fragment.
@@ -165,9 +189,11 @@ extension URI.Absolute {
   /// - Returns: The encoded absolute URI
   ///
   public var encoded: String {
+    let authority = encodedAuthority.map { "//\($0)" } ?? ""
     let query = encodedQuery.map { "?\($0)" } ?? ""
     let fragment = encodedFragment.map { "#\($0)" } ?? ""
-    return "\(scheme)://\(encodedAuthority)\(encodedPath)\(query)\(fragment)"
+    let path = encodedPath.isEmpty ? "" : "\(encodedPath)"
+    return "\(scheme):\(authority)\(path)\(query)\(fragment)"
   }
 
   /// Converts this URI to a `Foundation.URL` representation of this absolute URI.
@@ -177,10 +203,10 @@ extension URI.Absolute {
   public var url: URL {
     var components = URLComponents()
     components.scheme = scheme
-    components.encodedHost = authority.encodedHost
-    components.port = authority.port
-    components.percentEncodedUser = authority.userInfo?.encodedUser
-    components.percentEncodedPassword = authority.userInfo?.encodedPassword
+    components.encodedHost = authority?.encodedHost
+    components.port = authority?.port
+    components.percentEncodedUser = authority?.userInfo?.encodedUser
+    components.percentEncodedPassword = authority?.userInfo?.encodedPassword
     components.percentEncodedPath = encodedPath
     components.percentEncodedQuery = encodedQuery
     components.percentEncodedFragment = encodedFragment
@@ -214,13 +240,13 @@ extension URI.Absolute {
       case .scheme(let scheme):
         copy = self.copy(scheme: scheme)
       case .host(let host):
-        copy = self.copy(authority: copy.authority.copy(host: host))
+        copy = self.copy(authority: copy.authority?.copy(host: host))
       case .port(let port):
-        copy = self.copy(authority: copy.authority.copy(port: port))
+        copy = self.copy(authority: copy.authority?.copy(port: port))
       case .user(let user):
-        copy = self.copy(authority: copy.authority.copy(userInfo: copy.authority.userInfo?.copy(user: user)))
+        copy = self.copy(authority: copy.authority?.copy(userInfo: copy.authority?.userInfo?.copy(user: user)))
       case .password(let password):
-        copy = self.copy(authority: copy.authority.copy(userInfo: copy.authority.userInfo?.copy(password: password)))
+        copy = self.copy(authority: copy.authority?.copy(userInfo: copy.authority?.userInfo?.copy(password: password)))
       case .path(let path):
         copy = self.copy(path: path)
       case .query(let query):
@@ -313,11 +339,11 @@ extension URI.Absolute {
     for part in components {
       switch part {
       case .user:
-        result = result.copy(authority: authority.copy(userInfo: .some(authority.userInfo?.copy(user: .some(nil)))))
+        result = result.copy(authority: authority?.copy(userInfo: authority?.userInfo?.copy(user: .some(nil))))
       case .password:
-        result = result.copy(authority: authority.copy(userInfo: .some(authority.userInfo?.copy(password: .some(nil)))))
+        result = result.copy(authority: authority?.copy(userInfo: authority?.userInfo?.copy(password: .some(nil))))
       case .port:
-        result = result.copy(authority: authority.copy(port: .some(nil)))
+        result = result.copy(authority: authority?.copy(port: .some(nil)))
       case .path:
         result = result.copy(path: [])
       case .query:
@@ -372,7 +398,7 @@ extension URI.Absolute {
     }
 
     let relPath = Array([.current] + selfPath.dropFirst(commonPrefixCount))
-    let query = self.query.nilIfEmpty() ?? other.query
+    let query = self.query ?? other.query
     let fragment = self.fragment ?? other.fragment
 
     return .relative(path: relPath, query: query, fragment: fragment)

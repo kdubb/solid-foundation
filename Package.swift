@@ -5,10 +5,10 @@ import PackageDescription
 let package = Package(
   name: "Codex",
   platforms: [
-    .macOS("13.3"),
-    .iOS("16.3"),
-    .tvOS("16.3"),
-    .watchOS("9.3"),
+    .macOS("14"),
+    .iOS("17"),
+    .tvOS("17"),
+    .watchOS("10"),
   ],
   products: [
     .library(
@@ -18,6 +18,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
     .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.1.4")),
+    .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "1.2.0")),
     .package(url: "https://github.com/kdubb/BigDecimal.git", branch: "main"),
     .package(url: "https://github.com/SwiftScream/URITemplate.git", from: "5.0.1"),
     .package(url: "https://github.com/StarLard/SwiftFormatPlugins.git", from: "1.1.1"),
@@ -26,6 +27,7 @@ let package = Package(
     .target(
       name: "Codex",
       dependencies: [
+        .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "BigDecimal", package: "BigDecimal"),

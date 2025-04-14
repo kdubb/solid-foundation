@@ -51,14 +51,18 @@ extension Schema {
       return schema
     }
 
-    internal static func build(from schemaInstance: Value, context: inout Context) throws -> SubSchema {
+    internal static func build(
+      from schemaInstance: Value,
+      context: inout Context,
+      isUnknown: Bool = false
+    ) throws -> SubSchema {
 
       let subSchema: SubSchema =
         switch schemaInstance {
         case .bool:
           try BooleanSubSchema.build(from: schemaInstance, context: &context)
         case .object:
-          try ObjectSubSchema.build(from: schemaInstance, context: &context)
+          try ObjectSubSchema.build(from: schemaInstance, context: &context, isUnknown: isUnknown)
         default:
           try context.invalidValue(options: [Schema.InstanceType.object, Schema.InstanceType.boolean])
         }
@@ -88,7 +92,10 @@ extension Schema {
     // 3. The resource must exist and be a JSON object
     // 4. The sub-schema cannot create a new scope (e.g., it cannot have an `id` keyword)
     //
-    internal static func buildDynamicFragment(from schemaId: URI, context: inout Validator.Context) throws -> SubSchema? {
+    internal static func buildDynamicFragment(
+      from schemaId: URI,
+      context: inout Validator.Context
+    ) throws -> SubSchema? {
 
       // Ensure it's a pointer fragment
       guard let fragment = schemaId.fragment, fragment.count > 1, let pointer = Pointer(encoded: fragment) else {
@@ -104,9 +111,8 @@ extension Schema {
 
       // Locate the resource schema, verify it's an object, and that it doesn't create a new scope
       guard
-       let resourceSchema = try context.locateResource(schemaId: schemaId),
-       case .object(let subSchemaInstance) = resourceSchema.instance[pointer],
-        subSchemaInstance[Schema.Keyword.id$] == nil
+        let resourceSchema = try context.locateResource(schemaId: schemaId),
+        case .object(let subSchemaInstance) = resourceSchema.instance[pointer]
       else {
         return nil
       }
@@ -120,7 +126,11 @@ extension Schema {
           options: context.options
         )
 
-        return try Schema.ObjectSubSchema.build(from: .object(subSchemaInstance), context: &builderContext)
+        return try Schema.ObjectSubSchema.build(
+          from: .object(subSchemaInstance),
+          context: &builderContext,
+          isUnknown: true
+        )
 
       } catch {
         // TODO: Need to log failures like this as informational at least. This is a hail mary to locate

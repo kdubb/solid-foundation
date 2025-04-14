@@ -121,6 +121,20 @@ extension URI.QueryItem {
     return "\(name)=\(value)"
   }
 
+  /// Indicates whether this query item is properly percent encoded.
+  ///
+  /// A properly percent encoded query item has:
+  /// - All reserved characters percent encoded
+  /// - All non-ASCII characters percent encoded
+  /// - No invalid percent encoding sequences
+  public var isPercentEncoded: Bool {
+    guard name.rangeOfCharacter(from: .urlQueryAllowed.inverted) == nil else { return false }
+    if let value = value {
+      guard value.rangeOfCharacter(from: .urlQueryAllowed.inverted) == nil else { return false }
+    }
+    return true
+  }
+
 }
 
 extension Array where Element == URI.QueryItem {

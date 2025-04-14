@@ -211,11 +211,7 @@ struct JSONTokenReader {
 
       case UInt8(ascii: "\\"):
         try source.skip(count: copy + 1)
-        if output != nil {
-          output = try (output ?? "") + makeString(at: stringStart..<stringStart + copy, start: start)
-        } else {
-          output = try makeString(at: stringStart..<stringStart + copy, start: start)
-        }
+        output = try (output ?? "") + makeString(at: stringStart..<stringStart + copy, start: start)
 
         let escaped = try parseEscapeSequence(start: source.location.advanced(by: copy))
         output = (output ?? "") + escaped

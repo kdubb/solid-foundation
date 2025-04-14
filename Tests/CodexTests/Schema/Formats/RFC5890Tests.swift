@@ -139,7 +139,7 @@ final class RFC5890IDNATests {
     #expect(localhostValue == "localhost")
 
     // Test root domain
-    let root = RFC5890.IDNHostname.parse(string: ".")
+    let root = RFC5890.IDNHostname.parse(string: ".", allowRoot: true)
     let rootValue = try #require(root?.value, "Failed to parse root domain")
     #expect(rootValue == "")
 

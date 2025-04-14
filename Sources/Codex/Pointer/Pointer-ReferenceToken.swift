@@ -56,12 +56,40 @@ extension Pointer.ReferenceToken {
   ///
   /// - Parameter string: The encoded string representation
   public init?(encoded string: String) {
-    if string == "-" {
+    if string.isEmpty {
+      self = .name("")
+      return
+    } else if string == "-" {
       self = .append
     } else if string == "0" || string.first != "0", let index = Int(string, radix: 10) {
       self = .index(index)
     } else {
-      self = .name(string.replacingOccurrences(of: "~1", with: "/").replacingOccurrences(of: "~0", with: "~"))
+      var value = ""
+      var index = string.startIndex
+      let lastIndex = string.index(before: string.endIndex)
+      while index < string.endIndex {
+        switch string[index] {
+        case "~":
+          guard index < lastIndex else {
+            return nil
+          }
+          switch string[string.index(after: index)] {
+          case "0":
+            value += "~"
+          case "1":
+            value += "/"
+          default:
+            return nil
+          }
+          index = string.index(after: index)
+        case "\u{0000}"..."\u{002E}", "\u{0030}"..."\u{007D}", "\u{007F}"..."\u{10FFFF}":
+          value.append(string[index])
+        default:
+          return nil
+        }
+        index = string.index(after: index)
+      }
+      self = .name(value)
     }
   }
 

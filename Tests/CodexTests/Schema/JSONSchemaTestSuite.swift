@@ -16,7 +16,7 @@ public struct JSONSchemaTestSuite {
     "Specific Test Cases",
     .disabled(),
     arguments: [
-      (draft: .draft2020_12, group: "ref", case: "root pointer ref", test: "match")
+      (draft: .draft2020_12, group: "unevaluatedItems", case: "unevaluatedItems with $dynamicRef", test: "with no unevaluated items")
     ] as [(Draft.Version, String, String, String)],
   )
   func specificTests(draftVersion: Draft.Version, groupName: String, caseName: String, testName: String) throws {
@@ -343,12 +343,124 @@ public struct JSONSchemaTestSuite {
         arguments: draft.tests(group: "optional/refOfUnknownKeyword")
       )
       func refOfUnknownKeyword(testCase: TestCase, test: Test) throws {
-        executeTest(testCase: testCase, test: test, trace: true)
+        executeTest(testCase: testCase, test: test)
       }
 
       @Test("Unknown Keyword", arguments: draft.tests(group: "optional/unknownKeyword"))
       func unknownKeyword(testCase: TestCase, test: Test) throws {
-        executeTest(testCase: testCase, test: test)
+        executeTest(testCase: testCase, test: test, trace: true)
+      }
+
+      @Suite("Formats") struct Formats {
+
+        @Test("Date-Time", arguments: draft.tests(group: "optional/format/date-time"))
+        func dateTime(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Date", arguments: draft.tests(group: "optional/format/date"))
+        func date(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Duration", arguments: draft.tests(group: "optional/format/duration"))
+        func duration(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test(
+          "Ecmascript Regex",
+          .disabled("Swift's regex engine is not compatible with ECMA regex syntax"),
+          arguments: draft.tests(group: "optional/format/ecmascript-regex")
+        )
+        func ecmascriptRegex(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Email", arguments: draft.tests(group: "optional/format/email"))
+        func email(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Hostname", arguments: draft.tests(group: "optional/format/hostname"))
+        func hostname(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("IDN Email", arguments: draft.tests(group: "optional/format/idn-email"))
+        func idnEmail(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("IDN Hostname", arguments: draft.tests(group: "optional/format/idn-hostname"))
+        func idnHostname(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("IPv4", arguments: draft.tests(group: "optional/format/ipv4"))
+        func ipv4(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("IPv6", arguments: draft.tests(group: "optional/format/ipv6"))
+        func ipv6(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("IRI Reference", arguments: draft.tests(group: "optional/format/iri-reference"))
+        func iriReference(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("IRI", arguments: draft.tests(group: "optional/format/iri"))
+        func iri(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("JSON Pointer", arguments: draft.tests(group: "optional/format/json-pointer"))
+        func jsonPointer(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Regex", arguments: draft.tests(group: "optional/format/regex"))
+        func regex(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Relative JSON Pointer", arguments: draft.tests(group: "optional/format/relative-json-pointer"))
+        func relativeJsonPointer(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Time", arguments: draft.tests(group: "optional/format/time"))
+        func time(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("Unknown Format", arguments: draft.tests(group: "optional/format/unknown"))
+        func unknownFormat(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("URI Reference", arguments: draft.tests(group: "optional/format/uri-reference"))
+        func uriReference(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("URI Template", arguments: draft.tests(group: "optional/format/uri-template"))
+        func uriTemplate(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("URI", arguments: draft.tests(group: "optional/format/uri"))
+        func uri(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
+
+        @Test("UUID", arguments: draft.tests(group: "optional/format/uuid"))
+        func uuid(testCase: TestCase, test: Test) throws {
+          executeTest(testCase: testCase, test: test, formatAssertion: true)
+        }
       }
     }
   }
@@ -356,11 +468,25 @@ public struct JSONSchemaTestSuite {
   static func executeTest(
     testCase: TestCase,
     test: Test,
+    formatAssertion: Bool = false,
     trace: Bool = false,
     sourceLocation: SourceLocation = #_sourceLocation
   ) {
+    struct Locator: MetaSchemaLocator {
+      let metaSchema: MetaSchema
+      func locate(metaSchemaId: URI, options: Schema.Options) -> MetaSchema? {
+        guard metaSchemaId == metaSchema.id else {
+          return nil
+        }
+        return metaSchema
+      }
+    }
+
+    let locator = Locator(metaSchema: formatAssertion ? .v2020_12_formatAssertion : .v2020_12)
+
     let options = Schema.Options.default
       .schemaLocator(JSONSchemaTestSuite.remoteSchemas)
+      .metaSchemaLocator(locator)
       .trace(trace)
 
     let schema: Schema
@@ -378,7 +504,11 @@ public struct JSONSchemaTestSuite {
       Issue.record(error, "Failed to validate instance", sourceLocation: sourceLocation)
       return
     }
-    #expect(result.isValid == test.valid, "Expected \(test.valid ? "valid" : "invalid")", sourceLocation: sourceLocation)
+    #expect(
+      result.isValid == test.valid,
+      "Expected \(test.valid ? "valid" : "invalid")\nFor: \(test.data.description)",
+      sourceLocation: sourceLocation
+    )
     if trace {
       print("Output:\n\(result)")
     }

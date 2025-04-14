@@ -18,7 +18,8 @@ extension MetaSchema {
 
     private var id: URI?
     private var vocabularies: OrderedDictionary<Vocabulary, Bool> = [:]
-    private var keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type> = [:]
+    private var localTypes: OrderedSet<Schema.InstanceType> = []
+    private var localKeywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type> = [:]
     private var schemaLocator: SchemaLocator?
     private var options: [URI: any Sendable] = [:]
 
@@ -27,7 +28,8 @@ extension MetaSchema {
     public init() {
       self.id = URI(valid: "")
       self.vocabularies = [:]
-      self.keywordBehaviors = [:]
+      self.localTypes = []
+      self.localKeywordBehaviors = [:]
       self.schemaLocator = LocalSchemaContainer.empty
       self.options = [:]
     }
@@ -39,7 +41,8 @@ extension MetaSchema {
     public init(from metaSchema: MetaSchema) {
       self.id = metaSchema.id
       self.vocabularies = metaSchema.vocabularies
-      self.keywordBehaviors = metaSchema.keywordBehaviors
+      self.localTypes = metaSchema.localTypes
+      self.localKeywordBehaviors = metaSchema.localKeywordBehaviors
       self.schemaLocator = metaSchema.schemaLocator
       self.options = metaSchema.options
     }
@@ -66,16 +69,49 @@ extension MetaSchema {
       return builder
     }
 
-    /// Sets the ``MetaSchema/keywordBehaviors`` property.
+    /// Adds the given vocabularies to the ``MetaSchema/vocabularies`` property.
     ///
-    /// - Parameter keywordBehaviors: The ``MetaSchema/keywordBehaviors`` to set.
-    /// - Returns: A new ``Builder`` instance with the ``MetaSchema/keywordBehaviors`` set.
+    /// - Parameter vocabularies: The vocabularies to add.
+    /// - Returns: A new ``Builder`` instance with the vocabularies added.
     ///
-    public func keywordBehaviors(
-      _ keywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>
+    public func vocabularies(adding vocabularies: OrderedDictionary<Vocabulary, Bool> = [:]) -> Builder {
+      var builder = self
+      builder.vocabularies = self.vocabularies.merging(vocabularies, uniquingKeysWith: { $1 })
+      return builder
+    }
+
+    /// Removes the vocabularies with the given IDs from the ``MetaSchema/vocabularies`` property.
+    ///
+    /// - Parameter ids: The IDs of the vocabularies to remove.
+    /// - Returns: A new ``Builder`` instance with the vocabularies removed.
+    ///
+    public func vocabularies(removing ids: [URI]) -> Builder {
+      var builder = self
+      builder.vocabularies = self.vocabularies.filter { !ids.contains($0.key.id) }
+      return builder
+    }
+
+    /// Sets the ``MetaSchema/localTypes`` property.
+    ///
+    /// - Parameter localTypes: The ``MetaSchema/localTypes`` to set.
+    /// - Returns: A new ``Builder`` instance with the ``MetaSchema/localTypes`` set.
+    ///
+    public func localTypes(_ localTypes: OrderedSet<Schema.InstanceType>) -> Builder {
+      var builder = self
+      builder.localTypes = localTypes
+      return builder
+    }
+
+    /// Sets the ``MetaSchema/localKeywordBehaviors`` property.
+    ///
+    /// - Parameter localKeywordBehaviors: The ``MetaSchema/localKeywordBehaviors`` to set.
+    /// - Returns: A new ``Builder`` instance with the ``MetaSchema/localKeywordBehaviors`` set.
+    ///
+    public func localKeywordBehaviors(
+      _ localKeywordBehaviors: OrderedDictionary<Schema.Keyword, any Schema.KeywordBehaviorBuilder.Type>
     ) -> Builder {
       var builder = self
-      builder.keywordBehaviors = keywordBehaviors
+      builder.localKeywordBehaviors = localKeywordBehaviors
       return builder
     }
 
@@ -127,7 +163,8 @@ extension MetaSchema {
       return MetaSchema(
         id: id,
         vocabularies: vocabularies,
-        keywordBehaviors: keywordBehaviors,
+        localTypes: localTypes,
+        localKeywordBehaviors: localKeywordBehaviors,
         schemaLocator: schemaLocator ?? LocalSchemaContainer.empty,
         options: options
       )
@@ -165,7 +202,8 @@ extension MetaSchema {
       var builder = Builder()
         .id(schema.id)
         .vocabularies(vocabularies)
-        .keywordBehaviors([:])
+        .localTypes([])
+        .localKeywordBehaviors([:])
         .schemaLocator(schema)
 
       if vocabularies[Draft2020_12.Vocabularies.formatAssertion] != nil {

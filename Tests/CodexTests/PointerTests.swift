@@ -12,68 +12,68 @@ struct PointerTests {
 
   @Test func tokensInitializer() throws {
 
-    try #require(Pointer(tokens: "foo", "bar").tokens == ["foo", "bar"])
-    try #require(Pointer(tokens: "foo", 0).tokens == ["foo", 0])
-    try #require(Pointer(tokens: "foo", .append).tokens == ["foo", .append])
+    try #require(Pointer(tokens: "foo", "bar").tokens == [.name("foo"), .name("bar")])
+    try #require(Pointer(tokens: "foo", 0).tokens == [.name("foo"), .index(0)])
+    try #require(Pointer(tokens: "foo", .append).tokens == [.name("foo"), .append])
 
     try #require(Pointer(tokens: []).tokens == [])
-    try #require(Pointer(tokens: ["foo", "bar"]).tokens == ["foo", "bar"])
-    try #require(Pointer(tokens: ["foo", 0]).tokens == ["foo", 0])
-    try #require(Pointer(tokens: ["foo", .append]).tokens == ["foo", .append])
+    try #require(Pointer(tokens: ["foo", "bar"]).tokens == [.name("foo"), .name("bar")])
+    try #require(Pointer(tokens: ["foo", 0]).tokens == [.name("foo"), .index(0)])
+    try #require(Pointer(tokens: ["foo", .append]).tokens == [.name("foo"), .append])
   }
 
   @Test func decodingInitialzer() throws {
 
     // RFC 6901
     try #require(Pointer(encoded: "")?.tokens == [])
-    try #require(Pointer(encoded: "/foo")?.tokens == ["foo"])
-    try #require(Pointer(encoded: "/foo/0")?.tokens == ["foo", 0])
-    try #require(Pointer(encoded: "/")?.tokens == [""])
-    try #require(Pointer(encoded: "/a~1b")?.tokens == ["a/b"])
-    try #require(Pointer(encoded: "/c%d")?.tokens == ["c%d"])
-    try #require(Pointer(encoded: "/e^f")?.tokens == ["e^f"])
-    try #require(Pointer(encoded: "/g|h")?.tokens == ["g|h"])
-    try #require(Pointer(encoded: "/i\\j")?.tokens == ["i\\j"])
-    try #require(Pointer(encoded: "/k\"l")?.tokens == ["k\"l"])
-    try #require(Pointer(encoded: "/ ")?.tokens == [" "])
-    try #require(Pointer(encoded: "/m~0n")?.tokens == ["m~n"])
+    try #require(Pointer(encoded: "/foo")?.tokens == [.name("foo")])
+    try #require(Pointer(encoded: "/foo/0")?.tokens == [.name("foo"), .index(0)])
+    try #require(Pointer(encoded: "/")?.tokens == [.name("")])
+    try #require(Pointer(encoded: "/a~1b")?.tokens == [.name("a/b")])
+    try #require(Pointer(encoded: "/c%d")?.tokens == [.name("c%d")])
+    try #require(Pointer(encoded: "/e^f")?.tokens == [.name("e^f")])
+    try #require(Pointer(encoded: "/g|h")?.tokens == [.name("g|h")])
+    try #require(Pointer(encoded: "/i\\j")?.tokens == [.name("i\\j")])
+    try #require(Pointer(encoded: "/k\"l")?.tokens == [.name("k\"l")])
+    try #require(Pointer(encoded: "/ ")?.tokens == [.name(" ")])
+    try #require(Pointer(encoded: "/m~0n")?.tokens == [.name("m~n")])
 
     // Extra
-    try #require(Pointer(encoded: "/01")?.tokens == ["01"])
-    try #require(Pointer(encoded: "/001")?.tokens == ["001"])
+    try #require(Pointer(encoded: "/01")?.tokens == [.name("01")])
+    try #require(Pointer(encoded: "/001")?.tokens == [.name("001")])
   }
 
   @Test func literalInitializer() throws {
 
     let pointer: Pointer = "/foo/0"
-    try #require(pointer.tokens == ["foo", 0])
+    try #require(pointer.tokens == [.name("foo"), .index(0)])
 
     let pointer2: Pointer = "foo"
-    try #require(pointer2.tokens == ["foo"])
+    try #require(pointer2.tokens == [.name("foo")])
 
     let pointer3: Pointer = 0
-    try #require(pointer3.tokens == [0])
+    try #require(pointer3.tokens == [.index(0)])
   }
 
   @Test func appending() throws {
 
     let pointer: Pointer = "/foo"
 
-    try #require(pointer.appending(tokens: ["bar", 0]).tokens == ["foo", "bar", 0])
-    try #require(pointer.appending(tokens: "bar", 0).tokens == ["foo", "bar", 0])
-    try #require(pointer.appending(pointer: "bar").tokens == ["foo", "bar"])
-    try #require(pointer.appending(string: "bar/0").tokens == ["foo", "bar", 0])
-    try #require((pointer / "bar" / 0).tokens == ["foo", "bar", 0])
-    try #require((pointer / "bar/0").tokens == ["foo", "bar", 0])
+    try #require(pointer.appending(tokens: ["bar", 0]).tokens == [.name("foo"), .name("bar"), .index(0)])
+    try #require(pointer.appending(tokens: "bar", 0).tokens == [.name("foo"), .name("bar"), .index(0)])
+    try #require(pointer.appending(pointer: "bar").tokens == [.name("foo"), .name("bar")])
+    try #require(pointer.appending(string: "/bar/0").tokens == [.name("foo"), .name("bar"), .index(0)])
+    try #require((pointer / "bar" / 0).tokens == [.name("foo"), .name("bar"), .index(0)])
+    try #require((pointer / "/bar/0").tokens == [.name("foo"), .name("bar"), .index(0)])
   }
 
   @Test func dropping() async throws {
 
     let pointer: Pointer = "/foo/bar/baz/0"
 
-    try #require(pointer.parent.tokens == ["foo", "bar", "baz"])
-    try #require(pointer.dropping(count: 1).tokens == ["foo", "bar", "baz"])
-    try #require(pointer.dropping(count: 3).tokens == ["foo"])
+    try #require(pointer.parent.tokens == [.name("foo"), .name("bar"), .name("baz")])
+    try #require(pointer.dropping(count: 1).tokens == [.name("foo"), .name("bar"), .name("baz")])
+    try #require(pointer.dropping(count: 3).tokens == [.name("foo")])
     try #require(pointer.dropping(count: 4).tokens == [])
     try #require(pointer.dropping(count: 10).tokens == [])
   }
@@ -110,9 +110,9 @@ struct PointerTests {
     for token in pointer {
       tokens.append(token)
     }
-    try #require(tokens == ["foo", "bar", "baz", 0])
+    try #require(tokens == [.name("foo"), .name("bar"), .name("baz"), .index(0)])
 
-    try #require(pointer.map { $0 } == ["foo", "bar", "baz", 0])
+    try #require(pointer.map { $0 } == [.name("foo"), .name("bar"), .name("baz"), .index(0)])
   }
 
 }

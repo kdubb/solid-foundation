@@ -145,6 +145,19 @@ extension URI.Authority {
     return "\(userInfo.encoded)@\(hostPort)"
   }
 
+  /// Indicates whether this query item is properly percent encoded.
+  ///
+  /// A properly percent encoded authority has:
+  /// - All reserved characters in host and userInfo percent encoded
+  /// - All non-ASCII characters in host and userInfo percent encoded
+  /// - No invalid percent encoding sequences
+  public var isPercentEncoded: Bool {
+    guard host.rangeOfCharacter(from: .urlHostAllowed.inverted) == nil else { return false }
+    if let userInfo {
+      guard userInfo.isPercentEncoded else { return false }
+    }
+    return true
+  }
 }
 
 extension URI.Authority.UserInfo: Sendable {}
@@ -242,4 +255,19 @@ extension URI.Authority.UserInfo {
     }
   }
 
+  /// Indicates whether this user info is properly percent encoded.
+  ///
+  /// A properly percent encoded user info has:
+  /// - All reserved characters in user and password percent encoded
+  /// - All non-ASCII characters in user and password percent encoded
+  /// - No invalid percent encoding sequences
+  public var isPercentEncoded: Bool {
+    if let user {
+      guard user.rangeOfCharacter(from: .urlUserAllowed.inverted) == nil else { return false }
+    }
+    if let password {
+      guard password.rangeOfCharacter(from: .urlPasswordAllowed.inverted) == nil else { return false }
+    }
+    return true
+  }
 }

@@ -16,15 +16,23 @@ extension MetaSchema {
       Draft2020_12.Vocabularies.applicator: true,
       Draft2020_12.Vocabularies.validation: true,
       Draft2020_12.Vocabularies.unevaluated: true,
-      Draft2020_12.Vocabularies.formatAssertion: true,
+      Draft2020_12.Vocabularies.formatAnnotation: true,
       Draft2020_12.Vocabularies.content: true,
       Draft2020_12.Vocabularies.metadata: true,
     ],
-    keywordBehaviors: [
-      .dependencies: Schema.Objects.Dependencies.self,
+    localTypes: [],
+    localKeywordBehaviors: [
+      .dependencies: Schema.Objects.Dependencies.self
     ],
     schemaLocator: Draft2020_12.instance
   )
+
+  /// The JSON Schema Draft 2020-12 meta-schema with the format assertion vocabulary.
+  ///
+  public static let v2020_12_formatAssertion = v2020_12.builder()
+    .vocabularies(removing: [Draft2020_12.Vocabularies.formatAnnotation.id])
+    .vocabularies(adding: [Draft2020_12.Vocabularies.formatAssertion: true])
+    .build()
 
   /// Namespace for the JSON Schema Draft 2020-12 schema & meta-shema.
   ///

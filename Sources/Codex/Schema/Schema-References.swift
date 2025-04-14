@@ -167,9 +167,9 @@ extension Schema {
           let uriReference = schemaId.relative().removing(.path)
           let dynamicAnchor = schemaId.fragment ?? ""
 
-          for scope in context.scopes {
+          for scopeId in context.scopeIds {
 
-            let scopeSchemaResourceId = uriReference.resolved(against: scope.schema.id)
+            let scopeSchemaResourceId = uriReference.resolved(against: scopeId)
 
             do {
 

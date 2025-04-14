@@ -153,7 +153,9 @@ extension Schema {
           try context.invalidType(requiredType: .string)
         }
 
-        let mode = context.schema.value(forOption: MetaSchema.Draft2020_12.Options.formatMode) ?? .annotate
+        let mode: Mode =
+          context.schema.vocabularies.contains { $0.key.id == MetaSchema.Draft2020_12.Vocabularies.formatAssertion.id }
+          ? .assert : .annotate
 
         do {
           let formatType = try context.options.formatTypeLocator.locate(formatType: format)
