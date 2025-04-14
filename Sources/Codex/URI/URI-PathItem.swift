@@ -108,11 +108,19 @@ extension URI.PathItem {
     }
   }
 
+  /// The decoded string representation of this path item.
+  ///
+  /// - Returns: The decoded string representation of this path item
+  /// or nil if this is a special segment (empty, current, or parent).
   public var decoded: String? {
-    guard case .decoded(let value) = self else {
+    switch self {
+    case .decoded(let value):
+      return value
+    case .name(let value):
+      return value
+    case .empty, .current, .parent:
       return nil
     }
-    return value
   }
 
 }
@@ -163,26 +171,30 @@ extension Array where Element == URI.PathItem {
 
   /// Whether all path items are normalized.
   public var isNormalized: Bool {
-    self == normalized
+    self == normalized()
   }
 
   /// Returns a new normalized path from this path.
   ///
   /// - Returns: A new normalized path
-  public var normalized: Self {
+  public func normalized(retainLeadingRelativeSegments: Bool = true, retainTrailingEmptySegment: Bool = true) -> Self {
     var segments: [URI.PathItem] = []
     for (idx, segment) in enumerated() {
       switch segment {
-      case .empty where idx == 0 || idx == endIndex - 1:
+      case .empty where idx == 0:
+        segments.append(.empty)
+      case .empty where idx == endIndex - 1 && retainTrailingEmptySegment:
         segments.append(.empty)
       case .empty:
         // skip empty segments not at the start or end
         break
-      case .current where idx == 0:
+      case .current where idx == 0 && retainLeadingRelativeSegments:
         segments.append(segment)
       case .current:
         // skip current segments not at the start
         break
+      case .parent where idx == 0 && retainLeadingRelativeSegments:
+        segments.append(segment)
       case .parent:
         // remove the last segment if it is not the root
         if !segments.isEmpty {

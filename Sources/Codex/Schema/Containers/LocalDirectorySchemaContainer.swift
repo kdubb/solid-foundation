@@ -15,7 +15,7 @@ public final class LocalDirectorySchemaContainer: SchemaLocator {
   private let caching: Bool
 
   public init(for uri: URI, caching: Bool = true) {
-    self.directory = uri.removing(.fragment, .query)
+    self.directory = uri.removing(.fragment, .query).directoryPath()
     self.cache = [:]
     self.caching = caching
   }

@@ -158,6 +158,33 @@ extension URI.Authority {
     }
     return true
   }
+
+  /// Indicates whether this authority is normalized according to RFC 3986.
+  ///
+  /// A normalized authority has:
+  /// - A lowercase host name
+  /// - No empty port (nil instead)
+  /// - A normalized userInfo if present
+  public var isNormalized: Bool {
+    // No empty port is obeyed by port being an Int?, which is either nil or an integer.
+    host == host.lowercased() && (userInfo?.isNormalized ?? true)
+  }
+
+  /// Returns a normalized version of this authority.
+  ///
+  /// A normalized authority has:
+  /// - A lowercase host name
+  /// - No empty port (nil instead)
+  /// - A normalized userInfo if present
+  ///
+  /// - Returns: A new normalized authority
+  public func normalized() -> Self {
+    Self(
+      host: host.lowercased(),
+      port: port,
+      userInfo: userInfo?.normalized()
+    )
+  }
 }
 
 extension URI.Authority.UserInfo: Sendable {}
@@ -269,5 +296,59 @@ extension URI.Authority.UserInfo {
       guard password.rangeOfCharacter(from: .urlPasswordAllowed.inverted) == nil else { return false }
     }
     return true
+  }
+
+  /// Indicates whether this user info is normalized.
+  ///
+  /// A normalized user info has:
+  /// - All unreserved characters decoded
+  /// - All reserved characters percent encoded
+  /// - All percent encodings are uppercase
+  /// - No percent encoding of unreserved characters
+  public var isNormalized: Bool {
+    if let user {
+      guard user == user.removingPercentEncoding?.addingPercentEncoding(withAllowedCharacters: .urlUserAllowed) else {
+        return false
+      }
+      guard !user.contains(where: { $0.isASCII && $0.isLetter && $0.isLowercase }) else {
+        return false
+      }
+    }
+
+    if let password {
+      guard password == password.removingPercentEncoding?.addingPercentEncoding(withAllowedCharacters: .urlPasswordAllowed) else {
+        return false
+      }
+      guard !password.contains(where: { $0.isASCII && $0.isLetter && $0.isLowercase }) else {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  /// Returns a normalized version of this user info.
+  ///
+  /// A normalized user info has:
+  /// - All unreserved characters decoded
+  /// - All reserved characters percent encoded
+  /// - All percent encodings are uppercase
+  /// - No percent encoding of unreserved characters
+  ///
+  /// - Returns: A new normalized user info
+  public func normalized() -> Self {
+    let normalizedUser = user.map { user in
+      user.removingPercentEncoding?
+        .addingPercentEncoding(withAllowedCharacters: .urlUserAllowed)?
+        .uppercased() ?? user
+    }
+
+    let normalizedPassword = password.map { password in
+      password.removingPercentEncoding?
+        .addingPercentEncoding(withAllowedCharacters: .urlPasswordAllowed)?
+        .uppercased() ?? password
+    }
+
+    return Self(user: normalizedUser, password: normalizedPassword)
   }
 }

@@ -14,9 +14,9 @@ public struct JSONSchemaTestSuite {
 
   @Test(
     "Specific Test Cases",
-    .disabled(),
+    // .disabled(),
     arguments: [
-      (draft: .draft2020_12, group: "unevaluatedItems", case: "unevaluatedItems with $dynamicRef", test: "with no unevaluated items")
+      (draft: .draft2020_12, group: "refRemote", case: "remote ref", test: "remote ref valid")
     ] as [(Draft.Version, String, String, String)],
   )
   func specificTests(draftVersion: Draft.Version, groupName: String, caseName: String, testName: String) throws {

@@ -226,6 +226,9 @@ extension URI {
       switch state {
       case .scheme:
         if char == ":" {
+          guard stateOffset > 0 else {
+            return .fail
+          }
           return produce(.scheme, next: [.authority, .pathRoot, .pathItem])
         } else if isSchemeChar(char, offset: stateOffset) {
           return .continue
@@ -321,7 +324,7 @@ extension URI {
     mutating func finish(state: State) -> FinishResult {
       currentIndex = input.endIndex
       switch state {
-      case .hostPort, .queryKey, .queryValue:
+      case .hostPort, .pathRoot, .queryKey:
         guard currentIndex > startIndex else {
           return .complete
         }
@@ -329,7 +332,7 @@ extension URI {
           return .fail
         }
         return .produce(component)
-      case .pathRoot, .pathItem, .fragment:
+      case .pathItem, .fragment, .queryValue:
         guard let component = component(for: state, token: input[startIndex..<currentIndex]) else {
           return .fail
         }
@@ -510,6 +513,11 @@ extension URI {
 
       // Final requirement checks
 
+      // Absolute URIs cannot end at authority separator
+      if components.count == 2 && components.last == .authority {
+        return nil
+      }
+
       if requiresNormalized {
         // Check for empty path items not at beginning or end
         let pathItemComponents: [String] = components.compactMap {
@@ -589,14 +597,11 @@ extension URI {
           return nil
         }
 
-        return .relativeReference(
-          .init(
-            authority: authority,
-            path: pathItems,
-            query: queryItems,
-            fragment: fragment,
-            normalized: false
-          )
+        return .relative(
+          authority: authority,
+          path: pathItems,
+          query: queryItems,
+          fragment: fragment,
         )
       }
 
@@ -605,14 +610,11 @@ extension URI {
       }
 
       return .absolute(
-        .init(
-          scheme: scheme,
-          authority: authority,
-          path: pathItems,
-          query: queryItems,
-          fragment: fragment,
-          normalized: false
-        )
+        scheme: scheme,
+        authority: authority,
+        path: pathItems,
+        query: queryItems,
+        fragment: fragment,
       )
     }
 
@@ -719,40 +721,40 @@ extension URI {
       }
     }
   }
-
   static func decodePercentEncoded(_ str: Substring) -> String? {
-    var result = ""
+    var bytes: [UInt8] = []
     var i = str.startIndex
 
     while i < str.endIndex {
       let c = str[i]
-      switch c {
-      case "%":
-        // Check if we have at least 2 more characters
-        guard let advanced = str.index(i, offsetBy: 2, limitedBy: str.endIndex), advanced < str.endIndex else {
+      if c == "%" {
+        // Ensure two more characters exist
+        guard str.distance(from: i, to: str.endIndex) >= 3 else {
           return nil
         }
 
         let hex1 = str[str.index(after: i)]
         let hex2 = str[str.index(i, offsetBy: 2)]
 
-        // Both characters must be hex digits
-        guard let hex1Value = hex1.hexDigitValue, let hex2Value = hex2.hexDigitValue else { return nil }
+        guard let hex1Value = hex1.hexDigitValue,
+          let hex2Value = hex2.hexDigitValue
+        else {
+          return nil
+        }
 
-        // Convert hex to byte
-        let byte = hex1Value << 4 | hex2Value
-        guard let scalar = UnicodeScalar(byte) else { return nil }
-        result.append(Character(scalar))
+        let byte = UInt8(hex1Value << 4 | hex2Value)
+        bytes.append(byte)
 
         i = str.index(i, offsetBy: 3)
-
-      default:
-        result.append(str[i])
+      } else {
+        // Append non-percent-encoded characters as UTF-8 bytes
+        let scalar = String(c).utf8
+        bytes.append(contentsOf: scalar)
         i = str.index(after: i)
       }
     }
 
-    return result
+    return String(bytes: bytes, encoding: .utf8)
   }
 }
 
@@ -779,9 +781,9 @@ extension URI.Parser.State: CustomStringConvertible {
 }
 
 #if TRACE_URI_PARSER
-  private func trace(_ string: String) {
-    print(string)
+  private func trace(_ string: @autoclosure () -> String) {
+    print(string())
   }
 #else
-  private func trace(_ string: String) {}
+  private func trace(_ string: @autoclosure () -> String) {}
 #endif

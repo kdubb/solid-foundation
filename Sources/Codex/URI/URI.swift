@@ -12,13 +12,55 @@ import Foundation
 /// URIs are used to identify resources on the internet and follow the syntax defined in RFC 3986.
 /// This implementation supports both absolute URIs and relative references, with comprehensive
 /// support for URI manipulation and normalization.
-public enum URI {
+public struct URI {
 
-  /// An absolute URI.
-  case absolute(Absolute)
+  /// Absolute URI components.
+  public typealias Absolute = (scheme: String, authority: Authority?, path: [PathItem], query: [QueryItem]?, fragment: String?)
+  /// Authoritative URI components.
+  public typealias Authoritative = (scheme: String, authority: Authority, path: [PathItem], query: [QueryItem]?, fragment: String?)
+  /// Relative reference components.
+  public typealias RelativeReference = (authority: Authority?, path: [PathItem], query: [QueryItem]?, fragment: String?)
 
-  /// A relative reference.
-  case relativeReference(RelativeReference)
+  /// The scheme component of the URI, if present.
+  ///
+  /// The scheme identifies the protocol used to access the resource.
+  /// For example: "http", "https", "ftp", etc.
+  public let scheme: String?
+
+  /// The authority component of the URI.
+  public let authority: Authority?
+
+  /// The path component of the URI.
+  public let path: [PathItem]
+
+  /// The query component of the URI.
+  public let query: [QueryItem]?
+
+  /// The fragment component of the URI.
+  public let fragment: String?
+
+  /// Creates a new URI with the specified components.
+  ///
+  /// - Parameters:
+  ///   - scheme: The scheme of the URI
+  ///   - authority: The authority of the URI
+  ///   - path: The path of the URI
+  ///   - query: The query of the URI
+  ///   - fragment: The fragment of the URI
+  ///
+  public init(
+    scheme: String?,
+    authority: Authority?,
+    path: [PathItem],
+    query: [QueryItem]?,
+    fragment: String?
+  ) {
+    self.scheme = scheme
+    self.authority = authority
+    self.path = path
+    self.query = query
+    self.fragment = fragment
+  }
 
   /// Creates a new URI from an encoded string, optionally applying validation requirements.
   ///
@@ -79,51 +121,218 @@ public enum URI {
     self = uri
   }
 
+  /// Creates a new absolute URI.
+  ///
+  /// - Parameters:
+  ///   - scheme: The scheme of the URI
+  ///   - authority: The authority of the URI
+  ///   - path: The path of the URI
+  ///   - query: The query of the URI
+  ///   - fragment: The fragment of the URI
+  /// - Returns: An absolute URI with the specified components
+  public static func absolute(
+    scheme: String,
+    authority: Authority? = nil,
+    path: [PathItem] = [],
+    query: [QueryItem]? = nil,
+    fragment: String? = nil,
+  ) -> Self {
+    Self(
+      scheme: scheme,
+      authority: authority,
+      path: path,
+      query: query,
+      fragment: fragment
+    )
+  }
+
+  /// Creates a new absolute URI from an encoded path.
+  ///
+  /// - Parameters:
+  ///   - scheme: The scheme of the URI
+  ///   - authority: The authority of the URI
+  ///   - encodedPath: The encoded path of the URI
+  ///   - query: The query of the URI
+  ///   - fragment: The fragment of the URI
+  /// - Returns: An absolute URI with the specified components
+  public static func absolute(
+    scheme: String,
+    authority: Authority? = nil,
+    encodedPath: String,
+    query: [QueryItem]? = nil,
+    fragment: String? = nil
+  ) -> URI {
+    Self(
+      scheme: scheme,
+      authority: authority,
+      path: [URI.PathItem].from(encoded: encodedPath, absolute: true),
+      query: query,
+      fragment: fragment
+    )
+  }
+
+  /// Creates a new relative reference.
+  ///
+  /// - Parameters:
+  ///  - authority: The authority of the URI
+  ///  - path: The path of the URI
+  ///  - query: The query of the URI
+  ///  - fragment: The fragment of the URI
+  /// - Returns: A relative reference with the specified components
+  public static func relative(
+    authority: Authority? = nil,
+    path: [PathItem] = [],
+    query: [QueryItem]? = nil,
+    fragment: String? = nil
+  ) -> URI {
+    Self(
+      scheme: nil,
+      authority: authority,
+      path: path,
+      query: query,
+      fragment: fragment
+    )
+  }
+
+  /// Creates a relative reference from an encoded path.
+  ///
+  /// - Parameters:
+  ///  - authority: The authority of the URI
+  ///  - encodedPath: The encoded path of the URI
+  ///  - query: The query of the URI
+  ///  - fragment: The fragment of the URI
+  public static func relative(
+    authority: URI.Authority? = nil,
+    encodedPath: String,
+    query: [URI.QueryItem]? = nil,
+    fragment: String? = nil
+  ) -> Self {
+    Self(
+      scheme: nil,
+      authority: authority,
+      path: [URI.PathItem].from(encoded: encodedPath, absolute: false),
+      query: query,
+      fragment: fragment
+    )
+  }
+
+  /// The encoded authority of the URI.
+  ///
+  /// This property returns the authority in its encoded form, ready for use in HTTP requests
+  /// or other contexts where a string representation is needed.
+  public var encodedAuthority: String? {
+    guard let authority else {
+      return nil
+    }
+    return authority.encoded
+  }
+
+  /// The encoded path of the URI.
+  ///
+  /// This property returns the path in its encoded form, ready for use in HTTP requests
+  /// or other contexts where a string representation is needed.
+  public var encodedPath: String {
+    return path.encoded(relative: isRelativeReference)
+  }
+
+  /// The encoded query of the URI.
+  ///
+  /// This property returns the query in its encoded form, ready for use in HTTP requests
+  /// or other contexts where a string representation is needed.
+  public var encodedQuery: String? {
+    guard let query else {
+      return nil
+    }
+    return query.encoded
+  }
+
+  /// The encoded fragment of the URI.
+  ///
+  /// This property returns the fragment in its encoded form, ready for use in HTTP requests
+  /// or other contexts where a string representation is needed.
+  public var encodedFragment: String? {
+    guard let fragment else {
+      return nil
+    }
+    return fragment.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+  }
+
   /// The encoded string representation of the URI.
   ///
   /// This property returns the URI in its encoded form, ready for use in HTTP requests
   /// or other contexts where a string representation is needed.
   public var encoded: String {
-    switch self {
-    case .absolute(let absolute): absolute.encoded
-    case .relativeReference(let relative): relative.encoded
+    let authority =
+      if let encodedAuthority = self.encodedAuthority {
+        "//\(encodedAuthority)"
+      } else {
+        ""
+      }
+    let path = self.encodedPath
+    let query =
+      if let encodedQuery = self.encodedQuery {
+        "?\(encodedQuery)"
+      } else {
+        ""
+      }
+    let fragment =
+      if let encodedFragment = self.encodedFragment {
+        "#\(encodedFragment)"
+      } else {
+        ""
+      }
+    guard let scheme = scheme else {
+      return "\(authority)\(path)\(query)\(fragment)"
     }
+    return "\(scheme):\(authority)\(path)\(query)\(fragment)"
   }
 
   /// Indicates whether the URI is absolute (has a scheme).
   ///
   /// An absolute URI begins with a scheme followed by a colon.
   public var isAbsolute: Bool {
-    switch self {
-    case .absolute: true
-    case .relativeReference: false
-    }
+    scheme != nil
   }
 
   /// The absolute URI, if this is an absolute URI.
-  public var absolute: URI.Absolute? {
-    guard case .absolute(let absolute) = self else {
+  public var absolute: Absolute? {
+    guard let scheme else {
       return nil
     }
-    return absolute
+    return (scheme: scheme, authority: authority, path: path, query: query, fragment: fragment)
+  }
+
+  /// Indicates whether the URI is an authoritative URI.
+  ///
+  /// An authoritative URI has a scheme and authority.
+  public var isAuthoritative: Bool {
+    guard scheme != nil, authority != nil else {
+      return false
+    }
+    return true
+  }
+
+  /// The authoritative URI, if this is an authoritative URI.
+  public var authoritative: Authoritative? {
+    guard let scheme, let authority else {
+      return nil
+    }
+    return (scheme: scheme, authority: authority, path: path, query: query, fragment: fragment)
   }
 
   /// Indicates whether the URI is a relative reference.
   ///
   /// A relative reference does not begin with a scheme and colon.
   public var isRelativeReference: Bool {
-    guard case .relativeReference = self else {
-      return false
-    }
-    return true
+    scheme == nil
   }
 
   /// The relative reference, if this is a relative reference.
-  public var relativeReference: URI.RelativeReference? {
-    guard case .relativeReference(let relative) = self else {
+  public var relativeReference: RelativeReference? {
+    guard scheme == nil else {
       return nil
     }
-    return relative
+    return (authority: authority, path: path, query: query, fragment: fragment)
   }
 
   /// Indicates whether the URI is in its normalized form.
@@ -135,10 +344,13 @@ public enum URI {
   /// - No empty path segments
   /// - No trailing slash unless it's the root path
   public var isNormalized: Bool {
-    switch self {
-    case .absolute(let absolute): absolute.isNormalized
-    case .relativeReference(let relative): relative.isNormalized
+    if let scheme = scheme, scheme != scheme.lowercased() {
+      return false
     }
+    if let authority = authority, !authority.isNormalized {
+      return false
+    }
+    return path.isNormalized
   }
 
   /// Indicates whether the URI is properly percent encoded.
@@ -148,10 +360,18 @@ public enum URI {
   /// - All non-ASCII characters percent encoded
   /// - No invalid percent encoding sequences
   public var isPercentEncoded: Bool {
-    switch self {
-    case .absolute(let absolute): absolute.isPercentEncoded
-    case .relativeReference(let relative): relative.isPercentEncoded
+    if let authority = authority, !authority.isPercentEncoded {
+      return false
     }
+    if let query = query, !query.allSatisfy({ $0.isPercentEncoded }) {
+      return false
+    }
+    if let fragment = fragment {
+      guard fragment.rangeOfCharacter(from: .urlFragmentAllowed.inverted) == nil else {
+        return false
+      }
+    }
+    return true
   }
 
   /// Returns a normalized version of this URI.
@@ -163,34 +383,37 @@ public enum URI {
   /// - Removing empty path segments
   /// - Removing trailing slash unless it's the root path
   /// - Sorting query parameters
-  public func normalized() -> URI {
-    switch self {
-    case .absolute(let absolute): .absolute(absolute.normalized())
-    case .relativeReference(let relative): .relativeReference(relative.normalized())
-    }
-  }
-
-  /// The scheme component of the URI, if present.
   ///
-  /// The scheme identifies the protocol used to access the resource.
-  /// For example: "http", "https", "ftp", etc.
+  /// ### Path Normalization
   ///
-  public var scheme: String? {
-    switch self {
-    case .absolute(let absolute): absolute.scheme
-    case .relativeReference: nil
-    }
-  }
-
-  /// The query items of the URI.
+  /// #### Empty Segment Retention (Preserving Slashes)
+  /// Path normalization retains leading and trailing empty segments
+  /// to preserve slashes. `retainTrailingEmptySegment` argument can
+  /// be used to remove empty trailing segments.
   ///
-  /// Query items are name-value pairs that appear after the question mark in the URI.
+  /// #### Leading Relative Segment Retention
+  /// When the URI is a relative reference, path normalization retains
+  /// the leading current (`.`) & parent (`..`) segments, as is common for relative
+  /// references. If you wish to remove these segmente, you need to
+  /// normalize the path manually using
+  /// ``PathItem/normalized(retainLeadingRelativeSegments:retainTrailingEmptySegment:)``.
   ///
-  public var query: [QueryItem]? {
-    switch self {
-    case .absolute(let absolute): absolute.query
-    case .relativeReference(let relative): relative.query
-    }
+  /// - Parameter retainTrailingEmptySegment: Whether to retain trailing empty segments to
+  ///   preserve slashes. Defaults to `true`.
+  /// - Returns: A normalized URI
+  ///
+  public func normalized(retainTrailingEmptySegment: Bool = true) -> URI {
+    Self(
+      scheme: scheme?.lowercased(),
+      authority: authority?.normalized(),
+      path: path
+        .normalized(
+          retainLeadingRelativeSegments: isRelativeReference,
+          retainTrailingEmptySegment: retainTrailingEmptySegment
+        ),
+      query: query,
+      fragment: fragment
+    )
   }
 
   /// Retrieves a specific query item by name, if present.
@@ -198,31 +421,8 @@ public enum URI {
   /// - Parameter named: The name of the query item to retrieve
   /// - Returns: The query item if found, nil otherwise
   ///
-  public func query(named: String) -> QueryItem? {
-    switch self {
-    case .absolute(let absolute): absolute.query(named: named)
-    case .relativeReference(let relative): relative.query(named: named)
-    }
-  }
-
-  /// The fragment component of the URI, if present.
-  ///
-  /// The fragment appears after the hash (#) and typically identifies a specific part of the resource.
-  public var fragment: String? {
-    switch self {
-    case .absolute(let absolute): absolute.fragment
-    case .relativeReference(let relative): relative.fragment
-    }
-  }
-
-  /// Converts the URI to a Foundation URL.
-  ///
-  /// - Returns: A URL representation of this URI
-  public var url: URL {
-    switch self {
-    case .absolute(let absolute): absolute.url
-    case .relativeReference(let relative): relative.url
-    }
+  public func queryItem(named: String) -> QueryItem? {
+    query?.first { $0.name == named }
   }
 
   /// Updates the specified components of this URI.
@@ -234,10 +434,76 @@ public enum URI {
   /// - Returns: A new URI with the specified components updated
   ///
   public func updating(_ components: some Sequence<Component>) -> URI {
-    switch self {
-    case .absolute(let absolute): absolute.updating(Set(components))
-    case .relativeReference(let relative): relative.updating(Set(components))
+    var result = self
+    for component in components {
+      switch component {
+      case .scheme(let scheme):
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .host(let host):
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(host: host),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .port(let port):
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(port: port),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .user(let user):
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(userInfo: authority?.userInfo?.copy(user: user)),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .password(let password):
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(userInfo: authority?.userInfo?.copy(password: password)),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .path(let path):
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .query(let query):
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .fragment(let fragment):
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      }
     }
+    return result
   }
 
   /// Updates the specified components of this URI.
@@ -249,7 +515,7 @@ public enum URI {
   /// - Returns: A new URI with the specified components updated
   ///
   public func updating(_ components: Component...) -> URI {
-    updating(Set(components))
+    updating(components)
   }
 
   /// Updates the fragment of this URI with the specified ``Pointer``.
@@ -286,10 +552,19 @@ public enum URI {
   /// fragment or the existing fragment is not a valid ``Pointer``.
   ///
   public func appending(fragmentPointer pointer: Pointer) -> URI? {
-    switch self {
-    case .absolute(let absolute): absolute.appending(fragmentPointer: pointer)
-    case .relativeReference(let relative): relative.appending(fragmentPointer: pointer)
+    guard let fragment else {
+      return updating(fragmentPointer: pointer)
     }
+    guard let fragmentPointer = Pointer(encoded: fragment) else {
+      return nil
+    }
+    return URI(
+      scheme: scheme,
+      authority: authority,
+      path: path,
+      query: query,
+      fragment: (fragmentPointer / pointer).encoded
+    )
   }
 
   /// Appends the specified ``Pointer`` to this URI's existing fragment.
@@ -314,10 +589,62 @@ public enum URI {
   /// - Returns: A new absolute URI with the specified parts removed
   ///
   public func removing(_ components: some Sequence<Component.Kind>) -> URI {
-    switch self {
-    case .absolute(let absolute): absolute.removing(components)
-    case .relativeReference(let relative): relative.removing(components)
+    var result = self
+    for part in components {
+      switch part {
+      case .user:
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(userInfo: authority?.userInfo?.copy(user: .some(nil))),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .password:
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(userInfo: authority?.userInfo?.copy(password: .some(nil))),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .port:
+        result = Self(
+          scheme: scheme,
+          authority: authority?.copy(port: .some(nil)),
+          path: path,
+          query: query,
+          fragment: fragment
+        )
+      case .path:
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: [],
+          query: query,
+          fragment: fragment
+        )
+      case .query:
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: nil,
+          fragment: fragment
+        )
+      case .fragment:
+        result = Self(
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: query,
+          fragment: nil
+        )
+      default:
+        break
+      }
     }
+    return result
   }
 
   /// Removes the specified parts from this absolute URI.
@@ -337,11 +664,52 @@ public enum URI {
   /// - Parameter base: The base URI to resolve against
   /// - Returns: A new absolute URI
   public func resolved(against base: URI) -> URI {
-    switch (self, base) {
-    case (.absolute, .absolute): self
-    case (.relativeReference(let rel), .absolute(let abs)): rel.resolved(against: abs)
-    default: self
+    if isAbsolute {
+      return self
     }
+    guard let base = base.absolute else {
+      return self
+    }
+
+    let selfPath = path
+    let basePath = base.path.normalized(retainLeadingRelativeSegments: false, retainTrailingEmptySegment: true)
+
+    var absPath: [URI.PathItem]
+
+    if selfPath.isEmpty {
+      absPath = basePath
+    } else if basePath.isEmpty || (selfPath.count > 1 && selfPath.first == .empty) {
+      absPath = selfPath.first == .empty ? selfPath : [.empty] + selfPath
+    } else {
+      // Drops the .empty segment for directories and the last segment for files
+      let mergePath = basePath.count > 1 ? basePath.dropLast() : basePath
+      var resPath: [URI.PathItem] =  mergePath.first != .empty ? [.empty] + mergePath : mergePath
+      for component in selfPath {
+        switch component {
+        case .current:
+          // skip
+          break
+        case .parent:
+          if resPath != [.empty] {
+            resPath = resPath.dropLast()
+          }
+        default:
+          resPath.append(component)
+        }
+      }
+      absPath = resPath
+    }
+
+    let query = self.query ?? base.query
+    let fragment = self.fragment ?? base.fragment
+
+    return Self(
+      scheme: base.scheme,
+      authority: base.authority,
+      path: absPath,
+      query: query,
+      fragment: fragment
+    )
   }
 
   /// Resolves this URI against a base URI string.
@@ -365,10 +733,39 @@ public enum URI {
   /// - Returns: A new relative URI
   ///
   public func relative(to absolute: URI) -> URI {
-    switch (self, absolute) {
-    case (.absolute(let specific), .absolute(let base)): specific.relative(to: base)
-    default: self
+    guard let absSelf = self.absolute, let absBase = absolute.absolute else {
+      return self
     }
+
+    let selfPath = path
+    let basePath = absBase.path
+
+    guard
+      absSelf.scheme == absBase.scheme,
+      absSelf.authority == absBase.authority,
+      selfPath.count >= basePath.count
+    else {
+      return self
+    }
+
+    var commonPrefixCount = 0
+    while commonPrefixCount < min(selfPath.count, basePath.count),
+      selfPath[commonPrefixCount] == basePath[commonPrefixCount]
+    {
+      commonPrefixCount += 1
+    }
+
+    let relPath = Array([.current] + selfPath.dropFirst(commonPrefixCount))
+    let query = absSelf.query ?? absBase.query
+    let fragment = absSelf.fragment ?? absBase.fragment
+
+    return Self(
+      scheme: nil,
+      authority: nil,
+      path: relPath,
+      query: query,
+      fragment: fragment
+    )
   }
 
   /// Creates a relative URI from this absolute URI.
@@ -414,22 +811,41 @@ public enum URI {
   /// - Returns: A new URI with a relative path
   ///
   public func relative(pathTransform: RelativePathTransform = .directory) -> URI {
-    switch self {
-    case .relativeReference:
+    if isRelativeReference {
       return self
-    case .absolute(let absolute):
-      let path =
-        switch pathTransform {
-        case .absolute: absolute.path.absolute
-        case .relative: absolute.path.relative
-        case .directory: absolute.path.directoryRelative
-        }
-      return .relative(
-        path: path,
-        query: absolute.query,
-        fragment: absolute.fragment
-      )
     }
+
+    let path =
+      switch pathTransform {
+      case .absolute: path.absolute
+      case .relative: path.relative
+      case .directory: path.directoryRelative
+      }
+
+    return URI(
+      scheme: nil,
+      authority: nil,
+      path: path,
+      query: query,
+      fragment: fragment
+    )
+  }
+
+  /// Returns a new URI ensuring the path components are normalized to a directory path.
+  ///
+  /// This method returns a new URI with the path components normalized to a directory path
+  /// (i.e., ensuring it has a trailing slash). All other components are left unchanged.
+  ///
+  /// - Returns: A new URI with the path components normalized to a directory path
+  ///
+  public func directoryPath() -> URI {
+    Self(
+      scheme: scheme,
+      authority: authority,
+      path: path.last == .empty ? path : path + [.empty],
+      query: query,
+      fragment: fragment
+    )
   }
 
 }
@@ -437,69 +853,6 @@ public enum URI {
 extension URI: Sendable {}
 extension URI: Hashable {}
 extension URI: Equatable {}
-
-extension URI {
-
-  /// Creates an absolute URI.
-  ///
-  /// - Parameters:
-  ///   - scheme: The scheme of the URI
-  ///   - authority: The authority of the URI
-  ///   - path: The path of the URI
-  ///   - query: The query of the URI
-  ///   - fragment: The fragment of the URI
-  /// - Returns: An absolute URI with the specified components
-  public static func absolute(
-    scheme: String,
-    authority: URI.Authority,
-    path: [URI.PathItem] = [],
-    query: [URI.QueryItem]? = nil,
-    fragment: String? = nil
-  ) -> Self {
-    .absolute(.init(scheme: scheme, authority: authority, path: path, query: query, fragment: fragment))
-  }
-
-  /// Creates a relative reference.
-  ///
-  /// - Parameters:
-  ///  - authority: The authority of the URI
-  ///  - path: The path of the URI
-  ///  - query: The query of the URI
-  ///  - fragment: The fragment of the URI
-  /// - Returns: A relative reference with the specified components
-  public static func relative(
-    authority: URI.Authority? = nil,
-    path: [URI.PathItem] = [],
-    query: [URI.QueryItem]? = nil,
-    fragment: String? = nil
-  ) -> Self {
-    .relativeReference(.init(authority: authority, path: path, query: query, fragment: fragment))
-  }
-
-  /// Creates a relative reference from an encoded path.
-  ///
-  /// - Parameters:
-  ///  - authority: The authority of the URI
-  ///  - encodedPath: The encoded path of the URI
-  ///  - query: The query of the URI
-  ///  - fragment: The fragment of the URI
-  public static func relative(
-    authority: URI.Authority? = nil,
-    encodedPath: String,
-    query: [URI.QueryItem]? = nil,
-    fragment: String? = nil
-  ) -> Self {
-    .relativeReference(
-      .init(
-        authority: authority,
-        path: .from(encoded: encodedPath, absolute: false),
-        query: query,
-        fragment: fragment
-      )
-    )
-  }
-
-}
 
 extension URI: CustomStringConvertible, CustomDebugStringConvertible {
 
