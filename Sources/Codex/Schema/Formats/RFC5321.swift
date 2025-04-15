@@ -37,6 +37,9 @@ public enum RFC5321 {
       "\(local)@\(domain)"
     }
 
+    private static nonisolated(unsafe) let parseRegex =
+      #/^(?<local>(?:[A-Za-z0-9!#$%&'*+\-\/=?^_`{|}~]+(?:\.[A-Za-z0-9!#$%&'*+\-\/=?^_`{|}~]+)*|"(?:[^\x00-\x1F\x7F"\\]|\\["\\])*"))@(?<domain>(?:[A-Za-z0-9-.]+|\[.+\]))$/#
+
     /// Attempts to parse a mailbox string according to RFC 5321.
     ///
     /// RFC 5321 (and related RFCs) define a mailbox as:
@@ -58,10 +61,7 @@ public enum RFC5321 {
     public static func parse(string: String) -> Mailbox? {
 
       // The following regex uses named capture groups "local" and "domain".
-      let regex =
-        #/^(?<local>(?:[A-Za-z0-9!#$%&'*+\-\/=?^_`{|}~]+(?:\.[A-Za-z0-9!#$%&'*+\-\/=?^_`{|}~]+)*|"(?:[^\x00-\x1F\x7F"\\]|\\["\\])*"))@(?<domain>(?:[A-Za-z0-9-.]+|\[.+\]))$/#
-
-      guard let match = string.wholeMatch(of: regex) else {
+      guard let match = string.wholeMatch(of: Self.parseRegex) else {
         return nil
       }
 
@@ -183,6 +183,8 @@ public enum RFC5321 {
           != nil
     }
 
+    private static nonisolated(unsafe) let generalLiteralRegex = #/^[\x21-\x5A\x5E-\x7E]+$/#
+
     private static func validateGeneralLiteral(_ string: String) -> Bool {
       let parts = string.split(separator: ":", maxSplits: 2)
       guard parts.count == 2 else {
@@ -195,7 +197,7 @@ public enum RFC5321 {
       }
       // Validate the content
       let content = String(parts[1])
-      guard content.wholeMatch(of: #/^[\x21-\x5A\x5E-\x7E]+$/#) != nil else {
+      guard content.wholeMatch(of: Self.generalLiteralRegex) != nil else {
         return false
       }
       return true

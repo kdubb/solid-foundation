@@ -15,9 +15,13 @@ import Foundation
 public struct URI {
 
   /// Absolute URI components.
-  public typealias Absolute = (scheme: String, authority: Authority?, path: [PathItem], query: [QueryItem]?, fragment: String?)
+  public typealias Absolute = (
+    scheme: String, authority: Authority?, path: [PathItem], query: [QueryItem]?, fragment: String?
+  )
   /// Authoritative URI components.
-  public typealias Authoritative = (scheme: String, authority: Authority, path: [PathItem], query: [QueryItem]?, fragment: String?)
+  public typealias Authoritative = (
+    scheme: String, authority: Authority, path: [PathItem], query: [QueryItem]?, fragment: String?
+  )
   /// Relative reference components.
   public typealias RelativeReference = (authority: Authority?, path: [PathItem], query: [QueryItem]?, fragment: String?)
 
@@ -406,7 +410,8 @@ public struct URI {
     Self(
       scheme: scheme?.lowercased(),
       authority: authority?.normalized(),
-      path: path
+      path:
+        path
         .normalized(
           retainLeadingRelativeSegments: isRelativeReference,
           retainTrailingEmptySegment: retainTrailingEmptySegment
@@ -683,7 +688,7 @@ public struct URI {
     } else {
       // Drops the .empty segment for directories and the last segment for files
       let mergePath = basePath.count > 1 ? basePath.dropLast() : basePath
-      var resPath: [URI.PathItem] =  mergePath.first != .empty ? [.empty] + mergePath : mergePath
+      var resPath: [URI.PathItem] = mergePath.first != .empty ? [.empty] + mergePath : mergePath
       for component in selfPath {
         switch component {
         case .current:

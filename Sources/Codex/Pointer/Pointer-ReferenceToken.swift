@@ -93,6 +93,8 @@ extension Pointer.ReferenceToken {
     }
   }
 
+  private static nonisolated(unsafe) let replaceRegex = #/[~/]/#
+
   /// The encoded string representation of this reference token.
   ///
   /// - For `.name` tokens, returns the name with special characters escaped
@@ -101,7 +103,7 @@ extension Pointer.ReferenceToken {
   public var encoded: String {
     switch self {
     case .name(let name):
-      return name.replacing(#/[~/]/#) { match in
+      return name.replacing(Self.replaceRegex) { match in
         return switch match.output {
         case "~": "~0"
         case "/": "~1"

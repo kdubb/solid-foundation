@@ -33,6 +33,9 @@ public enum RFC6531 {
       self.domain = domain
     }
 
+    private static nonisolated(unsafe) let parseRegex =
+      #/^(?<local>(?:[\p{L}\p{N}!#$%&'*+/=?^_`{|}~\-]+(?:\.[\p{L}\p{N}!#$%&'*+/=?^_`{|}~\-]+)*|"(?:[^"\\\r\n]|\\.)*"))@(?<domain>(?:[\p{L}\p{N}\-\.]+|\[.+\]))$/#
+
     /// Parses an IDN‑email address according to the mailbox production in RFC 6531.
     ///
     /// The local‑part is matched as either:
@@ -49,11 +52,7 @@ public enum RFC6531 {
     /// - Returns: An `Mailbox` instance if the input is valid; otherwise, `nil`.
     public static func parse(string: String) -> Mailbox? {
 
-      // The following regex uses named capture groups "local" and "domain".
-      let regex =
-        #/^(?<local>(?:[\p{L}\p{N}!#$%&'*+/=?^_`{|}~\-]+(?:\.[\p{L}\p{N}!#$%&'*+/=?^_`{|}~\-]+)*|"(?:[^"\\\r\n]|\\.)*"))@(?<domain>(?:[\p{L}\p{N}\-\.]+|\[.+\]))$/#
-
-      guard let match = string.wholeMatch(of: regex) else {
+      guard let match = string.wholeMatch(of: Self.parseRegex) else {
         return nil
       }
 
@@ -172,6 +171,8 @@ public enum RFC6531 {
         && RFC4291.IPv6Address.parse(string: String(string.trimmingPrefix(Self.ipv6LiteralPrefix))) != nil
     }
 
+    private static nonisolated(unsafe) let generalLiteralRegex = #/^[\x21-\x5A\x5E-\x7E]+$/#
+
     private static func validateGeneralLiteral(_ string: String) -> Bool {
       let parts = string.split(separator: ":", maxSplits: 2)
       guard parts.count == 2 else {
@@ -184,7 +185,7 @@ public enum RFC6531 {
       }
       // Validate the content
       let content = String(parts[1])
-      guard content.wholeMatch(of: #/^[\x21-\x5A\x5E-\x7E]+$/#) != nil else {
+      guard content.wholeMatch(of: Self.generalLiteralRegex) != nil else {
         return false
       }
       return true

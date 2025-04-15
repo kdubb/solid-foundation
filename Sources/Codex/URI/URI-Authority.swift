@@ -316,7 +316,9 @@ extension URI.Authority.UserInfo {
     }
 
     if let password {
-      guard password == password.removingPercentEncoding?.addingPercentEncoding(withAllowedCharacters: .urlPasswordAllowed) else {
+      guard
+        password == password.removingPercentEncoding?.addingPercentEncoding(withAllowedCharacters: .urlPasswordAllowed)
+      else {
         return false
       }
       guard !password.contains(where: { $0.isASCII && $0.isLetter && $0.isLowercase }) else {

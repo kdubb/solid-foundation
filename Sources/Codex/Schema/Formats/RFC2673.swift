@@ -56,6 +56,9 @@ public enum RFC2673 {
       self.d = octets.3
     }
 
+    private static nonisolated(unsafe) let parseRegex =
+      #/^(?<a>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<b>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<c>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<d>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/#
+
     /// Parses an IPv4Address from a string if it matches the RFC 2673 dotted‑quad syntax.
     ///
     /// The ABNF for a dotted‑quad is roughly:
@@ -68,11 +71,9 @@ public enum RFC2673 {
     /// - Parameter string: The IPv4 address string in dotted-quad format.
     /// - Returns: An IPv4Address instance if the input is valid; otherwise, nil.
     public static func parse(string: String) -> IPv4Address? {
-      let pattern =
-        #/^(?<a>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<b>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<c>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.(?<d>25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/#
 
       // Ensure the entire input matches the pattern.
-      guard let match = string.wholeMatch(of: pattern) else {
+      guard let match = string.wholeMatch(of: Self.parseRegex) else {
         return nil
       }
 

@@ -72,7 +72,8 @@ public final class MetaSchema {
   /// - Parameters:
   ///   - id: The unique identifier for the meta schema.
   ///   - vocabularies: The list of vocabularies referenced by this meta schema.
-  ///   - keywordBehaviors: The keyword behaviors defined locally by this meta schema.
+  ///   - localTypes: The instance types defined locally by this meta schema.
+  ///   - localKeywordBehaviors: The keyword behaviors defined locally by this meta schema.
   ///   - schemaLocator: The locator for schema instances associated with this meta schema.
   ///   - options: The options for controlling the behavior of the schema.
   ///

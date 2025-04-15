@@ -121,11 +121,14 @@ extension Array where Element == Path.Selector {
 
 }
 
+private nonisolated(unsafe) let singleQuoteRegex = #/'/#
+private nonisolated(unsafe) let doubleQuoteRegex = #/"/#
+
 extension String {
 
   internal func escaped(_ quote: Character) -> String {
     var string = self
-    for match in string.matches(of: quote == "'" ? #/'/# : #/"/#) {
+    for match in string.matches(of: quote == "'" ? singleQuoteRegex : doubleQuoteRegex) {
       string.replaceSubrange(match.range, with: #"\\#(quote)"#)
     }
     return string
