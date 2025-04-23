@@ -9,3 +9,11 @@ DerivedData/
 .vscode
 .editorconfig
 .cursor
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz

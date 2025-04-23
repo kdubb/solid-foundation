@@ -5,10 +5,10 @@ import PackageDescription
 let package = Package(
   name: "Codex",
   platforms: [
-    .macOS("14"),
-    .iOS("17"),
-    .tvOS("17"),
-    .watchOS("10"),
+    .macOS("15"),
+    .iOS("18"),
+    .tvOS("18"),
+    .watchOS("11"),
   ],
   products: [
     .library(
@@ -19,7 +19,6 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
     .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.1.4")),
     .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "1.2.0")),
-    .package(url: "https://github.com/kdubb/BigDecimal.git", branch: "main"),
     .package(url: "https://github.com/SwiftScream/URITemplate.git", from: "5.0.1"),
     .package(url: "https://github.com/StarLard/SwiftFormatPlugins.git", from: "1.1.1"),
   ],
@@ -30,7 +29,6 @@ let package = Package(
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "Collections", package: "swift-collections"),
-        .product(name: "BigDecimal", package: "BigDecimal"),
         .product(name: "ScreamURITemplate", package: "uritemplate"),
       ],
       exclude: [
@@ -44,9 +42,7 @@ let package = Package(
       name: "CodexTests",
       dependencies: ["Codex"],
       resources: [
-        .copy("../JSONTestSuite/tests"),
-        .copy("../JSONTestSuite/output-tests"),
-        .copy("../JSONTestSuite/remotes"),
+        .copy("Resources"),
       ],
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins"),

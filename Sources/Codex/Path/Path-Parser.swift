@@ -190,7 +190,7 @@ extension Path {
     private func parseIndexSelector() throws(ParserError) -> Path.Selector {
       guard
         case .literal(.number(let int), _) = try parseIntLiteral(),
-        let int: Int = int.asInt()
+        let int: Int = int.int()
       else {
         throw .unexpectedToken(currentToken)
       }
@@ -241,7 +241,7 @@ extension Path {
       var step: Int?
 
       if currentToken.kind == .number {
-        guard case .literal(.number(let value), _) = try parseIntLiteral(), let int: Int = value.asInt() else {
+        guard case .literal(.number(let value), _) = try parseIntLiteral(), let int: Int = value.int() else {
           throw .unexpectedToken(currentToken)
         }
         start = int
@@ -250,7 +250,7 @@ extension Path {
       try expect(.colon)
 
       if currentToken.kind == .number {
-        guard case .literal(.number(let value), _) = try parseIntLiteral(), let int: Int = value.asInt() else {
+        guard case .literal(.number(let value), _) = try parseIntLiteral(), let int: Int = value.int() else {
           throw .unexpectedToken(currentToken)
         }
         end = int
@@ -259,7 +259,7 @@ extension Path {
       if currentToken.kind == .colon {
         try advance()
         if currentToken.kind == .number {
-          guard case .literal(.number(let value), _) = try parseIntLiteral(), let int: Int = value.asInt() else {
+          guard case .literal(.number(let value), _) = try parseIntLiteral(), let int: Int = value.int() else {
             throw .unexpectedToken(currentToken)
           }
           step = int
@@ -451,7 +451,7 @@ extension Path {
     private func parseIntLiteral() throws(ParserError) -> Path.Selector.Expression {
       guard
         case .number(let value, _) = currentToken,
-        let int: Int = value.asInt()
+        let int = Int(exactly: value)
       else {
         throw .unexpectedToken(currentToken)
       }

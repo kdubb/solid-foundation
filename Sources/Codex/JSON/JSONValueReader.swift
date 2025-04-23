@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import BigDecimal
 
 public struct JSONValueReader {
 
@@ -37,7 +36,7 @@ public struct JSONValueReader {
     func convertScalar(_ value: JSONToken.Scalar) throws -> Value {
       switch value {
       case .string(let string): .string(string)
-      case .number(let number): .number(BigDecimal(number.value))
+      case .number(let number): .number(number.value)
       case .bool(let bool): .bool(bool)
       case .null: .null
       }

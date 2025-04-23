@@ -21,7 +21,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let minLength: Int = minLengthInstance.asInt() else {
+        guard let minLength: Int = minLengthInstance.int() else {
           try context.invalidValue("Must be an integer")
         }
 
@@ -67,7 +67,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let maxLength: Int = maxLengthInstance.asInt() else {
+        guard let maxLength: Int = maxLengthInstance.int() else {
           try context.invalidValue("Must be an integer")
         }
 

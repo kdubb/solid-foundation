@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import BigDecimal
 
 enum JSONToken: Equatable {
 

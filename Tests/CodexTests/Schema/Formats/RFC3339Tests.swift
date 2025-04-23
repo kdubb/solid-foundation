@@ -1,6 +1,5 @@
 import Testing
 import Codex
-import BigDecimal
 
 @Suite("RFC3339 ISO 8601 Date and Time Tests")
 struct RFC3339ISO8601DateAndTimeTests {

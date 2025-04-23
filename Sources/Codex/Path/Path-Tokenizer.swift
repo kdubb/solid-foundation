@@ -5,7 +5,6 @@
 //  Created by Kevin Wooten on 1/28/25.
 //
 
-import BigDecimal
 import Foundation
 
 extension Path {
@@ -397,8 +396,8 @@ extension Path {
         numberStr.append(char)
         _ = advance()
       }
-      let number = BigDecimal(numberStr)
-      guard number.isFinite else {
+
+      guard let number = BigDecimal(numberStr) else {
         throw .invalidNumber(numberStr, location: startLocation)
       }
       return number

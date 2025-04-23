@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import BigInt
-import BigDecimal
 import OrderedCollections
+
 
 /// A JSON like value with support for binary data.
 ///
@@ -20,7 +19,7 @@ import OrderedCollections
 /// - `string`: A string value
 /// - `array`: An array of values
 /// - `object`: An object mapping values to values
-public enum Value {
+public indirect enum Value {
 
   /// The type of an array of values.
   public typealias Array = Swift.Array<Value>
@@ -41,6 +40,16 @@ public enum Value {
   case array(Array)
   /// An object mapping values to values
   case object(Object)
+  /// A tagged value
+  ///
+  /// Tags are used to identify the type of a value.
+  /// They are not part of the value itself, but are used to provide additional information
+  /// about the value.
+  ///
+  /// - Note: Tagged value are "invisible" to convenience accessors like ``Value/object``,
+  /// ``Value/array``, and ``Value/string``.
+  ///
+  case tagged(tag: Value, value: Value)
 
 }
 
@@ -73,6 +82,9 @@ extension Value: Hashable {
     case .array(let value):
       hasher.combine(value)
     case .object(let value):
+      hasher.combine(value)
+    case .tagged(let tag, let value):
+      hasher.combine(tag)
       hasher.combine(value)
     }
   }
@@ -121,6 +133,8 @@ extension Value: CustomStringConvertible {
       return "{\(value.map { "\($0.description): \($1.description)" }.joined(separator: ", "))}"
     case .bytes(let value):
       return value.base64EncodedString()
+    case .tagged(let tag, let value):
+      return "<\(tag.description)> (\(value.description))"
     }
   }
 
@@ -130,80 +144,117 @@ extension Value {
 
   /// Whether this value is null.
   public var isNull: Bool {
-    guard case .null = self else {
+    switch self {
+    case .null:
+      return true
+    case .tagged(_, let value):
+      return value.isNull
+    default:
       return false
     }
-    return true
   }
 
   /// The array value if this value is an array, otherwise nil.
   public var array: Array? {
-    guard case .array(let array) = self else {
+    switch self {
+    case .array(let array):
+      return array
+    case .tagged(_, let value):
+      return value.array
+    default:
       return nil
     }
-    return array
   }
 
   /// The object value if this value is an object, otherwise nil.
   public var object: Object? {
-    guard case .object(let object) = self else {
+    switch self {
+    case .object(let object):
+      return object
+    case .tagged(_, let value):
+      return value.object
+    default:
       return nil
     }
-    return object
   }
 
   /// The boolean value if this value is a boolean, otherwise nil.
   public var bool: Bool? {
-    guard case .bool(let bool) = self else {
+    switch self {
+    case .bool(let bool):
+      return bool
+    case .tagged(_, let value):
+      return value.bool
+    default:
       return nil
     }
-    return bool
   }
 
   /// The number value if this value is a number, otherwise nil.
   public var number: Number? {
-    guard case .number(let number) = self else {
+    switch self {
+    case .number(let number):
+      return number
+    case .tagged(_, let value):
+      return value.number
+    default:
       return nil
     }
-    return number
   }
 
   /// The big integer value if this value is a number that can be represented as a big integer, otherwise nil.
-  public var integer: BInt? {
-    guard let number else {
+  public var integer: BigInt? {
+    switch self {
+    case .number(let number):
+      return number.integer
+    case .tagged(_, let value):
+      return value.integer
+    default:
       return nil
     }
-    return number.asInteger()
   }
 
   /// The Swift integer value if this value is a number that can be represented as a Swift integer, otherwise nil.
   public var int: Int? {
-    guard let integer else {
+    switch self {
+    case .number(let number):
+      return number.int()
+    case .tagged(_, let value):
+      return value.int
+    default:
       return nil
     }
-    return integer.asInt()
   }
 
   /// The string value if this value is a string, otherwise nil.
   public var string: String? {
-    guard case .string(let string) = self else {
+    switch self {
+    case .string(let string):
+      return string
+    case .tagged(_, let value):
+      return value.string
+    default:
       return nil
     }
-    return string
   }
 
   /// The binary data value if this value is binary data, otherwise nil.
   public var bytes: Data? {
-    guard case .bytes(let bytes) = self else {
+    switch self {
+    case .bytes(let bytes):
+      return bytes
+    case .tagged(_, let value):
+      return value.bytes
+    default:
       return nil
     }
-    return bytes
   }
 
-  /// A string representation of this value, with strings unquoted.
+  /// A string representation of this value, with strings unquoted and tags unwrapped.
   ///
   /// This is similar to `description` but with strings unquoted, making it more suitable
   /// for display purposes.
+  ///
   public var stringified: String {
     switch self {
     case .null:
@@ -220,6 +271,8 @@ extension Value {
       return "{\(value.map { "\($0): \($1.stringified)" }.joined(separator: ", "))}"
     case .bytes(let value):
       return value.base64EncodedString()
+    case .tagged(_, let value):
+      return value.stringified
     }
   }
 
@@ -379,8 +432,8 @@ extension Value {
   ///
   /// - Parameter value: The big integer value
   /// - Returns: A number value representing the big integer
-  public static func number(_ value: BInt) -> Value {
-    return .number(Value.TextNumber(text: value.asString()))
+  public static func number(_ value: BigInt) -> Value {
+    return .number(Value.TextNumber(decimal: .init(value)))
   }
 
   /// Creates a number value from a big decimal.
@@ -388,7 +441,7 @@ extension Value {
   /// - Parameter value: The big decimal value
   /// - Returns: A number value representing the big decimal
   public static func number(_ value: BigDecimal) -> Value {
-    return .number(Value.TextNumber(text: value.asString()))
+    return .number(Value.TextNumber(decimal: value))
   }
 
   /// Creates a number value from a string representation of a number.
@@ -397,8 +450,11 @@ extension Value {
   /// - Returns: A number value representing the number
   /// - Precondition: The string must represent a valid number
   public static func number(_ value: String) -> Value {
-    assert(!BigDecimal(value).isNaN, "Invalid numeric string")
-    return .number(Value.TextNumber(text: value))
+    guard let decimal = BigDecimal(value) else {
+      fatalError("Invalid numeric string: \(value)")
+    }
+    assert(!decimal.isNaN, "Invalid numeric string: \(value)")
+    return .number(Value.TextNumber(text: value, decimal: decimal))
   }
 
 }

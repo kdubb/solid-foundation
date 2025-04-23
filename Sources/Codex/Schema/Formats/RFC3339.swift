@@ -5,8 +5,6 @@
 //  Created by Kevin Wooten on 4/4/25.
 //
 
-import BigDecimal
-
 /// Namespace for RFC-3339 related types and functions.
 ///
 public struct RFC3339 {
@@ -128,7 +126,7 @@ public struct RFC3339 {
         hourRange.contains(hour),
         let minute = Int(match.output.minute),
         minuteRange.contains(minute),
-        let second = BigDecimal(string: String(match.output.seconds)),
+        let second = BigDecimal(match.output.seconds),
         secondRange.contains(second)
       else {
         return nil
@@ -164,7 +162,7 @@ public struct RFC3339 {
       }
 
       // Validate seconds.
-      if second.truncate() == 60 {
+      if second.rounded(.towardZero) == 60 {
         // Leap seconds are only valid at 23:59:60
         guard zHour == 23 && zMinute == 59 else {
           return nil

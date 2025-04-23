@@ -102,7 +102,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let minItems: Int = minItemsInstance.asInt() else {
+        guard let minItems: Int = minItemsInstance.int() else {
           try context.invalidValue("Must be an integer")
         }
 
@@ -145,7 +145,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let maxItems: Int = maxItemsInstance.asInt() else {
+        guard let maxItems: Int = maxItemsInstance.int() else {
           try context.invalidValue("Must be an integer")
         }
 
@@ -275,7 +275,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let minContains: Int = minContainsInstance.asInt() else {
+        guard let minContains: Int = minContainsInstance.int() else {
           try context.invalidValue("Must be an integer")
         }
 
@@ -323,7 +323,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let maxContains: Int = maxContainsInstance.asInt() else {
+        guard let maxContains: Int = maxContainsInstance.int() else {
           try context.invalidValue("Must be an integer")
         }
 

@@ -529,12 +529,12 @@ public struct JSONSchemaTestSuite {
     }
 
     public static func load(version: Version) -> Draft {
-      guard
-        let draftDir = Bundle.module.resourceURL?.appending(path: "tests/\(version.rawValue)"),
-        let reachable = try? draftDir.checkResourceIsReachable(),
-        reachable
-      else {
-        fatalError("Could not locate JSON Schema Test Suite for \(version)")
+      guard let resourceURL = Bundle.module.resourceURL else {
+        fatalError("No module resource URL found")
+      }
+      let draftDir = resourceURL.appending(path: "JSONTestSuite/tests/\(version.rawValue)")
+      guard let reachable = try? draftDir.checkResourceIsReachable(), reachable else {
+        fatalError("Could not locate JSON Schema Test Suite for \(version) at \(draftDir)")
       }
       do {
         return try Draft(directory: draftDir)
@@ -668,7 +668,7 @@ public struct JSONSchemaTestSuite {
     Bundle.module.resourceURL.neverNil("No resources directory for module")
   }()
   static let remoteSchemas: SchemaLocator = {
-    LocalDirectorySchemaContainer(for: resourcesDirectoryURL.appending(path: "/remotes")).neverNil()
+    LocalDirectorySchemaContainer(for: resourcesDirectoryURL.appending(path: "JSONTestSuite/remotes")).neverNil()
   }()
 
 }

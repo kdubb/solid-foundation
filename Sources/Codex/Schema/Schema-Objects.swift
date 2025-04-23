@@ -5,7 +5,6 @@
 //  Created by Kevin Wooten on 2/3/25.
 //
 
-import BigDecimal
 import OrderedCollections
 
 extension Schema {
@@ -420,7 +419,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let minProperties: Int = minPropertiesNum.asInt() else {
+        guard let minProperties: Int = minPropertiesNum.int() else {
           try context.invalidValue("Must be an integer")
         }
 
@@ -459,7 +458,7 @@ extension Schema {
           try context.invalidType(requiredType: .number)
         }
 
-        guard let maxProperties: Int = maxPropertiesNum.asInt() else {
+        guard let maxProperties: Int = maxPropertiesNum.int() else {
           try context.invalidValue("Must be an integer")
         }
 

@@ -5,19 +5,19 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
-import BigDecimal
-
 extension Value {
 
   var schemaTypes: [Schema.InstanceType] {
     switch self {
     case .null: [.null]
     case .bool: [.boolean]
-    case .number(let number): number.decimal.isSchemaInteger ? [.integer, .number] : [.number]
+    case .number(let number): number.isInteger ? [.integer, .number] : [.number]
     case .bytes: [.bytes]
     case .string: [.string]
     case .array: [.array]
     case .object: [.object]
+    case .tagged(tag: _, value: let value):
+      value.schemaTypes
     }
   }
 
@@ -46,6 +46,8 @@ extension Value {
         }
       }
       return true
+    case (.tagged(tag: _, value: let lhs), .tagged(tag: _, value: let rhs)):
+      return schemaEqual(lhs, rhs)
     default:
       return false
     }

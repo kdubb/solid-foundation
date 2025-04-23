@@ -1,0 +1,8478 @@
+{
+  "stringInitialization": [
+    {
+      "input": "-100",
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "input": "-1",
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "input": "0",
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "input": "1",
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "input": "42",
+      "expectedWords": [
+        2,
+        42
+      ]
+    },
+    {
+      "input": "100",
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "input": "255",
+      "expectedWords": [
+        2,
+        255
+      ]
+    },
+    {
+      "input": "256",
+      "expectedWords": [
+        2,
+        256
+      ]
+    },
+    {
+      "input": "65535",
+      "expectedWords": [
+        2,
+        65535
+      ]
+    },
+    {
+      "input": "65536",
+      "expectedWords": [
+        2,
+        65536
+      ]
+    },
+    {
+      "input": "-1000000",
+      "expectedWords": [
+        0,
+        1000000
+      ]
+    },
+    {
+      "input": "-1000000000",
+      "expectedWords": [
+        0,
+        1000000000
+      ]
+    },
+    {
+      "input": "-1000000000000000000",
+      "expectedWords": [
+        0,
+        1000000000000000000
+      ]
+    },
+    {
+      "input": "-9223372036854775808",
+      "expectedWords": [
+        0,
+        9223372036854775808
+      ]
+    },
+    {
+      "input": "1000000",
+      "expectedWords": [
+        2,
+        1000000
+      ]
+    },
+    {
+      "input": "1000000000",
+      "expectedWords": [
+        2,
+        1000000000
+      ]
+    },
+    {
+      "input": "1000000000000000000",
+      "expectedWords": [
+        2,
+        1000000000000000000
+      ]
+    },
+    {
+      "input": "9223372036854775807",
+      "expectedWords": [
+        2,
+        9223372036854775807
+      ]
+    },
+    {
+      "input": "-100000000000000000000000000000000000000000000000000",
+      "expectedWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "input": "-10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "expectedWords": [
+        0,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ]
+    },
+    {
+      "input": "100000000000000000000000000000000000000000000000000",
+      "expectedWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "input": "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "expectedWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ]
+    },
+    {
+      "input": "",
+      "expectedWords": null
+    },
+    {
+      "input": " ",
+      "expectedWords": null
+    },
+    {
+      "input": " 123",
+      "expectedWords": null
+    },
+    {
+      "input": "123 ",
+      "expectedWords": null
+    }
+  ],
+  "floatInitialization": [
+    {
+      "floatValue": 0.0,
+      "precision": 16,
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "floatValue": 0.0,
+      "precision": 32,
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "floatValue": 0.0,
+      "precision": 64,
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "floatValue": 1.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "floatValue": 1.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "floatValue": 1.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "floatValue": -1.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "floatValue": -1.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "floatValue": -1.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "floatValue": 2.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 2.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 2.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": 10.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        10
+      ]
+    },
+    {
+      "floatValue": 10.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        10
+      ]
+    },
+    {
+      "floatValue": 10.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        10
+      ]
+    },
+    {
+      "floatValue": -10.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        10
+      ]
+    },
+    {
+      "floatValue": -10.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        10
+      ]
+    },
+    {
+      "floatValue": -10.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        10
+      ]
+    },
+    {
+      "floatValue": 100.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "floatValue": 100.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "floatValue": 100.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "floatValue": -100.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "floatValue": -100.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "floatValue": -100.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "floatValue": 1000.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "floatValue": 1000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "floatValue": 1000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "floatValue": -1000.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "floatValue": -1000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "floatValue": -1000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "floatValue": 1.5,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "floatValue": 1.5,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "floatValue": 1.5,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "floatValue": -1.5,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "floatValue": -1.5,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "floatValue": -1.5,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "floatValue": 2.5,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 2.5,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 2.5,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.5,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.5,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.5,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": 3.14,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        3
+      ]
+    },
+    {
+      "floatValue": 3.14,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        3
+      ]
+    },
+    {
+      "floatValue": 3.14,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        3
+      ]
+    },
+    {
+      "floatValue": -3.14,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        3
+      ]
+    },
+    {
+      "floatValue": -3.14,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        3
+      ]
+    },
+    {
+      "floatValue": -3.14,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        3
+      ]
+    },
+    {
+      "floatValue": 2.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 2.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 2.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "floatValue": 4.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "floatValue": 4.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "floatValue": 4.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "floatValue": 8.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        8
+      ]
+    },
+    {
+      "floatValue": 8.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        8
+      ]
+    },
+    {
+      "floatValue": 8.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        8
+      ]
+    },
+    {
+      "floatValue": 16.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        16
+      ]
+    },
+    {
+      "floatValue": 16.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        16
+      ]
+    },
+    {
+      "floatValue": 16.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        16
+      ]
+    },
+    {
+      "floatValue": 32.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        32
+      ]
+    },
+    {
+      "floatValue": 32.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        32
+      ]
+    },
+    {
+      "floatValue": 32.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        32
+      ]
+    },
+    {
+      "floatValue": 64.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        64
+      ]
+    },
+    {
+      "floatValue": 64.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        64
+      ]
+    },
+    {
+      "floatValue": 64.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        64
+      ]
+    },
+    {
+      "floatValue": 128.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        128
+      ]
+    },
+    {
+      "floatValue": 128.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        128
+      ]
+    },
+    {
+      "floatValue": 128.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        128
+      ]
+    },
+    {
+      "floatValue": 256.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        256
+      ]
+    },
+    {
+      "floatValue": 256.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        256
+      ]
+    },
+    {
+      "floatValue": 256.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        256
+      ]
+    },
+    {
+      "floatValue": 512.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        512
+      ]
+    },
+    {
+      "floatValue": 512.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        512
+      ]
+    },
+    {
+      "floatValue": 512.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        512
+      ]
+    },
+    {
+      "floatValue": -2.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -2.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "floatValue": -4.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        4
+      ]
+    },
+    {
+      "floatValue": -4.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        4
+      ]
+    },
+    {
+      "floatValue": -4.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        4
+      ]
+    },
+    {
+      "floatValue": -8.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        8
+      ]
+    },
+    {
+      "floatValue": -8.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        8
+      ]
+    },
+    {
+      "floatValue": -8.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        8
+      ]
+    },
+    {
+      "floatValue": -16.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        16
+      ]
+    },
+    {
+      "floatValue": -16.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        16
+      ]
+    },
+    {
+      "floatValue": -16.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        16
+      ]
+    },
+    {
+      "floatValue": -32.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        32
+      ]
+    },
+    {
+      "floatValue": -32.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        32
+      ]
+    },
+    {
+      "floatValue": -32.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        32
+      ]
+    },
+    {
+      "floatValue": -64.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        64
+      ]
+    },
+    {
+      "floatValue": -64.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        64
+      ]
+    },
+    {
+      "floatValue": -64.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        64
+      ]
+    },
+    {
+      "floatValue": -128.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        128
+      ]
+    },
+    {
+      "floatValue": -128.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        128
+      ]
+    },
+    {
+      "floatValue": -128.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        128
+      ]
+    },
+    {
+      "floatValue": -256.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        256
+      ]
+    },
+    {
+      "floatValue": -256.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        256
+      ]
+    },
+    {
+      "floatValue": -256.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        256
+      ]
+    },
+    {
+      "floatValue": -512.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        512
+      ]
+    },
+    {
+      "floatValue": -512.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        512
+      ]
+    },
+    {
+      "floatValue": -512.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        512
+      ]
+    },
+    {
+      "floatValue": 100.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "floatValue": 100.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "floatValue": 100.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "floatValue": 1000.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "floatValue": 1000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "floatValue": 1000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "floatValue": 10000.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        10000
+      ]
+    },
+    {
+      "floatValue": 10000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        10000
+      ]
+    },
+    {
+      "floatValue": 10000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        10000
+      ]
+    },
+    {
+      "floatValue": 100000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        100000
+      ]
+    },
+    {
+      "floatValue": 100000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        100000
+      ]
+    },
+    {
+      "floatValue": 1000000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        1000000
+      ]
+    },
+    {
+      "floatValue": 1000000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        1000000
+      ]
+    },
+    {
+      "floatValue": 10000000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        10000000
+      ]
+    },
+    {
+      "floatValue": 10000000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        10000000
+      ]
+    },
+    {
+      "floatValue": 100000000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        100000000
+      ]
+    },
+    {
+      "floatValue": 100000000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        100000000
+      ]
+    },
+    {
+      "floatValue": 1000000000.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        1000000000
+      ]
+    },
+    {
+      "floatValue": 1000000000.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        1000000000
+      ]
+    },
+    {
+      "floatValue": -100.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "floatValue": -100.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "floatValue": -100.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "floatValue": -1000.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "floatValue": -1000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "floatValue": -1000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "floatValue": -10000.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        10000
+      ]
+    },
+    {
+      "floatValue": -10000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        10000
+      ]
+    },
+    {
+      "floatValue": -10000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        10000
+      ]
+    },
+    {
+      "floatValue": -100000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        100000
+      ]
+    },
+    {
+      "floatValue": -100000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        100000
+      ]
+    },
+    {
+      "floatValue": -1000000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        1000000
+      ]
+    },
+    {
+      "floatValue": -1000000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        1000000
+      ]
+    },
+    {
+      "floatValue": -10000000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        10000000
+      ]
+    },
+    {
+      "floatValue": -10000000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        10000000
+      ]
+    },
+    {
+      "floatValue": -100000000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        100000000
+      ]
+    },
+    {
+      "floatValue": -100000000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        100000000
+      ]
+    },
+    {
+      "floatValue": -1000000000.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        1000000000
+      ]
+    },
+    {
+      "floatValue": -1000000000.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        1000000000
+      ]
+    },
+    {
+      "floatValue": 2048.0,
+      "precision": 16,
+      "expectedWords": [
+        2,
+        2048
+      ]
+    },
+    {
+      "floatValue": 2048.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        2048
+      ]
+    },
+    {
+      "floatValue": 2048.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        2048
+      ]
+    },
+    {
+      "floatValue": -2048.0,
+      "precision": 16,
+      "expectedWords": [
+        0,
+        2048
+      ]
+    },
+    {
+      "floatValue": -2048.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        2048
+      ]
+    },
+    {
+      "floatValue": -2048.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        2048
+      ]
+    },
+    {
+      "floatValue": 16777216.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        16777216
+      ]
+    },
+    {
+      "floatValue": 16777216.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        16777216
+      ]
+    },
+    {
+      "floatValue": -16777216.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        16777216
+      ]
+    },
+    {
+      "floatValue": -16777216.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        16777216
+      ]
+    },
+    {
+      "floatValue": 9007199254740992.0,
+      "precision": 32,
+      "expectedWords": [
+        2,
+        9007199254740992
+      ]
+    },
+    {
+      "floatValue": 9007199254740992.0,
+      "precision": 64,
+      "expectedWords": [
+        2,
+        9007199254740992
+      ]
+    },
+    {
+      "floatValue": -9007199254740992.0,
+      "precision": 32,
+      "expectedWords": [
+        0,
+        9007199254740992
+      ]
+    },
+    {
+      "floatValue": -9007199254740992.0,
+      "precision": 64,
+      "expectedWords": [
+        0,
+        9007199254740992
+      ]
+    }
+  ],
+  "bitWidth": [
+    {
+      "words": [
+        1,
+        0
+      ],
+      "bitWidth": 1,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        1
+      ],
+      "bitWidth": 2,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        3
+      ],
+      "bitWidth": 3,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        7
+      ],
+      "bitWidth": 4,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        127
+      ],
+      "bitWidth": 8,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        255
+      ],
+      "bitWidth": 9,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        65535
+      ],
+      "bitWidth": 17,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        4294967295
+      ],
+      "bitWidth": 33,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "bitWidth": 64,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        18446744073709551615
+      ],
+      "bitWidth": 65,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        18446744073709551615,
+        1
+      ],
+      "bitWidth": 66,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        18446744073709551615,
+        9223372036854775807
+      ],
+      "bitWidth": 128,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        18446744073709551615,
+        18446744073709551615
+      ],
+      "bitWidth": 129,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        1
+      ],
+      "bitWidth": 2,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        3
+      ],
+      "bitWidth": 3,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        7
+      ],
+      "bitWidth": 4,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        127
+      ],
+      "bitWidth": 8,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        255
+      ],
+      "bitWidth": 9,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        65535
+      ],
+      "bitWidth": 17,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        4294967295
+      ],
+      "bitWidth": 33,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        9223372036854775807
+      ],
+      "bitWidth": 64,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        18446744073709551615
+      ],
+      "bitWidth": 65,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        18446744073709551615,
+        1
+      ],
+      "bitWidth": 66,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        18446744073709551615,
+        9223372036854775807
+      ],
+      "bitWidth": 128,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        18446744073709551615,
+        18446744073709551615
+      ],
+      "bitWidth": 129,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        42
+      ],
+      "bitWidth": 7,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 1
+    },
+    {
+      "words": [
+        0,
+        42
+      ],
+      "bitWidth": 7,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 1
+    },
+    {
+      "words": [
+        2,
+        255
+      ],
+      "bitWidth": 9,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        255
+      ],
+      "bitWidth": 9,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        65535
+      ],
+      "bitWidth": 17,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        65535
+      ],
+      "bitWidth": 17,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        2,
+        4294967295
+      ],
+      "bitWidth": 33,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    },
+    {
+      "words": [
+        0,
+        4294967295
+      ],
+      "bitWidth": 33,
+      "leadingZeroBitCount": 0,
+      "trailingZeroBitCount": 0
+    }
+  ],
+  "addition": [
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        42
+      ],
+      "rWords": [
+        2,
+        58
+      ],
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        42
+      ],
+      "rWords": [
+        0,
+        58
+      ],
+      "expectedWords": [
+        0,
+        100
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        100
+      ],
+      "rWords": [
+        0,
+        100
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        100
+      ],
+      "rWords": [
+        2,
+        100
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775808
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775809
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775806
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775807
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        2,
+        7694399963362492416,
+        2651792959217494523,
+        587747175411
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        0,
+        7694399963362492416,
+        2651792959217494523,
+        587747175411
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "rWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "expectedWords": [
+        2,
+        0,
+        5790817818656112640,
+        2036248227009037841,
+        687252044625845377,
+        6506339746360727119,
+        9363
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "rWords": [
+        0,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "expectedWords": [
+        0,
+        0,
+        5790817818656112640,
+        2036248227009037841,
+        687252044625845377,
+        6506339746360727119,
+        9363
+      ]
+    }
+  ],
+  "subtraction": [
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        100
+      ],
+      "rWords": [
+        2,
+        42
+      ],
+      "expectedWords": [
+        2,
+        58
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        42
+      ],
+      "rWords": [
+        2,
+        100
+      ],
+      "expectedWords": [
+        0,
+        58
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        100
+      ],
+      "rWords": [
+        0,
+        42
+      ],
+      "expectedWords": [
+        0,
+        58
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        42
+      ],
+      "rWords": [
+        0,
+        100
+      ],
+      "expectedWords": [
+        2,
+        58
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedWords": [
+        2,
+        18446744073709551615
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        0,
+        18446744073709551615
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        2,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ],
+      "expectedWords": [
+        2,
+        18117593173306900480,
+        3403760411288302929,
+        293873587676
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        0,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ],
+      "expectedWords": [
+        0,
+        18117593173306900480,
+        3403760411288302929,
+        293873587676
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        0,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ],
+      "expectedWords": [
+        2,
+        8023550863765143552,
+        17694776621638743209,
+        293873587734
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        2,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ],
+      "expectedWords": [
+        0,
+        8023550863765143552,
+        17694776621638743209,
+        293873587734
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "rWords": [
+        2,
+        0,
+        14826974150458867712,
+        3330727700749618282,
+        8201890710707044867,
+        8636168555094
+      ],
+      "expectedWords": [
+        2,
+        0,
+        15738550869433516032,
+        6910768449609676445,
+        1365107348460653629,
+        12476533273866584273,
+        4681
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "rWords": [
+        0,
+        0,
+        14826974150458867712,
+        3330727700749618282,
+        8201890710707044867,
+        8636168555094
+      ],
+      "expectedWords": [
+        0,
+        0,
+        15738550869433516032,
+        6910768449609676445,
+        1365107348460653629,
+        12476533273866584273,
+        4681
+      ]
+    }
+  ],
+  "multiplication": [
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        2
+      ],
+      "rWords": [
+        2,
+        3
+      ],
+      "expectedWords": [
+        2,
+        6
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        42
+      ],
+      "rWords": [
+        2,
+        58
+      ],
+      "expectedWords": [
+        2,
+        2436
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        2
+      ],
+      "rWords": [
+        2,
+        3
+      ],
+      "expectedWords": [
+        0,
+        6
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        2
+      ],
+      "rWords": [
+        0,
+        3
+      ],
+      "expectedWords": [
+        0,
+        6
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        2
+      ],
+      "rWords": [
+        0,
+        3
+      ],
+      "expectedWords": [
+        2,
+        6
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        42
+      ],
+      "rWords": [
+        2,
+        58
+      ],
+      "expectedWords": [
+        0,
+        2436
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        42
+      ],
+      "rWords": [
+        0,
+        58
+      ],
+      "expectedWords": [
+        0,
+        2436
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        42
+      ],
+      "rWords": [
+        0,
+        58
+      ],
+      "expectedWords": [
+        2,
+        2436
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        2
+      ],
+      "expectedWords": [
+        2,
+        18446744073709551614
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        2
+      ],
+      "expectedWords": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775807
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775808
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        2,
+        1,
+        4611686018427387903
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedWords": [
+        2,
+        0,
+        4611686018427387904
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1311768467294899695
+      ],
+      "rWords": [
+        2,
+        18364757930599072545
+      ],
+      "expectedWords": [
+        2,
+        14000077364136384719,
+        1305938341563349591
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1311768467294899695
+      ],
+      "rWords": [
+        2,
+        18364757930599072545
+      ],
+      "expectedWords": [
+        0,
+        14000077364136384719,
+        1305938341563349591
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1311768467294899695
+      ],
+      "rWords": [
+        0,
+        18364757930599072545
+      ],
+      "expectedWords": [
+        0,
+        14000077364136384719,
+        1305938341563349591
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        1311768467294899695
+      ],
+      "rWords": [
+        0,
+        18364757930599072545
+      ],
+      "expectedWords": [
+        2,
+        14000077364136384719,
+        1305938341563349591
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        2,
+        1,
+        4611686018427387903
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775808,
+        4611686018427387903
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expectedWords": [
+        2,
+        5,
+        16,
+        34,
+        60,
+        61,
+        52,
+        32
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expectedWords": [
+        2,
+        18446744073709551611,
+        3,
+        20,
+        44,
+        61,
+        52,
+        32
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        18446744073709551611,
+        5,
+        7,
+        8
+      ],
+      "expectedWords": [
+        2,
+        18446744073709551611,
+        18446744073709551611,
+        3,
+        20,
+        61,
+        52,
+        32
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        18446744073709551611,
+        5,
+        7,
+        8
+      ],
+      "expectedWords": [
+        2,
+        5,
+        18446744073709551600,
+        18446744073709551605,
+        3,
+        61,
+        52,
+        32
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "rWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        2,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "rWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        0,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "rWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        0,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "rWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        2,
+        13399722918938673152,
+        7145508105175220139,
+        29
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ]
+    }
+  ],
+  "divisionModulus": [
+    {
+      "dividendWords": [
+        1,
+        0
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        1,
+        0
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        1
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        2,
+        1
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        2
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        2,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        4
+      ],
+      "divisorWords": [
+        2,
+        2
+      ],
+      "quotientWords": [
+        2,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        100
+      ],
+      "divisorWords": [
+        2,
+        3
+      ],
+      "quotientWords": [
+        2,
+        33
+      ],
+      "remainderWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "dividendWords": [
+        1,
+        0
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        1,
+        0
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        1
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        0,
+        1
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        2
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        0,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        4
+      ],
+      "divisorWords": [
+        0,
+        2
+      ],
+      "quotientWords": [
+        0,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        100
+      ],
+      "divisorWords": [
+        0,
+        3
+      ],
+      "quotientWords": [
+        0,
+        33
+      ],
+      "remainderWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        1
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        0,
+        1
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        2
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        0,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        4
+      ],
+      "divisorWords": [
+        2,
+        2
+      ],
+      "quotientWords": [
+        0,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        100
+      ],
+      "divisorWords": [
+        2,
+        3
+      ],
+      "quotientWords": [
+        0,
+        33
+      ],
+      "remainderWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        1
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        2,
+        1
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        2
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        2,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        4
+      ],
+      "divisorWords": [
+        0,
+        2
+      ],
+      "quotientWords": [
+        2,
+        2
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        100
+      ],
+      "divisorWords": [
+        0,
+        3
+      ],
+      "quotientWords": [
+        2,
+        33
+      ],
+      "remainderWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        9223372036854775807
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        2,
+        9223372036854775807
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        9223372036854775808
+      ],
+      "divisorWords": [
+        2,
+        1
+      ],
+      "quotientWords": [
+        0,
+        9223372036854775808
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        9223372036854775807
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        0,
+        9223372036854775807
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        9223372036854775808
+      ],
+      "divisorWords": [
+        0,
+        1
+      ],
+      "quotientWords": [
+        2,
+        9223372036854775808
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        9223372036854775807
+      ],
+      "divisorWords": [
+        2,
+        9223372036854775807
+      ],
+      "quotientWords": [
+        2,
+        1
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        9223372036854775808
+      ],
+      "divisorWords": [
+        0,
+        9223372036854775808
+      ],
+      "quotientWords": [
+        2,
+        1
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        1311768467294899695
+      ],
+      "divisorWords": [
+        2,
+        1193046
+      ],
+      "quotientWords": [
+        2,
+        1099512061810
+      ],
+      "remainderWords": [
+        2,
+        726435
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        1311768467294899695
+      ],
+      "divisorWords": [
+        2,
+        1193046
+      ],
+      "quotientWords": [
+        0,
+        1099512061810
+      ],
+      "remainderWords": [
+        0,
+        726435
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        1311768467294899695
+      ],
+      "divisorWords": [
+        0,
+        1193046
+      ],
+      "quotientWords": [
+        0,
+        1099512061810
+      ],
+      "remainderWords": [
+        2,
+        726435
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        1311768467294899695
+      ],
+      "divisorWords": [
+        0,
+        1193046
+      ],
+      "quotientWords": [
+        2,
+        1099512061810
+      ],
+      "remainderWords": [
+        0,
+        726435
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "divisorWords": [
+        2,
+        5
+      ],
+      "quotientWords": [
+        2,
+        14757395258967641293,
+        7378697629483820646,
+        14757395258967641293
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "divisorWords": [
+        2,
+        5
+      ],
+      "quotientWords": [
+        2,
+        14757395258967641292,
+        7378697629483820646,
+        14757395258967641293
+      ],
+      "remainderWords": [
+        2,
+        3
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "divisorWords": [
+        0,
+        5
+      ],
+      "quotientWords": [
+        0,
+        14757395258967641293,
+        7378697629483820646,
+        14757395258967641293
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "divisorWords": [
+        0,
+        5
+      ],
+      "quotientWords": [
+        0,
+        14757395258967641292,
+        7378697629483820646,
+        14757395258967641293
+      ],
+      "remainderWords": [
+        2,
+        3
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "divisorWords": [
+        2,
+        1590897978359414784,
+        542101
+      ],
+      "quotientWords": [
+        2,
+        1590897978359414784,
+        542101
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "divisorWords": [
+        2,
+        1590897978359414784,
+        542101
+      ],
+      "quotientWords": [
+        0,
+        1590897978359414784,
+        542101
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "divisorWords": [
+        0,
+        1590897978359414784,
+        542101
+      ],
+      "quotientWords": [
+        0,
+        1590897978359414784,
+        542101
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "divisorWords": [
+        0,
+        1590897978359414784,
+        542101
+      ],
+      "quotientWords": [
+        2,
+        1590897978359414784,
+        542101
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        2,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "divisorWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "quotientWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "dividendWords": [
+        0,
+        0,
+        12118780946182832128,
+        10241496150359294728,
+        9566998059167698496,
+        12476541910035139367,
+        4681
+      ],
+      "divisorWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "quotientWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "remainderWords": [
+        1,
+        0
+      ]
+    }
+  ],
+  "negation": [
+    {
+      "valueWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        42
+      ],
+      "expectedWords": [
+        0,
+        42
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        42
+      ],
+      "expectedWords": [
+        2,
+        42
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775807
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775808
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        0,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        2,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    }
+  ],
+  "abs": [
+    {
+      "valueWords": [
+        1,
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        42
+      ],
+      "expectedWords": [
+        2,
+        42
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        42
+      ],
+      "expectedWords": [
+        2,
+        42
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775807
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775808
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        2,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "expectedWords": [
+        2,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "valueWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "valueWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    }
+  ],
+  "bitwiseOps": [
+    {
+      "lWords": [
+        2,
+        10
+      ],
+      "rWords": [
+        2,
+        12
+      ],
+      "expectedAndWords": [
+        2,
+        8
+      ],
+      "expectedOrWords": [
+        2,
+        14
+      ],
+      "expectedXorWords": [
+        2,
+        6
+      ],
+      "expectedNotLWords": [
+        0,
+        11
+      ],
+      "expectedNotRWords": [
+        0,
+        13
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        10
+      ],
+      "rWords": [
+        2,
+        12
+      ],
+      "expectedAndWords": [
+        2,
+        4
+      ],
+      "expectedOrWords": [
+        0,
+        2
+      ],
+      "expectedXorWords": [
+        0,
+        6
+      ],
+      "expectedNotLWords": [
+        2,
+        9
+      ],
+      "expectedNotRWords": [
+        0,
+        13
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        10
+      ],
+      "rWords": [
+        0,
+        12
+      ],
+      "expectedAndWords": [
+        1,
+        0
+      ],
+      "expectedOrWords": [
+        0,
+        2
+      ],
+      "expectedXorWords": [
+        0,
+        2
+      ],
+      "expectedNotLWords": [
+        0,
+        11
+      ],
+      "expectedNotRWords": [
+        2,
+        11
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        10
+      ],
+      "rWords": [
+        0,
+        12
+      ],
+      "expectedAndWords": [
+        0,
+        12
+      ],
+      "expectedOrWords": [
+        0,
+        10
+      ],
+      "expectedXorWords": [
+        2,
+        2
+      ],
+      "expectedNotLWords": [
+        2,
+        9
+      ],
+      "expectedNotRWords": [
+        2,
+        11
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        4294967295
+      ],
+      "expectedAndWords": [
+        2,
+        4294967295
+      ],
+      "expectedOrWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedXorWords": [
+        2,
+        9223372032559808512
+      ],
+      "expectedNotLWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedNotRWords": [
+        0,
+        4294967296
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        4294967295
+      ],
+      "expectedAndWords": [
+        1,
+        0
+      ],
+      "expectedOrWords": [
+        0,
+        9223372032559808513
+      ],
+      "expectedXorWords": [
+        0,
+        9223372032559808513
+      ],
+      "expectedNotLWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedNotRWords": [
+        0,
+        4294967296
+      ]
+    }
+  ],
+  "bitwiseShift": [
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 1,
+      "expectedLeftWords": [
+        2,
+        20
+      ],
+      "expectedRightWords": [
+        2,
+        5
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 4,
+      "expectedLeftWords": [
+        2,
+        160
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 8,
+      "expectedLeftWords": [
+        2,
+        2560
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 16,
+      "expectedLeftWords": [
+        2,
+        655360
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 32,
+      "expectedLeftWords": [
+        2,
+        42949672960
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 63,
+      "expectedLeftWords": [
+        2,
+        0,
+        5
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 64,
+      "expectedLeftWords": [
+        2,
+        0,
+        10
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 65,
+      "expectedLeftWords": [
+        2,
+        0,
+        20
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 127,
+      "expectedLeftWords": [
+        2,
+        0,
+        0,
+        5
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        10
+      ],
+      "shift": 128,
+      "expectedLeftWords": [
+        2,
+        0,
+        0,
+        10
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 1,
+      "expectedLeftWords": [
+        0,
+        20
+      ],
+      "expectedRightWords": [
+        0,
+        5
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 4,
+      "expectedLeftWords": [
+        0,
+        160
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 8,
+      "expectedLeftWords": [
+        0,
+        2560
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 16,
+      "expectedLeftWords": [
+        0,
+        655360
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 32,
+      "expectedLeftWords": [
+        0,
+        42949672960
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 63,
+      "expectedLeftWords": [
+        0,
+        0,
+        5
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 64,
+      "expectedLeftWords": [
+        0,
+        0,
+        10
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 65,
+      "expectedLeftWords": [
+        0,
+        0,
+        20
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 127,
+      "expectedLeftWords": [
+        0,
+        0,
+        0,
+        5
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        10
+      ],
+      "shift": 128,
+      "expectedLeftWords": [
+        0,
+        0,
+        0,
+        10
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 1,
+      "expectedLeftWords": [
+        2,
+        43690
+      ],
+      "expectedRightWords": [
+        2,
+        10922
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 4,
+      "expectedLeftWords": [
+        2,
+        349520
+      ],
+      "expectedRightWords": [
+        2,
+        1365
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 8,
+      "expectedLeftWords": [
+        2,
+        5592320
+      ],
+      "expectedRightWords": [
+        2,
+        85
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 16,
+      "expectedLeftWords": [
+        2,
+        1431633920
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 32,
+      "expectedLeftWords": [
+        2,
+        93823560581120
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 63,
+      "expectedLeftWords": [
+        2,
+        9223372036854775808,
+        10922
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 64,
+      "expectedLeftWords": [
+        2,
+        0,
+        21845
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 65,
+      "expectedLeftWords": [
+        2,
+        0,
+        43690
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 127,
+      "expectedLeftWords": [
+        2,
+        0,
+        9223372036854775808,
+        10922
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        21845
+      ],
+      "shift": 128,
+      "expectedLeftWords": [
+        2,
+        0,
+        0,
+        21845
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 1,
+      "expectedLeftWords": [
+        0,
+        43690
+      ],
+      "expectedRightWords": [
+        0,
+        10923
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 4,
+      "expectedLeftWords": [
+        0,
+        349520
+      ],
+      "expectedRightWords": [
+        0,
+        1366
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 8,
+      "expectedLeftWords": [
+        0,
+        5592320
+      ],
+      "expectedRightWords": [
+        0,
+        86
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 16,
+      "expectedLeftWords": [
+        0,
+        1431633920
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 32,
+      "expectedLeftWords": [
+        0,
+        93823560581120
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 63,
+      "expectedLeftWords": [
+        0,
+        9223372036854775808,
+        10922
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 64,
+      "expectedLeftWords": [
+        0,
+        0,
+        21845
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 65,
+      "expectedLeftWords": [
+        0,
+        0,
+        43690
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 127,
+      "expectedLeftWords": [
+        0,
+        0,
+        9223372036854775808,
+        10922
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        21845
+      ],
+      "shift": 128,
+      "expectedLeftWords": [
+        0,
+        0,
+        0,
+        21845
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 1,
+      "expectedLeftWords": [
+        2,
+        18446744073709551614
+      ],
+      "expectedRightWords": [
+        2,
+        4611686018427387903
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 4,
+      "expectedLeftWords": [
+        2,
+        18446744073709551600,
+        7
+      ],
+      "expectedRightWords": [
+        2,
+        576460752303423487
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 8,
+      "expectedLeftWords": [
+        2,
+        18446744073709551360,
+        127
+      ],
+      "expectedRightWords": [
+        2,
+        36028797018963967
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 16,
+      "expectedLeftWords": [
+        2,
+        18446744073709486080,
+        32767
+      ],
+      "expectedRightWords": [
+        2,
+        140737488355327
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 32,
+      "expectedLeftWords": [
+        2,
+        18446744069414584320,
+        2147483647
+      ],
+      "expectedRightWords": [
+        2,
+        2147483647
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 63,
+      "expectedLeftWords": [
+        2,
+        9223372036854775808,
+        4611686018427387903
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 64,
+      "expectedLeftWords": [
+        2,
+        0,
+        9223372036854775807
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 65,
+      "expectedLeftWords": [
+        2,
+        0,
+        18446744073709551614
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 127,
+      "expectedLeftWords": [
+        2,
+        0,
+        9223372036854775808,
+        4611686018427387903
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        2,
+        9223372036854775807
+      ],
+      "shift": 128,
+      "expectedLeftWords": [
+        2,
+        0,
+        0,
+        9223372036854775807
+      ],
+      "expectedRightWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 1,
+      "expectedLeftWords": [
+        0,
+        0,
+        1
+      ],
+      "expectedRightWords": [
+        0,
+        4611686018427387904
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 4,
+      "expectedLeftWords": [
+        0,
+        0,
+        8
+      ],
+      "expectedRightWords": [
+        0,
+        576460752303423488
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 8,
+      "expectedLeftWords": [
+        0,
+        0,
+        128
+      ],
+      "expectedRightWords": [
+        0,
+        36028797018963968
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 16,
+      "expectedLeftWords": [
+        0,
+        0,
+        32768
+      ],
+      "expectedRightWords": [
+        0,
+        140737488355328
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 32,
+      "expectedLeftWords": [
+        0,
+        0,
+        2147483648
+      ],
+      "expectedRightWords": [
+        0,
+        2147483648
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 63,
+      "expectedLeftWords": [
+        0,
+        0,
+        4611686018427387904
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 64,
+      "expectedLeftWords": [
+        0,
+        0,
+        9223372036854775808
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 65,
+      "expectedLeftWords": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 127,
+      "expectedLeftWords": [
+        0,
+        0,
+        0,
+        4611686018427387904
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "words": [
+        0,
+        9223372036854775808
+      ],
+      "shift": 128,
+      "expectedLeftWords": [
+        0,
+        0,
+        0,
+        9223372036854775808
+      ],
+      "expectedRightWords": [
+        0,
+        1
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        2,
+        2
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lWords": [
+        0,
+        2
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        2
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        0,
+        1
+      ],
+      "rWords": [
+        0,
+        2
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        0,
+        1
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        5,
+        6,
+        7,
+        8
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lWords": [
+        2,
+        5,
+        6,
+        7,
+        8
+      ],
+      "rWords": [
+        2,
+        1,
+        2,
+        3,
+        4
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        18446744073709551611,
+        5,
+        7,
+        8
+      ],
+      "rWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lWords": [
+        2,
+        18446744073709551615,
+        1,
+        3,
+        4
+      ],
+      "rWords": [
+        2,
+        18446744073709551611,
+        5,
+        7,
+        8
+      ],
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    }
+  ],
+  "power": [
+    {
+      "baseWords": [
+        1,
+        0
+      ],
+      "exponent": 0,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        1,
+        0
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        1
+      ],
+      "exponent": 0,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        1
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        1
+      ],
+      "exponent": 0,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        1
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        1
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 0,
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 3,
+      "expectedWords": [
+        0,
+        8
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        3
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        9
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        3
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        9
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        2,
+        2
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        0,
+        2
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        10
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        2,
+        10
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        10
+      ],
+      "exponent": 1,
+      "expectedWords": [
+        0,
+        10
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        4
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        10
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        10
+      ],
+      "exponent": 2,
+      "expectedWords": [
+        2,
+        100
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 3,
+      "expectedWords": [
+        2,
+        8
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 3,
+      "expectedWords": [
+        0,
+        8
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        10
+      ],
+      "exponent": 3,
+      "expectedWords": [
+        2,
+        1000
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        10
+      ],
+      "exponent": 3,
+      "expectedWords": [
+        0,
+        1000
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 10,
+      "expectedWords": [
+        2,
+        1024
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 10,
+      "expectedWords": [
+        2,
+        1024
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        10
+      ],
+      "exponent": 10,
+      "expectedWords": [
+        2,
+        10000000000
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        10
+      ],
+      "exponent": 10,
+      "expectedWords": [
+        2,
+        10000000000
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 20,
+      "expectedWords": [
+        2,
+        1048576
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 20,
+      "expectedWords": [
+        2,
+        1048576
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        10
+      ],
+      "exponent": 20,
+      "expectedWords": [
+        2,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        10
+      ],
+      "exponent": 20,
+      "expectedWords": [
+        2,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        2
+      ],
+      "exponent": 50,
+      "expectedWords": [
+        2,
+        1125899906842624
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        2
+      ],
+      "exponent": 50,
+      "expectedWords": [
+        2,
+        1125899906842624
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        10
+      ],
+      "exponent": 50,
+      "expectedWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        10
+      ],
+      "exponent": 50,
+      "expectedWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        3
+      ],
+      "exponent": 10,
+      "expectedWords": [
+        2,
+        59049
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        3
+      ],
+      "exponent": 10,
+      "expectedWords": [
+        2,
+        59049
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        3
+      ],
+      "exponent": 11,
+      "expectedWords": [
+        0,
+        177147
+      ]
+    },
+    {
+      "baseWords": [
+        2,
+        5
+      ],
+      "exponent": 7,
+      "expectedWords": [
+        2,
+        78125
+      ]
+    },
+    {
+      "baseWords": [
+        0,
+        5
+      ],
+      "exponent": 7,
+      "expectedWords": [
+        0,
+        78125
+      ]
+    }
+  ],
+  "gcdLcm": [
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedGcdWords": [
+        1,
+        0
+      ],
+      "expectedLcmWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        1,
+        0
+      ],
+      "expectedGcdWords": [
+        2,
+        1
+      ],
+      "expectedLcmWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        1,
+        0
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedGcdWords": [
+        2,
+        1
+      ],
+      "expectedLcmWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        1
+      ],
+      "rWords": [
+        2,
+        1
+      ],
+      "expectedGcdWords": [
+        2,
+        1
+      ],
+      "expectedLcmWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        2
+      ],
+      "rWords": [
+        2,
+        3
+      ],
+      "expectedGcdWords": [
+        2,
+        1
+      ],
+      "expectedLcmWords": [
+        2,
+        6
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        6
+      ],
+      "rWords": [
+        2,
+        8
+      ],
+      "expectedGcdWords": [
+        2,
+        2
+      ],
+      "expectedLcmWords": [
+        2,
+        24
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        12
+      ],
+      "rWords": [
+        2,
+        18
+      ],
+      "expectedGcdWords": [
+        2,
+        6
+      ],
+      "expectedLcmWords": [
+        2,
+        36
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        35
+      ],
+      "rWords": [
+        2,
+        49
+      ],
+      "expectedGcdWords": [
+        2,
+        7
+      ],
+      "expectedLcmWords": [
+        2,
+        245
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        48
+      ],
+      "rWords": [
+        2,
+        180
+      ],
+      "expectedGcdWords": [
+        2,
+        12
+      ],
+      "expectedLcmWords": [
+        2,
+        720
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        12
+      ],
+      "rWords": [
+        2,
+        18
+      ],
+      "expectedGcdWords": [
+        2,
+        6
+      ],
+      "expectedLcmWords": [
+        0,
+        36
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        12
+      ],
+      "rWords": [
+        0,
+        18
+      ],
+      "expectedGcdWords": [
+        2,
+        6
+      ],
+      "expectedLcmWords": [
+        0,
+        36
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        12
+      ],
+      "rWords": [
+        0,
+        18
+      ],
+      "expectedGcdWords": [
+        2,
+        6
+      ],
+      "expectedLcmWords": [
+        2,
+        36
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        35
+      ],
+      "rWords": [
+        2,
+        49
+      ],
+      "expectedGcdWords": [
+        2,
+        7
+      ],
+      "expectedLcmWords": [
+        0,
+        245
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        35
+      ],
+      "rWords": [
+        0,
+        49
+      ],
+      "expectedGcdWords": [
+        2,
+        7
+      ],
+      "expectedLcmWords": [
+        0,
+        245
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        35
+      ],
+      "rWords": [
+        0,
+        49
+      ],
+      "expectedGcdWords": [
+        2,
+        7
+      ],
+      "expectedLcmWords": [
+        2,
+        245
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        9223372036854775806
+      ],
+      "expectedGcdWords": [
+        2,
+        1
+      ],
+      "expectedLcmWords": [
+        2,
+        9223372036854775810,
+        4611686018427387902
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        9223372036854775807
+      ],
+      "rWords": [
+        2,
+        9223372036854775808
+      ],
+      "expectedGcdWords": [
+        2,
+        1
+      ],
+      "expectedLcmWords": [
+        2,
+        9223372036854775808,
+        4611686018427387903
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        9223372036854775808
+      ],
+      "rWords": [
+        2,
+        9223372036854775808
+      ],
+      "expectedGcdWords": [
+        2,
+        9223372036854775808
+      ],
+      "expectedLcmWords": [
+        0,
+        9223372036854775808
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "rWords": [
+        2,
+        3875820019684212736,
+        54
+      ],
+      "expectedGcdWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedLcmWords": [
+        2,
+        3875820019684212736,
+        54
+      ]
+    },
+    {
+      "lWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "rWords": [
+        2,
+        3875820019684212736,
+        54
+      ],
+      "expectedGcdWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedLcmWords": [
+        0,
+        3875820019684212736,
+        54
+      ]
+    },
+    {
+      "lWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "rWords": [
+        2,
+        17909126868192198656,
+        10278298888501128114,
+        29387358770
+      ],
+      "expectedGcdWords": [
+        2,
+        17909126868192198656,
+        10278298888501128114,
+        29387358770
+      ],
+      "expectedLcmWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    }
+  ],
+  "integerConversion": [
+    {
+      "sourceWords": [
+        1,
+        0
+      ],
+      "expectedInt8": 0,
+      "expectedUInt8": 0,
+      "expectedInt16": 0,
+      "expectedUInt16": 0,
+      "expectedInt32": 0,
+      "expectedUInt32": 0,
+      "expectedInt64": 0,
+      "expectedUInt64": 0,
+      "expectedInt128": 0,
+      "expectedUInt128": 0,
+      "expectedInt": 0,
+      "expectedUInt": 0
+    },
+    {
+      "sourceWords": [
+        2,
+        1
+      ],
+      "expectedInt8": 1,
+      "expectedUInt8": 1,
+      "expectedInt16": 1,
+      "expectedUInt16": 1,
+      "expectedInt32": 1,
+      "expectedUInt32": 1,
+      "expectedInt64": 1,
+      "expectedUInt64": 1,
+      "expectedInt128": 1,
+      "expectedUInt128": 1,
+      "expectedInt": 1,
+      "expectedUInt": 1
+    },
+    {
+      "sourceWords": [
+        0,
+        1
+      ],
+      "expectedInt8": -1,
+      "expectedUInt8": null,
+      "expectedInt16": -1,
+      "expectedUInt16": null,
+      "expectedInt32": -1,
+      "expectedUInt32": null,
+      "expectedInt64": -1,
+      "expectedUInt64": null,
+      "expectedInt128": -1,
+      "expectedUInt128": null,
+      "expectedInt": -1,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        127
+      ],
+      "expectedInt8": 127,
+      "expectedUInt8": 127,
+      "expectedInt16": 127,
+      "expectedUInt16": 127,
+      "expectedInt32": 127,
+      "expectedUInt32": 127,
+      "expectedInt64": 127,
+      "expectedUInt64": 127,
+      "expectedInt128": 127,
+      "expectedUInt128": 127,
+      "expectedInt": 127,
+      "expectedUInt": 127
+    },
+    {
+      "sourceWords": [
+        0,
+        128
+      ],
+      "expectedInt8": -128,
+      "expectedUInt8": null,
+      "expectedInt16": -128,
+      "expectedUInt16": null,
+      "expectedInt32": -128,
+      "expectedUInt32": null,
+      "expectedInt64": -128,
+      "expectedUInt64": null,
+      "expectedInt128": -128,
+      "expectedUInt128": null,
+      "expectedInt": -128,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        127
+      ],
+      "expectedInt8": -127,
+      "expectedUInt8": null,
+      "expectedInt16": -127,
+      "expectedUInt16": null,
+      "expectedInt32": -127,
+      "expectedUInt32": null,
+      "expectedInt64": -127,
+      "expectedUInt64": null,
+      "expectedInt128": -127,
+      "expectedUInt128": null,
+      "expectedInt": -127,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        255
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": 255,
+      "expectedInt16": 255,
+      "expectedUInt16": 255,
+      "expectedInt32": 255,
+      "expectedUInt32": 255,
+      "expectedInt64": 255,
+      "expectedUInt64": 255,
+      "expectedInt128": 255,
+      "expectedUInt128": 255,
+      "expectedInt": 255,
+      "expectedUInt": 255
+    },
+    {
+      "sourceWords": [
+        2,
+        32767
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": 32767,
+      "expectedUInt16": 32767,
+      "expectedInt32": 32767,
+      "expectedUInt32": 32767,
+      "expectedInt64": 32767,
+      "expectedUInt64": 32767,
+      "expectedInt128": 32767,
+      "expectedUInt128": 32767,
+      "expectedInt": 32767,
+      "expectedUInt": 32767
+    },
+    {
+      "sourceWords": [
+        0,
+        32768
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": -32768,
+      "expectedUInt16": null,
+      "expectedInt32": -32768,
+      "expectedUInt32": null,
+      "expectedInt64": -32768,
+      "expectedUInt64": null,
+      "expectedInt128": -32768,
+      "expectedUInt128": null,
+      "expectedInt": -32768,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        32767
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": -32767,
+      "expectedUInt16": null,
+      "expectedInt32": -32767,
+      "expectedUInt32": null,
+      "expectedInt64": -32767,
+      "expectedUInt64": null,
+      "expectedInt128": -32767,
+      "expectedUInt128": null,
+      "expectedInt": -32767,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        65535
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": 65535,
+      "expectedInt32": 65535,
+      "expectedUInt32": 65535,
+      "expectedInt64": 65535,
+      "expectedUInt64": 65535,
+      "expectedInt128": 65535,
+      "expectedUInt128": 65535,
+      "expectedInt": 65535,
+      "expectedUInt": 65535
+    },
+    {
+      "sourceWords": [
+        2,
+        2147483647
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": 2147483647,
+      "expectedUInt32": 2147483647,
+      "expectedInt64": 2147483647,
+      "expectedUInt64": 2147483647,
+      "expectedInt128": 2147483647,
+      "expectedUInt128": 2147483647,
+      "expectedInt": 2147483647,
+      "expectedUInt": 2147483647
+    },
+    {
+      "sourceWords": [
+        0,
+        2147483648
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": -2147483648,
+      "expectedUInt32": null,
+      "expectedInt64": -2147483648,
+      "expectedUInt64": null,
+      "expectedInt128": -2147483648,
+      "expectedUInt128": null,
+      "expectedInt": -2147483648,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        2147483647
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": -2147483647,
+      "expectedUInt32": null,
+      "expectedInt64": -2147483647,
+      "expectedUInt64": null,
+      "expectedInt128": -2147483647,
+      "expectedUInt128": null,
+      "expectedInt": -2147483647,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        4294967295
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": 4294967295,
+      "expectedInt64": 4294967295,
+      "expectedUInt64": 4294967295,
+      "expectedInt128": 4294967295,
+      "expectedUInt128": 4294967295,
+      "expectedInt": 4294967295,
+      "expectedUInt": 4294967295
+    },
+    {
+      "sourceWords": [
+        2,
+        9223372036854775807
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": 9223372036854775807,
+      "expectedUInt64": 9223372036854775807,
+      "expectedInt128": 9223372036854775807,
+      "expectedUInt128": 9223372036854775807,
+      "expectedInt": 9223372036854775807,
+      "expectedUInt": 9223372036854775807
+    },
+    {
+      "sourceWords": [
+        0,
+        9223372036854775808
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": -9223372036854775808,
+      "expectedUInt64": null,
+      "expectedInt128": -9223372036854775808,
+      "expectedUInt128": null,
+      "expectedInt": -9223372036854775808,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        9223372036854775807
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": -9223372036854775807,
+      "expectedUInt64": null,
+      "expectedInt128": -9223372036854775807,
+      "expectedUInt128": null,
+      "expectedInt": -9223372036854775807,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        18446744073709551615
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": 18446744073709551615,
+      "expectedInt128": 18446744073709551615,
+      "expectedUInt128": 18446744073709551615,
+      "expectedInt": null,
+      "expectedUInt": 18446744073709551615
+    },
+    {
+      "sourceWords": [
+        2,
+        18446744073709551615,
+        9223372036854775807
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": 170141183460469231731687303715884105727,
+      "expectedUInt128": 170141183460469231731687303715884105727,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        0,
+        9223372036854775808
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": -170141183460469231731687303715884105728,
+      "expectedUInt128": null,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        18446744073709551615,
+        9223372036854775807
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": -170141183460469231731687303715884105727,
+      "expectedUInt128": null,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        18446744073709551615,
+        18446744073709551615
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": null,
+      "expectedUInt128": 340282366920938463463374607431768211455,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        7766279631452241920,
+        5
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": 100000000000000000000,
+      "expectedUInt128": 100000000000000000000,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        7766279631452241920,
+        5
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": -100000000000000000000,
+      "expectedUInt128": null,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": null,
+      "expectedUInt128": null,
+      "expectedInt": null,
+      "expectedUInt": null
+    },
+    {
+      "sourceWords": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ],
+      "expectedInt8": null,
+      "expectedUInt8": null,
+      "expectedInt16": null,
+      "expectedUInt16": null,
+      "expectedInt32": null,
+      "expectedUInt32": null,
+      "expectedInt64": null,
+      "expectedUInt64": null,
+      "expectedInt128": null,
+      "expectedUInt128": null,
+      "expectedInt": null,
+      "expectedUInt": null
+    }
+  ],
+  "twosComplementInit": [
+    {
+      "twosComplementWords": [
+        0
+      ],
+      "expectedWords": [
+        1,
+        0
+      ]
+    },
+    {
+      "twosComplementWords": [
+        1
+      ],
+      "expectedWords": [
+        2,
+        1
+      ]
+    },
+    {
+      "twosComplementWords": [
+        42
+      ],
+      "expectedWords": [
+        2,
+        42
+      ]
+    },
+    {
+      "twosComplementWords": [
+        255
+      ],
+      "expectedWords": [
+        2,
+        255
+      ]
+    },
+    {
+      "twosComplementWords": [
+        65535
+      ],
+      "expectedWords": [
+        2,
+        65535
+      ]
+    },
+    {
+      "twosComplementWords": [
+        4294967295
+      ],
+      "expectedWords": [
+        2,
+        4294967295
+      ]
+    },
+    {
+      "twosComplementWords": [
+        9223372036854775807
+      ],
+      "expectedWords": [
+        2,
+        9223372036854775807
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744073709551615,
+        0
+      ],
+      "expectedWords": [
+        2,
+        18446744073709551615
+      ]
+    },
+    {
+      "twosComplementWords": [
+        1152921504606846976
+      ],
+      "expectedWords": [
+        2,
+        1152921504606846976
+      ]
+    },
+    {
+      "twosComplementWords": [
+        1311768467463790320
+      ],
+      "expectedWords": [
+        2,
+        1311768467463790320
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744073709551615,
+        18446744073709551615,
+        0
+      ],
+      "expectedWords": [
+        2,
+        18446744073709551615,
+        18446744073709551615
+      ]
+    },
+    {
+      "twosComplementWords": [
+        1311768467463790320,
+        1311768467463790320
+      ],
+      "expectedWords": [
+        2,
+        1311768467463790320,
+        1311768467463790320
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744073709551615
+      ],
+      "expectedWords": [
+        0,
+        1
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744073709551574
+      ],
+      "expectedWords": [
+        0,
+        42
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744073709551361
+      ],
+      "expectedWords": [
+        0,
+        255
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744073709486081
+      ],
+      "expectedWords": [
+        0,
+        65535
+      ]
+    },
+    {
+      "twosComplementWords": [
+        18446744069414584321
+      ],
+      "expectedWords": [
+        0,
+        4294967295
+      ]
+    },
+    {
+      "twosComplementWords": [
+        9223372036854775809
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775807
+      ]
+    },
+    {
+      "twosComplementWords": [
+        9223372036854775808,
+        18446744073709551615
+      ],
+      "expectedWords": [
+        0,
+        9223372036854775808
+      ]
+    },
+    {
+      "twosComplementWords": [
+        1,
+        18446744073709551615
+      ],
+      "expectedWords": [
+        0,
+        18446744073709551615
+      ]
+    },
+    {
+      "twosComplementWords": [
+        17134975606245761296
+      ],
+      "expectedWords": [
+        0,
+        1311768467463790320
+      ]
+    },
+    {
+      "twosComplementWords": [
+        1,
+        0,
+        18446744073709551615
+      ],
+      "expectedWords": [
+        0,
+        18446744073709551615,
+        18446744073709551615
+      ]
+    },
+    {
+      "twosComplementWords": [
+        17134975606245761296,
+        17134975606245761295
+      ],
+      "expectedWords": [
+        0,
+        1311768467463790320,
+        1311768467463790320
+      ]
+    }
+  ],
+  "encoding": [
+    {
+      "value": "0",
+      "encodedBytes": [
+        0
+      ],
+      "words": [
+        1,
+        0
+      ]
+    },
+    {
+      "value": "1",
+      "encodedBytes": [
+        1
+      ],
+      "words": [
+        2,
+        1
+      ]
+    },
+    {
+      "value": "-1",
+      "encodedBytes": [
+        255
+      ],
+      "words": [
+        0,
+        1
+      ]
+    },
+    {
+      "value": "127",
+      "encodedBytes": [
+        127
+      ],
+      "words": [
+        2,
+        127
+      ]
+    },
+    {
+      "value": "-128",
+      "encodedBytes": [
+        255,
+        128
+      ],
+      "words": [
+        0,
+        128
+      ]
+    },
+    {
+      "value": "128",
+      "encodedBytes": [
+        0,
+        128
+      ],
+      "words": [
+        2,
+        128
+      ]
+    },
+    {
+      "value": "-129",
+      "encodedBytes": [
+        255,
+        127
+      ],
+      "words": [
+        0,
+        129
+      ]
+    },
+    {
+      "value": "255",
+      "encodedBytes": [
+        0,
+        255
+      ],
+      "words": [
+        2,
+        255
+      ]
+    },
+    {
+      "value": "-256",
+      "encodedBytes": [
+        255,
+        0
+      ],
+      "words": [
+        0,
+        256
+      ]
+    },
+    {
+      "value": "256",
+      "encodedBytes": [
+        1,
+        0
+      ],
+      "words": [
+        2,
+        256
+      ]
+    },
+    {
+      "value": "-257",
+      "encodedBytes": [
+        254,
+        255
+      ],
+      "words": [
+        0,
+        257
+      ]
+    },
+    {
+      "value": "32767",
+      "encodedBytes": [
+        127,
+        255
+      ],
+      "words": [
+        2,
+        32767
+      ]
+    },
+    {
+      "value": "-32768",
+      "encodedBytes": [
+        255,
+        128,
+        0
+      ],
+      "words": [
+        0,
+        32768
+      ]
+    },
+    {
+      "value": "32768",
+      "encodedBytes": [
+        0,
+        128,
+        0
+      ],
+      "words": [
+        2,
+        32768
+      ]
+    },
+    {
+      "value": "-32769",
+      "encodedBytes": [
+        255,
+        127,
+        255
+      ],
+      "words": [
+        0,
+        32769
+      ]
+    },
+    {
+      "value": "65535",
+      "encodedBytes": [
+        0,
+        255,
+        255
+      ],
+      "words": [
+        2,
+        65535
+      ]
+    },
+    {
+      "value": "-65536",
+      "encodedBytes": [
+        255,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        65536
+      ]
+    },
+    {
+      "value": "2147483647",
+      "encodedBytes": [
+        127,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        2,
+        2147483647
+      ]
+    },
+    {
+      "value": "-2147483648",
+      "encodedBytes": [
+        255,
+        128,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        2147483648
+      ]
+    },
+    {
+      "value": "4294967295",
+      "encodedBytes": [
+        0,
+        255,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        2,
+        4294967295
+      ]
+    },
+    {
+      "value": "-4294967296",
+      "encodedBytes": [
+        255,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        4294967296
+      ]
+    },
+    {
+      "value": "9223372036854775807",
+      "encodedBytes": [
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        2,
+        9223372036854775807
+      ]
+    },
+    {
+      "value": "-9223372036854775808",
+      "encodedBytes": [
+        255,
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        9223372036854775808
+      ]
+    },
+    {
+      "value": "18446744073709551615",
+      "encodedBytes": [
+        0,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        2,
+        18446744073709551615
+      ]
+    },
+    {
+      "value": "-18446744073709551616",
+      "encodedBytes": [
+        255,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "value": "18446744073709551616",
+      "encodedBytes": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        2,
+        0,
+        1
+      ]
+    },
+    {
+      "value": "-18446744073709551617",
+      "encodedBytes": [
+        254,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "value": "100000000000000000000",
+      "encodedBytes": [
+        5,
+        107,
+        199,
+        94,
+        45,
+        99,
+        16,
+        0,
+        0
+      ],
+      "words": [
+        2,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "value": "-100000000000000000000",
+      "encodedBytes": [
+        250,
+        148,
+        56,
+        161,
+        210,
+        156,
+        240,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        7766279631452241920,
+        5
+      ]
+    },
+    {
+      "value": "100000000000000000000000000000000000000000000000000",
+      "encodedBytes": [
+        68,
+        108,
+        59,
+        21,
+        249,
+        146,
+        102,
+        135,
+        210,
+        196,
+        5,
+        52,
+        253,
+        181,
+        100,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        2,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "value": "-100000000000000000000000000000000000000000000000000",
+      "encodedBytes": [
+        187,
+        147,
+        196,
+        234,
+        6,
+        109,
+        153,
+        120,
+        45,
+        59,
+        250,
+        203,
+        2,
+        74,
+        156,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        13070572018536022016,
+        10549268516463523069,
+        293873587705
+      ]
+    },
+    {
+      "value": "8",
+      "encodedBytes": [
+        8
+      ],
+      "words": [
+        2,
+        8
+      ]
+    },
+    {
+      "value": "-8",
+      "encodedBytes": [
+        248
+      ],
+      "words": [
+        0,
+        8
+      ]
+    },
+    {
+      "value": "16",
+      "encodedBytes": [
+        16
+      ],
+      "words": [
+        2,
+        16
+      ]
+    },
+    {
+      "value": "-16",
+      "encodedBytes": [
+        240
+      ],
+      "words": [
+        0,
+        16
+      ]
+    },
+    {
+      "value": "32",
+      "encodedBytes": [
+        32
+      ],
+      "words": [
+        2,
+        32
+      ]
+    },
+    {
+      "value": "-32",
+      "encodedBytes": [
+        224
+      ],
+      "words": [
+        0,
+        32
+      ]
+    },
+    {
+      "value": "64",
+      "encodedBytes": [
+        64
+      ],
+      "words": [
+        2,
+        64
+      ]
+    },
+    {
+      "value": "-64",
+      "encodedBytes": [
+        192
+      ],
+      "words": [
+        0,
+        64
+      ]
+    },
+    {
+      "value": "128",
+      "encodedBytes": [
+        0,
+        128
+      ],
+      "words": [
+        2,
+        128
+      ]
+    },
+    {
+      "value": "-128",
+      "encodedBytes": [
+        255,
+        128
+      ],
+      "words": [
+        0,
+        128
+      ]
+    },
+    {
+      "value": "256",
+      "encodedBytes": [
+        1,
+        0
+      ],
+      "words": [
+        2,
+        256
+      ]
+    },
+    {
+      "value": "-256",
+      "encodedBytes": [
+        255,
+        0
+      ],
+      "words": [
+        0,
+        256
+      ]
+    },
+    {
+      "value": "512",
+      "encodedBytes": [
+        2,
+        0
+      ],
+      "words": [
+        2,
+        512
+      ]
+    },
+    {
+      "value": "-512",
+      "encodedBytes": [
+        254,
+        0
+      ],
+      "words": [
+        0,
+        512
+      ]
+    },
+    {
+      "value": "1024",
+      "encodedBytes": [
+        4,
+        0
+      ],
+      "words": [
+        2,
+        1024
+      ]
+    },
+    {
+      "value": "-1024",
+      "encodedBytes": [
+        252,
+        0
+      ],
+      "words": [
+        0,
+        1024
+      ]
+    },
+    {
+      "value": "2048",
+      "encodedBytes": [
+        8,
+        0
+      ],
+      "words": [
+        2,
+        2048
+      ]
+    },
+    {
+      "value": "-2048",
+      "encodedBytes": [
+        248,
+        0
+      ],
+      "words": [
+        0,
+        2048
+      ]
+    },
+    {
+      "value": "9223372036854775797",
+      "encodedBytes": [
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        245
+      ],
+      "words": [
+        2,
+        9223372036854775797
+      ]
+    },
+    {
+      "value": "-9223372036854775818",
+      "encodedBytes": [
+        255,
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        246
+      ],
+      "words": [
+        0,
+        9223372036854775818
+      ]
+    },
+    {
+      "value": "9223372036854775805",
+      "encodedBytes": [
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        253
+      ],
+      "words": [
+        2,
+        9223372036854775805
+      ]
+    },
+    {
+      "value": "-9223372036854775810",
+      "encodedBytes": [
+        255,
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        254
+      ],
+      "words": [
+        0,
+        9223372036854775810
+      ]
+    },
+    {
+      "value": "9223372036854775806",
+      "encodedBytes": [
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        254
+      ],
+      "words": [
+        2,
+        9223372036854775806
+      ]
+    },
+    {
+      "value": "-9223372036854775809",
+      "encodedBytes": [
+        255,
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        0,
+        9223372036854775809
+      ]
+    },
+    {
+      "value": "9223372036854775807",
+      "encodedBytes": [
+        127,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255,
+        255
+      ],
+      "words": [
+        2,
+        9223372036854775807
+      ]
+    },
+    {
+      "value": "-9223372036854775808",
+      "encodedBytes": [
+        255,
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        0,
+        9223372036854775808
+      ]
+    },
+    {
+      "value": "9223372036854775808",
+      "encodedBytes": [
+        0,
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "words": [
+        2,
+        9223372036854775808
+      ]
+    },
+    {
+      "value": "-9223372036854775807",
+      "encodedBytes": [
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "words": [
+        0,
+        9223372036854775807
+      ]
+    },
+    {
+      "value": "9223372036854775809",
+      "encodedBytes": [
+        0,
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "words": [
+        2,
+        9223372036854775809
+      ]
+    },
+    {
+      "value": "-9223372036854775806",
+      "encodedBytes": [
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "words": [
+        0,
+        9223372036854775806
+      ]
+    },
+    {
+      "value": "9223372036854775817",
+      "encodedBytes": [
+        0,
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9
+      ],
+      "words": [
+        2,
+        9223372036854775817
+      ]
+    },
+    {
+      "value": "-9223372036854775798",
+      "encodedBytes": [
+        128,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10
+      ],
+      "words": [
+        0,
+        9223372036854775798
+      ]
+    },
+    {
+      "value": "1",
+      "encodedBytes": [
+        1
+      ],
+      "words": [
+        2,
+        1
+      ],
+      "inputBytes": [
+        0,
+        1
+      ]
+    },
+    {
+      "value": "127",
+      "encodedBytes": [
+        127
+      ],
+      "words": [
+        2,
+        127
+      ],
+      "inputBytes": [
+        0,
+        127
+      ]
+    },
+    {
+      "value": "128",
+      "encodedBytes": [
+        0,
+        128
+      ],
+      "words": [
+        2,
+        128
+      ],
+      "inputBytes": [
+        0,
+        0,
+        128
+      ]
+    },
+    {
+      "value": "255",
+      "encodedBytes": [
+        0,
+        255
+      ],
+      "words": [
+        2,
+        255
+      ],
+      "inputBytes": [
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "value": "-1",
+      "encodedBytes": [
+        255
+      ],
+      "words": [
+        0,
+        1
+      ],
+      "inputBytes": [
+        255,
+        255
+      ]
+    },
+    {
+      "value": "-128",
+      "encodedBytes": [
+        255,
+        128
+      ],
+      "words": [
+        0,
+        128
+      ],
+      "inputBytes": [
+        255,
+        255,
+        128
+      ]
+    },
+    {
+      "value": "-129",
+      "encodedBytes": [
+        255,
+        127
+      ],
+      "words": [
+        0,
+        129
+      ],
+      "inputBytes": [
+        255,
+        255,
+        127
+      ]
+    },
+    {
+      "value": "-256",
+      "encodedBytes": [
+        255,
+        0
+      ],
+      "words": [
+        0,
+        256
+      ],
+      "inputBytes": [
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "value": "1",
+      "encodedBytes": [
+        1
+      ],
+      "words": [
+        2,
+        1
+      ],
+      "inputBytes": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "value": "127",
+      "encodedBytes": [
+        127
+      ],
+      "words": [
+        2,
+        127
+      ],
+      "inputBytes": [
+        0,
+        0,
+        127
+      ]
+    },
+    {
+      "value": "128",
+      "encodedBytes": [
+        0,
+        128
+      ],
+      "words": [
+        2,
+        128
+      ],
+      "inputBytes": [
+        0,
+        0,
+        0,
+        128
+      ]
+    },
+    {
+      "value": "255",
+      "encodedBytes": [
+        0,
+        255
+      ],
+      "words": [
+        2,
+        255
+      ],
+      "inputBytes": [
+        0,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "value": "-1",
+      "encodedBytes": [
+        255
+      ],
+      "words": [
+        0,
+        1
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "value": "-128",
+      "encodedBytes": [
+        255,
+        128
+      ],
+      "words": [
+        0,
+        128
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        128
+      ]
+    },
+    {
+      "value": "-129",
+      "encodedBytes": [
+        255,
+        127
+      ],
+      "words": [
+        0,
+        129
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        127
+      ]
+    },
+    {
+      "value": "-256",
+      "encodedBytes": [
+        255,
+        0
+      ],
+      "words": [
+        0,
+        256
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "value": "1",
+      "encodedBytes": [
+        1
+      ],
+      "words": [
+        2,
+        1
+      ],
+      "inputBytes": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "value": "127",
+      "encodedBytes": [
+        127
+      ],
+      "words": [
+        2,
+        127
+      ],
+      "inputBytes": [
+        0,
+        0,
+        0,
+        0,
+        127
+      ]
+    },
+    {
+      "value": "128",
+      "encodedBytes": [
+        0,
+        128
+      ],
+      "words": [
+        2,
+        128
+      ],
+      "inputBytes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        128
+      ]
+    },
+    {
+      "value": "255",
+      "encodedBytes": [
+        0,
+        255
+      ],
+      "words": [
+        2,
+        255
+      ],
+      "inputBytes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "value": "-1",
+      "encodedBytes": [
+        255
+      ],
+      "words": [
+        0,
+        1
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        255,
+        255
+      ]
+    },
+    {
+      "value": "-128",
+      "encodedBytes": [
+        255,
+        128
+      ],
+      "words": [
+        0,
+        128
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        255,
+        255,
+        128
+      ]
+    },
+    {
+      "value": "-129",
+      "encodedBytes": [
+        255,
+        127
+      ],
+      "words": [
+        0,
+        129
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        255,
+        255,
+        127
+      ]
+    },
+    {
+      "value": "-256",
+      "encodedBytes": [
+        255,
+        0
+      ],
+      "words": [
+        0,
+        256
+      ],
+      "inputBytes": [
+        255,
+        255,
+        255,
+        255,
+        255,
+        0
+      ]
+    }
+  ]
+}

@@ -6,27 +6,29 @@
 //
 
 import Foundation
-import BigInt
-import BigDecimal
+
 
 extension Value {
 
   public struct TextNumber {
 
     public let text: String
+    public let isInteger: Bool
     public let decimal: BigDecimal
 
-    private init(text: String, decimal: BigDecimal) {
+    internal init(text: String, decimal: BigDecimal) {
       self.text = text
       self.decimal = decimal
+      self.isInteger = !decimal.isNaN && !decimal.isInfinite && decimal.isInteger
     }
 
-    public init(text: String) {
-      self = Self(text: text, decimal: BigDecimal(text))
+    public init?(text: String) {
+      guard let decimal = BigDecimal(text) else { return nil }
+      self = Self(text: text, decimal: decimal)
     }
 
     public init(decimal: BigDecimal) {
-      self = Self(text: decimal.asString(), decimal: decimal)
+      self = Self(text: decimal.description, decimal: decimal)
     }
   }
 
@@ -36,21 +38,16 @@ extension Value.TextNumber: Sendable {}
 
 extension Value.TextNumber: Value.Number {
 
-  public var isInteger: Bool {
-    let decimal = self.decimal
-    return decimal.rounded(.towardZero) == decimal && !decimal.isNaN && !decimal.isInfinite
+  public var integer: BigInt? {
+    return decimal.integer()
   }
 
-  public func asDouble() -> Double {
-    return decimal.asDouble()
+  public func int<T: BinaryInteger>() -> T? {
+    return T(exactly: decimal.rounded(.towardZero))
   }
 
-  public func asInteger() -> BInt {
-    return decimal.withExponent(0, .towardZero).digits
-  }
-
-  public func asInt() -> Int? {
-    return asInteger().asInt()
+  public func float<T: BinaryFloatingPoint>() -> T? {
+    return T(exactly: decimal)
   }
 
   public var isNaN: Bool {

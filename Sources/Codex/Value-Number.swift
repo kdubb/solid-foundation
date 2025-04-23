@@ -5,8 +5,6 @@
 //  Created by Kevin Wooten on 1/28/25.
 //
 
-import BigInt
-import BigDecimal
 
 extension Value {
 
@@ -26,20 +24,20 @@ extension Value {
     var isNaN: Bool { get }
     /// Whether this number is negative.
     var isNegative: Bool { get }
-
-    /// Converts this number to a double-precision floating-point value.
-    ///
-    /// - Returns: The double-precision floating-point representation of this number
-    func asDouble() -> Double
-    /// Converts this number to a big integer.
-    ///
-    /// - Returns: The big integer representation of this number
-    func asInteger() -> BInt
-    /// Converts this number to a Swift integer if possible.
+    /// The integer representation of this number, if it is an integer.
+    var integer: BigInt? { get }
+    /// The integer representation of this number, if it is an integer and can be represented as the
+    /// Swift integer type ``T``.
     ///
     /// - Returns: The Swift integer representation of this number, or `nil` if the
-    ///   number cannot be represented as a Swift integer
-    func asInt() -> Int?
+    ///   number cannot be represented as a Swift integer of type ``T``.
+    func int<T: FixedWidthInteger>() -> T?
+    /// The floating-point representation of this number, if it is a floating-point number
+    /// and can be represented as the Swift floating-point type ``F``.
+    ///
+    /// - Returns: The Swift floating-point representation of this number, or `nil` if the
+    ///   number cannot be represented as a Swift floating-point of type ``F``.
+    func float<F: BinaryFloatingPoint>() -> F?
   }
 
 }

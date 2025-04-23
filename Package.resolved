@@ -1,24 +1,6 @@
 {
-  "originHash" : "d0f06ab64966bc11a2424e9879694d3e7c09f531fabdb48dc1ddf5bca7337fe1",
+  "originHash" : "9a9778598e997366ad649735ca7ab4a63010cd748dbe1681ab298ab92c57dd41",
   "pins" : [
-    {
-      "identity" : "bigdecimal",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kdubb/BigDecimal.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "dca0e84ffe0b558bcaec56730951f162f7b07834"
-      }
-    },
-    {
-      "identity" : "bigint",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/kdubb/BigInt.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "04261d504d450a937eb0f2f4aa9dcd4a251ebf95"
-      }
-    },
     {
       "identity" : "swift-algorithms",
       "kind" : "remoteSourceControl",
@@ -71,15 +53,6 @@
       "state" : {
         "revision" : "8b7fe1b899d82e1abbe4a88d7593645e06669467",
         "version" : "1.1.1"
-      }
-    },
-    {
-      "identity" : "uint128",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mgriebling/UInt128.git",
-      "state" : {
-        "revision" : "f32052e906fd125936fef2d16e3ad284d50d68ed",
-        "version" : "3.2.0"
       }
     },
     {

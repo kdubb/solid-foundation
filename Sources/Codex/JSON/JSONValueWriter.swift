@@ -7,10 +7,39 @@
 
 public struct JSONValueWriter {
 
-  let tokenWriter: JSONTokenWriter
+  public struct Options {
 
-  public init() {
+    /// Determines the shape of tagged values.
+    ///
+    public enum TagShape {
+      /// No tags are written.
+      ///
+      /// Unwraps the tagged value and writes the value directly.
+      ///
+      case unwrapped
+      /// Tags are written as an array of `[tag, value]`.
+      ///
+      case array
+      /// Tags are written as an object of `{ <tagKey>: <tag>, <valueKey>: <value> }`.
+      ///
+      case object(tagKey: String, valueKey: String)
+      /// Tags are written as an object of `{ <tag>: <value> }`.
+      case wrapped
+    }
+
+    public var tagShape: TagShape
+
+    public init(tagShape: TagShape = .unwrapped) {
+      self.tagShape = tagShape
+    }
+  }
+
+  let tokenWriter: JSONTokenWriter
+  let options: Options
+
+  public init(options: Options = Options()) {
     self.tokenWriter = JSONTokenWriter()
+    self.options = options
   }
 
   func writeValue(_ value: Value) {
@@ -62,6 +91,18 @@ public struct JSONValueWriter {
       }
 
       tokenWriter.writeToken(.endObject)
+
+    case .tagged(let tag, let value):
+      switch options.tagShape {
+      case .unwrapped:
+        writeValue(value)
+      case .array:
+        writeValue([tag, value])
+      case .object(let tagKey, let valueKey):
+        writeValue([.string(tagKey): tag, .string(valueKey): value])
+      case .wrapped:
+        writeValue([tag: value])
+      }
     }
   }
 }

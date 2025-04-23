@@ -1,0 +1,8671 @@
+{
+  "stringInitialization": [
+    {
+      "input": "0",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "42",
+      "expected": {
+        "mantissaWords": [
+          2,
+          42
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "100",
+      "expected": {
+        "mantissaWords": [
+          2,
+          100
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "255",
+      "expected": {
+        "mantissaWords": [
+          2,
+          255
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "256",
+      "expected": {
+        "mantissaWords": [
+          2,
+          256
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "65535",
+      "expected": {
+        "mantissaWords": [
+          2,
+          65535
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "65536",
+      "expected": {
+        "mantissaWords": [
+          2,
+          65536
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-42",
+      "expected": {
+        "mantissaWords": [
+          0,
+          42
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-100",
+      "expected": {
+        "mantissaWords": [
+          0,
+          100
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-255",
+      "expected": {
+        "mantissaWords": [
+          0,
+          255
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-256",
+      "expected": {
+        "mantissaWords": [
+          0,
+          256
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-65535",
+      "expected": {
+        "mantissaWords": [
+          0,
+          65535
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "-65536",
+      "expected": {
+        "mantissaWords": [
+          0,
+          65536
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "input": "0.1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "input": "0.01",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "input": "0.001",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "input": "1.1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "input": "1.01",
+      "expected": {
+        "mantissaWords": [
+          2,
+          101
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "input": "1.001",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1001
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "input": "42.42",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4242
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "input": "-0.1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "input": "-1.1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          11
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "input": "-42.42",
+      "expected": {
+        "mantissaWords": [
+          0,
+          4242
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "input": "1e5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -5
+      }
+    },
+    {
+      "input": "1e-5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "input": "1.23e5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": -3
+      }
+    },
+    {
+      "input": "1.23e-5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 7
+      }
+    },
+    {
+      "input": "-1e5",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": -5
+      }
+    },
+    {
+      "input": "-1e-5",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "input": "-1.23e5",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": -3
+      }
+    },
+    {
+      "input": "-1.23e-5",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": 7
+      }
+    },
+    {
+      "input": "10e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "input": "10e50",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10
+        ],
+        "scale": -50
+      }
+    },
+    {
+      "input": "10e100",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10
+        ],
+        "scale": -100
+      }
+    },
+    {
+      "input": "-10e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          10
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "input": "-10e50",
+      "expected": {
+        "mantissaWords": [
+          0,
+          10
+        ],
+        "scale": -50
+      }
+    },
+    {
+      "input": "-10e100",
+      "expected": {
+        "mantissaWords": [
+          0,
+          10
+        ],
+        "scale": -100
+      }
+    },
+    {
+      "input": "0.12345678901234567890",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12345678901234567890
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "input": "1.12345678901234567890",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1665214458977258194,
+          6
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "input": "-0.12345678901234567890",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12345678901234567890
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "input": "-1.12345678901234567890",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1665214458977258194,
+          6
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "input": "",
+      "expected": null
+    },
+    {
+      "input": " ",
+      "expected": null
+    },
+    {
+      "input": " 123",
+      "expected": null
+    },
+    {
+      "input": "123 ",
+      "expected": null
+    },
+    {
+      "input": "1.2.3",
+      "expected": null
+    },
+    {
+      "input": "1..2",
+      "expected": null
+    },
+    {
+      "input": "1e2e3",
+      "expected": null
+    }
+  ],
+  "addition": [
+    {
+      "lhs": "0",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "42",
+      "rhs": "58",
+      "expected": {
+        "mantissaWords": [
+          2,
+          100
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-42",
+      "rhs": "-58",
+      "expected": {
+        "mantissaWords": [
+          0,
+          100
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "100",
+      "rhs": "-100",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-100",
+      "rhs": "100",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "0.01",
+      "rhs": "0.02",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          33
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          11
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          33
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.01",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.001",
+      "rhs": "0.0001",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6912
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4444
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          4444
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          6912
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "2e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1.5e2",
+      "rhs": "2.5e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          40
+        ],
+        "scale": -1
+      }
+    },
+    {
+      "lhs": "1.5e-2",
+      "rhs": "2.5e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          40
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "1e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10001
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "1e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10001
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "2e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e-20",
+      "rhs": "2e-20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "1e-20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13399722918938673153,
+          7145508105175220139,
+          29
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "-1e20",
+      "rhs": "2e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "-2e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "-1e20",
+      "rhs": "-2e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e50",
+      "rhs": "1e50",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -50
+      }
+    },
+    {
+      "lhs": "-1e50",
+      "rhs": "-1e50",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -50
+      }
+    }
+  ],
+  "subtraction": [
+    {
+      "lhs": "0",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "100",
+      "rhs": "42",
+      "expected": {
+        "mantissaWords": [
+          2,
+          58
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "42",
+      "rhs": "100",
+      "expected": {
+        "mantissaWords": [
+          0,
+          58
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-100",
+      "rhs": "-42",
+      "expected": {
+        "mantissaWords": [
+          0,
+          58
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-42",
+      "rhs": "-100",
+      "expected": {
+        "mantissaWords": [
+          2,
+          58
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0.3",
+      "rhs": "0.1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "0.03",
+      "rhs": "0.01",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.01",
+      "rhs": "0.03",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "3.3",
+      "rhs": "1.1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          22
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "3.3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          22
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          33
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          33
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-2.2",
+      "rhs": "-1.1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          11
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.01",
+      "expected": {
+        "mantissaWords": [
+          2,
+          9
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.01",
+      "rhs": "0.1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          9
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.001",
+      "rhs": "0.0001",
+      "expected": {
+        "mantissaWords": [
+          2,
+          9
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "0.0001",
+      "rhs": "0.001",
+      "expected": {
+        "mantissaWords": [
+          0,
+          9
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          4444
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "5.678",
+      "rhs": "1.234",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4444
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          6912
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "5.678",
+      "rhs": "-1.234",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6912
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6912
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "-5.678",
+      "rhs": "1.234",
+      "expected": {
+        "mantissaWords": [
+          0,
+          6912
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4444
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "-5.678",
+      "rhs": "-1.234",
+      "expected": {
+        "mantissaWords": [
+          0,
+          4444
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "3e2",
+      "rhs": "1e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "3e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "3e-2",
+      "rhs": "1e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "3e-2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "3.5e2",
+      "rhs": "1.5e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          20
+        ],
+        "scale": -1
+      }
+    },
+    {
+      "lhs": "1.5e2",
+      "rhs": "3.5e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          20
+        ],
+        "scale": -1
+      }
+    },
+    {
+      "lhs": "3.5e-2",
+      "rhs": "1.5e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          20
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "1.5e-2",
+      "rhs": "3.5e-2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          20
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "1e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          9999
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "1e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          9999
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "2e2",
+      "rhs": "-1e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "-2e2",
+      "rhs": "1e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "-2e2",
+      "rhs": "-1e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "3e20",
+      "rhs": "1e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "3e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "3e-20",
+      "rhs": "1e-20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "1e-20",
+      "rhs": "3e-20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "1e-20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13399722918938673151,
+          7145508105175220139,
+          29
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "1e-20",
+      "rhs": "1e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13399722918938673151,
+          7145508105175220139,
+          29
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "-1e20",
+      "rhs": "2e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "2e20",
+      "rhs": "-1e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "-2e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "-2e20",
+      "rhs": "1e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "-1e20",
+      "rhs": "-2e20",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "-2e20",
+      "rhs": "-1e20",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e50",
+      "rhs": "1e50",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": -50
+      }
+    },
+    {
+      "lhs": "-1e50",
+      "rhs": "-1e50",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": -50
+      }
+    }
+  ],
+  "multiplication": [
+    {
+      "lhs": "0",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "2",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "42",
+      "rhs": "58",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2436
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "0",
+      "expected": {
+        "mantissaWords": [
+          0,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-2",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          6
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "2",
+      "rhs": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          6
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-2",
+      "rhs": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-42",
+      "rhs": "58",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2436
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "42",
+      "rhs": "-58",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2436
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-42",
+      "rhs": "-58",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2436
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.01",
+      "rhs": "0.02",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          242
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          242
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          242
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          242
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.5",
+      "rhs": "0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "0.25",
+      "rhs": "4",
+      "expected": {
+        "mantissaWords": [
+          2,
+          100
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          7006652
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          7006652
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          7006652
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          7006652
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -4
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "2e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1.5e2",
+      "rhs": "2.5e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          375
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1.5e-2",
+      "rhs": "2.5e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          375
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "1e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "1e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -4
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -4
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -4
+      }
+    },
+    {
+      "lhs": "1e10",
+      "rhs": "2e10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e-10",
+      "rhs": "2e-10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 20
+      }
+    },
+    {
+      "lhs": "1e10",
+      "rhs": "1e-10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1e10",
+      "rhs": "2e10",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e10",
+      "rhs": "-2e10",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "-1e10",
+      "rhs": "-2e10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": -20
+      }
+    },
+    {
+      "lhs": "1e25",
+      "rhs": "1e25",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -50
+      }
+    },
+    {
+      "lhs": "-1e25",
+      "rhs": "-1e25",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -50
+      }
+    }
+  ],
+  "division": [
+    {
+      "lhs": "0",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "2",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "4",
+      "rhs": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "100",
+      "rhs": "4",
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-4",
+      "rhs": "2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-100",
+      "rhs": "4",
+      "expected": {
+        "mantissaWords": [
+          0,
+          25
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "4",
+      "rhs": "-2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "100",
+      "rhs": "-4",
+      "expected": {
+        "mantissaWords": [
+          0,
+          25
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-1",
+      "rhs": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-4",
+      "rhs": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-100",
+      "rhs": "-4",
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "0.01",
+      "rhs": "0.02",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "-2.2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3333333333
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "lhs": "1",
+      "rhs": "0.3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3333333333
+        ],
+        "scale": 9
+      }
+    },
+    {
+      "lhs": "0.1",
+      "rhs": "0.3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3333333333
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2173300458
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2173300458
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "lhs": "1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2173300458
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "lhs": "-1.234",
+      "rhs": "-5.678",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2173300458
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "2e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.5e2",
+      "rhs": "2.5e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1.5e-2",
+      "rhs": "2.5e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          6
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "1e-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -4
+      }
+    },
+    {
+      "lhs": "1e-2",
+      "rhs": "1e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "-2e2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "2e10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": -9
+      }
+    },
+    {
+      "lhs": "1e-20",
+      "rhs": "2e-10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 11
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "1e-10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -30
+      }
+    },
+    {
+      "lhs": "-1e20",
+      "rhs": "2e10",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": -9
+      }
+    },
+    {
+      "lhs": "1e20",
+      "rhs": "-2e10",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": -9
+      }
+    },
+    {
+      "lhs": "-1e20",
+      "rhs": "-2e10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": -9
+      }
+    }
+  ],
+  "remainder": [
+    {
+      "lhs": "10",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "10.5",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "10",
+      "rhs": "3.5",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          30
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "10.5",
+      "rhs": "3.5",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 1
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-10",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "10",
+      "rhs": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-10",
+      "rhs": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "-10.5",
+      "rhs": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "10.5",
+      "rhs": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "-10.5",
+      "rhs": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "lhs": "3",
+      "rhs": "10",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": 0
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          3
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "lhs": "10.123",
+      "rhs": "3.45",
+      "expected": {
+        "mantissaWords": [
+          0,
+          227
+        ],
+        "scale": 3
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          3223
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "10.123",
+      "rhs": "0.45",
+      "expected": {
+        "mantissaWords": [
+          2,
+          223
+        ],
+        "scale": 3
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          223
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "lhs": "10.123",
+      "rhs": "0.0045",
+      "expected": {
+        "mantissaWords": [
+          0,
+          20
+        ],
+        "scale": 4
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1234.5678",
+      "rhs": "33.22",
+      "expected": {
+        "mantissaWords": [
+          2,
+          54278
+        ],
+        "scale": 4
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          54278
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "-1234.5678",
+      "rhs": "33.22",
+      "expected": {
+        "mantissaWords": [
+          0,
+          54278
+        ],
+        "scale": 4
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          54278
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1234.5678",
+      "rhs": "-33.22",
+      "expected": {
+        "mantissaWords": [
+          2,
+          54278
+        ],
+        "scale": 4
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          54278
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "-1234.5678",
+      "rhs": "-33.22",
+      "expected": {
+        "mantissaWords": [
+          0,
+          54278
+        ],
+        "scale": 4
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          54278
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "lhs": "1.23e5",
+      "rhs": "4.56e4",
+      "expected": {
+        "mantissaWords": [
+          0,
+          138
+        ],
+        "scale": -2
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          318
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1.23e-5",
+      "rhs": "4.56e-6",
+      "expected": {
+        "mantissaWords": [
+          0,
+          138
+        ],
+        "scale": 8
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          318
+        ],
+        "scale": 8
+      }
+    },
+    {
+      "lhs": "-1.23e5",
+      "rhs": "4.56e4",
+      "expected": {
+        "mantissaWords": [
+          2,
+          138
+        ],
+        "scale": -2
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          318
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "1.23e5",
+      "rhs": "-4.56e4",
+      "expected": {
+        "mantissaWords": [
+          0,
+          138
+        ],
+        "scale": -2
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          2,
+          318
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "lhs": "-1.23e5",
+      "rhs": "-4.56e4",
+      "expected": {
+        "mantissaWords": [
+          2,
+          138
+        ],
+        "scale": -2
+      },
+      "expectedTruncating": {
+        "mantissaWords": [
+          0,
+          318
+        ],
+        "scale": -2
+      }
+    }
+  ],
+  "integerPower": [
+    {
+      "base": "0",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          4
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1024
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "2",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "2",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "2",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          97656
+        ],
+        "scale": 8
+      }
+    },
+    {
+      "base": "10",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "10",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          10
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "10",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          100
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "10",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1000
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "10",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": -6
+      }
+    },
+    {
+      "base": "10",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "10",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "10",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "10",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 10
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -1
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -3
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -10
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          97656
+        ],
+        "scale": 8
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          4
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1024
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          225
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          3375
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          57665
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          2,
+          66667
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          44444
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          2,
+          29630
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          17342
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": 0,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": 2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          4
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": 10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          1024
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": -2,
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": -10,
+      "expected": {
+        "mantissaWords": [
+          2,
+          97656
+        ],
+        "scale": 8
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": 1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": 3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          3375
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": -1,
+      "expected": {
+        "mantissaWords": [
+          0,
+          66667
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": -3,
+      "expected": {
+        "mantissaWords": [
+          0,
+          29630
+        ],
+        "scale": 5
+      }
+    }
+  ],
+  "floatingPointPower": [
+    {
+      "base": "0",
+      "exponent": "0.5",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": "1.5",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": "2.5",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0",
+      "exponent": "3.14159",
+      "expected": {
+        "mantissaWords": [
+          1,
+          0
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1",
+      "exponent": "-3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          10000
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14142
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          28284
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          56569
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          88250
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          70711
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          35355
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          17678
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "2",
+      "exponent": "-3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11331
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          31623
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          31623
+        ],
+        "scale": 6
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          31623
+        ],
+        "scale": 7
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          72179
+        ],
+        "scale": 8
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          31623
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -1
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          31623
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -2
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          31623
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": -3
+      }
+    },
+    {
+      "base": "0.1",
+      "exponent": "-3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13854
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          70711
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          35355
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          17678
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          11331
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14142
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          28284
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          56569
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "0.5",
+      "exponent": "-3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          88250
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12247
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          18371
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          225
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          27557
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          3375
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          35744
+        ],
+        "scale": 4
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-0.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          81650
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          2,
+          66667
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-1.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          54433
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          44444
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-2.5",
+      "expected": {
+        "mantissaWords": [
+          2,
+          36289
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          2,
+          29630
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "1.5",
+      "exponent": "-3.14159",
+      "expected": {
+        "mantissaWords": [
+          2,
+          27977
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "0",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          4
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "-2",
+      "expected": {
+        "mantissaWords": [
+          2,
+          25
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "base": "-2",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          5
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-0.5",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          8
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": "1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": "3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          3375
+        ],
+        "scale": 3
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": "-1",
+      "expected": {
+        "mantissaWords": [
+          0,
+          66667
+        ],
+        "scale": 5
+      }
+    },
+    {
+      "base": "-1.5",
+      "exponent": "-3",
+      "expected": {
+        "mantissaWords": [
+          0,
+          29630
+        ],
+        "scale": 5
+      }
+    }
+  ],
+  "comparison": [
+    {
+      "lhs": "1",
+      "rhs": "1.0",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1",
+      "rhs": "1.00",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1.0",
+      "rhs": "1.00",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "100",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "100.0",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "0.1e1",
+      "rhs": "1",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "0.01e2",
+      "rhs": "1",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1.000",
+      "rhs": "1",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "-1",
+      "rhs": "-1.0",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "-1e2",
+      "rhs": "-100",
+      "expectedEq": true,
+      "expectedLt": false,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1",
+      "rhs": "2",
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lhs": "1.1",
+      "rhs": "1.2",
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lhs": "1.01",
+      "rhs": "1.02",
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lhs": "1",
+      "rhs": "0.999",
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "1",
+      "rhs": "1.001",
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lhs": "1e2",
+      "rhs": "101",
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    },
+    {
+      "lhs": "1",
+      "rhs": "-1",
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "-1",
+      "rhs": "-2",
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "-1.1",
+      "rhs": "-1.2",
+      "expectedEq": false,
+      "expectedLt": false,
+      "expectedLtEq": false,
+      "expectedGt": true,
+      "expectedGtEq": true
+    },
+    {
+      "lhs": "-1.2",
+      "rhs": "-1.1",
+      "expectedEq": false,
+      "expectedLt": true,
+      "expectedLtEq": true,
+      "expectedGt": false,
+      "expectedGtEq": false
+    }
+  ],
+  "rounding": [
+    {
+      "value": "1.234",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.234",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.235",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.236",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.245",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.250",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          126
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.251",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.4",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.5",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          2,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          2,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          2,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "1.6",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          2,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.234",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.235",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          123
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.236",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          124
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.245",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.250",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          12
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          13
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          126
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          126
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.251",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          125
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          14
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.4",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          140
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          15
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.5",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          150
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 0,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          1
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 0,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 0,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 0,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 0,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          2
+        ],
+        "scale": 0
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 1,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 1,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 1,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 1,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 1,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          16
+        ],
+        "scale": 1
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 2,
+      "mode": "towardZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 2,
+      "mode": "up",
+      "expected": {
+        "mantissaWords": [
+          0,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 2,
+      "mode": "down",
+      "expected": {
+        "mantissaWords": [
+          0,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 2,
+      "mode": "toNearestOrEven",
+      "expected": {
+        "mantissaWords": [
+          0,
+          160
+        ],
+        "scale": 2
+      }
+    },
+    {
+      "value": "-1.6",
+      "scale": 2,
+      "mode": "toNearestOrAwayFromZero",
+      "expected": {
+        "mantissaWords": [
+          0,
+          160
+        ],
+        "scale": 2
+      }
+    }
+  ],
+  "stringFormatting": [
+    {
+      "value": "0",
+      "expectedString": "0",
+      "expectedNormalizedString": "0",
+      "expectedScientificString": "0"
+    },
+    {
+      "value": "1",
+      "expectedString": "1",
+      "expectedNormalizedString": "1",
+      "expectedScientificString": "1"
+    },
+    {
+      "value": "123",
+      "expectedString": "123",
+      "expectedNormalizedString": "123",
+      "expectedScientificString": "123"
+    },
+    {
+      "value": "0.1",
+      "expectedString": "0.1",
+      "expectedNormalizedString": "0.1",
+      "expectedScientificString": "0.1"
+    },
+    {
+      "value": "0.01",
+      "expectedString": "0.01",
+      "expectedNormalizedString": "0.01",
+      "expectedScientificString": "0.01"
+    },
+    {
+      "value": "0.001",
+      "expectedString": "0.001",
+      "expectedNormalizedString": "0.001",
+      "expectedScientificString": "0.001"
+    },
+    {
+      "value": "1.1",
+      "expectedString": "1.1",
+      "expectedNormalizedString": "1.1",
+      "expectedScientificString": "1.1"
+    },
+    {
+      "value": "1.01",
+      "expectedString": "1.01",
+      "expectedNormalizedString": "1.01",
+      "expectedScientificString": "1.01"
+    },
+    {
+      "value": "1.001",
+      "expectedString": "1.001",
+      "expectedNormalizedString": "1.001",
+      "expectedScientificString": "1.001"
+    },
+    {
+      "value": "1.234",
+      "expectedString": "1.234",
+      "expectedNormalizedString": "1.234",
+      "expectedScientificString": "1.234"
+    },
+    {
+      "value": "123.456",
+      "expectedString": "123.456",
+      "expectedNormalizedString": "123.456",
+      "expectedScientificString": "123.456"
+    },
+    {
+      "value": "0.0",
+      "expectedString": "0.0",
+      "expectedNormalizedString": "0",
+      "expectedScientificString": "0.0"
+    },
+    {
+      "value": "1.0",
+      "expectedString": "1.0",
+      "expectedNormalizedString": "1",
+      "expectedScientificString": "1.0"
+    },
+    {
+      "value": "1.00",
+      "expectedString": "1.00",
+      "expectedNormalizedString": "1",
+      "expectedScientificString": "1.00"
+    },
+    {
+      "value": "123.0",
+      "expectedString": "123.0",
+      "expectedNormalizedString": "123",
+      "expectedScientificString": "123.0"
+    },
+    {
+      "value": "123.00",
+      "expectedString": "123.00",
+      "expectedNormalizedString": "123",
+      "expectedScientificString": "123.00"
+    },
+    {
+      "value": "-1",
+      "expectedString": "-1",
+      "expectedNormalizedString": "-1",
+      "expectedScientificString": "-1"
+    },
+    {
+      "value": "-0.1",
+      "expectedString": "-0.1",
+      "expectedNormalizedString": "-0.1",
+      "expectedScientificString": "-0.1"
+    },
+    {
+      "value": "-1.1",
+      "expectedString": "-1.1",
+      "expectedNormalizedString": "-1.1",
+      "expectedScientificString": "-1.1"
+    },
+    {
+      "value": "-123.456",
+      "expectedString": "-123.456",
+      "expectedNormalizedString": "-123.456",
+      "expectedScientificString": "-123.456"
+    },
+    {
+      "value": "1e5",
+      "expectedString": "1E+5",
+      "expectedNormalizedString": "1E+5",
+      "expectedScientificString": "100E+3"
+    },
+    {
+      "value": "1e-5",
+      "expectedString": "0.00001",
+      "expectedNormalizedString": "0.00001",
+      "expectedScientificString": "0.00001"
+    },
+    {
+      "value": "1.23e5",
+      "expectedString": "1.23E+5",
+      "expectedNormalizedString": "1.23E+5",
+      "expectedScientificString": "123E+3"
+    },
+    {
+      "value": "1.23e-5",
+      "expectedString": "0.0000123",
+      "expectedNormalizedString": "0.0000123",
+      "expectedScientificString": "0.0000123"
+    },
+    {
+      "value": "-1e5",
+      "expectedString": "-1E+5",
+      "expectedNormalizedString": "-1E+5",
+      "expectedScientificString": "-100E+3"
+    },
+    {
+      "value": "-1e-5",
+      "expectedString": "-0.00001",
+      "expectedNormalizedString": "-0.00001",
+      "expectedScientificString": "-0.00001"
+    }
+  ]
+}

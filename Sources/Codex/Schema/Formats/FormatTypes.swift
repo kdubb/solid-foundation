@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import BigDecimal
 import ScreamURITemplate
 
 /// Local fprmat type registry.
