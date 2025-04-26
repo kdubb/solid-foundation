@@ -5,6 +5,8 @@
 //  Created by Kevin Wooten on 1/31/25.
 //
 
+import Synchronization
+
 /// A JSON Pointer that can be used to reference a specific location in a JSON document.
 ///
 /// JSON Pointers are defined in RFC 6901 and are used to identify a specific value
@@ -12,6 +14,25 @@
 /// that navigate through the document's structure.
 ///
 public struct Pointer {
+
+  /// Whether to enforce strict parsing rules globally.
+  ///
+  /// When true, the parser will enforce strict rules for reference tokens,
+  /// including proper escaping of special characters.
+  ///
+  /// Currently applies to:
+  ///   - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
+  ///
+  /// - Important: This is a global setting that affects all pointer parsing. It is not
+  ///   meant to be used as a per-pointer setting, use `Pointer(validating:strict:)`,
+  ///   passing `strict` as true or false as needed.
+  ///
+  public static var strict: Bool {
+    get { _strict.withLock { $0 } }
+    set { _strict.withLock { $0 = newValue } }
+  }
+
+  private static let _strict = Mutex<Bool>(true)
 
   /// The type of a sequence of reference tokens.
   ///
@@ -112,13 +133,15 @@ extension Pointer: CustomStringConvertible, CustomDebugStringConvertible {
   /// A string representation of this pointer.
   ///
   /// This is the encoded form of the pointer, which can be used to create a new pointer.
-  public var description: String { encoded }
+  public var description: String {
+    tokens.map { "/\($0.description)" }.joined(separator: "")
+  }
 
   /// A debug string representation of this pointer.
   ///
   /// This shows the pointer as a sequence of tokens, with each token prefixed by a slash.
   public var debugDescription: String {
-    "\(tokens.map { "/\($0.description)" }.joined(separator: ""))"
+    "\(tokens.map { "/\($0.debugDescription)" }.joined(separator: ""))"
   }
 
 }
@@ -128,33 +151,16 @@ extension Pointer {
   /// Creates a pointer from its encoded string representation.
   ///
   /// - Parameter string: The encoded string representation of the pointer
+  /// - Parameter strict: Whether to enforce strict parsing rules
+  ///   Currrently affects:
+  ///     - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
   ///
-  public init?(encoded string: some StringProtocol) {
-    var tokens: [ReferenceToken] = []
-    guard !string.isEmpty else {
-      self.tokens = []
-      return
+  public init?(encoded string: some StringProtocol, strict: Bool = Pointer.strict) {
+    do {
+      self = try Pointer(validating: string, strict: strict)
+    } catch {
+      return nil
     }
-    var segmentStart = string.startIndex
-    let endIndex = string.endIndex
-    while segmentStart < endIndex {
-      guard string.first == "/" else {
-        return nil
-      }
-      guard let tokenStart = string.index(segmentStart, offsetBy: 1, limitedBy: endIndex) else {
-        tokens.append(.name(""))
-        return nil
-      }
-      let remaining = string[tokenStart...]
-      let tokenEnd = remaining.firstIndex(of: "/") ?? remaining.endIndex
-      let token = remaining[..<tokenEnd]
-      guard let token = ReferenceToken(encoded: String(token)) else {
-        return nil
-      }
-      tokens.append(token)
-      segmentStart = tokenEnd
-    }
-    self.tokens = tokens
   }
 
   /// The encoded string representation of this pointer.
@@ -171,21 +177,67 @@ extension Pointer {
   /// Creates a pointer from its string representation, throwing an error if invalid.
   ///
   /// - Parameter string: The string representation of the pointer
+  /// - Parameter strict: Whether to enforce strict parsing rules
+  ///   Currrently affects:
+  ///     - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
   /// - Throws: An error if the string is not a valid pointer representation
-  public init(validating string: String) throws {
-    self.tokens = try string.split(separator: "/")
-      .map { try ReferenceToken(validating: String($0)) }
+  ///
+  public init(validating string: some StringProtocol, strict: Bool = Pointer.strict) throws {
+    var tokens: [ReferenceToken] = []
+    guard !string.isEmpty else {
+      self.tokens = []
+      return
+    }
+    var segmentStart = string.startIndex
+    let endIndex = string.endIndex
+
+    func fail(_ details: String) throws -> Never {
+      throw Pointer.Error.invalidPointer(
+        String(string),
+        position: string.distance(from: string.startIndex, to: segmentStart),
+        details: details
+      )
+    }
+
+    while segmentStart < endIndex {
+      guard string.first == "/" else {
+        try fail("Expected '/')")
+      }
+      guard let tokenStart = string.index(segmentStart, offsetBy: 1, limitedBy: endIndex) else {
+        try fail("Expected token after '/'")
+      }
+      let remaining = string[tokenStart...]
+      let tokenEnd = remaining.firstIndex(of: "/") ?? remaining.endIndex
+      let token = remaining[..<tokenEnd]
+      do {
+        let token = try ReferenceToken(validating: String(token), strict: strict)
+        tokens.append(token)
+      } catch let error as Pointer.Error {
+        // Rewrite errors to include token start position
+        guard case .invalidReferenceToken(let invalidToken, let position, let details) = error else {
+          throw error
+        }
+        throw Pointer.Error.invalidReferenceToken(
+          invalidToken,
+          position: string.distance(from: string.startIndex, to: tokenStart) + position,
+          details: details
+        )
+      }
+      segmentStart = tokenEnd
+    }
+    self.tokens = tokens
   }
 
   /// Creates a pointer from a valid pointer string; halts if invalid.
   ///
   /// - Parameter string: The string representation of the pointer
   /// - Precondition: The string must be a valid pointer representation
-  public init(valid string: String) {
-    guard let pointer = Pointer(encoded: string) else {
-      fatalError("Invalid pointer")
+  public init(valid string: String, strict: Bool = Pointer.strict) {
+    do {
+      self = try Pointer(validating: string, strict: strict)
+    } catch {
+      fatalError("Invalid pointer: \(error.localizedDescription)")
     }
-    self = pointer
   }
 
 }
@@ -194,17 +246,18 @@ extension Pointer: ExpressibleByStringLiteral {
 
   /// Creates a pointer from a string literal.
   ///
-  /// If the string contains slashes, it is treated as an encoded pointer.
+  /// If the string starts with a slash, it is treated as an encoded pointer.
   /// Otherwise, it is treated as a single name token.
   ///
   /// - Parameter value: The string literal
   /// - Precondition: If the string contains slashes, it must be a valid encoded pointer
   public init(stringLiteral value: String) {
-    if value.contains("/") {
-      guard let pointer = Pointer(encoded: value) else {
-        fatalError("Invalid Pointer string literal")
+    if value.first == "/" {
+      do {
+        self = try Pointer(validating: value)
+      } catch {
+        fatalError("Invalid literal Pointer: \(error.localizedDescription)")
       }
-      self = pointer
     } else {
       self = Pointer(tokens: [.name(value)])
     }

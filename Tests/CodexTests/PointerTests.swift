@@ -11,61 +11,139 @@ import Testing
 @Suite("Pointer Tests")
 struct PointerTests {
 
-  @Test func tokensInitializer() throws {
-
-    try #require(Pointer(tokens: "foo", "bar").tokens == [.name("foo"), .name("bar")])
-    try #require(Pointer(tokens: "foo", 0).tokens == [.name("foo"), .index(0)])
-    try #require(Pointer(tokens: "foo", .append).tokens == [.name("foo"), .append])
-
-    try #require(Pointer(tokens: []).tokens == [])
-    try #require(Pointer(tokens: ["foo", "bar"]).tokens == [.name("foo"), .name("bar")])
-    try #require(Pointer(tokens: ["foo", 0]).tokens == [.name("foo"), .index(0)])
-    try #require(Pointer(tokens: ["foo", .append]).tokens == [.name("foo"), .append])
+  @Test(
+    "Tokens Initializer",
+    arguments: [
+      ("names", Pointer(tokens: [.name("foo"), .name("bar")]), [.name("foo"), .name("bar")]),
+      ("names (variadic)",Pointer(tokens: .name("foo"), .name("bar")), [.name("foo"), .name("bar")]),
+      ("names (literals)", Pointer(tokens: "foo", "bar"), [.name("foo"), .name("bar")]),
+      ("name/index", Pointer(tokens: [.name("foo"), .index(0)]), [.name("foo"), .index(0)]),
+      ("name/index (variadic)", Pointer(tokens: .name("foo"), .index(0)), [.name("foo"), .index(0)]),
+      ("name/index (literals)", Pointer(tokens: "foo", 0), [.name("foo"), .index(0)]),
+      ("name/append", Pointer(tokens: [.name("foo"), .append]), [.name("foo"), .append]),
+      ("name/append (variadic)", Pointer(tokens: .name("foo"), .append), [.name("foo"), .append]),
+      ("name/append (literals)", Pointer(tokens: "foo", .append), [.name("foo"), .append]),
+      ("index", Pointer(tokens: [.index(0)]), [.index(0)]),
+      ("index (variadic)", Pointer(tokens: .index(0)), [.index(0)]),
+      ("index (literals)", Pointer(tokens: 0), [.index(0)]),
+      ("index/name", Pointer(tokens: [.index(0), .name("foo")]), [.index(0), .name("foo")]),
+      ("index/name (variadic)", Pointer(tokens: .index(0), .name("foo")), [.index(0), .name("foo")]),
+      ("index/name (literals)", Pointer(tokens: 0, "foo"), [.index(0), .name("foo")]),
+      ("index/append", Pointer(tokens: [.index(0), .append]), [.index(0), .append]),
+      ("index/append (variadic)", Pointer(tokens: .index(0), .append), [.index(0), .append]),
+      ("index/append (literals)", Pointer(tokens: 0, .append), [.index(0), .append]),
+      ("append", Pointer(tokens: [.append]), [.append]),
+      ("append (variadic)", Pointer(tokens: .append), [.append]),
+      ("append (literals)", Pointer(tokens: .append), [.append]),
+      ("index/index", Pointer(tokens: [.index(0), .index(1)]), [.index(0), .index(1)]),
+      ("index/index (variadic)", Pointer(tokens: .index(0), .index(1)), [.index(0), .index(1)]),
+      ("index/index (literals)", Pointer(tokens: 0, 1), [.index(0), .index(1)]),
+    ] as [(String, Pointer, [Pointer.ReferenceToken])]
+  )
+  func tokensInitializer(id: String, pointer: Pointer, tokens: [Pointer.ReferenceToken]) throws {
+    #expect(pointer.tokens == tokens)
   }
 
-  @Test func decodingInitialzer() throws {
+  @Test(
+    "Decoding Initializer",
+    arguments: [
+      // RFC 6901
+      ("", [], true),
+      ("/foo", [.name("foo")], true),
+      ("/foo/0", [.name("foo"), .index(0)], true),
+      ("/", [.name("")], true),
+      ("/a~1b", [.name("a/b")], true),
+      ("/c%d", [.name("c%d")], true),
+      ("/e^f", [.name("e^f")], true),
+      ("/g|h", [.name("g|h")], true),
+      ("/i\\j", [.name("i\\j")], true),
+      ("/k\"l", [.name("k\"l")], true),
+      ("/ ", [.name(" ")], true),
+      ("/m~0n", [.name("m~n")], true),
 
-    // RFC 6901
-    try #require(Pointer(encoded: "")?.tokens == [])
-    try #require(Pointer(encoded: "/foo")?.tokens == [.name("foo")])
-    try #require(Pointer(encoded: "/foo/0")?.tokens == [.name("foo"), .index(0)])
-    try #require(Pointer(encoded: "/")?.tokens == [.name("")])
-    try #require(Pointer(encoded: "/a~1b")?.tokens == [.name("a/b")])
-    try #require(Pointer(encoded: "/c%d")?.tokens == [.name("c%d")])
-    try #require(Pointer(encoded: "/e^f")?.tokens == [.name("e^f")])
-    try #require(Pointer(encoded: "/g|h")?.tokens == [.name("g|h")])
-    try #require(Pointer(encoded: "/i\\j")?.tokens == [.name("i\\j")])
-    try #require(Pointer(encoded: "/k\"l")?.tokens == [.name("k\"l")])
-    try #require(Pointer(encoded: "/ ")?.tokens == [.name(" ")])
-    try #require(Pointer(encoded: "/m~0n")?.tokens == [.name("m~n")])
+      // Extra
+      ("/01", [.name("01")], true),
+      ("/001", [.name("001")], true),
 
-    // Extra
-    try #require(Pointer(encoded: "/01")?.tokens == [.name("01")])
-    try #require(Pointer(encoded: "/001")?.tokens == [.name("001")])
+      // ~ Escapes (lenient)
+      ("/num~s", [.name("num~s")], false),
+      ("/nums~", [.name("nums~")], false),
+      ("/nums~/0", [.name("nums~"), .index(0)], false),
+
+      // Invalid
+      ("foo", nil, true),
+      ("foo/", nil, true),
+
+      // Invalid ~ Escapes (strict)
+      ("/num~s", nil, true),
+      ("/nums~", nil, true),
+      ("/nums~/0", nil, true),
+    ] as [(String, [Pointer.ReferenceToken]?, Bool)]
+  )
+  func decodingInitializer(pointer: String, expectedTokens: [Pointer.ReferenceToken]?, strict: Bool) throws {
+    try #require(Pointer(encoded: pointer, strict: strict)?.tokens == expectedTokens)
   }
 
-  @Test func literalInitializer() throws {
+  @Test(
+    "Validating Initializer",
+    arguments: [
+      // Invalid
+      ("foo", 0, "Expected '/'", false),
+      ("foo/", 0, "Expected '/'", false),
+      // Invalid ~ Escapes (strict)
+      ("/num~s", 5, "~ escaping anything but 0 or 1", true),
+      ("/num~", 4, "~ at end of string", true),
+    ] as [(String, Int, String, Bool)]
+  )
+  func validatingInitializer(pointer: String, expectedPosition: Int, expectedDetails: String, expectedTokenError: Bool) throws {
 
-    let pointer: Pointer = "/foo/0"
-    try #require(pointer.tokens == [.name("foo"), .index(0)])
-
-    let pointer2: Pointer = "foo"
-    try #require(pointer2.tokens == [.name("foo")])
-
-    let pointer3: Pointer = 0
-    try #require(pointer3.tokens == [.index(0)])
+    let error = try #require(throws: Pointer.Error.self) { try Pointer(validating: pointer) }
+    if expectedTokenError {
+      guard case .invalidReferenceToken(_, let position, let details) = error else {
+        Issue.record("Expected invalid reference token error")
+        return
+      }
+      try #require(position == expectedPosition)
+      try #require(details.contains(expectedDetails))
+    } else {
+      guard case .invalidPointer(_, let position, let details) = error else {
+        Issue.record("Expected invalid pointer error")
+        return
+      }
+      try #require(position == expectedPosition)
+      try #require(details.contains(expectedDetails))
+    }
   }
 
-  @Test func appending() throws {
+  @Test(
+    "Appending",
+    arguments: [
+      (Pointer(tokens: .name("foo")), ["bar", 0], [.name("foo"), .name("bar"), .index(0)]),
+      (Pointer(tokens: .name("foo")), [0, "bar"], [.name("foo"), .index(0), .name("bar")]),
+      (Pointer(tokens: .name("foo")), [.append, "bar"], [.name("foo"), .append, .name("bar")]),
 
-    let pointer: Pointer = "/foo"
+      (Pointer(tokens: .index(1)), ["bar", 0], [.index(1), .name("bar"), .index(0)]),
+      (Pointer(tokens: .index(1)), [0, "bar"], [.index(1), .index(0), .name("bar")]),
+      (Pointer(tokens: .index(1)), [.append, "bar"], [.index(1), .append, .name("bar")]),
 
-    try #require(pointer.appending(tokens: ["bar", 0]).tokens == [.name("foo"), .name("bar"), .index(0)])
-    try #require(pointer.appending(tokens: "bar", 0).tokens == [.name("foo"), .name("bar"), .index(0)])
-    try #require(pointer.appending(pointer: "bar").tokens == [.name("foo"), .name("bar")])
-    try #require(pointer.appending(string: "/bar/0").tokens == [.name("foo"), .name("bar"), .index(0)])
-    try #require((pointer / "bar" / 0).tokens == [.name("foo"), .name("bar"), .index(0)])
-    try #require((pointer / "/bar/0").tokens == [.name("foo"), .name("bar"), .index(0)])
+      (Pointer(tokens: .append), ["bar", 0], [.append, .name("bar"), .index(0)]),
+      (Pointer(tokens: .append), [0, "bar"], [.append, .index(0), .name("bar")]),
+      (Pointer(tokens: .append), [.append, "bar"], [.append, .append, .name("bar")]),
+    ] as [(Pointer, [Pointer.ReferenceToken], [Pointer.ReferenceToken])]
+  )
+  func appending(pointer: Pointer, appendTokens: [Pointer.ReferenceToken], expectedTokens: [Pointer.ReferenceToken]) throws {
+    #expect(pointer.appending(tokens: appendTokens).tokens == expectedTokens)
+    #expect((pointer / appendTokens[0] / appendTokens[1]).tokens == expectedTokens)
+  }
+
+  @Test("Appending Literals")
+  func appendingLiterals() throws {
+    #expect(Pointer(tokens: .name("foo")).appending(tokens: "bar", 0).tokens == [.name("foo"), .name("bar"), .index(0)])
+    #expect(Pointer(tokens: .name("foo")).appending(tokens: "bar~10").tokens == [.name("foo"), .name("bar/0")])
+    #expect(Pointer(tokens: .name("foo")).appending(tokens: "bar/0").tokens == [.name("foo"), .name("bar/0")])
+    #expect((Pointer(tokens: .name("foo")) / "bar" / 0).tokens == [.name("foo"), .name("bar"), .index(0)])
+    #expect((Pointer(tokens: .name("foo")) / "bar/0").tokens == [.name("foo"), .name("bar/0")])
+    #expect((Pointer(tokens: .name("foo")) / "/bar/0").tokens == [.name("foo"), .name("bar"), .index(0)])
   }
 
   @Test func dropping() async throws {
@@ -84,15 +162,18 @@ struct PointerTests {
     try #require(Pointer(validating: "/foo").description == "/foo")
     try #require(Pointer(validating: "/foo/0").description == "/foo/0")
     try #require(Pointer(validating: "/foo/-").description == "/foo/-")
-    try #require(Pointer(validating: "/foo~1bar/-").description == #"/foo~1bar/-"#)
+    try #require(Pointer(validating: "/foo~1bar/-").description == #"/"foo/bar"/-"#)
   }
 
   @Test func debugDescription() throws {
 
+    let pointer = try Pointer(validating: "/foo~1bar/-")
+    debugPrint(pointer)
+
     try #require(Pointer(validating: "/foo").debugDescription == "/foo")
     try #require(Pointer(validating: "/foo/0").debugDescription == "/foo/0")
     try #require(Pointer(validating: "/foo/-").debugDescription == "/foo/-")
-    try #require(Pointer(validating: "/foo~1bar/-").debugDescription == #"/"foo/bar"/-"#)
+    try #require(Pointer(validating: "/foo~1bar/-").debugDescription == #"/f̲o̲o̲/̲b̲a̲r̲/-"#)
   }
 
   @Test func encoded() throws {
