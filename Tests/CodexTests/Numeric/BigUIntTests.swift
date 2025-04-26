@@ -827,4 +827,504 @@ struct BigUIntTests {
     #expect(multipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor))
     #expect(!multipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor + BigUInt(1)))
   }
+
+  @Suite("Words")
+  struct BigUIntWordsTests {
+    @Test("Same words in different representations compare equal and hash the same")
+    func sameWordsEqualAndHash() {
+      // Single zero word
+      let wordsInline = BigUInt.Words.inline1(0)
+      let wordsDynamic = BigUInt.Words.dynamic([0])
+      #expect(wordsInline == wordsDynamic)
+      #expect(wordsInline.hashValue == wordsDynamic.hashValue)
+
+      // Two zero words
+      let wordsInline2 = BigUInt.Words.inline2(0, 0)
+      let wordsDynamic2 = BigUInt.Words.dynamic([0, 0])
+      #expect(wordsInline2 == wordsDynamic2)
+      #expect(wordsInline2.hashValue == wordsDynamic2.hashValue)
+
+      // Single non-zero word
+      let wordsInline3 = BigUInt.Words.inline1(42)
+      let wordsDynamic3 = BigUInt.Words.dynamic([42])
+      #expect(wordsInline3 == wordsDynamic3)
+      #expect(wordsInline3.hashValue == wordsDynamic3.hashValue)
+
+      // Two non-zero words
+      let wordsInline4 = BigUInt.Words.inline2(42, 43)
+      let wordsDynamic4 = BigUInt.Words.dynamic([42, 43])
+      #expect(wordsInline4 == wordsDynamic4)
+      #expect(wordsInline4.hashValue == wordsDynamic4.hashValue)
+
+      // Single word with high bit set
+      let wordsInline7 = BigUInt.Words.inline1(0x8000000000000000)
+      let wordsDynamic7 = BigUInt.Words.dynamic([0x8000000000000000])
+      #expect(wordsInline7 == wordsDynamic7)
+      #expect(wordsInline7.hashValue == wordsDynamic7.hashValue)
+
+      // Two words with high bit set
+      let wordsInline8 = BigUInt.Words.inline2(0x8000000000000000, 0x8000000000000000)
+      let wordsDynamic8 = BigUInt.Words.dynamic([0x8000000000000000, 0x8000000000000000])
+      #expect(wordsInline8 == wordsDynamic8)
+      #expect(wordsInline8.hashValue == wordsDynamic8.hashValue)
+
+      // Single zero word transitioned to dynamic two words
+      var wordsInline1ToDynamic = BigUInt.Words.inline1(0)
+      wordsInline1ToDynamic.append(1)
+      let wordsDynamic9 = BigUInt.Words.dynamic([0, 1])
+      #expect(wordsInline1ToDynamic == wordsDynamic9)
+      #expect(wordsInline1ToDynamic.hashValue == wordsDynamic9.hashValue)
+
+      // Two zero words transitioned to dynamic two words
+      var wordsInline2ToDynamic = BigUInt.Words.inline2(0, 0)
+      wordsInline2ToDynamic.append(1)
+      let wordsDynamic10 = BigUInt.Words.dynamic([0, 0, 1])
+      #expect(wordsInline2ToDynamic == wordsDynamic10)
+      #expect(wordsInline2ToDynamic.hashValue == wordsDynamic10.hashValue)
+
+      // Single non-zero word transitioned to dynamic two words
+      var wordsInline3ToDynamic = BigUInt.Words.inline1(42)
+      wordsInline3ToDynamic.append(1)
+      let wordsDynamic11 = BigUInt.Words.dynamic([42, 1])
+      #expect(wordsInline3ToDynamic == wordsDynamic11)
+      #expect(wordsInline3ToDynamic.hashValue == wordsDynamic11.hashValue)
+
+      // Two non-zero words transitioned to dynamic two words
+      var wordsInline4ToDynamic = BigUInt.Words.inline2(42, 43)
+      wordsInline4ToDynamic.append(1)
+      let wordsDynamic12 = BigUInt.Words.dynamic([42, 43, 1])
+      #expect(wordsInline4ToDynamic == wordsDynamic12)
+      #expect(wordsInline4ToDynamic.hashValue == wordsDynamic12.hashValue)
+    }
+
+    @Test("Different words compare not equal and hash differently")
+    func differentWordsNotEqualAndHashDifferently() {
+      // Single inline words
+      let wordsInline1 = BigUInt.Words.inline1(0)
+      let wordsInline2 = BigUInt.Words.inline1(1)
+      #expect(wordsInline1 != wordsInline2)
+      #expect(wordsInline1.hashValue != wordsInline2.hashValue)
+
+      // Two inline words
+      let wordsInline3 = BigUInt.Words.inline2(0, 0)
+      let wordsInline4 = BigUInt.Words.inline2(0, 1)
+      #expect(wordsInline3 != wordsInline4)
+      #expect(wordsInline3.hashValue != wordsInline4.hashValue)
+
+      // Dynamic words (of length 1)
+      let wordsDynamic1 = BigUInt.Words.dynamic([0])
+      let wordsDynamic2 = BigUInt.Words.dynamic([1])
+      #expect(wordsDynamic1 != wordsDynamic2)
+      #expect(wordsDynamic1.hashValue != wordsDynamic2.hashValue)
+
+      // Dynamic words (of length 1)
+      let wordsDynamic3 = BigUInt.Words.dynamic([0, 0])
+      let wordsDynamic4 = BigUInt.Words.dynamic([0, 1])
+      #expect(wordsDynamic3 != wordsDynamic4)
+      #expect(wordsDynamic3.hashValue != wordsDynamic4.hashValue)
+    }
+
+    @Test("Appending to 1 inline words becomes two inline words")
+    func appendingToOneInlineWordBecomesTwoInlineWords() {
+
+      var wordsInline1 = BigUInt.Words.inline1(0)
+      wordsInline1.append(1)
+
+      guard case .inline2(let word1, let word2) = wordsInline1 else {
+        Issue.record("Expected inline2 words")
+        return
+      }
+      #expect(word1 == 0)
+      #expect(word2 == 1)
+
+      var wordsInline2 = BigUInt.Words.inline1(0)
+      wordsInline2.append(0)
+
+      guard case .inline2(let word1, let word2) = wordsInline2 else {
+        Issue.record("Expected inline2 words")
+        return
+      }
+      #expect(word1 == 0)
+      #expect(word2 == 0)
+    }
+
+    @Test("Appending to 2 inline words becomes dynamic array")
+    func appendingToTwoInlineWordsBecomesDynamicArray() {
+      var wordsInline1 = BigUInt.Words.inline2(0, 0)
+      wordsInline1.append(1)
+
+      guard case .dynamic(let words) = wordsInline1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [0, 0, 1])
+
+      var wordsInline2 = BigUInt.Words.inline2(0, 0)
+      wordsInline2.append(0)
+
+      guard case .dynamic(let words) = wordsInline2 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [0, 0, 0])
+    }
+
+    @Test("Removing first word(s) from dynamic array stays dynamic array")
+    func removingFirstWordFromDynamicArrayStaysDynamicArray() {
+      var wordsDynamic1 = BigUInt.Words.dynamic([0, 0, 1])
+      wordsDynamic1.removeFirst()
+
+      guard case .dynamic(let words1) = wordsDynamic1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words1 == [0, 1])
+
+      wordsDynamic1.removeFirst()
+
+      guard case .dynamic(let words2) = wordsDynamic1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words2 == [1])
+    }
+
+    @Test("Removing last word(s) from dynamic array stays dynamic array")
+    func removingLastWordFromDynamicArrayStaysDynamicArray() {
+      var wordsDynamic1 = BigUInt.Words.dynamic([0, 0, 1])
+      wordsDynamic1.removeLast()
+
+      guard case .dynamic(let words1) = wordsDynamic1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words1 == [0, 0])
+
+      wordsDynamic1.removeLast()
+
+      guard case .dynamic(let words2) = wordsDynamic1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words2 == [0])
+    }
+
+    @Test("Removing first inline word from inline2 becomes inline1")
+    func removingFirstInlineWordFromInline2BecomesInline1() {
+      var wordsInline1 = BigUInt.Words.inline2(0, 1)
+      wordsInline1.removeFirst()
+
+      guard case .inline1(let word) = wordsInline1 else {
+        Issue.record("Expected inline1 words")
+        return
+      }
+      #expect(word == 1)
+    }
+
+    @Test("Removing last inline word from inline2 becomes inline1")
+    func removingLastInlineWordFromInline2BecomesInline1() {
+      var wordsInline1 = BigUInt.Words.inline2(0, 1)
+      wordsInline1.removeLast()
+
+      guard case .inline1(let word) = wordsInline1 else {
+        Issue.record("Expected inline1 words")
+        return
+      }
+      #expect(word == 0)
+    }
+
+    @Test("Inserting a word into inline1 becomes inline2")
+    func insertingAWordIntoInline1BecomesInline2() {
+      var wordsInline1 = BigUInt.Words.inline1(0)
+      wordsInline1.insert(contentsOf: [1], at: 0)
+
+      guard case .inline2(let word1, let word2) = wordsInline1 else {
+        Issue.record("Expected inline2 words")
+        return
+      }
+      #expect(word1 == 1)
+      #expect(word2 == 0)
+
+      var wordsInline2 = BigUInt.Words.inline1(0)
+      wordsInline2.insert(contentsOf: [1], at: 1)
+
+      guard case .inline2(let word3, let word4) = wordsInline2 else {
+        Issue.record("Expected inline2 words")
+        return
+      }
+      #expect(word3 == 0)
+      #expect(word4 == 1)
+    }
+
+    @Test("Inserting a word into inline2 becomes dynamic array")
+    func insertingAWordIntoInline2BecomesDynamicArray() {
+      var wordsInline1 = BigUInt.Words.inline2(0, 0)
+      wordsInline1.insert(contentsOf: [1], at: 0)
+
+      guard case .dynamic(let words) = wordsInline1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [1, 0, 0])
+
+      var wordsInline2 = BigUInt.Words.inline2(0, 0)
+      wordsInline2.insert(contentsOf: [1], at: 1)
+
+      guard case .dynamic(let words2) = wordsInline2 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words2 == [0, 1, 0])
+    }
+
+    @Test("Replacing all words of an inline1 with a collection of 1 stays inline1")
+    func replacingAllWordsOfAnInline1WithACollectionOf1StaysInline1() {
+      var wordsInline1 = BigUInt.Words.inline1(0)
+      wordsInline1.replaceAll(with: [1])
+
+      guard case .inline1(let word) = wordsInline1 else {
+        Issue.record("Expected inline1 words")
+        return
+      }
+      #expect(word == 1)
+    }
+
+    @Test("Replacing all words of an inline1 with a collection of 2 becomes inline2")
+    func replacingAllWordsOfAnInline1WithACollectionOf2BecomesInline2() {
+      var wordsInline1 = BigUInt.Words.inline1(0)
+      wordsInline1.replaceAll(with: [1, 2])
+
+      guard case .inline2(let word1, let word2) = wordsInline1 else {
+        Issue.record("Expected inline2 words")
+        return
+      }
+      #expect(word1 == 1)
+      #expect(word2 == 2)
+    }
+
+    @Test("Replacing all words of an inline1 with a collection of 3 becomes dynamic array")
+    func replacingAllWordsOfAnInline1WithACollectionOf3BecomesDynamicArray() {
+      var wordsInline1 = BigUInt.Words.inline1(0)
+      wordsInline1.replaceAll(with: [1, 2, 3])
+
+      guard case .dynamic(let words) = wordsInline1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [1, 2, 3])
+    }
+
+    @Test("Replacing all words of an inline2 with a collection of 1 becomes inline1")
+    func replacingAllWordsOfAnInline2WithACollectionOf1BecomesInline1() {
+      var wordsInline2 = BigUInt.Words.inline2(0, 0)
+      wordsInline2.replaceAll(with: [1])
+
+      guard case .inline1(let word) = wordsInline2 else {
+        Issue.record("Expected inline1 words")
+        return
+      }
+      #expect(word == 1)
+    }
+
+    @Test("Replacing all words of an inline2 with a collection of 2 stays inline2")
+    func replacingAllWordsOfAnInline2WithACollectionOf2StaysInline2() {
+      var wordsInline2 = BigUInt.Words.inline2(0, 0)
+      wordsInline2.replaceAll(with: [1, 2])
+
+      guard case .inline2(let word1, let word2) = wordsInline2 else {
+        Issue.record("Expected inline2 words")
+        return
+      }
+      #expect(word1 == 1)
+      #expect(word2 == 2)
+    }
+
+    @Test("Replacing all words of an inline2 with a collection of 3 becomes dynamic array")
+    func replacingAllWordsOfAnInline2WithACollectionOf3BecomesDynamicArray() {
+      var wordsInline2 = BigUInt.Words.inline2(0, 0)
+      wordsInline2.replaceAll(with: [1, 2, 3])
+
+      guard case .dynamic(let words) = wordsInline2 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [1, 2, 3])
+    }
+
+    @Test("Replacing all words of a dynamic array with a collection of 1 stays dynamic array")
+    func replacingAllWordsOfADynamicArrayWithACollectionOf1StaysDynamicArray() {
+      var wordsDynamic1 = BigUInt.Words.dynamic([0, 0, 1])
+      wordsDynamic1.replaceAll(with: [1])
+
+      guard case .dynamic(let words) = wordsDynamic1 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [1])
+    }
+
+    @Test("Replacing all words of a dynamic array with a collection of 2 stays dynamic array")
+    func replacingAllWordsOfADynamicArrayWithACollectionOf2StaysDynamicArray() {
+      var wordsDynamic2 = BigUInt.Words.dynamic([0, 0, 1])
+      wordsDynamic2.replaceAll(with: [1, 2])
+
+      guard case .dynamic(let words) = wordsDynamic2 else {
+        Issue.record("Expected dynamic words")
+        return
+      }
+      #expect(words == [1, 2])
+    }
+
+    @Test("Allows iteration over inline1 words")
+    func allowsIterationOverInline1Words() {
+      let words = BigUInt.Words.inline1(0)
+      var count = 0
+      for (idx, word) in words.enumerated() {
+        #expect(idx == word)
+        count += 1
+      }
+      #expect(count == 1)
+    }
+
+    @Test("Allows iteration over inline2 words")
+    func allowsIterationOverInline2Words() {
+      let words = BigUInt.Words.inline2(0, 1)
+      var count = 0
+      for (idx, word) in words.enumerated() {
+        #expect(idx == word)
+        count += 1
+      }
+      #expect(count == 2)
+    }
+
+    @Test("Allows iteration over dynamic words")
+    func allowsIterationOverDynamicWords() {
+      let words = BigUInt.Words.dynamic([0, 1, 2, 3, 4, 5])
+      var count = 0
+      for (idx, word) in words.enumerated() {
+        #expect(idx == word)
+        count += 1
+      }
+      #expect(count == 6)
+    }
+
+    @Test("Subscripting inline1 words")
+    func subscriptingInline1Words() {
+      let words = BigUInt.Words.inline1(10)
+      #expect(words[0] == 10)
+    }
+
+    @Test("Subscripting inline2 words")
+    func subscriptingInline2Words() {
+      let words = BigUInt.Words.inline2(10, 11)
+      #expect(words[0] == 10)
+      #expect(words[1] == 11)
+    }
+
+    @Test("Subscripting dynamic words")
+    func subscriptingDynamicWords() {
+      let words = BigUInt.Words.dynamic([10, 11, 12, 13, 14])
+      #expect(words[0] == 10)
+      #expect(words[1] == 11)
+      #expect(words[2] == 12)
+      #expect(words[3] == 13)
+      #expect(words[4] == 14)
+    }
+
+    @Test("mostSignificantWord")
+    func mostSignificantWord() {
+      let wordsInline1 = BigUInt.Words.inline1(10)
+      #expect(wordsInline1.mostSignificant == 10)
+
+      let wordsInline2 = BigUInt.Words.inline2(10, 11)
+      #expect(wordsInline2.mostSignificant == 11)
+
+      let wordsDynamic = BigUInt.Words.dynamic([10, 11, 12, 13, 14])
+      #expect(wordsDynamic.mostSignificant == 14)
+    }
+
+    @Test("leastSignificantWord")
+    func leastSignificantWord() {
+      let wordsInline1 = BigUInt.Words.inline1(10)
+      #expect(wordsInline1.leastSignificant == 10)
+
+      let wordsInline2 = BigUInt.Words.inline2(10, 11)
+      #expect(wordsInline2.leastSignificant == 10)
+
+      let wordsDynamic = BigUInt.Words.dynamic([10, 11, 12, 13, 14])
+      #expect(wordsDynamic.leastSignificant == 10)
+    }
+
+    @Test("leastSignificantZeroCount")
+    func leastSignificantZeroCount() {
+      let wordsInline1a = BigUInt.Words.inline1(0)
+      #expect(wordsInline1a.leastSignificantZeroCount == 1)
+
+      let wordsInline1b = BigUInt.Words.inline1(1)
+      #expect(wordsInline1b.leastSignificantZeroCount == 0)
+
+      let wordsInline2a = BigUInt.Words.inline2(0, 0)
+      #expect(wordsInline2a.leastSignificantZeroCount == 2)
+
+      let wordsInline2b = BigUInt.Words.inline2(0, 1)
+      #expect(wordsInline2b.leastSignificantZeroCount == 1)
+
+      let wordsInline2c = BigUInt.Words.inline2(1, 0)
+      #expect(wordsInline2c.leastSignificantZeroCount == 0)
+
+      let wordsDynamic = BigUInt.Words.dynamic([0, 0, 0, 0, 0])
+      #expect(wordsDynamic.leastSignificantZeroCount == 5)
+
+      let wordsDynamic2 = BigUInt.Words.dynamic([0, 0, 0, 0, 1])
+      #expect(wordsDynamic2.leastSignificantZeroCount == 4)
+
+      let wordsDynamic3 = BigUInt.Words.dynamic([0, 0, 0, 1, 1])
+      #expect(wordsDynamic3.leastSignificantZeroCount == 3)
+
+      let wordsDynamic4 = BigUInt.Words.dynamic([1, 0, 0, 0, 0])
+      #expect(wordsDynamic4.leastSignificantZeroCount == 0)
+    }
+
+    @Test("mostSignificantZeroCount")
+    func mostSignificantZeroCount() {
+      let wordsInline1a = BigUInt.Words.inline1(0)
+      #expect(wordsInline1a.mostSignificantZeroCount == 1)
+
+      let wordsInline1b = BigUInt.Words.inline1(1)
+      #expect(wordsInline1b.mostSignificantZeroCount == 0)
+
+      let wordsInline2a = BigUInt.Words.inline2(0, 0)
+      #expect(wordsInline2a.mostSignificantZeroCount == 2)
+
+      let wordsInline2b = BigUInt.Words.inline2(0, 1)
+      #expect(wordsInline2b.mostSignificantZeroCount == 0)
+
+      let wordsInline2c = BigUInt.Words.inline2(1, 0)
+      #expect(wordsInline2c.mostSignificantZeroCount == 1)
+
+      let wordsDynamic = BigUInt.Words.dynamic([0, 0, 0, 0, 0])
+      #expect(wordsDynamic.mostSignificantZeroCount == 5)
+
+      let wordsDynamic2 = BigUInt.Words.dynamic([0, 0, 0, 0, 1])
+      #expect(wordsDynamic2.mostSignificantZeroCount == 0)
+
+      let wordsDynamic3 = BigUInt.Words.dynamic([1, 0, 0, 0, 0])
+      #expect(wordsDynamic3.mostSignificantZeroCount == 4)
+
+      let wordsDynamic4 = BigUInt.Words.dynamic([1, 1, 0, 0, 0])
+      #expect(wordsDynamic4.mostSignificantZeroCount == 3)
+    }
+
+    @Test("count")
+    func count() {
+      let wordsInline1 = BigUInt.Words.inline1(10)
+      #expect(wordsInline1.count == 1)
+
+      let wordsInline2 = BigUInt.Words.inline2(10, 11)
+      #expect(wordsInline2.count == 2)
+
+      let wordsDynamic = BigUInt.Words.dynamic([10, 11, 12, 13, 14])
+      #expect(wordsDynamic.count == 5)
+    }
+  }
 }
