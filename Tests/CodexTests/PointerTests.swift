@@ -8,6 +8,7 @@
 import Testing
 @testable import Codex
 
+@Suite("Pointer Tests")
 struct PointerTests {
 
   @Test func tokensInitializer() throws {
@@ -115,236 +116,238 @@ struct PointerTests {
     try #require(pointer.map { $0 } == [.name("foo"), .name("bar"), .name("baz"), .index(0)])
   }
 
-}
 
-struct PointerValueTests {
+  @Suite("Value Tests")
+  struct ValueTests {
 
-  @Test func get() throws {
+    @Test func get() throws {
 
-    let value: Value = [
-      "foo": ["bar", "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar", "baz"],
+        "bar": [0, 2],
+      ]
 
-    try #require(value[Pointer(validating: "/foo")] == ["bar", "baz"])
-    try #require(value[Pointer(validating: "/foo/0")] == "bar")
-    try #require(value[Pointer(validating: "/bar/0")] == 0)
-    try #require(value[Pointer(validating: "/bar/1")] == 2)
+      try #require(value[Pointer(validating: "/foo")] == ["bar", "baz"])
+      try #require(value[Pointer(validating: "/foo/0")] == "bar")
+      try #require(value[Pointer(validating: "/bar/0")] == 0)
+      try #require(value[Pointer(validating: "/bar/1")] == 2)
 
-    try #require(value[Pointer(validating: "/bar/-")] == nil)
-  }
+      try #require(value[Pointer(validating: "/bar/-")] == nil)
+    }
 
-  @Test func setName() throws {
+    @Test func setName() throws {
 
-    let value: Value = [
-      "foo": ["bar", "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar", "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/bar")] = "qux"
-    try #require(copy == ["foo": ["bar", "baz"], "bar": "qux"])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/bar")] = "qux"
+      try #require(copy == ["foo": ["bar", "baz"], "bar": "qux"])
+    }
 
-  @Test func setChildName() throws {
+    @Test func setChildName() throws {
 
-    let value: Value = [
-      "foo": ["bar": "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar": "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/foo/bar")] = "qux"
-    try #require(copy == ["foo": ["bar": "qux"], "bar": [0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/foo/bar")] = "qux"
+      try #require(copy == ["foo": ["bar": "qux"], "bar": [0, 2]])
+    }
 
-  @Test func setNewName() throws {
+    @Test func setNewName() throws {
 
-    let value: Value = [
-      "foo": ["bar", "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar", "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/baz")] = "qux"
-    try #require(copy == ["foo": ["bar", "baz"], "bar": [0, 2], "baz": "qux"])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/baz")] = "qux"
+      try #require(copy == ["foo": ["bar", "baz"], "bar": [0, 2], "baz": "qux"])
+    }
 
-  @Test func setNewChildName() throws {
+    @Test func setNewChildName() throws {
 
-    let value: Value = [
-      "foo": ["bar": "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar": "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/foo/baz")] = "qux"
-    try #require(copy == ["foo": ["bar": "baz", "baz": "qux"], "bar": [0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/foo/baz")] = "qux"
+      try #require(copy == ["foo": ["bar": "baz", "baz": "qux"], "bar": [0, 2]])
+    }
 
-  @Test func setIndex() throws {
+    @Test func setIndex() throws {
 
-    let value: Value = [
-      0,
-      ["bar", "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        0,
+        ["bar", "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/0")] = "qux"
-    try #require(copy == ["qux", ["bar", "baz"], [0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/0")] = "qux"
+      try #require(copy == ["qux", ["bar", "baz"], [0, 2]])
+    }
 
-  @Test func setNewIndex() throws {
+    @Test func setNewIndex() throws {
 
-    let value: Value = [
-      0,
-      ["bar", "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        0,
+        ["bar", "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/-")] = "qux"
-    try #require(copy == [0, ["bar", "baz"], [0, 2], "qux"])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/-")] = "qux"
+      try #require(copy == [0, ["bar", "baz"], [0, 2], "qux"])
+    }
 
-  @Test func setChildIndex() throws {
-    let value: Value = [
-      0,
-      ["bar", "baz"],
-      [0, 2],
-    ]
+    @Test func setChildIndex() throws {
+      let value: Value = [
+        0,
+        ["bar", "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/2/1")] = "qux"
-    try #require(copy == [0, ["bar", "baz"], [0, "qux"]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/2/1")] = "qux"
+      try #require(copy == [0, ["bar", "baz"], [0, "qux"]])
+    }
 
-  @Test func setNewChildIndex() throws {
+    @Test func setNewChildIndex() throws {
 
-    let value: Value = [
-      0,
-      ["bar", "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        0,
+        ["bar", "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/2/-")] = "qux"
-    try #require(copy == [0, ["bar", "baz"], [0, 2, "qux"]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/2/-")] = "qux"
+      try #require(copy == [0, ["bar", "baz"], [0, 2, "qux"]])
+    }
 
-  @Test func setNameIndex() throws {
+    @Test func setNameIndex() throws {
 
-    let value: Value = [
-      "foo": ["bar", "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar", "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/bar/0")] = "qux"
-    try #require(copy == ["foo": ["bar", "baz"], "bar": ["qux", 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/bar/0")] = "qux"
+      try #require(copy == ["foo": ["bar", "baz"], "bar": ["qux", 2]])
+    }
 
-  @Test func setNameNewIndex() throws {
+    @Test func setNameNewIndex() throws {
 
-    let value: Value = [
-      "foo": ["bar", "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar", "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/bar/-")] = "qux"
-    try #require(copy == ["foo": ["bar", "baz"], "bar": [0, 2, "qux"]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/bar/-")] = "qux"
+      try #require(copy == ["foo": ["bar", "baz"], "bar": [0, 2, "qux"]])
+    }
 
-  @Test func setIndexName() throws {
+    @Test func setIndexName() throws {
 
-    let value: Value = [
-      ["bar": "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        ["bar": "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/0/bar")] = "qux"
-    try #require(copy == [["bar": "qux"], [0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/0/bar")] = "qux"
+      try #require(copy == [["bar": "qux"], [0, 2]])
+    }
 
-  @Test func setIndexNewName() throws {
+    @Test func setIndexNewName() throws {
 
-    let value: Value = [
-      ["bar": "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        ["bar": "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/0/baz")] = "qux"
-    try #require(copy == [["bar": "baz", "baz": "qux"], [0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/0/baz")] = "qux"
+      try #require(copy == [["bar": "baz", "baz": "qux"], [0, 2]])
+    }
 
-  @Test func removeIndex() throws {
+    @Test func removeIndex() throws {
 
-    let value: Value = [
-      ["bar": "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        ["bar": "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/0")] = nil
-    try #require(copy == [[0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/0")] = nil
+      try #require(copy == [[0, 2]])
+    }
 
-  @Test func removeChildIndex() throws {
+    @Test func removeChildIndex() throws {
 
-    let value: Value = [
-      ["bar": "baz"],
-      [0, 2],
-    ]
+      let value: Value = [
+        ["bar": "baz"],
+        [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/1/1")] = nil
-    try #require(copy == [["bar": "baz"], [0]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/1/1")] = nil
+      try #require(copy == [["bar": "baz"], [0]])
+    }
 
-  @Test func removeName() throws {
+    @Test func removeName() throws {
 
-    let value: Value = [
-      "foo": ["bar": "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar": "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/bar")] = nil
-    try #require(copy == ["foo": ["bar": "baz"]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/bar")] = nil
+      try #require(copy == ["foo": ["bar": "baz"]])
+    }
 
-  @Test func removeChildName() throws {
+    @Test func removeChildName() throws {
 
-    let value: Value = [
-      "foo": ["bar": "baz"],
-      "bar": [0, 2],
-    ]
+      let value: Value = [
+        "foo": ["bar": "baz"],
+        "bar": [0, 2],
+      ]
 
-    var copy = value
-    copy[try Pointer(validating: "/foo/bar")] = nil
-    try #require(copy == ["foo": [:], "bar": [0, 2]])
-  }
+      var copy = value
+      copy[try Pointer(validating: "/foo/bar")] = nil
+      try #require(copy == ["foo": [:], "bar": [0, 2]])
+    }
 
-  @Test func getRoot() throws {
+    @Test func getRoot() throws {
 
-    let value: Value = ["bar": "baz"]
+      let value: Value = ["bar": "baz"]
 
-    try #require(value[.root] == ["bar": "baz"])
-  }
+      try #require(value[.root] == ["bar": "baz"])
+    }
 
-  @Test func setRoot() throws {
+    @Test func setRoot() throws {
 
-    let value: Value = [
-      ["bar": "baz"]
-    ]
+      let value: Value = [
+        ["bar": "baz"]
+      ]
 
-    var copy = value
-    copy[.root] = "qux"
-    try #require(copy == "qux")
+      var copy = value
+      copy[.root] = "qux"
+      try #require(copy == "qux")
+    }
+
   }
 
 }
