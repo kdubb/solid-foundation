@@ -5,6 +5,8 @@
 //  Created by Kevin Wooten on 4/16/25.
 //
 
+import Algorithms
+
 
 /// arbitrary‑precision unsigned integer.
 ///
@@ -15,33 +17,46 @@
 ///
 public struct BigUInt {
 
+  @usableFromInline
   internal static let wordBits = UInt.bitWidth
+  @usableFromInline
   internal static let wordMask = UInt.max
 
+  @usableFromInline
   internal static let wordBitsDW = UInt128(Self.wordBits)
+  @usableFromInline
   internal static let wordMaskDW = UInt128(Self.wordMask)
 
+  @usableFromInline
   internal static let msbShift = UInt.bitWidth - 1
 
   public private(set) var words: Words
 
   public init() {
-    self.words = [0]
+    self.words = .zero
   }
 
-  internal init<S>(words: S) where S: Sequence, S.Element == UInt {
-    self.init(words: Words(words))
+  internal init<S>(words: S, preNormalized: Bool = false) where S: Collection, S.Element == UInt {
+    self.init(words: Words(words), preNormalized: preNormalized)
   }
 
-  internal init(words: Words) {
+  internal init(words: Words, preNormalized: Bool = false) {
     precondition(words.count > 0, "words must not be empty")
     self.words = words
-    normalize()
+    if !preNormalized { normalize() }
   }
 
   // Remove leading‑zero words so that `words.last! != 0`, except for zero.
-  @inline(__always) internal mutating func normalize() {
-    while words.count > 1 && words.mostSignificant == 0 { words.removeLast() }
+  internal mutating func normalize() {
+    let wordCount = words.count
+    guard wordCount > 1 else {
+      return
+    }
+    let mszwCount = words.mostSignificantZeroCount
+    let trimCount = mszwCount == wordCount ? wordCount - 1 : mszwCount
+    if trimCount > 0 {
+      words.removeLast(trimCount)
+    }
   }
 
   internal var isZero: Bool {
@@ -59,8 +74,6 @@ extension BigUInt: Equatable {}
 extension BigUInt: Hashable {}
 
 extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
-
-  public typealias Words = ContiguousArray<UInt>
 
   public typealias Magnitude = BigUInt
 
@@ -85,7 +98,7 @@ extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
       return
     }
     let neededWords = (totalBits + Self.wordBits - 1) / Self.wordBits
-    var w = Words(repeating: 0, count: neededWords)
+    var w = Words(count: neededWords)
     // copy the low‑order words verbatim (little‑endian)
     for (i, word) in source.words.enumerated() where i < neededWords {
       w[i] = UInt(word)
@@ -170,215 +183,355 @@ extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
   }
 
   public var trailingZeroBitCount: Int {
-    for (i, w) in words.enumerated() where w != 0 {
-      return i * Self.wordBits + w.trailingZeroBitCount
+    let lszwCount = words.leastSignificantZeroCount
+    guard lszwCount < words.count else {
+      return 0
     }
-    return 0
+    return lszwCount * Self.wordBits + words[lszwCount].trailingZeroBitCount
   }
 
   // MARK: - Arithmetic
 
-  public static func + (lhs: Self, rhs: Self) -> Self {
-    var result = Words()
-    let count = Swift.max(lhs.words.count, rhs.words.count)
-    var carry: UInt = 0
-    for i in 0..<count {
-      let a = i < lhs.words.count ? lhs.words[i] : 0
-      let b = i < rhs.words.count ? rhs.words[i] : 0
-      let (sum1, ov1) = a.addingReportingOverflow(b)
-      let (sum2, ov2) = sum1.addingReportingOverflow(carry)
-      result.append(sum2)
-      carry = (ov1 ? 1 : 0) + (ov2 ? 1 : 0)
-    }
-    if carry != 0 { result.append(carry) }
-    return Self(words: result)
-  }
-
   public static func += (lhs: inout Self, rhs: Self) {
-    lhs = lhs + rhs
+    withUnsafeTemporaryBufferArray(count: lhs.words.count + rhs.words.count) { result in
+
+      let count = Swift.max(lhs.words.count, rhs.words.count)
+      result.resize(to: count)
+
+      var carry: UInt = 0
+      for i in 0..<count {
+        let a = i < lhs.words.count ? lhs.words[i] : 0
+        let b = i < rhs.words.count ? rhs.words[i] : 0
+        let (sum1, ov1) = a.addingReportingOverflow(b)
+        let (sum2, ov2) = sum1.addingReportingOverflow(carry)
+        result[i] = sum2
+        carry = (ov1 ? 1 : 0) + (ov2 ? 1 : 0)
+      }
+
+      if carry != 0 { result.append(carry) }
+
+      // Normalize & assign the result
+      result.normalize()
+      lhs.words.replaceAll(with: result)
+    }
   }
 
-  public static func - (lhs: Self, rhs: Self) -> Self {
-    precondition(lhs >= rhs, "arithmetic operation '\(lhs) - \(rhs)' (on type 'BigUInt') results in an underflow")
-    var result = Words()
-    var borrow: UInt = 0
-    for i in 0..<lhs.words.count {
-      let a = lhs.words[i]
-      let b = i < rhs.words.count ? rhs.words[i] : 0
-      let (sub1, ov1) = a.subtractingReportingOverflow(b)
-      let (sub2, ov2) = sub1.subtractingReportingOverflow(borrow)
-      result.append(sub2)
-      borrow = (ov1 ? 1 : 0) + (ov2 ? 1 : 0)
-    }
-    return Self(words: result)
+  public static func + (lhs: Self, rhs: Self) -> Self {
+    var result = lhs
+    result += rhs
+    return result
   }
 
   public static func -= (lhs: inout Self, rhs: Self) {
-    lhs = lhs - rhs
+    precondition(lhs >= rhs, "arithmetic operation '\(lhs) - \(rhs)' (on type 'BigUInt') results in an underflow")
+    withUnsafeTemporaryBufferArray(count: lhs.words.count) { result in
+
+      result.resize(to: lhs.words.count)
+
+      var borrow: UInt = 0
+      for i in 0..<lhs.words.count {
+        let a = lhs.words[i]
+        let b = i < rhs.words.count ? rhs.words[i] : 0
+        let (sub1, ov1) = a.subtractingReportingOverflow(b)
+        let (sub2, ov2) = sub1.subtractingReportingOverflow(borrow)
+        result[i] = sub2
+        borrow = (ov1 ? 1 : 0) + (ov2 ? 1 : 0)
+      }
+
+      // Normalize & assign the result
+      result.normalize()
+      lhs.words.replaceAll(with: result)
+    }
   }
 
-  public static func * (lhs: Self, rhs: Self) -> Self {
-    if lhs.isZero || rhs.isZero { return Self.zero }
-    // Ensure lhs is the longer number
-    let (a, b) = lhs.words.count >= rhs.words.count ? (lhs, rhs) : (rhs, lhs)
-    var result = Words(repeating: 0, count: a.words.count + b.words.count)
-    for i in 0..<a.words.count {
-      var carry: UInt = 0
-      for j in 0..<b.words.count {
-        let idx = i + j
-        let (hi, lo) = a.words[i].multipliedFullWidth(by: b.words[j])
-
-        // add lo to current limb
-        let (sumLo, ovLo) = result[idx].addingReportingOverflow(lo)
-
-        // add hi + old carry + overflow‑from‑lo to next limb
-        let hiPlusCarry = hi &+ carry &+ (ovLo ? 1 : 0)
-        let (sumHi, ovHi) =
-          result[idx + 1].addingReportingOverflow(hiPlusCarry)
-        result[idx] = sumLo
-        result[idx + 1] = sumHi
-        carry = ovHi ? 1 : 0    // propagate overflow
-      }
-
-      // propagate remaining carry
-      var k = i + b.words.count
-      while carry != 0 {
-        print("Carry: \(lhs) * \(rhs)")
-        let (s, ov) = result[k].addingReportingOverflow(carry)
-        result[k] = s
-        carry = ov ? 1 : 0
-        k += 1
-      }
-    }
-    return Self(words: result)
+  public static func - (lhs: Self, rhs: Self) -> Self {
+    var result = lhs
+    result -= rhs
+    return result
   }
 
   public static func *= (lhs: inout Self, rhs: Self) {
-    lhs = lhs * rhs
+    if lhs.isZero || rhs.isZero {
+      lhs = .zero
+      return
+    }
+    // Ensure lhs is the longer number
+    let (a, b) = lhs.words.count >= rhs.words.count ? (lhs, rhs) : (rhs, lhs)
+    withUnsafeTemporaryBufferArray(repeating: UInt(0), count: a.words.count + b.words.count) { result in
+
+      result.resize(to: a.words.count + b.words.count)
+
+      for i in 0..<a.words.count {
+        var carry: UInt = 0
+        for j in 0..<b.words.count {
+          let idx = i + j
+          let (hi, lo) = a.words[i].multipliedFullWidth(by: b.words[j])
+
+          // add lo to current limb
+          let (sumLo, ovLo) = result[idx].addingReportingOverflow(lo)
+
+          // add hi + old carry + overflow‑from‑lo to next limb
+          let hiPlusCarry = hi &+ carry &+ (ovLo ? 1 : 0)
+          let (sumHi, ovHi) =
+            result[idx + 1].addingReportingOverflow(hiPlusCarry)
+          result[idx] = sumLo
+          result[idx + 1] = sumHi
+          carry = ovHi ? 1 : 0    // propagate overflow
+        }
+
+        // propagate remaining carry
+        var k = i + b.words.count
+        while carry != 0 {
+          let (s, ov) = result[k].addingReportingOverflow(carry)
+          result[k] = s
+          carry = ov ? 1 : 0
+          k += 1
+        }
+      }
+
+      // Normalize & assign the result
+      result.normalize()
+      lhs.words.replaceAll(with: result)
+    }
+  }
+
+  public static func * (lhs: Self, rhs: Self) -> Self {
+    var result = lhs
+    result *= rhs
+    return result
   }
 
   private static let divBeta = UInt128(UInt64.max) + 1
 
   // Long division (Knuth D, radix 2⁶⁴)
-  public func quotientAndRemainder(dividingBy v: Self) -> (quotient: Self, remainder: Self) {
-    precondition(!v.isZero, "division by zero")
+  internal func quotientAndRemainder(
+    dividingBy divisor: Self,
+    quotient: inout UnsafeBufferArray<UInt>,
+    remainder: inout UnsafeBufferArray<UInt>?
+  ) {
+    precondition(!divisor.isZero, "division by zero")
 
     // Knuth D: m >= n
-    if self < v { return (.zero, self) }
+    if self < divisor {
+      quotient.append(0)
+      remainder?.append(contentsOf: self.words)
+      return
+    }
+
     // Knuth D: n >= 2
-    guard v.words.count >= 2 else {
-      let d = v.words.leastSignificant
-      var q = Words(repeating: 0, count: words.count)
+    guard divisor.words.count >= 2 else {
+      let d = divisor.words.leastSignificant
+      quotient.resize(to: words.count)
       var r: UInt = 0
       for i in stride(from: words.count &- 1, through: 0, by: -1) {
-        (q[i], r) = d.dividingFullWidth((high: r, low: words[i]))
+        (quotient[i], r) = d.dividingFullWidth((high: r, low: words[i]))
       }
-      return (Self(words: q), Self(r))
+      remainder?.append(r)
+      // Normalize the quotient
+      quotient.normalize()
+      return
     }
 
     let m = self.words.count    // dividend length
-    let n = v.words.count    // divisor length
+    let n = divisor.words.count    // divisor length
 
     // ────────────────────────────────────────────────────────────────────
     // D1  normalise  (shift so v₁ ≥ β/2)
-    let shift = v.words.mostSignificant.leadingZeroBitCount
-    var un = (self << shift).words + [0]
-    let vn = (v << shift).words
+    let shift = divisor.words.mostSignificant.leadingZeroBitCount
+    let unCount = m + 1 + (shift > self.words.mostSignificant.leadingZeroBitCount ? 1 : 0)
+    let vnCount = n
+    let qCount = m - n + 1
 
-    var q = Words(repeating: 0, count: m - n + 1)    // final quotient
+    return withUnsafeTemporaryAllocation(of: UInt.self, capacity: unCount + vnCount) { wordBuffer in
+      var un = wordBuffer.extracting(..<unCount)
+      var vn = wordBuffer.extracting(unCount..<(unCount + vnCount))
+      quotient.resize(to: qCount)
 
-    // ────────────────────────────────────────────────────────────────────
-    // D2 … D7
-    for j in stride(from: m - n, through: 0, by: -1) {
+      // Shift and copy the source values
+      Self.copyAndShift(source: words, destination: &un, shift: shift)
+      Self.copyAndShift(source: divisor.words, destination: &vn, shift: shift)
+      // Zero out the extra word in un
+      un[unCount - 1] = 0
 
-      let un0 = UInt128(un[j + n])
-      let un1 = UInt128(un[j + n - 1])
-      let un2 = UInt128(un[j + n - 2])
-      let vn1 = UInt128(vn[n - 1])
-      let vn2 = UInt128(vn[n - 2])
+      // ────────────────────────────────────────────────────────────────────
+      // D2 … D7
+      for j in stride(from: m - n, through: 0, by: -1) {
+        let un0 = UInt128(un[j + n])
+        let un1 = UInt128(un[j + n - 1])
+        let un2 = UInt128(un[j + n - 2])
+        let vn1 = UInt128(vn[n - 1])
+        let vn2 = UInt128(vn[n - 2])
 
-      // ---------- D3  estimate q̂
-      var (qHat, rHat) = (un0 << Self.wordBits | un1).quotientAndRemainder(dividingBy: vn1)
+        // ---------- D3  estimate q̂
+        var (qHat, rHat) = (un0 << Self.wordBits | un1).quotientAndRemainder(dividingBy: vn1)
 
-      // correct if q̂ = β or q̂·v₂ > (r̂·β + u₀)
-      while (qHat == Self.divBeta) || (qHat * vn2 > (rHat * Self.divBeta + un2)) {
-        qHat -= 1
-        rHat += vn1
-        if rHat >= Self.divBeta { break }    // at most one more loop
-      }
-
-      // ---------- D4  multiply‑subtract
-      var borrow: UInt = 0
-      for i in 0..<n {
-        let prod = UInt128(vn[i]) * qHat    // 128‑bit product
-        let prodLo = UInt(prod & UInt128(UInt.max))    // low 64 product
-        let prodHi = UInt(prod >> 64)    // high 64 product
-
-        //  ui ← ui - lo - borrow
-        let (u1, ov1) = un[i + j].subtractingReportingOverflow(prodLo)
-        let (u2, ov2) = u1.subtractingReportingOverflow(borrow)
-        un[i + j] = u2
-        borrow = prodHi &+ (ov1 ? 1 : 0) &+ (ov2 ? 1 : 0)    // 0,1, or 2
-      }
-
-      // top word
-      let (top, ov3) = un[j + n].subtractingReportingOverflow(borrow)
-      un[j + n] = top
-      var qWord = UInt(qHat & UInt128(UInt.max))
-
-      // ---------- D5  q̂ one too large →  add divisor back
-      if ov3 {
-        qWord &-= 1
-        var carry: UInt = 0
-        for i in 0..<n {
-          let (s1, ov1) = un[i + j].addingReportingOverflow(vn[i])
-          let (s2, ov2) = s1.addingReportingOverflow(carry)
-          un[i + j] = s2
-          carry = (ov1 ? 1 : 0) &+ (ov2 ? 1 : 0)
+        // correct if q̂ = β or q̂·v₂ > (r̂·β + u₀)
+        while (qHat == Self.divBeta) || (qHat * vn2 > (rHat * Self.divBeta + un2)) {
+          qHat -= 1
+          rHat += vn1
+          if rHat >= Self.divBeta { break }    // at most one more loop
         }
-        un[j + n] &+= carry
+
+        // ---------- D4  multiply‑subtract
+        var borrow: UInt = 0
+        for i in 0..<n {
+          let prod = UInt128(vn[i]) * qHat    // 128‑bit product
+          let prodLo = UInt(prod & UInt128(UInt.max))    // low 64 product
+          let prodHi = UInt(prod >> 64)    // high 64 product
+
+          //  ui ← ui - lo - borrow
+          let (u1, ov1) = un[i + j].subtractingReportingOverflow(prodLo)
+          let (u2, ov2) = u1.subtractingReportingOverflow(borrow)
+          un[i + j] = u2
+          borrow = prodHi &+ (ov1 ? 1 : 0) &+ (ov2 ? 1 : 0)    // 0,1, or 2
+        }
+
+        // top word
+        let (top, ov3) = un[j + n].subtractingReportingOverflow(borrow)
+        un[j + n] = top
+        var qWord = UInt(qHat & UInt128(UInt.max))
+
+        // ---------- D5  q̂ one too large →  add divisor back
+        if ov3 {
+          qWord &-= 1
+          var carry: UInt = 0
+          for i in 0..<n {
+            let (s1, ov1) = un[i + j].addingReportingOverflow(vn[i])
+            let (s2, ov2) = s1.addingReportingOverflow(carry)
+            un[i + j] = s2
+            carry = (ov1 ? 1 : 0) &+ (ov2 ? 1 : 0)
+          }
+          un[j + n] &+= carry
+        }
+        quotient[j] = qWord
       }
-      q[j] = qWord
+
+      // ---------- D8  prepare remainder and quotient
+
+      quotient.normalize()
+
+      if var rem = remainder {
+        rem.resize(to: unCount)
+        Self.copyAndShift(source: un, destination: &rem, shift: -shift)
+        rem.normalize()
+        remainder = rem
+      }
     }
+  }
 
-    // ---------- D8  un‑normalise remainder, normalise quotient
-    var rem = Self(words: un)
-    rem.shiftRight(shift)
-    rem.normalize()
+  public func quotientAndRemainder(dividingBy rhs: Self) -> (quotient: Self, remainder: Self) {
+    return withUnsafeTemporaryBufferArrays(counts: (words.count + 2, words.count + 2)) { (q, r) in
+      // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+      var ro: UnsafeBufferArray<UInt>! = r
+      self.quotientAndRemainder(dividingBy: rhs, quotient: &q, remainder: &ro)
+      return (Self(words: q, preNormalized: true), Self(words: ro, preNormalized: true))
+    }
+  }
 
-    var quo = Self(words: q)
-    quo.normalize()
-
-    return (quo, rem)
+  /// Divides the value by another value, only if it is a multiple of the divisor.
+  ///
+  /// - Parameter divisor: The divisor.
+  /// - Returns: `true` if the value is a multiple of the divisor; otherwise, `false`.
+  ///
+  public mutating func divide(ifMultipleOf divisor: Self) -> Bool {
+    return withUnsafeTemporaryBufferArrays(counts: (words.count + 2, words.count + 2)) { (q, r) in
+      // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+      var ro: UnsafeBufferArray<UInt>! = r
+      self.quotientAndRemainder(dividingBy: divisor, quotient: &q, remainder: &ro)
+      if !ro.isZero {
+        return false
+      }
+      self.words.replaceAll(with: q)
+      return true
+    }
   }
 
   public func remainder(dividingBy divisor: Self) -> Self {
-    return quotientAndRemainder(dividingBy: divisor).remainder
+    return withUnsafeTemporaryBufferArrays(counts: (words.count + 2, words.count + 2)) { (q, r) in
+      // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+      var ro: UnsafeBufferArray<UInt>! = r
+      self.quotientAndRemainder(dividingBy: divisor, quotient: &q, remainder: &ro)
+      return Self(words: ro, preNormalized: true)
+    }
+  }
+
+  /// Replaces the value with the remainder of the division by another value.
+  ///
+  /// - Parameter dividend: The value to divide.
+  ///
+  public mutating func formRemainder(dividing dividend: Self) {
+    return withUnsafeTemporaryBufferArrays(counts: (dividend.words.count + 2, dividend.words.count + 2)) { (q, r) in
+      // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+      var ro: UnsafeBufferArray<UInt>! = r
+      dividend.quotientAndRemainder(dividingBy: self, quotient: &q, remainder: &ro)
+      self.words.replaceAll(with: ro)
+    }
+  }
+
+  /// Returns a Boolean value indicating whether this value is a multiple of the given value.
+  ///
+  /// - Parameter other: The value to test as a divisor.
+  /// - Returns: `true` if this value is a multiple of `other`; otherwise, `false`.
+  ///
+  public func isMultiple(of other: Self) -> Bool {
+
+    // Easy cases
+    if other == .one || self == other { return true }
+    if self.isZero { return true }
+    if other.isZero { return false }
+    if self < other { return false }
+
+    // Use trailing zeros optimization: if other has more trailing zeros than self,
+    // then self cannot be multiple of other
+    let otherTrailingZeros = other.trailingZeroBitCount
+    let selfTrailingZeros = self.trailingZeroBitCount
+    if otherTrailingZeros > selfTrailingZeros {
+      return false
+    }
+
+    // For small divisors, check for divisibility using the GCD method
+    // which is faster than full division for large numbers
+    if other.words.count <= 2 {
+      return self.greatestCommonDivisor(other) == other
+    }
+
+    // Fall back to remainder test
+    var temp = self
+    return temp.divide(ifMultipleOf: other)
   }
 
   public static func / (lhs: Self, rhs: Self) -> Self {
-    return lhs.quotientAndRemainder(dividingBy: rhs).quotient
+    withUnsafeTemporaryBufferArray(count: lhs.words.count + 2) { q in
+      var ro: UnsafeBufferArray<UInt>? = nil
+      lhs.quotientAndRemainder(dividingBy: rhs, quotient: &q, remainder: &ro)
+      return Self(words: q, preNormalized: true)
+    }
   }
 
   public static func /= (lhs: inout Self, rhs: Self) {
-    lhs = lhs / rhs
+    withUnsafeTemporaryBufferArray(count: lhs.words.count + 2) { q in
+      var ro: UnsafeBufferArray<UInt>? = nil
+      lhs.quotientAndRemainder(dividingBy: rhs, quotient: &q, remainder: &ro)
+      lhs.words.replaceAll(with: q)
+    }
   }
 
   public static func % (lhs: Self, rhs: Self) -> Self {
-    return lhs.remainder(dividingBy: rhs)
+    withUnsafeTemporaryBufferArrays(counts: (lhs.words.count + 2, lhs.words.count + 2)) { (q, r) in
+      // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+      var ro: UnsafeBufferArray<UInt>! = r
+      lhs.quotientAndRemainder(dividingBy: rhs, quotient: &q, remainder: &ro)
+      return Self(words: ro, preNormalized: true)
+    }
   }
 
   public static func %= (lhs: inout Self, rhs: Self) {
-    lhs = lhs % rhs
-  }
-
-  public static prefix func ~ (x: Self) -> Self {
-    if x.isZero { return .zero }
-    // 2^n - 1 - x
-    var mask = Self.one
-    mask.shiftLeft(x.bitWidth)
-    mask -= .one
-    return mask - x
+    withUnsafeTemporaryBufferArrays(counts: (lhs.words.count + 2, lhs.words.count + 2)) { (q, r) in
+      // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+      var ro: UnsafeBufferArray<UInt>! = r
+      lhs.quotientAndRemainder(dividingBy: rhs, quotient: &q, remainder: &ro)
+      lhs.words.replaceAll(with: ro)
+    }
   }
 
   /// Raises the value to the specified power.
@@ -416,7 +569,7 @@ extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
     var b = other
     while !b.isZero {
       let temp = b
-      b = a % b
+      b.formRemainder(dividing: a)
       a = temp
     }
     return a
@@ -434,39 +587,67 @@ extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
 
   // MARK: - Bitwise
 
-  internal static func bitwiseOperation(lhs: Self, rhs: Self, _ op: (UInt, UInt) -> UInt) -> Self {
+  internal static func bitwiseOperation(lhs: inout Self, rhs: Self, _ op: (UInt, UInt) -> UInt) {
     let count = Swift.max(lhs.words.count, rhs.words.count)
-    var result = Words(repeating: 0, count: count)
-    for i in 0..<count {
-      let a = i < lhs.words.count ? lhs.words[i] : 0
-      let b = i < rhs.words.count ? rhs.words[i] : 0
-      result[i] = op(a, b)
+    withUnsafeTemporaryBufferArray(repeating: UInt(0), count: count) { result in
+
+      result.resize(to: count)
+
+      for i in 0..<count {
+        let a = i < lhs.words.count ? lhs.words[i] : 0
+        let b = i < rhs.words.count ? rhs.words[i] : 0
+        result[i] = op(a, b)
+      }
+
+      result.normalize()
+      lhs.words.replaceAll(with: result)
     }
-    return Self(words: result)
   }
 
   public static func & (lhs: Self, rhs: Self) -> Self {
-    return bitwiseOperation(lhs: lhs, rhs: rhs, &)
+    var result = lhs
+    bitwiseOperation(lhs: &result, rhs: rhs, &)
+    return result
   }
 
   public static func &= (lhs: inout Self, rhs: Self) {
-    lhs = lhs & rhs
+    bitwiseOperation(lhs: &lhs, rhs: rhs, &)
   }
 
   public static func | (lhs: Self, rhs: Self) -> Self {
-    return bitwiseOperation(lhs: lhs, rhs: rhs, |)
+    var result = lhs
+    bitwiseOperation(lhs: &result, rhs: rhs, |)
+    return result
   }
 
   public static func |= (lhs: inout Self, rhs: Self) {
-    lhs = lhs | rhs
+    bitwiseOperation(lhs: &lhs, rhs: rhs, |)
   }
 
   public static func ^ (lhs: Self, rhs: Self) -> Self {
-    return bitwiseOperation(lhs: lhs, rhs: rhs, ^)
+    var result = lhs
+    bitwiseOperation(lhs: &result, rhs: rhs, ^)
+    return result
   }
 
   public static func ^= (lhs: inout Self, rhs: Self) {
-    lhs = lhs ^ rhs
+    bitwiseOperation(lhs: &lhs, rhs: rhs, ^)
+  }
+
+  public mutating func formComplement() {
+    if isZero { return }
+    // 2^n - 1 - x
+    var mask = Self.one
+    mask.shiftLeft(bitWidth)
+    mask -= .one
+    mask -= self
+    self = mask
+  }
+
+  public static prefix func ~ (x: Self) -> Self {
+    var result = x
+    result.formComplement()
+    return result
   }
 
   // MARK: - Shifts
@@ -515,7 +696,7 @@ extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
   }
 
   public static func <<= <RHS>(lhs: inout Self, rhs: RHS) where RHS: BinaryInteger {
-    lhs = lhs << rhs
+    lhs.shiftLeft(Int(rhs))
   }
 
   public static func >> <RHS>(lhs: Self, rhs: RHS) -> Self where RHS: BinaryInteger {
@@ -525,7 +706,7 @@ extension BigUInt: Numeric, BinaryInteger, UnsignedInteger {
   }
 
   public static func >>= <RHS>(lhs: inout Self, rhs: RHS) where RHS: BinaryInteger {
-    lhs = lhs >> rhs
+    lhs.shiftRight(Int(rhs))
   }
 
 }
@@ -565,12 +746,20 @@ extension BigUInt: ExpressibleByIntegerLiteral {
       self = .zero
       return
     }
+
     let wordCount = (bitWidth + Self.wordBits - 1) / Self.wordBits
-    var words: Words = Words(repeating: 0, count: wordCount)
-    for i in 0..<wordCount {
-      words[i] = UInt(value[i])
+    let words = withUnsafeTemporaryBufferArray(count: wordCount) { buffer in
+
+      buffer.resize(to: buffer.capacity)
+      for i in 0..<buffer.count {
+        buffer[i] = UInt(value[i])
+      }
+
+      buffer.normalize()
+      return Words(buffer)
     }
-    self.init(words: words)
+
+    self.init(words: words, preNormalized: true)
   }
 
 }
@@ -613,13 +802,19 @@ extension BigUInt: CustomStringConvertible, CustomDebugStringConvertible {
     guard words.count > 1 else { return String(words.leastSignificant) }
 
     // Split the number into base‑10¹⁸ chunks
-    let base: UInt = 1_000_000_000_000_000_000
+    let base = BigUInt(1_000_000_000_000_000_000)
     var chunks: [String] = []
+
     var n = self
+    var tr = BigUInt.zero
     while !n.isZero {
-      let (q, r) = n.quotientAndRemainder(dividingBy: BigUInt(base))
-      chunks.append(String(r))
-      n = q
+      withUnsafeTemporaryBufferArrays(counts: (words.count + 2, words.count + 2)) { (q, r) in
+        var ro: UnsafeBufferArray<UInt>! = r
+        n.quotientAndRemainder(dividingBy: base, quotient: &q, remainder: &ro)
+        n.words.replaceAll(with: q)
+        tr.words.replaceAll(with: ro)
+        chunks.append(String(tr))
+      }
     }
 
     // Most‑significant chunk is already un‑padded; pad the rest to 18 digits
@@ -632,18 +827,6 @@ extension BigUInt: CustomStringConvertible, CustomDebugStringConvertible {
 
   public var debugDescription: String {
     return "BigUInt(\(self))"
-  }
-
-}
-
-extension BigUInt.Words {
-
-  internal var leastSignificant: UInt {
-    return self[0]
-  }
-
-  internal var mostSignificant: UInt {
-    return self[self.count - 1]
   }
 
 }
@@ -675,16 +858,22 @@ extension BigUInt {
   }
 
   public init<C>(encoded bytes: C) where C: RandomAccessCollection, C: Collection, C.Element == UInt8 {
+    guard !bytes.isEmpty else {
+      self = .zero
+      return
+    }
+
     let wordBytes = UInt.bitWidth / 8
     let wordCount = (bytes.count + (wordBytes - 1)) / wordBytes
-    var words = Words(repeating: 0, count: wordCount)
+    var words = Words(count: wordCount)
 
     let fill = (wordBytes - (bytes.count % wordBytes)) % wordBytes
     let msWordIndex = words.endIndex - 1
-    var wordIndex = msWordIndex
+    var wordIndex = words.endIndex
     var byteIndex = bytes.startIndex
 
-    while wordIndex >= words.startIndex {
+    while wordIndex > words.startIndex {
+      wordIndex = words.index(before: wordIndex)
       var word: UInt = 0
       let currentWordBytes = wordIndex == msWordIndex ? wordBytes - fill : wordBytes
       let wordEndIndex = bytes.index(byteIndex, offsetBy: currentWordBytes)
@@ -694,7 +883,6 @@ extension BigUInt {
         byteIndex = bytes.index(after: byteIndex)
       }
       words[wordIndex] = word
-      wordIndex = words.index(before: wordIndex)
     }
 
     self.init(words: words)
@@ -709,5 +897,110 @@ extension String {
   /// - Parameter integer: The value to convert to a string.
   public init(_ integer: BigUInt) {
     self = integer.description
+  }
+}
+
+extension BigUInt {
+  /// Copies the source array to the destination, applying a bit shift if needed.
+  ///
+  /// - Parameters:
+  ///   - source: The source array to copy from
+  ///   - destination: The destination buffer to copy to
+  ///   - shift: Number of bits to shift left (0 for no shift)
+  @inline(__always)
+  private static func copyAndShift<S, D>(
+    source: S,
+    destination: inout D,
+    shift: Int,
+  )
+  where
+    S: BidirectionalCollection,
+    S.Element == UInt,
+    D: MutableCollection,
+    D: BidirectionalCollection,
+    D.Element == UInt
+  {
+    if shift > 0 {
+      assert(source.count <= destination.count, "Source must be smaller than or equal to destination")
+      let leftShift = shift
+      var sourceIndex = source.startIndex
+      var destinationIndex = destination.startIndex
+
+      var carry: UInt = 0
+      while sourceIndex < source.endIndex && destinationIndex < destination.endIndex {
+        let word = source[sourceIndex]
+        destination[destinationIndex] = (word << leftShift) | carry
+        carry = word >> (UInt.bitWidth - leftShift)
+        sourceIndex = source.index(after: sourceIndex)
+        destinationIndex = destination.index(after: destinationIndex)
+      }
+
+      if carry > 0 {
+        destination[destinationIndex] = carry
+      }
+    } else if shift < 0 {
+
+      let rightShift = -shift
+      var sourceIndex = source.endIndex
+      var destinationIndex = destination.endIndex
+
+      var carry: UInt = 0
+      while sourceIndex > source.startIndex && destinationIndex > destination.startIndex {
+        sourceIndex = source.index(before: sourceIndex)
+        destinationIndex = destination.index(before: destinationIndex)
+        let newCarry = source[sourceIndex] << (UInt.bitWidth - rightShift)
+        destination[destinationIndex] = (source[sourceIndex] >> rightShift) | carry
+        carry = newCarry
+      }
+    } else {
+      var sourceIndex = source.startIndex
+      var destinationIndex = destination.startIndex
+
+      while sourceIndex < source.endIndex && destinationIndex < destination.endIndex {
+        destination[destinationIndex] = source[sourceIndex]
+        sourceIndex = source.index(after: sourceIndex)
+        destinationIndex = destination.index(after: destinationIndex)
+      }
+    }
+  }
+
+}
+
+extension BigUInt {
+  /// Estimates the number of decimal digits required to represent this value.
+  ///
+  /// This estimation uses the relationship between binary and decimal digits:
+  /// log10(2^n) ≈ n * log10(2)
+  ///
+  /// - Returns: The approximate number of decimal digits.
+  public var decimalDigitCount: Int {
+    if isZero {
+      return 1
+    }
+
+    // log10(2) ≈ 0.301029995663981
+    // We multiply by bitWidth and divide by 1_000_000_000 to avoid floating-point operations
+    let approximateDigits = (bitWidth * 301_029_996) / 1_000_000_000
+
+    // Add 1 because log10 gives us one less than the number of digits
+    return approximateDigits + 1
+  }
+}
+
+extension UnsafeBufferArray<UInt> {
+
+  @inline(__always)
+  internal var mostSignificant: UInt {
+    return self[self.count - 1]
+  }
+
+  @inline(__always)
+  internal var isZero: Bool {
+    return count == 1 && self[0] == 0
+  }
+
+  @inline(__always)
+  internal mutating func normalize() {
+    resize(to: Swift.max(1, startOfSuffix { $0 == 0 }))
   }
 }

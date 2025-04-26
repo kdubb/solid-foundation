@@ -873,4 +873,163 @@ struct BigIntTests {
       #expect(decoded2 == number)
     }
   }
+
+  @Test("isMultiple implementation")
+  func isMultipleImplementation() {
+    // Setup test values
+    let zero = BigInt.zero
+    let one = BigInt.one
+    let two = BigInt.two
+    let ten = BigInt.ten
+    let hundred = BigInt(100)
+    let largeNumber = BigInt("123456789123456789123456789")!
+    let divisibleLargeNumber = largeNumber * BigInt(42)
+
+    // Negative values
+    let minusOne = BigInt.minusOne
+    let minusTwo = BigInt(-2)
+    let minusTen = BigInt(-10)
+    let minusHundred = BigInt(-100)
+    let minusLargeNumber = BigInt("-123456789123456789123456789")!
+    let minusDivisibleLargeNumber = minusLargeNumber * BigInt(42)
+
+    // Zero is multiple of everything except zero
+    #expect(zero.isMultiple(of: one))
+    #expect(zero.isMultiple(of: two))
+    #expect(zero.isMultiple(of: ten))
+    #expect(zero.isMultiple(of: hundred))
+    #expect(zero.isMultiple(of: largeNumber))
+
+    // Zero is multiple of negative numbers too
+    #expect(zero.isMultiple(of: minusOne))
+    #expect(zero.isMultiple(of: minusTwo))
+    #expect(zero.isMultiple(of: minusTen))
+
+    // One is multiple of only one (positive or negative)
+    #expect(one.isMultiple(of: one))
+    #expect(one.isMultiple(of: minusOne))
+    #expect(!one.isMultiple(of: two))
+    #expect(!one.isMultiple(of: ten))
+    #expect(!one.isMultiple(of: hundred))
+    #expect(!one.isMultiple(of: largeNumber))
+
+    // Negative one is multiple of one (positive or negative)
+    #expect(minusOne.isMultiple(of: one))
+    #expect(minusOne.isMultiple(of: minusOne))
+    #expect(!minusOne.isMultiple(of: two))
+    #expect(!minusOne.isMultiple(of: ten))
+
+    // Basic multiples (positive divisors)
+    #expect(ten.isMultiple(of: one))
+    #expect(ten.isMultiple(of: two))
+    #expect(ten.isMultiple(of: BigInt(5)))
+    #expect(!ten.isMultiple(of: BigInt(3)))
+    #expect(!ten.isMultiple(of: hundred))
+
+    // Basic multiples (negative divisors)
+    #expect(ten.isMultiple(of: minusOne))
+    #expect(ten.isMultiple(of: minusTwo))
+    #expect(ten.isMultiple(of: BigInt(-5)))
+    #expect(!ten.isMultiple(of: BigInt(-3)))
+
+    // Negative multiples with positive divisors
+    #expect(minusTen.isMultiple(of: one))
+    #expect(minusTen.isMultiple(of: two))
+    #expect(minusTen.isMultiple(of: BigInt(5)))
+    #expect(!minusTen.isMultiple(of: BigInt(3)))
+
+    // Negative multiples with negative divisors
+    #expect(minusTen.isMultiple(of: minusOne))
+    #expect(minusTen.isMultiple(of: minusTwo))
+    #expect(minusTen.isMultiple(of: BigInt(-5)))
+    #expect(!minusTen.isMultiple(of: BigInt(-3)))
+
+    // Self is always multiple of self (positive and negative)
+    #expect(hundred.isMultiple(of: hundred))
+    #expect(minusHundred.isMultiple(of: minusHundred))
+    #expect(largeNumber.isMultiple(of: largeNumber))
+    #expect(minusLargeNumber.isMultiple(of: minusLargeNumber))
+
+    // A number is multiple of both positive and negative versions of its divisors
+    #expect(hundred.isMultiple(of: BigInt(10)))
+    #expect(hundred.isMultiple(of: BigInt(-10)))
+    #expect(minusHundred.isMultiple(of: BigInt(10)))
+    #expect(minusHundred.isMultiple(of: BigInt(-10)))
+
+    // Large numbers (positive)
+    #expect(divisibleLargeNumber.isMultiple(of: largeNumber))
+    #expect(divisibleLargeNumber.isMultiple(of: BigInt(42)))
+    #expect(divisibleLargeNumber.isMultiple(of: BigInt(6)))
+    #expect(divisibleLargeNumber.isMultiple(of: BigInt(7)))
+    #expect(!divisibleLargeNumber.isMultiple(of: BigInt(11)))
+
+    // Large numbers (negative)
+    #expect(divisibleLargeNumber.isMultiple(of: minusLargeNumber))
+    #expect(divisibleLargeNumber.isMultiple(of: BigInt(-42)))
+    #expect(minusDivisibleLargeNumber.isMultiple(of: largeNumber))
+    #expect(minusDivisibleLargeNumber.isMultiple(of: minusLargeNumber))
+    #expect(minusDivisibleLargeNumber.isMultiple(of: BigInt(42)))
+    #expect(minusDivisibleLargeNumber.isMultiple(of: BigInt(-42)))
+
+    // Powers of 2 - testing trailing zeros optimization
+    let powerOf2 = BigInt(1) << 64
+    let multiplePowerOf2 = powerOf2 * BigInt(42)
+    let negativePowerOf2 = BigInt(-1) << 64
+    let negativeMultiplePowerOf2 = negativePowerOf2 * BigInt(42)
+
+    #expect(powerOf2.isMultiple(of: BigInt(1) << 32))
+    #expect(powerOf2.isMultiple(of: BigInt(1) << 16))
+    #expect(powerOf2.isMultiple(of: BigInt(1) << 8))
+    #expect(powerOf2.isMultiple(of: BigInt(1) << 4))
+    #expect(powerOf2.isMultiple(of: BigInt(1) << 2))
+    #expect(powerOf2.isMultiple(of: BigInt(1) << 1))
+    #expect(!powerOf2.isMultiple(of: BigInt(1) << 128))
+
+    #expect(negativePowerOf2.isMultiple(of: BigInt(1) << 32))
+    #expect(negativePowerOf2.isMultiple(of: BigInt(-1) << 32))
+    #expect(negativePowerOf2.isMultiple(of: BigInt(1) << 16))
+    #expect(negativePowerOf2.isMultiple(of: BigInt(-1) << 16))
+
+    #expect(multiplePowerOf2.isMultiple(of: BigInt(1) << 32))
+    #expect(multiplePowerOf2.isMultiple(of: BigInt(1) << 16))
+    #expect(multiplePowerOf2.isMultiple(of: BigInt(1) << 8))
+    #expect(multiplePowerOf2.isMultiple(of: BigInt(1) << 4))
+    #expect(multiplePowerOf2.isMultiple(of: BigInt(1) << 2))
+    #expect(multiplePowerOf2.isMultiple(of: BigInt(1) << 1))
+    #expect(!multiplePowerOf2.isMultiple(of: BigInt(1) << 128))
+
+    #expect(negativeMultiplePowerOf2.isMultiple(of: BigInt(1) << 32))
+    #expect(negativeMultiplePowerOf2.isMultiple(of: BigInt(-1) << 32))
+    #expect(negativeMultiplePowerOf2.isMultiple(of: BigInt(1) << 16))
+    #expect(negativeMultiplePowerOf2.isMultiple(of: BigInt(-1) << 16))
+
+    // Test two-word divisors (GCD method)
+    let twoWordDivisor = BigInt(UInt.max) + BigInt(1)
+    let multipleTwoWordDivisor = twoWordDivisor * BigInt(123)
+    let negativeTwoWordDivisor = BigInt(0) - twoWordDivisor
+    let negativeMultipleTwoWordDivisor = negativeTwoWordDivisor * BigInt(123)
+
+    #expect(multipleTwoWordDivisor.isMultiple(of: twoWordDivisor))
+    #expect(multipleTwoWordDivisor.isMultiple(of: negativeTwoWordDivisor))
+    #expect(!multipleTwoWordDivisor.isMultiple(of: twoWordDivisor + BigInt(1)))
+
+    #expect(negativeMultipleTwoWordDivisor.isMultiple(of: twoWordDivisor))
+    #expect(negativeMultipleTwoWordDivisor.isMultiple(of: negativeTwoWordDivisor))
+    #expect(!negativeMultipleTwoWordDivisor.isMultiple(of: twoWordDivisor + BigInt(1)))
+
+    // Test large divisors (fallback method)
+    let largeWordDivisor = BigInt(UInt.max) + BigInt(1)
+    let veryLargeDivisor = largeWordDivisor * largeWordDivisor * largeWordDivisor
+    let multipleVeryLargeDivisor = veryLargeDivisor * BigInt(456)
+    let negativeVeryLargeDivisor = BigInt(0) - veryLargeDivisor
+    let negativeMultipleVeryLargeDivisor = negativeVeryLargeDivisor * BigInt(456)
+
+    #expect(multipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor))
+    #expect(multipleVeryLargeDivisor.isMultiple(of: negativeVeryLargeDivisor))
+    #expect(!multipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor + BigInt(1)))
+
+    #expect(negativeMultipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor))
+    #expect(negativeMultipleVeryLargeDivisor.isMultiple(of: negativeVeryLargeDivisor))
+    #expect(!negativeMultipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor + BigInt(1)))
+  }
 }

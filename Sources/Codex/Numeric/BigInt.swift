@@ -33,35 +33,31 @@ public struct BigInt {
     self.init(isNegative: isNegative, magnitude: BigUInt(words: words))
   }
 
-  internal init<S>(isNegative: Bool, words: S) where S: Sequence, S.Element == UInt {
+  internal init<S>(isNegative: Bool, words: S) where S: Collection, S.Element == UInt {
     self.init(isNegative: isNegative, words: BigUInt.Words(words))
   }
 
   public init<S>(twosComplementWords words: S) where S: Collection, S.Element == UInt {
     precondition(!words.isEmpty, "words must not be empty")
 
-    var resultWords = BigUInt.Words(words)
+    let (magnitude, isNegative) = withUnsafeTemporaryBufferArray(from: words) { buffer in
+      // Check sign based on highest bit
+      guard buffer.mostSignificant >> BigUInt.msbShift == 1 else {
+        // Positive: direct initialization
+        buffer.normalize()
+        return (BigUInt(words: buffer, preNormalized: true), false)
+      }
 
-    // Check sign based on highest bit
-    guard resultWords.mostSignificant >> BigUInt.msbShift == 1 else {
-      // Positive: direct initialization
-      self.isNegative = false
-      self.magnitude = BigUInt(words: resultWords)
-      return
+      // Negative: convert from two's complement
+      let carry = buffer.twosComplement()
+      assert(carry == 0, "Carry must be 0 or we're translating a positive number")
+
+      buffer.normalize()
+      return (BigUInt(words: buffer, preNormalized: true), true)
     }
 
-    // Negative: convert from two's complement
-    var carry: UInt = 1
-    for i in 0..<resultWords.count {
-      resultWords[i] = ~resultWords[i]
-      let (sum, overflow) = resultWords[i].addingReportingOverflow(carry)
-      resultWords[i] = sum
-      carry = overflow ? 1 : 0
-    }
-    assert(carry == 0, "Carry must be 0 or we're translating a positive number")
-
-    self.isNegative = true
-    self.magnitude = BigUInt(words: resultWords)
+    self.isNegative = isNegative
+    self.magnitude = magnitude
   }
 
   internal var isZero: Bool {
@@ -232,42 +228,50 @@ extension BigInt: Numeric, BinaryInteger, SignedInteger {
     return value
   }
 
-  public static func + (lhs: Self, rhs: Self) -> Self {
+  public static func += (lhs: inout Self, rhs: Self) {
     switch (lhs.isNegative, rhs.isNegative) {
     case (false, false):
-      return Self(isNegative: false, magnitude: lhs.magnitude + rhs.magnitude)
+      lhs.magnitude += rhs.magnitude
+      lhs.isNegative = false
     case (true, true):
-      return Self(isNegative: true, magnitude: lhs.magnitude + rhs.magnitude)
-    case (false, true):
-      guard lhs.magnitude >= rhs.magnitude else {
-        return Self(isNegative: true, magnitude: rhs.magnitude - lhs.magnitude)
+      lhs.magnitude += rhs.magnitude
+      lhs.isNegative = true
+    default:
+      if lhs.magnitude >= rhs.magnitude {
+        lhs.magnitude -= rhs.magnitude
+      } else {
+        lhs.magnitude = rhs.magnitude - lhs.magnitude
+        lhs.isNegative = !lhs.isNegative
       }
-      return Self(isNegative: false, magnitude: lhs.magnitude - rhs.magnitude)
-    case (true, false):
-      guard lhs.magnitude >= rhs.magnitude else {
-        return Self(isNegative: false, magnitude: rhs.magnitude - lhs.magnitude)
-      }
-      return Self(isNegative: true, magnitude: lhs.magnitude - rhs.magnitude)
     }
   }
 
-  public static func += (lhs: inout Self, rhs: Self) {
-    lhs = lhs + rhs
+  public static func + (lhs: Self, rhs: Self) -> Self {
+    var result = lhs
+    result += rhs
+    return result
   }
 
-  public static func - (lhs: Self, rhs: Self) -> Self { lhs + (-rhs) }
-
   public static func -= (lhs: inout Self, rhs: Self) {
-    lhs = lhs - rhs
+    lhs += (-rhs)
+  }
+
+  public static func - (lhs: Self, rhs: Self) -> Self {
+    var result = lhs
+    result -= rhs
+    return result
+  }
+
+  public static func *= (lhs: inout Self, rhs: Self) {
+    lhs.magnitude *= rhs.magnitude
+    lhs.isNegative = !lhs.magnitude.isZero && lhs.isNegative != rhs.isNegative
   }
 
   public static func * (lhs: Self, rhs: Self) -> Self {
-    let isNegative = lhs.isNegative != rhs.isNegative
-    let magnitude = lhs.magnitude * rhs.magnitude
-    return Self(isNegative: isNegative, magnitude: magnitude)
+    var result = lhs
+    result *= rhs
+    return result
   }
-
-  public static func *= (lhs: inout Self, rhs: Self) { lhs = lhs * rhs }
 
   public func quotientAndRemainder(dividingBy divisor: BigInt) -> (quotient: BigInt, remainder: BigInt) {
     precondition(!divisor.isZero, "Division by zero")
@@ -285,21 +289,50 @@ extension BigInt: Numeric, BinaryInteger, SignedInteger {
     return (quotient, remainder)
   }
 
+  public mutating func divide(byMultipleOf divisor: BigInt) -> Bool {
+    let isDivisible = magnitude.divide(ifMultipleOf: divisor.magnitude)
+    // If the magnitude was divisible, we need to update the sign
+    if isDivisible {
+      isNegative = isNegative != divisor.isNegative
+    }
+    return isDivisible
+  }
+
   public func remainder(dividingBy divisor: BigInt) -> BigInt {
-    quotientAndRemainder(dividingBy: divisor).remainder
+    let rMag = magnitude.remainder(dividingBy: divisor.magnitude)
+    return BigInt(isNegative: isNegative, magnitude: rMag)
   }
 
   public static func / (lhs: Self, rhs: Self) -> Self {
-    return lhs.quotientAndRemainder(dividingBy: rhs).quotient
+    let qMag = lhs.magnitude / rhs.magnitude
+    return BigInt(isNegative: lhs.isNegative != rhs.isNegative, magnitude: qMag)
   }
 
-  public static func /= (lhs: inout Self, rhs: Self) { lhs = lhs / rhs }
+  public static func /= (lhs: inout Self, rhs: Self) {
+    lhs.magnitude /= rhs.magnitude
+    lhs.isNegative = lhs.isNegative != rhs.isNegative
+  }
 
   public static func % (lhs: Self, rhs: Self) -> Self {
-    return lhs.remainder(dividingBy: rhs)
+    let rMag = lhs.magnitude % rhs.magnitude
+    return BigInt(isNegative: lhs.isNegative, magnitude: rMag)
   }
 
-  public static func %= (lhs: inout Self, rhs: Self) { lhs = lhs % rhs }
+  public static func %= (lhs: inout Self, rhs: Self) {
+    lhs.magnitude %= rhs.magnitude
+  }
+
+  /// Returns a Boolean value indicating whether this value is a multiple of the given value.
+  ///
+  /// This implementation is optimized to avoid full division when possible.
+  ///
+  /// - Parameter other: The value to test as a divisor.
+  /// - Returns: `true` if this value is a multiple of `other`; otherwise, `false`.
+  public func isMultiple(of other: Self) -> Bool {
+    // For signed integers, we only need to check if the magnitude is divisible
+    // The sign doesn't affect divisibility
+    return magnitude.isMultiple(of: other.magnitude)
+  }
 
   /// Returns the value raised to the specified power.
   ///
@@ -344,25 +377,40 @@ extension BigInt: Numeric, BinaryInteger, SignedInteger {
   // MARK: - Bitwise
 
   internal static func bitwiseOp(
-    _ lhs: BigInt,
+    _ lhs: inout BigInt,
     _ rhs: BigInt,
     operation: (UInt, UInt) -> UInt
-  ) -> BigInt {
+  ) {
 
     // Operate directly on two's complement representation
     let lhsWords = lhs.words
     let rhsWords = rhs.words
     let maxCount = Swift.max(lhsWords.count, rhsWords.count)
-    var resultWords = BigUInt.Words(repeating: 0, count: maxCount)
 
-    for i in 0..<maxCount {
-      let lhsWord = lhsWords[i, defaultSignExtended: lhs.isNegative]
-      let rhsWord = rhsWords[i, defaultSignExtended: rhs.isNegative]
-      resultWords[i] = operation(lhsWord, rhsWord)
+    let (magnitude, isNegative) = withUnsafeTemporaryBufferArray(count: maxCount) { result in
+
+      result.resize(to: maxCount)
+
+      for i in 0..<maxCount {
+        let lhsWord = lhsWords[i, defaultSignExtended: lhs.isNegative]
+        let rhsWord = rhsWords[i, defaultSignExtended: rhs.isNegative]
+        result[i] = operation(lhsWord, rhsWord)
+      }
+
+      guard result.mostSignificant >> BigUInt.msbShift == 1 else {
+        result.normalize()
+        return (BigUInt(words: result, preNormalized: true), false)
+      }
+
+      let carry = result.twosComplement()
+      assert(carry == 0, "Carry must be 0 or we're translating a positive number")
+
+      result.normalize()
+      return (BigUInt(words: result, preNormalized: true), true)
     }
 
-    // Initialize from two's complement words directly
-    return BigInt(twosComplementWords: resultWords)
+    lhs.isNegative = isNegative
+    lhs.magnitude = magnitude
   }
 
   public static prefix func ~ (value: BigInt) -> BigInt {
@@ -371,27 +419,33 @@ extension BigInt: Numeric, BinaryInteger, SignedInteger {
   }
 
   public static func & (lhs: BigInt, rhs: BigInt) -> BigInt {
-    bitwiseOp(lhs, rhs, operation: &)
+    var result = lhs
+    bitwiseOp(&result, rhs, operation: &)
+    return result
   }
 
   public static func &= (lhs: inout BigInt, rhs: BigInt) {
-    lhs = lhs & rhs
+    bitwiseOp(&lhs, rhs, operation: &)
   }
 
   public static func | (lhs: BigInt, rhs: BigInt) -> BigInt {
-    bitwiseOp(lhs, rhs, operation: |)
+    var result = lhs
+    bitwiseOp(&result, rhs, operation: |)
+    return result
   }
 
   public static func |= (lhs: inout BigInt, rhs: BigInt) {
-    lhs = lhs | rhs
+    bitwiseOp(&lhs, rhs, operation: |)
   }
 
   public static func ^ (lhs: BigInt, rhs: BigInt) -> BigInt {
-    bitwiseOp(lhs, rhs, operation: ^)
+    var result = lhs
+    bitwiseOp(&result, rhs, operation: ^)
+    return result
   }
 
   public static func ^= (lhs: inout BigInt, rhs: BigInt) {
-    lhs = lhs ^ rhs
+    bitwiseOp(&lhs, rhs, operation: ^)
   }
 
   /// Shifts
@@ -418,7 +472,7 @@ extension BigInt: Numeric, BinaryInteger, SignedInteger {
     }
     if lhs.isNegative {
       // arithmetic shift
-      var add = BigUInt(1)
+      var add = BigUInt.one
       add.shiftLeft(Int(rhs))
       add -= 1
       lhs.magnitude += add
@@ -462,17 +516,24 @@ extension BigInt: ExpressibleByIntegerLiteral {
       return
     }
     let wordCount = (bitWidth + BigUInt.wordBits - 1) / BigUInt.wordBits
-    var words = BigUInt.Words(repeating: 0, count: wordCount + 1)
-    for i in 0..<words.count {
-      words[i] = UInt(value[i])
-    }
-    if value.signum() < 0 {
-      self.init(twosComplementWords: words)
-    } else {
-      self.init(isNegative: false, magnitude: BigUInt(words: words))
-    }
-  }
+    let (magnitude, isNegative) = withUnsafeTemporaryBufferArray(count: wordCount + 1) { buffer in
 
+      buffer.resize(to: buffer.capacity)
+      for i in 0..<buffer.count {
+        buffer[i] = UInt(value[i])
+      }
+
+      if value.signum() < 0 {
+        let carry = buffer.twosComplement()
+        assert(carry == 0, "Carry must be 0 or we're translating a positive number")
+      }
+
+      buffer.normalize()
+      return (BigUInt(words: buffer, preNormalized: true), value.signum() < 0)
+    }
+
+    self.init(isNegative: isNegative, magnitude: magnitude)
+  }
 }
 
 // MARK: - Strings
@@ -607,5 +668,20 @@ extension BigInt {
     }
 
     self.init(isNegative: true, magnitude: BigUInt(encoded: decodedBytes))
+  }
+}
+
+extension UnsafeBufferArray<UInt> {
+
+  @inline(__always)
+  internal mutating func twosComplement() -> UInt {
+    var carry: UInt = 1
+    for i in 0..<self.count {
+      self[i] = ~self[i]
+      let (sum, overflow) = self[i].addingReportingOverflow(carry)
+      self[i] = sum
+      carry = overflow ? 1 : 0
+    }
+    return carry
   }
 }

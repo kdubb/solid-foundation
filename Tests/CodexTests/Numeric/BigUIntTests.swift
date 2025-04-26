@@ -349,7 +349,7 @@ struct BigUIntTests {
     arguments: [
       (
         1234567890, "1234567890",
-        IntegerFormatStyle<BigUInt>.number.locale(Locale(identifier: "C"))
+        IntegerFormatStyle<BigUInt>.number.locale(Locale(identifier: "C")).grouping(.never)
       ),
       (
         1000000000000000000, "1,000,000,000,000,000,000",
@@ -642,7 +642,7 @@ struct BigUIntTests {
     let uint128 = UInt128(exactly: num)
     let int = Int(exactly: num)
     let uint = UInt(exactly: num)
-    
+
     // Int8/UInt8
     #expect(int8 == expectedInt8)
     #expect(uint8 == expectedUInt8)
@@ -750,5 +750,81 @@ struct BigUIntTests {
       let decoded2 = BigUInt(encoded: inputBytes)
       #expect(decoded2 == number)
     }
+  }
+
+  @Test("isMultiple implementation")
+  func isMultipleImplementation() {
+    // Setup test values
+    let zero = BigUInt.zero
+    let one = BigUInt.one
+    let two = BigUInt.two
+    let ten = BigUInt.ten
+    let hundred = BigUInt(100)
+    let largeNumber = BigUInt("123456789123456789123456789")!
+    let divisibleLargeNumber = largeNumber * BigUInt(42)
+
+    // Zero is multiple of everything except zero
+    #expect(zero.isMultiple(of: one))
+    #expect(zero.isMultiple(of: two))
+    #expect(zero.isMultiple(of: ten))
+    #expect(zero.isMultiple(of: hundred))
+    #expect(zero.isMultiple(of: largeNumber))
+
+    // One is multiple of only one
+    #expect(one.isMultiple(of: one))
+    #expect(!one.isMultiple(of: two))
+    #expect(!one.isMultiple(of: ten))
+    #expect(!one.isMultiple(of: hundred))
+    #expect(!one.isMultiple(of: largeNumber))
+
+    // Basic multiples
+    #expect(ten.isMultiple(of: one))
+    #expect(ten.isMultiple(of: two))
+    #expect(ten.isMultiple(of: BigUInt(5)))
+    #expect(!ten.isMultiple(of: BigUInt(3)))
+    #expect(!ten.isMultiple(of: hundred))
+
+    // Self is always multiple of self
+    #expect(hundred.isMultiple(of: hundred))
+    #expect(largeNumber.isMultiple(of: largeNumber))
+
+    // Large numbers
+    #expect(divisibleLargeNumber.isMultiple(of: largeNumber))
+    #expect(divisibleLargeNumber.isMultiple(of: BigUInt(42)))
+    #expect(divisibleLargeNumber.isMultiple(of: BigUInt(6)))
+    #expect(divisibleLargeNumber.isMultiple(of: BigUInt(7)))
+    #expect(!divisibleLargeNumber.isMultiple(of: BigUInt(11)))
+
+    // Powers of 2 - testing trailing zeros optimization
+    let powerOf2 = BigUInt(1) << 64
+    let multiplePowerOf2 = powerOf2 * BigUInt(42)
+    #expect(powerOf2.isMultiple(of: BigUInt(1) << 32))
+    #expect(powerOf2.isMultiple(of: BigUInt(1) << 16))
+    #expect(powerOf2.isMultiple(of: BigUInt(1) << 8))
+    #expect(powerOf2.isMultiple(of: BigUInt(1) << 4))
+    #expect(powerOf2.isMultiple(of: BigUInt(1) << 2))
+    #expect(powerOf2.isMultiple(of: BigUInt(1) << 1))
+    #expect(!powerOf2.isMultiple(of: BigUInt(1) << 128))
+
+    #expect(multiplePowerOf2.isMultiple(of: BigUInt(1) << 32))
+    #expect(multiplePowerOf2.isMultiple(of: BigUInt(1) << 16))
+    #expect(multiplePowerOf2.isMultiple(of: BigUInt(1) << 8))
+    #expect(multiplePowerOf2.isMultiple(of: BigUInt(1) << 4))
+    #expect(multiplePowerOf2.isMultiple(of: BigUInt(1) << 2))
+    #expect(multiplePowerOf2.isMultiple(of: BigUInt(1) << 1))
+    #expect(!multiplePowerOf2.isMultiple(of: BigUInt(1) << 128))
+
+    // Test two-word divisors (GCD method)
+    let twoWordDivisor = BigUInt(UInt.max) + BigUInt(1)
+    let multipleTwoWordDivisor = twoWordDivisor * BigUInt(123)
+    #expect(multipleTwoWordDivisor.isMultiple(of: twoWordDivisor))
+    #expect(!multipleTwoWordDivisor.isMultiple(of: twoWordDivisor + BigUInt(1)))
+
+    // Test large divisors (fallback method)
+    let largeWordDivisor = BigUInt(UInt.max) + BigUInt(1)
+    let veryLargeDivisor = largeWordDivisor * largeWordDivisor * largeWordDivisor
+    let multipleVeryLargeDivisor = veryLargeDivisor * BigUInt(456)
+    #expect(multipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor))
+    #expect(!multipleVeryLargeDivisor.isMultiple(of: veryLargeDivisor + BigUInt(1)))
   }
 }

@@ -14,7 +14,7 @@ public struct JSONSchemaTestSuite {
 
   @Test(
     "Specific Test Cases",
-    // .disabled(),
+     .disabled(),
     arguments: [
       (draft: .draft2020_12, group: "refRemote", case: "remote ref", test: "remote ref valid")
     ] as [(Draft.Version, String, String, String)],
@@ -348,7 +348,7 @@ public struct JSONSchemaTestSuite {
 
       @Test("Unknown Keyword", arguments: draft.tests(group: "optional/unknownKeyword"))
       func unknownKeyword(testCase: TestCase, test: Test) throws {
-        executeTest(testCase: testCase, test: test, trace: true)
+        executeTest(testCase: testCase, test: test)
       }
 
       @Suite("Formats") struct Formats {

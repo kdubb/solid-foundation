@@ -90,9 +90,7 @@ public struct BigDecimal {
   ///   will return nil only if the value is NaN. Disallowing NaN replicates
   ///   the behavior of `Double` and `Float`.
   ///
-  /// - Parameter value: The floating-point value to convert.
-  /// - Returns: A new BigDecimal representing the value if it can be
-  ///   represented exactly, otherwise nil.
+  /// - Parameter source: The floating-point value to convert.
   ///
   public init?<Source>(exactly source: Source) where Source: BinaryFloatingPoint {
     guard !source.isNaN else {
@@ -306,8 +304,7 @@ public struct BigDecimal {
       return
     }
 
-    while mantissa.isMultiple(of: 10) {
-      mantissa /= 10
+    while mantissa.divide(byMultipleOf: .ten) {
       scale -= 1
     }
 
