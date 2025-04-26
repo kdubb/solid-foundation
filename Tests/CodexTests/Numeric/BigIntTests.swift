@@ -839,7 +839,7 @@ struct BigIntTests {
     func normalize(_ tcWords: [UInt]) -> [UInt] {
       guard tcWords.count > 1 else {
         return tcWords
-      }      
+      }
       if tcWords[tcWords.count - 2] == 0 && tcWords.last == 0 {
         return normalize(Array(tcWords.dropLast()))
       }

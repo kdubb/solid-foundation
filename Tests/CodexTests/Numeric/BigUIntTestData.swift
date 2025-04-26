@@ -11,20 +11,20 @@ import Foundation
 /// Test data for BigUInt.
 struct BigUIntTestData: TestData, Codable, Sendable {
 
-  /// String initialization test cases
+  /// String initialization test cases.
   struct StringInitializationTest: Codable, Sendable {
     let input: String
     let expectedWords: [UInt]?
   }
 
-  /// Floating-point initialization test cases
+  /// Floating-point initialization test cases.
   struct FloatInitializationTest: Codable, Sendable {
     let floatValue: Double
-    let precision: Int  // 16, 32, or 64 bits
+    let precision: Int    // 16, 32, or 64 bits
     let expectedWords: [UInt]
   }
 
-  /// Bit width test cases
+  /// Bit width test cases.
   struct BitWidthTest: Codable, Sendable {
     let words: [UInt]
     let bitWidth: Int
@@ -32,28 +32,28 @@ struct BigUIntTestData: TestData, Codable, Sendable {
     let trailingZeroBitCount: Int
   }
 
-  /// Addition test cases
+  /// Addition test cases.
   struct AdditionTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Subtraction test cases
+  /// Subtraction test cases.
   struct SubtractionTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Multiplication test cases
+  /// Multiplication test cases.
   struct MultiplicationTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Division and modulus test cases
+  /// Division and modulus test cases.
   struct DivisionModulusTest: Codable, Sendable {
     let dividendWords: [UInt]
     let divisorWords: [UInt]
@@ -61,7 +61,7 @@ struct BigUIntTestData: TestData, Codable, Sendable {
     let remainderWords: [UInt]
   }
 
-  /// Bitwise shift test cases
+  /// Bitwise shift test cases.
   struct BitwiseShiftTest: Codable, Sendable {
     let words: [UInt]
     let shift: Int
@@ -69,7 +69,7 @@ struct BigUIntTestData: TestData, Codable, Sendable {
     let expectedRightWords: [UInt]
   }
 
-  /// Bitwise operations test cases
+  /// Bitwise operations test cases.
   struct BitwiseOpsTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
@@ -80,7 +80,7 @@ struct BigUIntTestData: TestData, Codable, Sendable {
     let expectedNotRWords: [UInt]
   }
 
-  /// Comparison test cases
+  /// Comparison test cases.
   struct ComparisonTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
@@ -91,29 +91,29 @@ struct BigUIntTestData: TestData, Codable, Sendable {
     let expectedGtEq: Bool
   }
 
-  /// Power operation test cases
+  /// Power operation test cases.
   struct PowerTest: Codable, Sendable {
     let baseWords: [UInt]
     let exponent: Int
     let expectedWords: [UInt]
   }
 
-  /// GCD and LCM test cases
+  /// GCD and LCM test cases.
   struct GcdLcmTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedGcdWords: [UInt]
     let expectedLcmWords: [UInt]
   }
-  
-  /// Encoding and decoding test cases
+
+  /// Encoding and decoding test cases.
   struct EncodingTest: Codable, Sendable {
     let words: [UInt]
     let encodedBytes: [UInt8]
     let inputBytes: [UInt8]?
   }
 
-  /// Integer conversion test cases
+  /// Integer conversion test cases.
   struct IntegerConversionTest: Codable, Sendable {
     let sourceWords: [UInt]
     let expectedInt8: Int8?

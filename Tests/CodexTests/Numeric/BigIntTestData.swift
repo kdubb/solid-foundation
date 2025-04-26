@@ -11,20 +11,20 @@ import Foundation
 /// Test data for BigInt.
 struct BigIntTestData: TestData, Codable, Sendable {
 
-  /// String initialization test cases
+  /// String initialization test cases.
   struct StringInitializationTest: Codable, Sendable {
     let input: String
     let expectedWords: [UInt]?
   }
 
-  /// Floating-point initialization test cases
+  /// Floating-point initialization test cases.
   struct FloatInitializationTest: Codable, Sendable {
     let floatValue: Double
-    let precision: Int  // 16, 32, or 64 bits
+    let precision: Int    // 16, 32, or 64 bits
     let expectedWords: [UInt]
   }
 
-  /// Bit width test cases
+  /// Bit width test cases.
   struct BitWidthTest: Codable, Sendable {
     let words: [UInt]
     let bitWidth: Int
@@ -32,28 +32,28 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let trailingZeroBitCount: Int
   }
 
-  /// Addition test cases
+  /// Addition test cases.
   struct AdditionTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Subtraction test cases
+  /// Subtraction test cases.
   struct SubtractionTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Multiplication test cases
+  /// Multiplication test cases.
   struct MultiplicationTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Division and modulus test cases
+  /// Division and modulus test cases.
   struct DivisionModulusTest: Codable, Sendable {
     let dividendWords: [UInt]
     let divisorWords: [UInt]
@@ -61,19 +61,19 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let remainderWords: [UInt]
   }
 
-  /// Negation test cases
+  /// Negation test cases.
   struct NegationTest: Codable, Sendable {
     let valueWords: [UInt]
     let expectedWords: [UInt]
   }
-  
-  /// Absolute value test cases
+
+  /// Absolute value test cases.
   struct AbsTest: Codable, Sendable {
     let valueWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Bitwise operations test cases
+  /// Bitwise operations test cases.
   struct BitwiseOpsTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
@@ -83,8 +83,8 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let expectedNotLWords: [UInt]
     let expectedNotRWords: [UInt]
   }
-  
-  /// Bitwise shift test cases
+
+  /// Bitwise shift test cases.
   struct BitwiseShiftTest: Codable, Sendable {
     let words: [UInt]
     let shift: Int
@@ -92,7 +92,7 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let expectedRightWords: [UInt]
   }
 
-  /// Comparison test cases
+  /// Comparison test cases.
   struct ComparisonTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
@@ -103,14 +103,14 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let expectedGtEq: Bool
   }
 
-  /// Power operation test cases
+  /// Power operation test cases.
   struct PowerTest: Codable, Sendable {
     let baseWords: [UInt]
     let exponent: Int
     let expectedWords: [UInt]
   }
 
-  /// GCD and LCM test cases
+  /// GCD and LCM test cases.
   struct GcdLcmTest: Codable, Sendable {
     let lWords: [UInt]
     let rWords: [UInt]
@@ -118,7 +118,7 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let expectedLcmWords: [UInt]
   }
 
-  /// Integer conversion test cases
+  /// Integer conversion test cases.
   struct IntegerConversionTest: Codable, Sendable {
     let sourceWords: [UInt]
     let expectedInt8: Int8?
@@ -135,13 +135,13 @@ struct BigIntTestData: TestData, Codable, Sendable {
     let expectedUInt: UInt?
   }
 
-  /// Two's complement initialization test cases
+  /// Two's complement initialization test cases.
   struct TwosComplementInitTest: Codable, Sendable {
     let twosComplementWords: [UInt]
     let expectedWords: [UInt]
   }
 
-  /// Encoding and decoding test cases
+  /// Encoding and decoding test cases.
   struct EncodingTest: Codable, Sendable {
     let value: String
     let encodedBytes: [UInt8]
@@ -176,7 +176,7 @@ extension BigInt {
     assert(words.count > 1)
     self.init(isNegative: words[0] == 0, words: words.dropFirst())
   }
-  
+
 }
 
 extension Array where Element == UInt {
@@ -185,13 +185,14 @@ extension Array where Element == UInt {
     guard let signFlag = self.first else {
       fatalError("Empty array")
     }
-    
-    let sign = switch signFlag {
-    case 0: BigInt.minusOne
-    case 1: BigInt.zero
-    case 2: BigInt.one
-    default: fatalError("Invalid sign flag: \(signFlag)")
-    }
+
+    let sign =
+      switch signFlag {
+      case 0: BigInt.minusOne
+      case 1: BigInt.zero
+      case 2: BigInt.one
+      default: fatalError("Invalid sign flag: \(signFlag)")
+      }
 
     return (sign, BigUInt.Words(self.dropFirst()))
   }

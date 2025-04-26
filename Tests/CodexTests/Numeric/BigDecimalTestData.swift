@@ -12,9 +12,9 @@ import Testing
 /// Test data for BigDecimal.
 struct BigDecimalTestData: TestData, Codable, Sendable {
 
-  /// Represents a BigInt component (value, sign) and scale for BigDecimal
+  /// Represents a BigInt component (value, sign) and scale for BigDecimal.
   struct BigDecimalComponents: Codable, Sendable, CustomTestStringConvertible {
-    let mantissaWords: [UInt]  // BigInt mantissa value
+    let mantissaWords: [UInt]    // BigInt mantissa value
     let scale: Int
 
     var testDescription: String {
@@ -22,41 +22,41 @@ struct BigDecimalTestData: TestData, Codable, Sendable {
     }
   }
 
-  /// String initialization test cases
+  /// String initialization test cases.
   struct StringInitializationTest: Codable, Sendable {
     let input: String
     let expected: BigDecimalComponents?
   }
 
-  /// Addition test cases
+  /// Addition test cases.
   struct AdditionTest: Codable, Sendable {
     let lhs: String
     let rhs: String
     let expected: BigDecimalComponents
   }
 
-  /// Subtraction test cases
+  /// Subtraction test cases.
   struct SubtractionTest: Codable, Sendable {
     let lhs: String
     let rhs: String
     let expected: BigDecimalComponents
   }
 
-  /// Multiplication test cases
+  /// Multiplication test cases.
   struct MultiplicationTest: Codable, Sendable {
     let lhs: String
     let rhs: String
     let expected: BigDecimalComponents
   }
 
-  /// Division test cases
+  /// Division test cases.
   struct DivisionTest: Codable, Sendable {
     let lhs: String
     let rhs: String
     let expected: BigDecimalComponents
   }
 
-  /// Remainder test cases
+  /// Remainder test cases.
   struct RemainderTest: Codable, Sendable {
     let lhs: String
     let rhs: String
@@ -64,21 +64,21 @@ struct BigDecimalTestData: TestData, Codable, Sendable {
     let expectedTruncating: BigDecimalComponents
   }
 
-  /// Power operation test cases
+  /// Power operation test cases.
   struct IntegerPowerTest: Codable, Sendable {
     let base: String
     let exponent: Int
     let expected: BigDecimalComponents
   }
 
-  /// Power operation test cases
+  /// Power operation test cases.
   struct FloatingPointPowerTest: Codable, Sendable {
     let base: String
     let exponent: String
     let expected: BigDecimalComponents
   }
 
-  /// Comparison test cases
+  /// Comparison test cases.
   struct ComparisonTest: Codable, Sendable {
     let lhs: String
     let rhs: String
@@ -89,7 +89,7 @@ struct BigDecimalTestData: TestData, Codable, Sendable {
     let expectedGtEq: Bool
   }
 
-  /// Rounding test cases
+  /// Rounding test cases.
   struct RoundingTest: Codable, Sendable {
     let value: String
     let scale: Int
@@ -97,7 +97,7 @@ struct BigDecimalTestData: TestData, Codable, Sendable {
     let expected: BigDecimalComponents
   }
 
-  /// String formatting test cases
+  /// String formatting test cases.
   struct StringFormattingTest: Codable, Sendable {
     let value: String
     let expectedString: String
@@ -120,8 +120,8 @@ struct BigDecimalTestData: TestData, Codable, Sendable {
 }
 
 extension BigDecimal {
-  
-  /// Initialize a BigDecimal from test data components
+
+  /// Initialize a BigDecimal from test data components.
   init(components: BigDecimalTestData.BigDecimalComponents) {
     let mantissa = BigInt(wordsWithSignFlag: components.mantissaWords)
     self.init(mantissa: mantissa, scale: components.scale)

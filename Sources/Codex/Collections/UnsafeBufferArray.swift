@@ -10,7 +10,7 @@ import Collections
 
 /// A wrapper around `UnsafeMutableBufferPointer` that provides a mutable collection interface.
 ///
-/// This struct is designed to manage a buffer of elements, allowing for dynamic resizing similar to a standard
+/// This struct manages a buffer of elements, allowing for dynamic resizing similar to a standard
 /// Swift array up to the buffer's count.
 ///
 /// Element access is bounds checked accoring the the current size of the array. If using one of the temporary

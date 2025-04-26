@@ -97,8 +97,7 @@ extension BigUInt.Words: Hashable {
   ///   and `.inline(1).hashValue == .dynamic([0]).hashValue` must
   ///   evaluate to `true`.
   ///
-  /// - Parameters:
-  ///   - hasher: The hasher to use.
+  /// - Parameter hasher: The hasher to use.
   ///
   @inlinable
   public func hash(into hasher: inout Hasher) {
@@ -177,8 +176,7 @@ extension BigUInt.Words: RandomAccessCollection {
   /// either inline or dynamic, based on the number of words in
   /// the sequence.
   ///
-  /// - Parameters:
-  ///   - source: The sequence of words to convert to a collection.
+  /// - Parameter source: The sequence of words to convert to a collection.
   ///
   @inlinable
   public init(_ source: some Collection<UInt>) {
@@ -215,8 +213,7 @@ extension BigUInt.Words: RandomAccessCollection {
   /// either inline or dynamic, based on the number of words in
   /// the sequence.
   ///
-  /// - Parameters:
-  ///   - count: The number of words in the collection.
+  /// - Parameter count: The number of words in the collection.
   ///
   @inlinable
   public init(count: Int) {
@@ -257,6 +254,7 @@ extension BigUInt.Words: RandomAccessCollection {
 
   /// Returns or assigns the word at the given index.
   ///
+  /// - Parameter position: The index of the word to access.
   /// - Precondition: The index must be within bounds.
   ///
   @inlinable
@@ -297,8 +295,7 @@ extension BigUInt.Words: RandomAccessCollection {
 
   /// Appends a word to the collection.
   ///
-  /// - Parameters:
-  ///   - word: The word to append.
+  /// - Parameter word: The word to append.
   ///
   @inlinable
   public mutating func append(_ word: UInt) {
@@ -315,8 +312,8 @@ extension BigUInt.Words: RandomAccessCollection {
 
   /// Returns a new collection with the given word appended.
   ///
-  /// - Parameters:
-  ///   - word: The word to append.
+  /// - Parameter word: The word to append.
+  /// - Returns: A new collection with the word appended.
   ///
   @inlinable
   public func appending(_ word: UInt) -> Self {
@@ -370,8 +367,7 @@ extension BigUInt.Words: RandomAccessCollection {
 
   /// Removes the first `count` words from the collection.
   ///
-  /// - Parameters:
-  ///   - count: The number of words to remove.
+  /// - Parameter count: The number of words to remove.
   ///
   @inlinable
   public mutating func removeFirst(_ count: Int = 1) {
@@ -395,8 +391,7 @@ extension BigUInt.Words: RandomAccessCollection {
 
   /// Removes the last `count` words from the collection.
   ///
-  /// - Parameters:
-  ///   - count: The number of words to remove.
+  /// - Parameter count: The number of words to remove.
   ///
   @inlinable
   public mutating func removeLast(_ count: Int = 1) {
@@ -427,8 +422,7 @@ extension BigUInt.Words: RandomAccessCollection {
   ///   current collection; including re-using an already dynamically
   ///   allocated array.
   ///
-  /// - Parameters:
-  ///   - newWords: The new sequence of words to replace the existing words.
+  /// - Parameter newWords: The new sequence of words to replace the existing words.
   ///
   @inlinable
   public mutating func replaceAll<C: Collection>(with newWords: C) where C.Element == UInt, C.Index == Int {
