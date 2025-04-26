@@ -1325,28 +1325,36 @@ struct BigDecimalTests {
     "Formatted strings",
     arguments: [
       (
-        BigDecimal("1234567.890"), "1234567.890",
+        BigDecimal("1234567.890"), "1,234,567.890",
         DecimalFormatStyle.number.locale(Locale(identifier: "en_US"))
       ),
       (
-        BigDecimal("-1234567.890"), "-1234567.890",
+        BigDecimal("-1234567.890"), "-1,234,567.890",
         DecimalFormatStyle.number.locale(Locale(identifier: "en_US"))
       ),
       (
         BigDecimal("100000000000000.0000"), "100000000000000.0000",
-        DecimalFormatStyle.number.locale(Locale(identifier: "en_US"))
+        DecimalFormatStyle.number.locale(Locale(identifier: "en_US")).grouping(.never)
       ),
       (
         BigDecimal("-100000000000000.0000"), "-100000000000000.0000",
-        DecimalFormatStyle.number.locale(Locale(identifier: "en_US"))
+        DecimalFormatStyle.number.locale(Locale(identifier: "en_US")).grouping(.never)
       ),
       (
-        BigDecimal("184467440737.09551615"), "+184467440737.095516",
+        BigDecimal("184467440737.09551615"), "+184,467,440,737.095516",
         DecimalFormatStyle.number.grouping(.automatic).sign(strategy: .always)
       ),
       (
-        BigDecimal("-184467440737.09551615"), "-184467440737.095516",
+        BigDecimal("-184467440737.09551615"), "-184,467,440,737.095516",
         DecimalFormatStyle.number.grouping(.automatic).sign(strategy: .always)
+      ),
+      (
+        BigDecimal("184467440737.09551615"), "184,467,440,737.1",
+        DecimalFormatStyle.number.precision(.fractionLength(0...2))
+      ),
+      (
+        BigDecimal("184467440737.09551615"), "184,467,440,737.10",
+        DecimalFormatStyle.number.precision(.fractionLength(2))
       ),
     ] as [(BigDecimal, String, DecimalFormatStyle)]
   )

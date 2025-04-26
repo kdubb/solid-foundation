@@ -44,10 +44,15 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
   public func format(_ value: BigDecimal) -> String {
     // Handle special values
     if value.isNaN {
-      return "NaN"
+      return "NaN" // Using static string as locale may not have a localized version
     }
     if value.isInfinite {
-      return value.isNegative ? "-∞" : (sign == .always ? "+∞" : "∞")
+      let infinityString = "∞" // Using static string as locale may not have a localized version
+      if value.isNegative {
+        return "-" + infinityString
+      } else {
+        return sign == .always ? "+" + infinityString : infinityString
+      }
     }
 
     // Format the number
@@ -56,7 +61,9 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
     // Handle zero case
     if value.isZero {
       string = "0"
-      if value.scale > 0 {
+      if case .fractionLength(let range) = precision, range.lowerBound > 0 {
+        string += (locale.decimalSeparator ?? ".") + String(repeating: "0", count: range.lowerBound)
+      } else if value.scale > 0 {
         string += (locale.decimalSeparator ?? ".") + String(repeating: "0", count: value.scale)
       }
     } else {
@@ -74,16 +81,11 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
         if value.scale >= digits.count {
           // All digits go after decimal point with leading zeros
           let leadingZeros = String(repeating: "0", count: value.scale - digits.count)
-          string = "0" + leadingZeros + digits
-          string.insert(contentsOf: locale.decimalSeparator ?? ".", at: string.index(after: string.startIndex))
+          string = "0" + (locale.decimalSeparator ?? ".") + leadingZeros + digits
         } else {
           // Split digits around decimal point
           let decimalIndex = digits.count - value.scale
-          string = digits
-          string.insert(
-            contentsOf: locale.decimalSeparator ?? ".",
-            at: string.index(string.startIndex, offsetBy: decimalIndex)
-          )
+          string = String(digits.prefix(decimalIndex)) + (locale.decimalSeparator ?? ".") + String(digits.suffix(value.scale))
         }
       }
 
@@ -110,7 +112,7 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
     // Apply precision
     switch precision {
     case .fractionLength(let range):
-      let parts = string.split(separator: locale.decimalSeparator ?? ".")
+      let parts = string.split(separator: locale.decimalSeparator ?? ".", maxSplits: 1)
       if parts.count == 1 {
         if range.lowerBound > 0 {
           string += (locale.decimalSeparator ?? ".") + String(repeating: "0", count: range.lowerBound)
@@ -120,8 +122,62 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
         if fraction.count < range.lowerBound {
           string += String(repeating: "0", count: range.lowerBound - fraction.count)
         } else if fraction.count > range.upperBound {
-          let index = string.index(string.startIndex, offsetBy: parts[0].count + 1 + range.upperBound)
-          string = String(string[..<index])
+          // Find the position to truncate/round
+          let parts = string.split(separator: locale.decimalSeparator ?? ".", maxSplits: 1)
+          let integerPart = String(parts[0])
+          var fractionPart = String(parts[1])
+
+          if fractionPart.count > range.upperBound {
+            if range.upperBound == 0 {
+              // Remove decimal point and fraction
+              string = integerPart
+            } else {
+              // Truncate and round
+              let indexToCheck = fractionPart.index(fractionPart.startIndex, offsetBy: range.upperBound)
+              let shouldRoundUp = indexToCheck < fractionPart.endIndex &&
+                                  (fractionPart[indexToCheck].wholeNumberValue ?? 0) >= 5
+
+              fractionPart = String(fractionPart.prefix(range.upperBound))
+
+              if shouldRoundUp {
+                // Convert to number, add 1/10^upperBound, and convert back
+                var intPart = BigInt(integerPart) ?? .zero
+                var fractPart = BigInt(fractionPart) ?? .zero
+
+                if value.isNegative {
+                  intPart = -intPart
+                }
+
+                let tenPower = BigInt(10).raised(to: range.upperBound)
+                let roundingIncrement = BigInt(1)
+                fractPart += roundingIncrement
+
+                if fractPart >= tenPower {
+                  fractPart -= tenPower
+                  intPart += 1
+                }
+
+                // Reconstruct the string
+                string = intPart.isNegative ? "-" : ""
+                string += intPart.magnitude.description
+
+                if range.upperBound > 0 {
+                  var fractString = fractPart.description
+                  // Pad with leading zeros if needed
+                  while fractString.count < range.upperBound {
+                    fractString = "0" + fractString
+                  }
+                  // Remove trailing zeros if needed
+                  while fractString.count > range.lowerBound && fractString.last == "0" {
+                    fractString.removeLast()
+                  }
+                  string += (locale.decimalSeparator ?? ".") + fractString
+                }
+              } else {
+                string = integerPart + (fractionPart.isEmpty ? "" : (locale.decimalSeparator ?? ".") + fractionPart)
+              }
+            }
+          }
         }
       }
     case .significantDigits(let range):
@@ -177,6 +233,44 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
       }
     }
 
+    // Apply grouping
+    if grouping == .automatic && locale.groupingSeparator != nil {
+      let parts = string.split(separator: locale.decimalSeparator ?? ".", maxSplits: 1)
+      var integerPart = String(parts[0])
+
+      // Skip sign for grouping
+      let isNegative = integerPart.hasPrefix("-")
+      let isPositive = integerPart.hasPrefix("+")
+      let signPrefix = isNegative ? "-" : (isPositive ? "+" : "")
+
+      if isNegative || isPositive {
+        integerPart.removeFirst()
+      }
+
+      // Apply grouping to the integer part
+      if integerPart.count > 3 {
+        var result = ""
+        var count = 0
+
+        for char in integerPart.reversed() {
+          if count > 0 && count % 3 == 0 {
+            result.insert(contentsOf: locale.groupingSeparator ?? ",", at: result.startIndex)
+          }
+          result.insert(char, at: result.startIndex)
+          count += 1
+        }
+
+        integerPart = result
+      }
+
+      // Reconstruct the string
+      if parts.count > 1 {
+        string = signPrefix + integerPart + (locale.decimalSeparator ?? ".") + parts[1]
+      } else {
+        string = signPrefix + integerPart
+      }
+    }
+
     // Apply decimal separator strategy
     switch decimalSeparator {
     case .automatic:
@@ -186,7 +280,11 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
         string += locale.decimalSeparator ?? "."
       }
     case .never:
-      string = string.replacingOccurrences(of: locale.decimalSeparator ?? ".", with: "")
+      let parts = string.split(separator: locale.decimalSeparator ?? ".", maxSplits: 1)
+      if parts.count > 1 {
+        // Remove decimal separator and everything after it
+        string = String(parts[0])
+      }
     }
 
     return string
@@ -225,6 +323,14 @@ extension DecimalFormatStyle {
     case fractionLength(ClosedRange<Int>)
     /// A range of significant digits to display.
     case significantDigits(ClosedRange<Int>)
+
+    public static func fractionLength(_ places: Int) -> Self {
+      .fractionLength(places...places)
+    }
+
+    public static func significantDigits(_ places: Int) -> Self {
+      .significantDigits(places...places)
+    }
   }
 
   /// The decimal separator display strategy.
