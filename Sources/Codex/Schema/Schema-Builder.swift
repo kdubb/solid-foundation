@@ -104,7 +104,7 @@ extension Schema {
 
       // Ensure it's _not_ an applicator keyword
       let applicatorKeywords = context.currentScope.metaSchema.applicatorKeywords
-      let pathKeyords = pointer.asArray().map { Keyword(rawValue: $0.description) }.asSet()
+      let pathKeyords = Set(pointer.asArray().map { Keyword(rawValue: $0.description) })
       guard pathKeyords.intersection(applicatorKeywords).isEmpty else {
         return nil
       }

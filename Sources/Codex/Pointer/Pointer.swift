@@ -28,11 +28,11 @@ public struct Pointer {
   ///   passing `strict` as true or false as needed.
   ///
   public static var strict: Bool {
-    get { _strict.withLock { $0 } }
-    set { _strict.withLock { $0 = newValue } }
+    get { lockedStrict.withLock { $0 } }
+    set { lockedStrict.withLock { $0 = newValue } }
   }
 
-  private static let _strict = Mutex<Bool>(true)
+  private static let lockedStrict = Mutex<Bool>(true)
 
   /// The type of a sequence of reference tokens.
   ///
@@ -150,10 +150,11 @@ extension Pointer {
 
   /// Creates a pointer from its encoded string representation.
   ///
-  /// - Parameter string: The encoded string representation of the pointer
-  /// - Parameter strict: Whether to enforce strict parsing rules
-  ///   Currrently affects:
-  ///     - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
+  /// - Parameters:
+  ///   - string: The encoded string representation of the pointer
+  ///   - strict: Whether to enforce strict parsing rules
+  ///     Currrently affects:
+  ///       - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
   ///
   public init?(encoded string: some StringProtocol, strict: Bool = Pointer.strict) {
     do {
@@ -176,9 +177,10 @@ extension Pointer {
 
   /// Creates a pointer from its string representation, throwing an error if invalid.
   ///
-  /// - Parameter string: The string representation of the pointer
-  /// - Parameter strict: Whether to enforce strict parsing rules
-  ///   Currrently affects:
+  /// - Parameters:
+  ///   - string: The string representation of the pointer
+  ///   - strict: Whether to enforce strict parsing rules
+  ///     Currrently affects:
   ///     - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
   /// - Throws: An error if the string is not a valid pointer representation
   ///
@@ -230,8 +232,10 @@ extension Pointer {
 
   /// Creates a pointer from a valid pointer string; halts if invalid.
   ///
-  /// - Parameter string: The string representation of the pointer
+  /// - Parameter:
+  ///   - string: The string representation of the pointer
   /// - Precondition: The string must be a valid pointer representation
+  ///
   public init(valid string: String, strict: Bool = Pointer.strict) {
     do {
       self = try Pointer(validating: string, strict: strict)

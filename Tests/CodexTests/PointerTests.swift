@@ -15,7 +15,7 @@ struct PointerTests {
     "Tokens Initializer",
     arguments: [
       ("names", Pointer(tokens: [.name("foo"), .name("bar")]), [.name("foo"), .name("bar")]),
-      ("names (variadic)",Pointer(tokens: .name("foo"), .name("bar")), [.name("foo"), .name("bar")]),
+      ("names (variadic)", Pointer(tokens: .name("foo"), .name("bar")), [.name("foo"), .name("bar")]),
       ("names (literals)", Pointer(tokens: "foo", "bar"), [.name("foo"), .name("bar")]),
       ("name/index", Pointer(tokens: [.name("foo"), .index(0)]), [.name("foo"), .index(0)]),
       ("name/index (variadic)", Pointer(tokens: .name("foo"), .index(0)), [.name("foo"), .index(0)]),
@@ -95,7 +95,12 @@ struct PointerTests {
       ("/num~", 4, "~ at end of string", true),
     ] as [(String, Int, String, Bool)]
   )
-  func validatingInitializer(pointer: String, expectedPosition: Int, expectedDetails: String, expectedTokenError: Bool) throws {
+  func validatingInitializer(
+    pointer: String,
+    expectedPosition: Int,
+    expectedDetails: String,
+    expectedTokenError: Bool
+  ) throws {
 
     let error = try #require(throws: Pointer.Error.self) { try Pointer(validating: pointer) }
     if expectedTokenError {
@@ -131,14 +136,18 @@ struct PointerTests {
       (Pointer(tokens: .append), [.append, "bar"], [.append, .append, .name("bar")]),
     ] as [(Pointer, [Pointer.ReferenceToken], [Pointer.ReferenceToken])]
   )
-  func appending(pointer: Pointer, appendTokens: [Pointer.ReferenceToken], expectedTokens: [Pointer.ReferenceToken]) throws {
+  func appending(pointer: Pointer, appendTokens: [Pointer.ReferenceToken], expectedTokens: [Pointer.ReferenceToken])
+    throws
+  {
     #expect(pointer.appending(tokens: appendTokens).tokens == expectedTokens)
     #expect((pointer / appendTokens[0] / appendTokens[1]).tokens == expectedTokens)
   }
 
   @Test("Appending Literals")
   func appendingLiterals() throws {
-    #expect(Pointer(tokens: .name("foo")).appending(tokens: "bar", 0).tokens == [.name("foo"), .name("bar"), .index(0)])
+    #expect(
+      Pointer(tokens: .name("foo")).appending(tokens: "bar", 0).tokens == [.name("foo"), .name("bar"), .index(0)]
+    )
     #expect(Pointer(tokens: .name("foo")).appending(tokens: "bar~10").tokens == [.name("foo"), .name("bar/0")])
     #expect(Pointer(tokens: .name("foo")).appending(tokens: "bar/0").tokens == [.name("foo"), .name("bar/0")])
     #expect((Pointer(tokens: .name("foo")) / "bar" / 0).tokens == [.name("foo"), .name("bar"), .index(0)])

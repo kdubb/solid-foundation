@@ -29,7 +29,7 @@ extension Sequence {
 
 extension Sequence where Element: Hashable {
 
-  func asSet() -> Set<Element> {
+  func unique() -> Set<Element> {
     return Set(self)
   }
 

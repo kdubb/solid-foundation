@@ -26,3 +26,12 @@ extension Optional {
   }
 
 }
+
+internal protocol OptionalConvertible {
+  associatedtype Wrapped
+  var toOptional: Optional<Wrapped> { get }
+}
+
+extension Optional: OptionalConvertible {
+  var toOptional: Optional<Wrapped> { self }
+}

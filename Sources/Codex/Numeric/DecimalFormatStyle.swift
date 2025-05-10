@@ -44,15 +44,14 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
   public func format(_ value: BigDecimal) -> String {
     // Handle special values
     if value.isNaN {
-      return "NaN" // Using static string as locale may not have a localized version
+      return "NaN"    // Using static string as locale may not have a localized version
     }
     if value.isInfinite {
-      let infinityString = "∞" // Using static string as locale may not have a localized version
-      if value.isNegative {
-        return "-" + infinityString
-      } else {
+      let infinityString = "∞"    // Using static string as locale may not have a localized version
+      guard value.isNegative else {
         return sign == .always ? "+" + infinityString : infinityString
       }
+      return "-" + infinityString
     }
 
     // Format the number
@@ -85,7 +84,8 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
         } else {
           // Split digits around decimal point
           let decimalIndex = digits.count - value.scale
-          string = String(digits.prefix(decimalIndex)) + (locale.decimalSeparator ?? ".") + String(digits.suffix(value.scale))
+          string =
+            String(digits.prefix(decimalIndex)) + (locale.decimalSeparator ?? ".") + String(digits.suffix(value.scale))
         }
       }
 
@@ -134,8 +134,8 @@ public struct DecimalFormatStyle: FormatStyle, Codable, Hashable, Sendable {
             } else {
               // Truncate and round
               let indexToCheck = fractionPart.index(fractionPart.startIndex, offsetBy: range.upperBound)
-              let shouldRoundUp = indexToCheck < fractionPart.endIndex &&
-                                  (fractionPart[indexToCheck].wholeNumberValue ?? 0) >= 5
+              let shouldRoundUp =
+                indexToCheck < fractionPart.endIndex && (fractionPart[indexToCheck].wholeNumberValue ?? 0) >= 5
 
               fractionPart = String(fractionPart.prefix(range.upperBound))
 

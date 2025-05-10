@@ -68,10 +68,11 @@ extension Pointer.ReferenceToken {
 
   /// Creates a reference token from its encoded string representation, or `nil` if the string is invalid.
   ///
-  /// - Parameter string: The encoded string representation
-  /// - Parameter strict: Whether to enforce strict parsing rules
-  ///   Currrently affects:
-  ///   - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
+  /// - Parameters:
+  ///   - string: The encoded string representation
+  ///   - strict: Whether to enforce strict parsing rules
+  ///     Currrently affects:
+  ///     - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
   ///
   public init?(encoded string: String, strict: Bool = Pointer.strict) {
     do {
@@ -104,10 +105,11 @@ extension Pointer.ReferenceToken {
 
   /// Creates a reference token from its string representation, throwing an error if invalid.
   ///
-  /// - Parameter string: The string representation of the reference token
-  /// - Parameter strict: Whether to enforce strict parsing rules
-  ///   Currrently affects:
-  ///   - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
+  /// - Parameters:
+  ///   - string: The string representation of the reference token
+  ///   - strict: Whether to enforce strict parsing rules
+  ///     Currrently affects:
+  ///     - `~` escaping rules (strict mode fails when `~` is not followed by 0 or 1)
   /// - Throws: An error if the string is not a valid reference token representation
   ///
   public init(validating string: String, strict: Bool = Pointer.strict) throws {
@@ -190,11 +192,12 @@ extension Pointer.ReferenceToken: ExpressibleByStringLiteral {
   /// - Precondition: The string must be a valid reference token representation
   ///
   public init(stringLiteral value: String) {
-    let encoded = if value.contains(Self.encodedRegex) {
-      value
-    } else {
-      value.pointerEncoded
-    }
+    let encoded =
+      if value.contains(Self.encodedRegex) {
+        value
+      } else {
+        value.pointerEncoded
+      }
     do {
       try self.init(validating: encoded)
     } catch {
@@ -238,10 +241,9 @@ extension String {
   /// Tokens requiring escaping are underlined using Unicode combining characters.
   ///
   public var debugPointerEncoded: String {
-    if self.contains(encodingRegex) {
-      return map { "\($0)\u{0332}" }.joined(separator: "")
-    } else {
+    guard self.contains(encodingRegex) else {
       return self
     }
+    return map { "\($0)\u{0332}" }.joined(separator: "")
   }
 }
