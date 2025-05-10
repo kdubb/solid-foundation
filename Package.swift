@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-  name: "Codex",
+  name: "SolidFoundation",
   platforms: [
     .macOS("15"),
     .iOS("18"),
@@ -12,13 +12,13 @@ let package = Package(
   ],
   products: [
     .library(
-      name: "Codex",
-      targets: ["Codex"]
+      name: "Solid",
+      targets: ["Solid"]
     ),
     .executable(
-      name: "CodexBench",
+      name: "SolidBench",
       targets: [
-        "CodexBench"
+        "SolidBench"
       ]
     ),
   ],
@@ -33,7 +33,7 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "Codex",
+      name: "Solid",
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Atomics", package: "swift-atomics"),
@@ -48,15 +48,15 @@ let package = Package(
       ]
     ),
     .executableTarget(
-      name: "CodexBench",
+      name: "SolidBench",
       dependencies: [
-        "Codex",
+        "Solid",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
     ),
     .testTarget(
-      name: "CodexTests",
-      dependencies: ["Codex"],
+      name: "SolidTests",
+      dependencies: ["Solid"],
       resources: [
         .copy("Resources")
       ],
@@ -67,15 +67,15 @@ let package = Package(
   ]
 )
 
-// Benchmark of CodexNumericBenchmark
+// Benchmark of SolidNumericBenchmark
 package.targets += [
   .executableTarget(
-    name: "CodexNumericBenchmark",
+    name: "SolidNumericBenchmark",
     dependencies: [
-      "Codex",
+      "Solid",
       .product(name: "Benchmark", package: "package-benchmark"),
     ],
-    path: "Benchmarks/CodexNumericBenchmark",
+    path: "Benchmarks/SolidNumericBenchmark",
     plugins: [
       .plugin(name: "BenchmarkPlugin", package: "package-benchmark")
     ]

@@ -1,3 +1,3 @@
 [submodule "Tests/JSONTestSuite"]
-	path = Tests/CodexTests/Resources/JSONTestSuite
+	path = Tests/SolidTests/Resources/JSONTestSuite
 	url = https://github.com/json-schema-org/JSON-Schema-Test-Suite.git
