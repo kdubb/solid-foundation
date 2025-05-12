@@ -5,17 +5,14 @@
 //  Created by Kevin Wooten on 5/1/25.
 //
 
-extension Tempo {
 
-  public protocol TimeComponent<Value>: DateTimeComponent where Value: Equatable & Sendable {
-    var unit: Unit { get }
-    var min: Value { get }
-    var max: Value { get }
-  }
-
+public protocol TimeComponent<Value>: DateTimeComponent where Value: Equatable & Sendable {
+  var unit: Unit { get }
+  var min: Value { get }
+  var max: Value { get }
 }
 
-extension Tempo.Components {
+extension Components {
 
   public static let hourOfDay = Integer<Int>(id: .hourOfDay, unit: .hours, range: 0...23)
   public static let minuteOfHour = Integer<Int>(id: .minuteOfHour, unit: .minutes, range: 0...59)
@@ -32,8 +29,8 @@ extension Tempo.Components {
   public static let secondsOfZoneOffset = Integer<Int>(id: .secondsOfZoneOffset, unit: .seconds, range: 0...59)
 
   public static let zoneId = Identifier(id: .zoneId) { zoneId, componentId in
-    if (try? Tempo.Zone(identifier: zoneId)) == nil {
-      throw Tempo.Error.invalidComponentValue(
+    if (try? Zone(identifier: zoneId)) == nil {
+      throw Error.invalidComponentValue(
         component: componentId.name,
         reason: .invalidZoneId(id: zoneId)
       )
@@ -50,64 +47,64 @@ extension Tempo.Components {
 
 // MARK: - Common Component Extensions
 
-extension Tempo.Component where Self == Tempo.Components.Integer<Int> {
+extension Component where Self == Components.Integer<Int> {
 
-  public static var hourOfDay: Self { Tempo.Components.hourOfDay }
-  public static var minuteOfHour: Self { Tempo.Components.minuteOfHour }
-  public static var secondOfMinute: Self { Tempo.Components.secondOfMinute }
-  public static var nanosecondOfSecond: Self { Tempo.Components.nanosecondOfSecond }
+  public static var hourOfDay: Self { Components.hourOfDay }
+  public static var minuteOfHour: Self { Components.minuteOfHour }
+  public static var secondOfMinute: Self { Components.secondOfMinute }
+  public static var nanosecondOfSecond: Self { Components.nanosecondOfSecond }
 
-  public static var zoneOffset: Self { Tempo.Components.zoneOffset }
-  public static var hoursOfZoneOffset: Self { Tempo.Components.hoursOfZoneOffset }
-  public static var minutesOfZoneOffset: Self { Tempo.Components.minutesOfZoneOffset }
-  public static var secondsOfZoneOffset: Self { Tempo.Components.secondsOfZoneOffset }
+  public static var zoneOffset: Self { Components.zoneOffset }
+  public static var hoursOfZoneOffset: Self { Components.hoursOfZoneOffset }
+  public static var minutesOfZoneOffset: Self { Components.minutesOfZoneOffset }
+  public static var secondsOfZoneOffset: Self { Components.secondsOfZoneOffset }
 
   // Common shorthand
 
-  public static var hour: Self { Tempo.Components.hourOfDay }
-  public static var minute: Self { Tempo.Components.minuteOfHour }
-  public static var second: Self { Tempo.Components.secondOfMinute }
-  public static var nanosecond: Self { Tempo.Components.nanosecondOfSecond }
+  public static var hour: Self { Components.hourOfDay }
+  public static var minute: Self { Components.minuteOfHour }
+  public static var second: Self { Components.secondOfMinute }
+  public static var nanosecond: Self { Components.nanosecondOfSecond }
 
 }
 
-extension Tempo.Component where Self == Tempo.Components.Identifier {
+extension Component where Self == Components.Identifier {
 
-  public static var zoneId: Tempo.Components.Identifier { Tempo.Components.zoneId }
+  public static var zoneId: Components.Identifier { Components.zoneId }
 
 }
 
-extension Tempo.Component where Self == Tempo.Components.Integer<Int128> {
+extension Component where Self == Components.Integer<Int128> {
 
-  public static var durationSinceEpoch: Self { Tempo.Components.durationSinceEpoch }
+  public static var durationSinceEpoch: Self { Components.durationSinceEpoch }
 
 }
 
 // MARK: - TimeComponent Extensions
 
-extension Tempo.TimeComponent where Self == Tempo.Components.Integer<Int> {
+extension TimeComponent where Self == Components.Integer<Int> {
 
-  public static var hourOfDay: Self { Tempo.Components.hourOfDay }
-  public static var minuteOfHour: Self { Tempo.Components.minuteOfHour }
-  public static var secondOfMinute: Self { Tempo.Components.secondOfMinute }
-  public static var nanosecondOfSecond: Self { Tempo.Components.nanosecondOfSecond }
+  public static var hourOfDay: Self { Components.hourOfDay }
+  public static var minuteOfHour: Self { Components.minuteOfHour }
+  public static var secondOfMinute: Self { Components.secondOfMinute }
+  public static var nanosecondOfSecond: Self { Components.nanosecondOfSecond }
 
-  public static var zoneOffset: Self { Tempo.Components.zoneOffset }
-  public static var hoursOfZoneOffset: Self { Tempo.Components.hoursOfZoneOffset }
-  public static var minutesOfZoneOffset: Self { Tempo.Components.minutesOfZoneOffset }
-  public static var secondsOfZoneOffset: Self { Tempo.Components.secondsOfZoneOffset }
+  public static var zoneOffset: Self { Components.zoneOffset }
+  public static var hoursOfZoneOffset: Self { Components.hoursOfZoneOffset }
+  public static var minutesOfZoneOffset: Self { Components.minutesOfZoneOffset }
+  public static var secondsOfZoneOffset: Self { Components.secondsOfZoneOffset }
 
   // Common shorthand
 
-  public static var hour: Self { Tempo.Components.hourOfDay }
-  public static var minute: Self { Tempo.Components.minuteOfHour }
-  public static var second: Self { Tempo.Components.secondOfMinute }
-  public static var nanosecond: Self { Tempo.Components.nanosecondOfSecond }
+  public static var hour: Self { Components.hourOfDay }
+  public static var minute: Self { Components.minuteOfHour }
+  public static var second: Self { Components.secondOfMinute }
+  public static var nanosecond: Self { Components.nanosecondOfSecond }
 
 }
 
-extension Tempo.TimeComponent where Self == Tempo.Components.Integer<Int128> {
+extension TimeComponent where Self == Components.Integer<Int128> {
 
-  public static var durationSinceEpoch: Self { Tempo.Components.durationSinceEpoch }
+  public static var durationSinceEpoch: Self { Components.durationSinceEpoch }
 
 }

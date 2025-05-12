@@ -13,9 +13,6 @@ import Testing
 @Suite("TzIf Tests")
 struct TzIfTests {
 
-  typealias TzDb = Tempo.TzDb
-  typealias TzIf = Tempo.TzIf
-
   func zoneFileURL(_ identifier: String) -> URL {
     for url in TzDb.defaultZoneInfoUrls {
       let resolvedURL = url.resolvingSymlinksInPath()

@@ -13,17 +13,16 @@ import Testing
 @Suite("ZonedDateTime Tests")
 struct ZonedDateTimeTests {
 
-  public typealias ZDT = Tempo.ZonedDateTime
-  public typealias LDT = Tempo.LocalDateTime
-  public typealias RSO = Tempo.ResolutionStrategy.Options
-  public typealias Zone = Tempo.Zone
+  public typealias ZDT = ZonedDateTime
+  public typealias LDT = LocalDateTime
+  public typealias RSO = ResolutionStrategy.Options
 
   public typealias ZDTT =
     (year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, nano: Int, zone: Zone)
   public typealias LDTT =
     (year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, nano: Int)
 
-  public static let LAZone: Tempo.Zone = "America/Los_Angeles"
+  public static let LAZone: Zone = "America/Los_Angeles"
   public static let skoDefault: RSO = [.skipped(.nextValid)]
 
   @Test(
@@ -54,7 +53,7 @@ struct ZonedDateTimeTests {
         (year: 2024, month: 3, day: 10, hour: 3, minute: 0, second: 0, nano: 0),
         skoDefault
       ),
-    ] as [(String, ZDTT, LDTT, Tempo.ResolutionStrategy.Options)]
+    ] as [(String, ZDTT, LDTT, ResolutionStrategy.Options)]
   )
   func testInstantResolution(
     testing: String,
@@ -93,7 +92,7 @@ struct ZonedDateTimeTests {
   }
 }
 
-extension Tempo.ZonedDateTime {
+extension ZonedDateTime {
 
   init(_ tuple: ZonedDateTimeTests.ZDTT) throws {
     try self.init(

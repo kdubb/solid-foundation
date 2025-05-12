@@ -54,22 +54,22 @@ struct ZoneOffsetTests {
     expectedFailureReason: String?
   ) throws {
     if let expectedErrorDescription {
-      let error = try #require(throws: Tempo.Error.self) {
-        try Tempo.ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
+      let error = try #require(throws: Error.self) {
+        try ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
       }
       #expect(error.errorDescription == expectedErrorDescription)
       #expect(error.failureReason == expectedFailureReason)
-      let error2 = try #require(throws: Tempo.Error.self) {
-        try Tempo.ZoneOffset(totalSeconds: 0).with(hours: hours, minutes: minutes, seconds: seconds)
+      let error2 = try #require(throws: Error.self) {
+        try ZoneOffset(totalSeconds: 0).with(hours: hours, minutes: minutes, seconds: seconds)
       }
       #expect(error2.errorDescription == expectedErrorDescription)
       #expect(error2.failureReason == expectedFailureReason)
     } else {
-      let offset = try Tempo.ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
+      let offset = try ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
       #expect(offset.hours == hours)
       #expect(offset.minutes == minutes)
       #expect(offset.seconds == seconds)
-      let offset2 = try Tempo.ZoneOffset(totalSeconds: 0).with(hours: hours, minutes: minutes, seconds: seconds)
+      let offset2 = try ZoneOffset(totalSeconds: 0).with(hours: hours, minutes: minutes, seconds: seconds)
       #expect(offset2.hours == hours)
       #expect(offset2.minutes == minutes)
       #expect(offset2.seconds == seconds)
@@ -89,7 +89,7 @@ struct ZoneOffsetTests {
     ]
   )
   func testAccessors(totalSeconds: Int, hours: Int, minutes: Int, seconds: Int) throws {
-    let offset = try Tempo.ZoneOffset(totalSeconds: totalSeconds)
+    let offset = try ZoneOffset(totalSeconds: totalSeconds)
     #expect(offset.totalSeconds == totalSeconds)
     #expect(offset.hours == hours)
     #expect(offset.minutes == minutes)
@@ -98,25 +98,25 @@ struct ZoneOffsetTests {
 
   @Test("Description")
   func testDescription() throws {
-    let offset = try Tempo.ZoneOffset(totalSeconds: -3660)
+    let offset = try ZoneOffset(totalSeconds: -3660)
     #expect(offset.description == "-01:01")
 
-    let offset2 = try Tempo.ZoneOffset(totalSeconds: 3660)
+    let offset2 = try ZoneOffset(totalSeconds: 3660)
     #expect(offset2.description == "+01:01")
 
-    let offset3 = try Tempo.ZoneOffset(totalSeconds: 0)
+    let offset3 = try ZoneOffset(totalSeconds: 0)
     #expect(offset3.description == "+00:00")
 
-    let offset4 = try Tempo.ZoneOffset(totalSeconds: 60)
+    let offset4 = try ZoneOffset(totalSeconds: 60)
     #expect(offset4.description == "+00:01")
 
-    let offset5 = try Tempo.ZoneOffset(totalSeconds: -60)
+    let offset5 = try ZoneOffset(totalSeconds: -60)
     #expect(offset5.description == "-00:01")
 
-    let offset6 = try Tempo.ZoneOffset(hours: 12, minutes: 34, seconds: 56)
+    let offset6 = try ZoneOffset(hours: 12, minutes: 34, seconds: 56)
     #expect(offset6.description == "+12:34:56")
 
-    let offset7 = try Tempo.ZoneOffset(hours: -12, minutes: -34, seconds: -56)
+    let offset7 = try ZoneOffset(hours: -12, minutes: -34, seconds: -56)
     #expect(offset7.description == "-12:34:56")
   }
 }

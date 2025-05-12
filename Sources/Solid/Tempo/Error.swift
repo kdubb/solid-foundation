@@ -7,46 +7,42 @@
 
 import Foundation
 
-extension Tempo {
+public enum Error: Swift.Error {
 
-  public enum Error: Swift.Error {
-
-    public enum SkippedLocalTimeResolutionFailureReason: Sendable {
-      case failedToResolve
-      case rejectedByStrategy
-    }
-
-    public enum AmbiguousLocalTimeResolutionFailureReason: Sendable {
-      case failedToResolve
-      case noValidInstant
-      case rejectedByStrategy
-    }
-
-    public enum ValidationFailureReason: Sendable {
-      case outOfRange(value: String, range: String)
-      case invalidZoneId(id: String)
-      case unsupportedInContainer(String)
-      case unknown(reason: String)
-    }
-
-    public enum ComponentResolutionFailureReason: Sendable {
-      case invalidComponentType
-    }
-
-    case instantResolutionFailed
-    case skippedTimeResolutionFailed(reason: SkippedLocalTimeResolutionFailureReason)
-    case ambiguousTimeResolutionFailed(reason: AmbiguousLocalTimeResolutionFailureReason)
-    case calendarInconsistency(details: String)
-    case missingComponent(component: String)
-    case invalidComponentValue(component: String, reason: ValidationFailureReason)
-    case componentResolutionFailed(component: String, reason: ComponentResolutionFailureReason)
-    case invalidRegionalTimeZone(identifier: String)
-    case invalidFixedOffsetTimeZone(offset: Int)
+  public enum SkippedLocalTimeResolutionFailureReason: Sendable {
+    case failedToResolve
+    case rejectedByStrategy
   }
 
+  public enum AmbiguousLocalTimeResolutionFailureReason: Sendable {
+    case failedToResolve
+    case noValidInstant
+    case rejectedByStrategy
+  }
+
+  public enum ValidationFailureReason: Sendable {
+    case outOfRange(value: String, range: String)
+    case invalidZoneId(id: String)
+    case unsupportedInContainer(String)
+    case unknown(reason: String)
+  }
+
+  public enum ComponentResolutionFailureReason: Sendable {
+    case invalidComponentType
+  }
+
+  case instantResolutionFailed
+  case skippedTimeResolutionFailed(reason: SkippedLocalTimeResolutionFailureReason)
+  case ambiguousTimeResolutionFailed(reason: AmbiguousLocalTimeResolutionFailureReason)
+  case calendarInconsistency(details: String)
+  case missingComponent(component: String)
+  case invalidComponentValue(component: String, reason: ValidationFailureReason)
+  case componentResolutionFailed(component: String, reason: ComponentResolutionFailureReason)
+  case invalidRegionalTimeZone(identifier: String)
+  case invalidFixedOffsetTimeZone(offset: Int)
 }
 
-extension Tempo.Error: LocalizedError {
+extension Error: LocalizedError {
 
   public var errorDescription: String? {
     switch self {

@@ -5,42 +5,40 @@
 //  Created by Kevin Wooten on 4/30/25.
 //
 
-extension Tempo {
 
-  public struct ComponentValue {
+public struct ComponentValue {
 
-    public let component: any Component
-    public let value: any (Sendable & Equatable)
+  public let component: any Component
+  public let value: any (Sendable & Equatable)
 
-    private let isEqualTo: @Sendable (any Sendable & Equatable) -> Bool
-    private let hashValue: @Sendable (inout Hasher) -> Void
+  private let isEqualTo: @Sendable (any Sendable & Equatable) -> Bool
+  private let hashValue: @Sendable (inout Hasher) -> Void
 
-    public init<C>(component: C, value: C.Value) where C: Component {
-      self.component = component
-      self.value = value
-      self.isEqualTo = { other in
-        guard let otherValue = other as? C.Value else {
-          return false
-        }
-        return value == otherValue
+  public init<C>(component: C, value: C.Value) where C: Component {
+    self.component = component
+    self.value = value
+    self.isEqualTo = { other in
+      guard let otherValue = other as? C.Value else {
+        return false
       }
-      self.hashValue = { hasher in
-        hasher.combine(value)
-      }
+      return value == otherValue
     }
-
-    public func value<C>(forExpected component: C) -> C.Value where C: Component {
-      precondition(component.id == self.component.id, "Component ID mismatch")
-      guard let value = self.value as? C.Value else {
-        fatalError("Value type mismatch")
-      }
-      return value
+    self.hashValue = { hasher in
+      hasher.combine(value)
     }
   }
 
+  public func value<C>(forExpected component: C) -> C.Value where C: Component {
+    precondition(component.id == self.component.id, "Component ID mismatch")
+    guard let value = self.value as? C.Value else {
+      fatalError("Value type mismatch")
+    }
+    return value
+  }
 }
 
-extension Tempo.ComponentValue {
+
+extension ComponentValue {
 
   public static func era(_ value: Int) -> Self {
     return Self(component: .era, value: value)
@@ -240,14 +238,14 @@ extension Tempo.ComponentValue {
 
 }
 
-extension Tempo.ComponentValue: Equatable {
+extension ComponentValue: Equatable {
 
   public static func == (lhs: Self, rhs: Self) -> Bool {
     return lhs.component.id == rhs.component.id && lhs.isEqualTo(rhs.value)
   }
 }
 
-extension Tempo.ComponentValue: Hashable {
+extension ComponentValue: Hashable {
 
   public func hash(into hasher: inout Hasher) {
     hasher.combine(component.id)
@@ -255,4 +253,4 @@ extension Tempo.ComponentValue: Hashable {
   }
 }
 
-extension Tempo.ComponentValue: Sendable {}
+extension ComponentValue: Sendable {}

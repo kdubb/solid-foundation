@@ -8,54 +8,50 @@
 import SolidCore
 import Foundation
 
-extension Tempo {
+/// A duration of time with nanosecond precision.
+///
+public struct Duration: Sendable, Hashable, Codable {
 
-  /// A duration of time with nanosecond precision.
+  public static let zero = Duration(nanoseconds: 0)
+  public static let min = Duration(nanoseconds: .min)
+  public static let max = Duration(nanoseconds: .max)
+
+  public private(set) var nanoseconds: Int128
+
+  /// Initializes a `Duration` with the given number of nanoseconds.
   ///
-  public struct Duration: Sendable, Hashable, Codable {
-
-    public static let zero = Duration(nanoseconds: 0)
-    public static let min = Duration(nanoseconds: .min)
-    public static let max = Duration(nanoseconds: .max)
-
-    public private(set) var nanoseconds: Int128
-
-    /// Initializes a `Duration` with the given number of nanoseconds.
-    ///
-    /// - Parameter nanoseconds: The number of nanoseconds.
-    ///
-    public init(nanoseconds: Int128) {
-      self.nanoseconds = nanoseconds
-    }
-
-    /// Initializes a `Duration` with the given number of seconds and nanoseconds.
-    ///
-    /// - Parameters:
-    ///  - seconds: The number of seconds.
-    ///  - nanoseconds: The number of nanoseconds.
-    ///
-    public init(seconds: Int64, nanoseconds: Int) {
-      self.nanoseconds = Int128(seconds) * 1_000_000_000 + Int128(nanoseconds)
-    }
-
-    /// Initializes a `Duration` with the given number of fractional seconds.
-    ///
-    /// - Parameter seconds: The number of seconds.
-    ///
-    public init(seconds: Double) {
-      self.nanoseconds = Int128(seconds * 1_000_000_000)
-    }
-
-    internal var integerComponents: (hi: Int64, lo: Int64) {
-      let hi = nanoseconds >> Int64.bitWidth
-      let lo = nanoseconds & Int128(Int64.max)
-      return (hi: Int64(hi), lo: Int64(lo))
-    }
+  /// - Parameter nanoseconds: The number of nanoseconds.
+  ///
+  public init(nanoseconds: Int128) {
+    self.nanoseconds = nanoseconds
   }
 
+  /// Initializes a `Duration` with the given number of seconds and nanoseconds.
+  ///
+  /// - Parameters:
+  ///  - seconds: The number of seconds.
+  ///  - nanoseconds: The number of nanoseconds.
+  ///
+  public init(seconds: Int64, nanoseconds: Int) {
+    self.nanoseconds = Int128(seconds) * 1_000_000_000 + Int128(nanoseconds)
+  }
+
+  /// Initializes a `Duration` with the given number of fractional seconds.
+  ///
+  /// - Parameter seconds: The number of seconds.
+  ///
+  public init(seconds: Double) {
+    self.nanoseconds = Int128(seconds * 1_000_000_000)
+  }
+
+  internal var integerComponents: (hi: Int64, lo: Int64) {
+    let hi = nanoseconds >> Int64.bitWidth
+    let lo = nanoseconds & Int128(Int64.max)
+    return (hi: Int64(hi), lo: Int64(lo))
+  }
 }
 
-extension Tempo.Duration: Comparable {
+extension Duration: Comparable {
 
   public static func < (lhs: Self, rhs: Self) -> Bool {
     return lhs.nanoseconds < rhs.nanoseconds
@@ -63,7 +59,7 @@ extension Tempo.Duration: Comparable {
 
 }
 
-extension Tempo.Duration: CustomStringConvertible {
+extension Duration: CustomStringConvertible {
 
   public var description: String {
     let days = self[.numberOfDays]
@@ -83,13 +79,13 @@ extension Tempo.Duration: CustomStringConvertible {
 
 }
 
-extension Tempo.Duration: Tempo.LinkedComponentContainer, Tempo.ComponentBuildable {
+extension Duration: LinkedComponentContainer, ComponentBuildable {
 
-  public static let links: [any Tempo.ComponentLink<Self>] = [
-    Tempo.ComponentKeyPathLink(.totalNanoseconds, to: \.nanoseconds)
+  public static let links: [any ComponentLink<Self>] = [
+    ComponentKeyPathLink(.totalNanoseconds, to: \.nanoseconds)
   ]
 
-  public init(components: some Tempo.ComponentContainer) {
+  public init(components: some ComponentContainer) {
 
     if let duration = components as? Self {
       self = duration
@@ -155,15 +151,15 @@ extension Tempo.Duration: Tempo.LinkedComponentContainer, Tempo.ComponentBuildab
 
 // MARK: - Conversion Initializers
 
-extension Tempo.Duration {
+extension Duration {
 
-  /// Initialize a `Duration` from an integer and a ``Tempo/Components/Unit``.
+  /// Initialize a `Duration` from an integer and a ``Components/Unit``.
   ///
   /// - Parameters:
   ///   - value: The value in `unit`s.
   ///   - unit: The unit of `value`.
   ///
-  public init<I>(_ value: I, unit: Tempo.Unit) where I: FixedWidthInteger {
+  public init<I>(_ value: I, unit: Unit) where I: FixedWidthInteger {
     switch unit {
     case .days:
       self = .days(value)
@@ -184,12 +180,12 @@ extension Tempo.Duration {
     }
   }
 
-  public init(_ componentValue: Tempo.ComponentValue) {
-    guard let durationComponent = componentValue.component as? any Tempo.DurationComponent else {
+  public init(_ componentValue: ComponentValue) {
+    guard let durationComponent = componentValue.component as? any DurationComponent else {
       preconditionFailure("Invalid component value for initializing Duration: \(componentValue)")
     }
 
-    func unwrapInit<C>(_ component: C, value: some Sendable) -> Self where C: Tempo.DurationComponent {
+    func unwrapInit<C>(_ component: C, value: some Sendable) -> Self where C: DurationComponent {
       let typedValue = knownSafeCast(value, to: C.Value.self)
       return Self(typedValue, unit: component.unit)
     }
@@ -197,7 +193,7 @@ extension Tempo.Duration {
     self = unwrapInit(durationComponent, value: componentValue.value)
   }
 
-  public init(_ zoneOffset: Tempo.ZoneOffset) {
+  public init(_ zoneOffset: ZoneOffset) {
     self = .seconds(zoneOffset.totalSeconds)
   }
 
@@ -205,9 +201,9 @@ extension Tempo.Duration {
 
 // MARK: - Accessors
 
-extension Tempo.Duration {
+extension Duration {
 
-  public subscript<C>(_ component: C, rolledOver rolledOver: Bool? = nil) -> C.Value where C: Tempo.DurationComponent {
+  public subscript<C>(_ component: C, rolledOver rolledOver: Bool? = nil) -> C.Value where C: DurationComponent {
     component.extract(from: self, rolledOver: rolledOver)
   }
 
@@ -217,7 +213,7 @@ extension Tempo.Duration {
 
 private let twoToThe64thDouble = pow(2.0, 64.0)
 
-extension Tempo.Duration {
+extension Duration {
 
   public static func + (lhs: Self, rhs: Self) -> Self {
     let (sum, overflow) = Int128(lhs.nanoseconds).addingReportingOverflow(rhs.nanoseconds)
@@ -328,7 +324,7 @@ extension Tempo.Duration {
 
 // MARK: - Factory Methods
 
-extension Tempo.Duration {
+extension Duration {
 
   public static func days<I>(_ days: I) -> Self where I: BinaryInteger {
     return days * Self.hours(24)

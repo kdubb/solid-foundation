@@ -5,15 +5,12 @@
 //  Created by Kevin Wooten on 5/1/25.
 //
 
-extension Tempo {
 
-  public protocol DurationComponent<Value>: Component where Value: FixedWidthInteger {
-    func extract(from duration: Duration, rolledOver: Bool?) -> Value
-  }
-
+public protocol DurationComponent<Value>: Component where Value: FixedWidthInteger {
+  func extract(from duration: Duration, rolledOver: Bool?) -> Value
 }
 
-extension Tempo.Components {
+extension Components {
 
   public static let numberOfDays = DurationInteger<Int>(id: .numberOfDays, unit: .days)
   public static let numberOfHours = DurationInteger<Int>(id: .numberOfHours, unit: .hours)
@@ -191,12 +188,12 @@ extension Tempo.Components {
     }
   }
 
-  public struct DurationInteger<Value: FixedWidthInteger & SignedInteger>: Tempo.DurationComponent {
+  public struct DurationInteger<Value: FixedWidthInteger & SignedInteger>: DurationComponent {
 
     public typealias Value = Value
 
     public let id: Id
-    public let unit: Tempo.Unit
+    public let unit: Unit
     public let unitSize: UInt128
     public let rollover: UInt128?
     public let rolledOverDefault: Bool
@@ -206,8 +203,8 @@ extension Tempo.Components {
 
     public init(
       id: Id,
-      unit: Tempo.Unit,
-      parentUnit: Tempo.Unit? = nil,
+      unit: Unit,
+      parentUnit: Unit? = nil,
       rolledOverDefault: Bool = true,
       isTotal: Bool = false
     ) {
@@ -224,7 +221,7 @@ extension Tempo.Components {
 
     public func validate(_ value: Value) throws {}
 
-    public func extract(from duration: Tempo.Duration, rolledOver: Bool?) -> Value {
+    public func extract(from duration: Duration, rolledOver: Bool?) -> Value {
       if isTotal {
         return Value(duration.nanoseconds / totalUnitSize)
       } else if let parentUnitSize {
@@ -251,105 +248,105 @@ extension Tempo.Components {
 
 // MARK: - Common Component Extensions
 
-extension Tempo.Component where Self == Tempo.Components.DurationInteger<Int> {
+extension Component where Self == Components.DurationInteger<Int> {
 
-  public static var numberOfDays: Self { Tempo.Components.numberOfDays }
-  public static var numberOfHours: Self { Tempo.Components.numberOfHours }
-  public static var numberOfMinutes: Self { Tempo.Components.numberOfMinutes }
-  public static var numberOfSeconds: Self { Tempo.Components.numberOfSeconds }
-  public static var numberOfMilliseconds: Self { Tempo.Components.numberOfMilliseconds }
-  public static var numberOfMicroseconds: Self { Tempo.Components.numberOfMicroseconds }
-  public static var numberOfNanoseconds: Self { Tempo.Components.numberOfNanoseconds }
+  public static var numberOfDays: Self { Components.numberOfDays }
+  public static var numberOfHours: Self { Components.numberOfHours }
+  public static var numberOfMinutes: Self { Components.numberOfMinutes }
+  public static var numberOfSeconds: Self { Components.numberOfSeconds }
+  public static var numberOfMilliseconds: Self { Components.numberOfMilliseconds }
+  public static var numberOfMicroseconds: Self { Components.numberOfMicroseconds }
+  public static var numberOfNanoseconds: Self { Components.numberOfNanoseconds }
 
-  public static var totalDays: Self { Tempo.Components.totalDays }
-  public static var totalHours: Self { Tempo.Components.totalHours }
-  public static var totalMinutes: Self { Tempo.Components.totalMinutes }
-  public static var totalSeconds: Self { Tempo.Components.totalSeconds }
+  public static var totalDays: Self { Components.totalDays }
+  public static var totalHours: Self { Components.totalHours }
+  public static var totalMinutes: Self { Components.totalMinutes }
+  public static var totalSeconds: Self { Components.totalSeconds }
 
-  public static var hoursOfDay: Self { Tempo.Components.hoursOfDay }
-  public static var minutesOfDay: Self { Tempo.Components.minutesOfDay }
-  public static var secondsOfDay: Self { Tempo.Components.secondsOfDay }
-  public static var millisecondsOfDay: Self { Tempo.Components.millisecondsOfSecond }
-  public static var microsecondsOfDay: Self { Tempo.Components.microsecondsOfSecond }
-  public static var nanosecondsOfDay: Self { Tempo.Components.nanosecondsOfDay }
+  public static var hoursOfDay: Self { Components.hoursOfDay }
+  public static var minutesOfDay: Self { Components.minutesOfDay }
+  public static var secondsOfDay: Self { Components.secondsOfDay }
+  public static var millisecondsOfDay: Self { Components.millisecondsOfSecond }
+  public static var microsecondsOfDay: Self { Components.microsecondsOfSecond }
+  public static var nanosecondsOfDay: Self { Components.nanosecondsOfDay }
 
-  public static var minutesOfHour: Self { Tempo.Components.minutesOfHour }
-  public static var secondsOfHour: Self { Tempo.Components.secondsOfHour }
-  public static var millisecondsOfHour: Self { Tempo.Components.millisecondsOfHour }
-  public static var microsecondsOfHour: Self { Tempo.Components.microsecondsOfHour }
-  public static var nanosecondsOfHour: Self { Tempo.Components.nanosecondsOfHour }
+  public static var minutesOfHour: Self { Components.minutesOfHour }
+  public static var secondsOfHour: Self { Components.secondsOfHour }
+  public static var millisecondsOfHour: Self { Components.millisecondsOfHour }
+  public static var microsecondsOfHour: Self { Components.microsecondsOfHour }
+  public static var nanosecondsOfHour: Self { Components.nanosecondsOfHour }
 
-  public static var secondsOfMinute: Self { Tempo.Components.secondsOfMinute }
-  public static var millisecondsOfMinute: Self { Tempo.Components.millisecondsOfMinute }
-  public static var microsecondsOfMinute: Self { Tempo.Components.microsecondsOfMinute }
-  public static var nanosecondsOfMinute: Self { Tempo.Components.nanosecondsOfMinute }
+  public static var secondsOfMinute: Self { Components.secondsOfMinute }
+  public static var millisecondsOfMinute: Self { Components.millisecondsOfMinute }
+  public static var microsecondsOfMinute: Self { Components.microsecondsOfMinute }
+  public static var nanosecondsOfMinute: Self { Components.nanosecondsOfMinute }
 
-  public static var millisecondsOfSecond: Self { Tempo.Components.millisecondsOfSecond }
-  public static var microsecondsOfSecond: Self { Tempo.Components.microsecondsOfSecond }
-  public static var nanosecondsOfSecond: Self { Tempo.Components.nanosecondsOfSecond }
+  public static var millisecondsOfSecond: Self { Components.millisecondsOfSecond }
+  public static var microsecondsOfSecond: Self { Components.microsecondsOfSecond }
+  public static var nanosecondsOfSecond: Self { Components.nanosecondsOfSecond }
 
 }
 
-extension Tempo.Component where Self == Tempo.Components.DurationInteger<Int128> {
+extension Component where Self == Components.DurationInteger<Int128> {
 
-  public static var totalMilliseconds: Self { Tempo.Components.totalMilliseconds }
-  public static var totalMicroseconds: Self { Tempo.Components.totalMicroseconds }
-  public static var totalNanoseconds: Self { Tempo.Components.totalNanoseconds }
+  public static var totalMilliseconds: Self { Components.totalMilliseconds }
+  public static var totalMicroseconds: Self { Components.totalMicroseconds }
+  public static var totalNanoseconds: Self { Components.totalNanoseconds }
 
 }
 
 // MARK: - DurationComponent Extensions
 
-extension Tempo.DurationComponent where Self == Tempo.Components.DurationInteger<Int> {
+extension DurationComponent where Self == Components.DurationInteger<Int> {
 
-  public static var numberOfDays: Self { Tempo.Components.numberOfDays }
-  public static var numberOfHours: Self { Tempo.Components.numberOfHours }
-  public static var numberOfMinutes: Self { Tempo.Components.numberOfMinutes }
-  public static var numberOfSeconds: Self { Tempo.Components.numberOfSeconds }
-  public static var numberOfMilliseconds: Self { Tempo.Components.numberOfMilliseconds }
-  public static var numberOfMicroseconds: Self { Tempo.Components.numberOfMicroseconds }
-  public static var numberOfNanoseconds: Self { Tempo.Components.numberOfNanoseconds }
+  public static var numberOfDays: Self { Components.numberOfDays }
+  public static var numberOfHours: Self { Components.numberOfHours }
+  public static var numberOfMinutes: Self { Components.numberOfMinutes }
+  public static var numberOfSeconds: Self { Components.numberOfSeconds }
+  public static var numberOfMilliseconds: Self { Components.numberOfMilliseconds }
+  public static var numberOfMicroseconds: Self { Components.numberOfMicroseconds }
+  public static var numberOfNanoseconds: Self { Components.numberOfNanoseconds }
 
-  public static var totalDays: Self { Tempo.Components.totalDays }
-  public static var totalHours: Self { Tempo.Components.totalHours }
-  public static var totalMinutes: Self { Tempo.Components.totalMinutes }
-  public static var totalSeconds: Self { Tempo.Components.totalSeconds }
+  public static var totalDays: Self { Components.totalDays }
+  public static var totalHours: Self { Components.totalHours }
+  public static var totalMinutes: Self { Components.totalMinutes }
+  public static var totalSeconds: Self { Components.totalSeconds }
 
-  public static var hoursOfDay: Self { Tempo.Components.hoursOfDay }
-  public static var minutesOfDay: Self { Tempo.Components.minutesOfDay }
-  public static var secondsOfDay: Self { Tempo.Components.secondsOfDay }
-  public static var millisecondsOfDay: Self { Tempo.Components.millisecondsOfSecond }
-  public static var microsecondsOfDay: Self { Tempo.Components.microsecondsOfSecond }
-  public static var nanosecondsOfDay: Self { Tempo.Components.nanosecondsOfDay }
+  public static var hoursOfDay: Self { Components.hoursOfDay }
+  public static var minutesOfDay: Self { Components.minutesOfDay }
+  public static var secondsOfDay: Self { Components.secondsOfDay }
+  public static var millisecondsOfDay: Self { Components.millisecondsOfSecond }
+  public static var microsecondsOfDay: Self { Components.microsecondsOfSecond }
+  public static var nanosecondsOfDay: Self { Components.nanosecondsOfDay }
 
-  public static var minutesOfHour: Self { Tempo.Components.minutesOfHour }
-  public static var secondsOfHour: Self { Tempo.Components.secondsOfHour }
-  public static var millisecondsOfHour: Self { Tempo.Components.millisecondsOfHour }
-  public static var microsecondsOfHour: Self { Tempo.Components.microsecondsOfHour }
-  public static var nanosecondsOfHour: Self { Tempo.Components.nanosecondsOfHour }
+  public static var minutesOfHour: Self { Components.minutesOfHour }
+  public static var secondsOfHour: Self { Components.secondsOfHour }
+  public static var millisecondsOfHour: Self { Components.millisecondsOfHour }
+  public static var microsecondsOfHour: Self { Components.microsecondsOfHour }
+  public static var nanosecondsOfHour: Self { Components.nanosecondsOfHour }
 
-  public static var secondsOfMinute: Self { Tempo.Components.secondsOfMinute }
-  public static var millisecondsOfMinute: Self { Tempo.Components.millisecondsOfMinute }
-  public static var microsecondsOfMinute: Self { Tempo.Components.microsecondsOfMinute }
-  public static var nanosecondsOfMinute: Self { Tempo.Components.nanosecondsOfMinute }
+  public static var secondsOfMinute: Self { Components.secondsOfMinute }
+  public static var millisecondsOfMinute: Self { Components.millisecondsOfMinute }
+  public static var microsecondsOfMinute: Self { Components.microsecondsOfMinute }
+  public static var nanosecondsOfMinute: Self { Components.nanosecondsOfMinute }
 
-  public static var millisecondsOfSecond: Self { Tempo.Components.millisecondsOfSecond }
-  public static var microsecondsOfSecond: Self { Tempo.Components.microsecondsOfSecond }
-  public static var nanosecondsOfSecond: Self { Tempo.Components.nanosecondsOfSecond }
-
-}
-
-extension Tempo.DurationComponent where Self == Tempo.Components.DurationInteger<Int128> {
-
-  public static var totalMilliseconds: Self { Tempo.Components.totalMilliseconds }
-  public static var totalMicroseconds: Self { Tempo.Components.totalMicroseconds }
-  public static var totalNanoseconds: Self { Tempo.Components.totalNanoseconds }
+  public static var millisecondsOfSecond: Self { Components.millisecondsOfSecond }
+  public static var microsecondsOfSecond: Self { Components.microsecondsOfSecond }
+  public static var nanosecondsOfSecond: Self { Components.nanosecondsOfSecond }
 
 }
 
-private extension Tempo.Unit {
+extension DurationComponent where Self == Components.DurationInteger<Int128> {
 
-  var unitSize: Tempo.Components.DurationUnitSize {
+  public static var totalMilliseconds: Self { Components.totalMilliseconds }
+  public static var totalMicroseconds: Self { Components.totalMicroseconds }
+  public static var totalNanoseconds: Self { Components.totalNanoseconds }
+
+}
+
+private extension Unit {
+
+  var unitSize: Components.DurationUnitSize {
     switch self {
     case .days: .days
     case .hours: .hours

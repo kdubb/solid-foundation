@@ -5,15 +5,12 @@
 //  Created by Kevin Wooten on 5/1/25.
 //
 
-extension Tempo {
 
-  public protocol DateComponent<Value>: DateTimeComponent {
-    var unit: Unit { get }
-  }
-
+public protocol DateComponent<Value>: DateTimeComponent {
+  var unit: Unit { get }
 }
 
-extension Tempo.Components {
+extension Components {
 
   public static let era = Integer<Int>(id: .era, unit: .eras, range: 0...Int.max)
   public static let year = Integer<Int>(id: .year, unit: .years, range: 0...Int.max)
@@ -33,60 +30,60 @@ extension Tempo.Components {
 
 // MARK: - Common Component Extensions
 
-extension Tempo.Component where Self == Tempo.Components.Integer<Int> {
+extension Component where Self == Components.Integer<Int> {
 
-  public static var era: Self { Tempo.Components.era }
-  public static var year: Self { Tempo.Components.year }
-  public static var yearOfEra: Self { Tempo.Components.yearOfEra }
-  public static var monthOfYear: Self { Tempo.Components.monthOfYear }
-  public static var weekOfYear: Self { Tempo.Components.weekOfYear }
-  public static var weekOfMonth: Self { Tempo.Components.weekOfMonth }
-  public static var dayOfYear: Self { Tempo.Components.dayOfYear }
-  public static var dayOfMonth: Self { Tempo.Components.dayOfMonth }
-  public static var dayOfWeek: Self { Tempo.Components.dayOfWeek }
+  public static var era: Self { Components.era }
+  public static var year: Self { Components.year }
+  public static var yearOfEra: Self { Components.yearOfEra }
+  public static var monthOfYear: Self { Components.monthOfYear }
+  public static var weekOfYear: Self { Components.weekOfYear }
+  public static var weekOfMonth: Self { Components.weekOfMonth }
+  public static var dayOfYear: Self { Components.dayOfYear }
+  public static var dayOfMonth: Self { Components.dayOfMonth }
+  public static var dayOfWeek: Self { Components.dayOfWeek }
 
-  public static var dayOfWeekForMonth: Self { Tempo.Components.dayOfWeekForMonth }
-  public static var yearForWeekOfYear: Self { Tempo.Components.yearForWeekOfYear }
+  public static var dayOfWeekForMonth: Self { Components.dayOfWeekForMonth }
+  public static var yearForWeekOfYear: Self { Components.yearForWeekOfYear }
 
   // Common shorthand
 
-  public static var month: Self { Tempo.Components.monthOfYear }
-  public static var day: Self { Tempo.Components.dayOfMonth }
+  public static var month: Self { Components.monthOfYear }
+  public static var day: Self { Components.dayOfMonth }
 
 }
 
-extension Tempo.Component where Self == Tempo.Components.Boolean {
+extension Component where Self == Components.Boolean {
 
-  public static var isLeapMonth: Self { Tempo.Components.isLeapMonth }
+  public static var isLeapMonth: Self { Components.isLeapMonth }
 
 }
 
 // MARK: - DateComponent Extensions
 
-extension Tempo.DateComponent where Self == Tempo.Components.Integer<Int> {
+extension DateComponent where Self == Components.Integer<Int> {
 
-  public static var era: Self { Tempo.Components.era }
-  public static var year: Self { Tempo.Components.year }
-  public static var yearOfEra: Self { Tempo.Components.yearOfEra }
-  public static var monthOfYear: Self { Tempo.Components.monthOfYear }
-  public static var weekOfYear: Self { Tempo.Components.weekOfYear }
-  public static var weekOfMonth: Self { Tempo.Components.weekOfMonth }
-  public static var dayOfYear: Self { Tempo.Components.dayOfYear }
-  public static var dayOfMonth: Self { Tempo.Components.dayOfMonth }
-  public static var dayOfWeek: Self { Tempo.Components.dayOfWeek }
+  public static var era: Self { Components.era }
+  public static var year: Self { Components.year }
+  public static var yearOfEra: Self { Components.yearOfEra }
+  public static var monthOfYear: Self { Components.monthOfYear }
+  public static var weekOfYear: Self { Components.weekOfYear }
+  public static var weekOfMonth: Self { Components.weekOfMonth }
+  public static var dayOfYear: Self { Components.dayOfYear }
+  public static var dayOfMonth: Self { Components.dayOfMonth }
+  public static var dayOfWeek: Self { Components.dayOfWeek }
 
-  public static var dayOfWeekForMonth: Self { Tempo.Components.dayOfWeekForMonth }
-  public static var yearForWeekOfYear: Self { Tempo.Components.yearForWeekOfYear }
+  public static var dayOfWeekForMonth: Self { Components.dayOfWeekForMonth }
+  public static var yearForWeekOfYear: Self { Components.yearForWeekOfYear }
 
   // Common shorthand
 
-  public static var month: Self { Tempo.Components.monthOfYear }
-  public static var day: Self { Tempo.Components.dayOfMonth }
+  public static var month: Self { Components.monthOfYear }
+  public static var day: Self { Components.dayOfMonth }
 
 }
 
-extension Tempo.DateComponent where Self == Tempo.Components.Boolean {
+extension DateComponent where Self == Components.Boolean {
 
-  public static var isLeapMonth: Self { Tempo.Components.isLeapMonth }
+  public static var isLeapMonth: Self { Components.isLeapMonth }
 
 }

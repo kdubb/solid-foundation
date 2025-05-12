@@ -7,14 +7,14 @@
 
 import Foundation
 
-extension Tempo.Instant {
+extension Instant {
 
   /// Initializes an `Instant` from a `Foundation.Date`.
   ///
   /// - Parameter date: The `Date` to convert to an `Instant`.
   ///
   public init(date: Date) {
-    let duration = Tempo.Duration(
+    let duration = Duration(
       seconds: date.timeIntervalSinceReferenceDate + Date.timeIntervalBetween1970AndReferenceDate
     )
     self.init(durationSinceEpoch: duration)
@@ -28,7 +28,7 @@ extension Date {
   ///
   /// - Parameter instant: The `Instant` to convert to a `Date`.
   ///
-  public init(instant: Tempo.Instant) {
+  public init(instant: Instant) {
     let durationSinceReferenceDate = instant.durationSinceEpoch - durationBetween1970AndReferenceDate
     let timeIntervalSinceReferenceDate = Double(durationSinceReferenceDate.nanoseconds) / 1_000_000_000
     self.init(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate)
@@ -36,4 +36,4 @@ extension Date {
 
 }
 
-private let durationBetween1970AndReferenceDate = Tempo.Duration(seconds: Date.timeIntervalBetween1970AndReferenceDate)
+private let durationBetween1970AndReferenceDate = Duration(seconds: Date.timeIntervalBetween1970AndReferenceDate)

@@ -7,30 +7,26 @@
 
 import Foundation
 
-extension Tempo {
+public protocol Component<Value>: Equatable, Hashable, Sendable {
+  associatedtype Value: Equatable & Hashable & Sendable
+  typealias Id = Components.Id
 
-  public protocol Component<Value>: Equatable, Hashable, Sendable {
-    associatedtype Value: Equatable & Hashable & Sendable
-    typealias Id = Components.Id
+  var id: Id { get }
+  var name: String { get }
+  var unit: Unit { get }
 
-    var id: Id { get }
-    var name: String { get }
-    var unit: Unit { get }
-
-    func validate(_ value: Value) throws
-    func isValid(_ value: Value) -> Bool
-  }
-
+  func validate(_ value: Value) throws
+  func isValid(_ value: Value) -> Bool
 }
 
-extension Tempo.Component {
+extension Component {
 
   public var name: String {
-    Tempo.Components.names[id.rawValue]
+    Components.names[id.rawValue]
   }
 
   public static func `for`(id: String) -> Self {
-    guard let component = Tempo.Components.idMap[id] as? Self else {
+    guard let component = Components.idMap[id] as? Self else {
       fatalError("Component with id \(id) not found")
     }
     return component

@@ -8,69 +8,66 @@
 import SolidCore
 
 
-extension Tempo {
+public struct LocalTime {
 
-  public struct LocalTime {
+  public static let zero = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
+  public static let min = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
+  public static let max = neverThrow(try LocalTime(hour: 23, minute: 59, second: 59, nanosecond: 999_999_999))
+  public static let midnight = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
+  public static let noon = neverThrow(try LocalTime(hour: 12, minute: 0, second: 0, nanosecond: 0))
 
-    public static let zero = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
-    public static let min = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
-    public static let max = neverThrow(try LocalTime(hour: 23, minute: 59, second: 59, nanosecond: 999_999_999))
-    public static let midnight = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
-    public static let noon = neverThrow(try LocalTime(hour: 12, minute: 0, second: 0, nanosecond: 0))
+  internal typealias Storage = (hour: UInt8, minute: UInt8, second: UInt8, nanosecond: UInt32)
 
-    internal typealias Storage = (hour: UInt8, minute: UInt8, second: UInt8, nanosecond: UInt32)
+  internal var storage: Storage
 
-    internal var storage: Storage
+  public var hour: Int { Int(storage.hour) }
+  public var minute: Int { Int(storage.minute) }
+  public var second: Int { Int(storage.second) }
+  public var nanosecond: Int { Int(storage.nanosecond) }
 
-    public var hour: Int { Int(storage.hour) }
-    public var minute: Int { Int(storage.minute) }
-    public var second: Int { Int(storage.second) }
-    public var nanosecond: Int { Int(storage.nanosecond) }
+  internal init(storage: Storage) {
+    self.storage = storage
+  }
 
-    internal init(storage: Storage) {
-      self.storage = storage
-    }
-
-    public init(
-      @Validated(.hourOfDay) hour: Int,
-      @Validated(.minuteOfHour) minute: Int,
-      @Validated(.secondOfMinute) second: Int,
-      @Validated(.nanosecondOfSecond) nanosecond: Int
-    ) throws {
-      self.init(
-        storage: try (
-          hour: UInt8($hour.get()),
-          minute: UInt8($minute.get()),
-          second: UInt8($second.get()),
-          nanosecond: UInt32($nanosecond.get())
-        )
+  public init(
+    @Validated(.hourOfDay) hour: Int,
+    @Validated(.minuteOfHour) minute: Int,
+    @Validated(.secondOfMinute) second: Int,
+    @Validated(.nanosecondOfSecond) nanosecond: Int
+  ) throws {
+    self.init(
+      storage: try (
+        hour: UInt8($hour.get()),
+        minute: UInt8($minute.get()),
+        second: UInt8($second.get()),
+        nanosecond: UInt32($nanosecond.get())
       )
-    }
+    )
+  }
 
-    public func with(
-      @ValidatedOptional(.hourOfDay) hour: Int? = nil,
-      @ValidatedOptional(.minuteOfHour) minute: Int? = nil,
-      @ValidatedOptional(.secondOfMinute) second: Int? = nil,
-      @ValidatedOptional(.nanosecondOfSecond) nanosecond: Int? = nil,
-    ) throws -> Self {
-      return Self(
-        storage: try (
-          hour: UInt8($hour.getOrElse(self.hour)),
-          minute: UInt8($minute.getOrElse(self.minute)),
-          second: UInt8($second.getOrElse(self.second)),
-          nanosecond: UInt32($nanosecond.getOrElse(self.nanosecond))
-        )
+  public func with(
+    @ValidatedOptional(.hourOfDay) hour: Int? = nil,
+    @ValidatedOptional(.minuteOfHour) minute: Int? = nil,
+    @ValidatedOptional(.secondOfMinute) second: Int? = nil,
+    @ValidatedOptional(.nanosecondOfSecond) nanosecond: Int? = nil,
+  ) throws -> Self {
+    return Self(
+      storage: try (
+        hour: UInt8($hour.getOrElse(self.hour)),
+        minute: UInt8($minute.getOrElse(self.minute)),
+        second: UInt8($second.getOrElse(self.second)),
+        nanosecond: UInt32($nanosecond.getOrElse(self.nanosecond))
       )
-    }
+    )
+  }
 
-    public static func now(clock: some Clock = .system, in calendar: CalendarSystem = .default) -> Self {
-      return calendar.components(from: clock.instant, in: clock.zone)
-    }
+  public static func now(clock: some Clock = .system, in calendar: CalendarSystem = .default) -> Self {
+    return calendar.components(from: clock.instant, in: clock.zone)
   }
 }
 
-extension Tempo.LocalTime: Sendable {}
-extension Tempo.LocalTime: Hashable {
+extension LocalTime: Sendable {}
+extension LocalTime: Hashable {
 
   public func hash(into hasher: inout Hasher) {
     hasher.combine(storage.hour)
@@ -81,17 +78,17 @@ extension Tempo.LocalTime: Hashable {
 
 }
 
-extension Tempo.LocalTime: Equatable {
+extension LocalTime: Equatable {
 
-  public static func == (lhs: Tempo.LocalTime, rhs: Tempo.LocalTime) -> Bool {
+  public static func == (lhs: LocalTime, rhs: LocalTime) -> Bool {
     return lhs.storage == rhs.storage
   }
 
 }
 
-extension Tempo.LocalTime: Comparable {
+extension LocalTime: Comparable {
 
-  public static func < (lhs: Tempo.LocalTime, rhs: Tempo.LocalTime) -> Bool {
+  public static func < (lhs: LocalTime, rhs: LocalTime) -> Bool {
     if lhs.hour != rhs.hour {
       return lhs.hour < rhs.hour
     } else if lhs.minute != rhs.minute {
@@ -105,7 +102,7 @@ extension Tempo.LocalTime: Comparable {
 
 }
 
-extension Tempo.LocalTime: CustomStringConvertible {
+extension LocalTime: CustomStringConvertible {
 
   private static let hourFormatter = fixedWidthFormat(Int.self, width: 2)
   private static let minuteFormatter = fixedWidthFormat(Int.self, width: 2)
@@ -128,21 +125,21 @@ extension Tempo.LocalTime: CustomStringConvertible {
 
 }
 
-extension Tempo.LocalTime: Tempo.LinkedComponentContainer, Tempo.ComponentBuildable {
+extension LocalTime: LinkedComponentContainer, ComponentBuildable {
 
-  public static let links: [any Tempo.ComponentLink<Self>] = [
-    Tempo.ComponentKeyPathLink(.hourOfDay, to: \.hour),
-    Tempo.ComponentKeyPathLink(.minuteOfHour, to: \.minute),
-    Tempo.ComponentKeyPathLink(.secondOfMinute, to: \.second),
-    Tempo.ComponentKeyPathLink(.nanosecondOfSecond, to: \.nanosecond),
+  public static let links: [any ComponentLink<Self>] = [
+    ComponentKeyPathLink(.hourOfDay, to: \.hour),
+    ComponentKeyPathLink(.minuteOfHour, to: \.minute),
+    ComponentKeyPathLink(.secondOfMinute, to: \.second),
+    ComponentKeyPathLink(.nanosecondOfSecond, to: \.nanosecond),
   ]
 
-  public init(components: some Tempo.ComponentContainer) {
+  public init(components: some ComponentContainer) {
 
     if let time = components as? Self {
       self = time
       return
-    } else if let time = components as? Tempo.DateTime {
+    } else if let time = components as? DateTime {
       self = time.time
       return
     }
@@ -161,13 +158,13 @@ extension Tempo.LocalTime: Tempo.LinkedComponentContainer, Tempo.ComponentBuilda
 
 // MARK: - Conversion Initializers
 
-extension Tempo.LocalTime {
+extension LocalTime {
 
-  public init(_ dateTime: some Tempo.DateTime) {
+  public init(_ dateTime: some DateTime) {
     self = dateTime.time
   }
 
-  public init(_ duration: Tempo.Duration) throws {
+  public init(_ duration: Duration) throws {
     self = try Self(
       hour: duration[.numberOfHours],
       minute: duration[.numberOfMinutes],
@@ -180,14 +177,14 @@ extension Tempo.LocalTime {
 
 // MARK: - Arithmentic Conformance
 
-extension Tempo.LocalTime: Tempo.DurationArithmetic {
+extension LocalTime: DurationArithmetic {
 
   public mutating func addReportingOverflow(
-    duration components: some Tempo.ComponentContainer
-  ) throws -> Tempo.Duration {
-    let cal: Tempo.CalendarSystem = .default
+    duration components: some ComponentContainer
+  ) throws -> Duration {
+    let cal: CalendarSystem = .default
     let instant = try cal.instant(from: components, resolution: .default)
-    let updatedInstant = instant + Tempo.Duration(components: components)
+    let updatedInstant = instant + Duration(components: components)
     self = cal.components(from: updatedInstant, in: .utc)
     return .zero
   }

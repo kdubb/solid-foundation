@@ -10,16 +10,16 @@
   import Darwin
   import Synchronization
 
-  extension Tempo.SystemInstantSource {
+  extension SystemInstantSource {
 
-    public var instant: Tempo.Instant {
+    public var instant: Instant {
 
       // Use the commpage realtime clock to get the current time in nanoseconds,
       // with (currently) microsecond precision.
       let realtimeClockNow = clock_gettime_nsec_np(CLOCK_REALTIME)
 
-      let durationSinceEpoch = Tempo.Duration(nanoseconds: Int128(realtimeClockNow))
-      return Tempo.Instant(durationSinceEpoch: durationSinceEpoch)
+      let durationSinceEpoch = Duration(nanoseconds: Int128(realtimeClockNow))
+      return Instant(durationSinceEpoch: durationSinceEpoch)
     }
 
   }

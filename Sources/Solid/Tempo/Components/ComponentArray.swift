@@ -5,21 +5,17 @@
 //  Created by Kevin Wooten on 4/30/25.
 //
 
-extension Tempo {
+public struct ComponentArray: Equatable, Hashable, Sendable {
 
-  public struct ComponentArray: Equatable, Hashable, Sendable {
+  fileprivate var values: [ComponentValue]
 
-    fileprivate var values: [ComponentValue]
-
-    public init(_ values: [ComponentValue]) {
-      self.values = values
-    }
-
+  public init(_ values: [ComponentValue]) {
+    self.values = values
   }
 
 }
 
-extension Tempo.ComponentArray: CustomStringConvertible {
+extension ComponentArray: CustomStringConvertible {
 
   public var description: String {
     var entries: [String] = []
@@ -31,7 +27,7 @@ extension Tempo.ComponentArray: CustomStringConvertible {
 
 }
 
-extension Tempo.ComponentArray: CustomReflectable {
+extension ComponentArray: CustomReflectable {
 
   public var customMirror: Mirror {
     Mirror(
@@ -44,31 +40,31 @@ extension Tempo.ComponentArray: CustomReflectable {
 
 }
 
-extension Tempo.ComponentArray: Tempo.MutableComponentContainer {
+extension ComponentArray: MutableComponentContainer {
 
-  public var availableComponentIds: Set<Tempo.Component.Id> {
+  public var availableComponentIds: Set<Component.Id> {
     Set(values.map(\.component.id))
   }
 
-  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Tempo.Component {
+  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
     guard let value = values.first(where: { $0.component.id == component.id }) else {
       return nil
     }
     return value.value as? C.Value
   }
 
-  public mutating func setValue<C>(_ value: C.Value, for component: C) where C: Tempo.Component {
+  public mutating func setValue<C>(_ value: C.Value, for component: C) where C: Component {
     values.removeAll { $0.component.id == component.id }
-    values.append(Tempo.ComponentValue(component: component, value: value))
+    values.append(ComponentValue(component: component, value: value))
   }
 
-  public mutating func removeValue<C>(for component: C) -> C.Value? where C: Tempo.Component {
+  public mutating func removeValue<C>(for component: C) -> C.Value? where C: Component {
     let value = valueIfPresent(for: component)
     values.removeAll { $0.component.id == component.id }
     return value
   }
 
-  public subscript<C>(_ component: C) -> C.Value? where C: Tempo.Component {
+  public subscript<C>(_ component: C) -> C.Value? where C: Component {
     get { valueIfPresent(for: component) }
     set {
       if let newValue = newValue {
@@ -81,18 +77,18 @@ extension Tempo.ComponentArray: Tempo.MutableComponentContainer {
 
 }
 
-extension Tempo.ComponentArray: Tempo.ComponentBuildable {
+extension ComponentArray: ComponentBuildable {
 
-  public static var requiredComponentIds: Set<Tempo.Component.Id> { [] }
+  public static var requiredComponentIds: Set<Component.Id> { [] }
 
-  public init(components: some Tempo.ComponentContainer) {
+  public init(components: some ComponentContainer) {
     let values = components.values(for: Self.requiredComponentIds)
     self.init(values)
   }
 
 }
 
-extension Tempo.ComponentArray: RandomAccessCollection, RangeReplaceableCollection {
+extension ComponentArray: RandomAccessCollection, RangeReplaceableCollection {
 
   public var startIndex: Int { values.startIndex }
   public var endIndex: Int { values.endIndex }
@@ -101,7 +97,7 @@ extension Tempo.ComponentArray: RandomAccessCollection, RangeReplaceableCollecti
     self.values = []
   }
 
-  public subscript(index: Int) -> Tempo.ComponentValue {
+  public subscript(index: Int) -> ComponentValue {
     get { values[index] }
     set { values[index] = newValue }
   }
@@ -109,15 +105,15 @@ extension Tempo.ComponentArray: RandomAccessCollection, RangeReplaceableCollecti
   public mutating func replaceSubrange<C>(
     _ subrange: Range<Int>,
     with newElements: C
-  ) where C: Collection, C.Element == Tempo.ComponentValue {
+  ) where C: Collection, C.Element == ComponentValue {
     values.replaceSubrange(subrange, with: newElements)
   }
 
 }
 
-extension Tempo.ComponentArray: ExpressibleByArrayLiteral {
+extension ComponentArray: ExpressibleByArrayLiteral {
 
-  public init(arrayLiteral elements: Tempo.ComponentValue...) {
+  public init(arrayLiteral elements: ComponentValue...) {
     self.init(elements)
   }
 

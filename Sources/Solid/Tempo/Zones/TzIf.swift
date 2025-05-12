@@ -10,631 +10,622 @@ import Foundation
 import Synchronization
 import OSLog
 
-extension Tempo {
+/// TZif file parsing and validation.
+///
+public enum TzIf {
 
-  /// TZif file parsing and validation.
+  internal static let logger = Logger(subsystem: "tempo.swift-codex.github.io", category: "TzIf")
+
+  public enum Error: Swift.Error {
+    case invalidFooter
+    case invalidPosixTZ
+    case invalidDesignation
+    case invalidLeapSecond
+    case unsupportedFileVersion(version: UInt8)
+    case noTransitions
+    case typeIndexOutOfBounds
+    case missingVersionData
+    case wallStdUniversalDisagreement
+    case transitionsNotOrdered
+    case missingStandardTime
+    case invalidLength
+    case magicMismatch
+    case stdOrUniversalCountMismatch
+    case fieldLimitExceeded
+  }
+
+  public enum Version: UInt8 {
+    case v1 = 0
+    case v2 = 50
+    case v3 = 51
+    case v4 = 52
+  }
+
+  /// Parsed header data.
+  public struct Header {
+    let version: Version
+    let isUTCount: Int
+    let isStdCount: Int
+    let leapCount: Int
+    let timeCount: Int
+    let typeCount: Int
+    let charCount: Int
+  }
+
+  /// Parsed POSIX TZ rule string.
   ///
-  public enum TzIf {
+  /// This is a simplified representation of the rule that is used to
+  /// parse the rule string.
+  ///
+  public struct PosixTZ: Sendable {
+    public typealias DSTRule = (month: Int, week: Int, day: Int, time: Int)
+    public typealias DSTRules = (start: DSTRule, end: DSTRule)
 
-    internal static let logger = Logger(subsystem: "tempo.swift-codex.github.io", category: "TzIf")
+    public let raw: String
+    public let std: (designation: String, offset: Int)
+    public let dst: (designation: String, offset: Int, rules: DSTRules)?
+  }
 
-    public enum Error: Swift.Error {
-      case invalidFooter
-      case invalidPosixTZ
-      case invalidDesignation
-      case invalidLeapSecond
-      case unsupportedFileVersion(version: UInt8)
-      case noTransitions
-      case typeIndexOutOfBounds
-      case missingVersionData
-      case wallStdUniversalDisagreement
-      case transitionsNotOrdered
-      case missingStandardTime
-      case invalidLength
-      case magicMismatch
-      case stdOrUniversalCountMismatch
-      case fieldLimitExceeded
-    }
+  public typealias ElementSizes = (
+    version: Int,
+    count: Int,
+    time: Int,
+    index: Int,
+    timeType: Int,
+    leapSecond: Int,
+    indicator: Int
+  )
 
-    public enum Version: UInt8 {
-      case v1 = 0
-      case v2 = 50
-      case v3 = 51
-      case v4 = 52
-    }
+  // Namespaces for version-specific implementations
 
-    /// Parsed header data.
-    public struct Header {
-      let version: Version
-      let isUTCount: Int
-      let isStdCount: Int
-      let leapCount: Int
-      let timeCount: Int
-      let typeCount: Int
-      let charCount: Int
-    }
+  enum V1 {
+    public static let elementSizes: ElementSizes = (
+      version: 1,
+      count: 4,
+      time: 4,
+      index: 1,
+      timeType: 6,
+      leapSecond: 8,
+      indicator: 1
+    )
+  }
 
-    /// Parsed POSIX TZ rule string.
+  enum V2 {
+    public static let elementSizes: ElementSizes = (
+      version: V1.elementSizes.version,
+      count: V1.elementSizes.count,
+      time: 8,
+      index: V1.elementSizes.index,
+      timeType: V1.elementSizes.timeType,
+      leapSecond: V1.elementSizes.leapSecond,
+      indicator: V1.elementSizes.indicator
+    )
+  }
+
+  enum V3 {
+    public static let elementSizes = V2.elementSizes
+  }
+
+  enum V4 {
+    public static let elementSizes = V2.elementSizes
+  }
+
+  /// TZif specific rule data for a single zone information file.
+  ///
+  /// This structure of TZif files is fairly well represented by the
+  /// ``Rules`` type, expressing all the available information
+  /// in version `1-4` of the TZif file format. It is meant to be
+  /// an input to build higer level, more efficient, structures that
+  /// are purpose built for specific use cases. For example,
+  /// ``TzDb`` converts this information into an efficient
+  /// ``ZoneRules`` implementation for providing the
+  /// libraries time zone functionality.
+  ///
+  public struct Rules: Sendable {
+
+    /// A transition from one offset to another at a specific point in time.
     ///
-    /// This is a simplified representation of the rule that is used to
-    /// parse the rule string.
+    /// Parsed from the TZif `transition times` table. The time is in UTC
+    /// and paired with a `time type record`  via the ``typeIndex``
+    /// property that indexes into the ``TzIf/Rules/types`` table.
     ///
-    public struct PosixTZ: Sendable {
-      public typealias DSTRule = (month: Int, week: Int, day: Int, time: Int)
-      public typealias DSTRules = (start: DSTRule, end: DSTRule)
-
-      public let raw: String
-      public let std: (designation: String, offset: Int)
-      public let dst: (designation: String, offset: Int, rules: DSTRules)?
+    public struct Transition: Sendable {
+      /// The transition time in seconds since the Unix epoch (as parsed from TZif).
+      var timestamp: Int64
+      /// Index into ``TzIf/Rules/types`` array.
+      var typeIndex: Int
     }
 
-    public typealias ElementSizes = (
-      version: Int,
-      count: Int,
-      time: Int,
-      index: Int,
-      timeType: Int,
-      leapSecond: Int,
-      indicator: Int
+    /// Represents a local time type with offset, daylight saving info, etc.
+    ///
+    /// Matches the TZif `local time type record`  structure:
+    /// - `utoff`: offset from UTC in seconds.
+    /// - `isdst`: whether this is a DST offset.
+    /// - `desigidx`: byte index into the `time zone designations` string table.
+    ///
+    public struct TimeType: Sendable {
+
+      /// Unspecified ``isStd`` indicators default to `false`, denoting wall-clock time.
+      public static let isStdDefault = false
+      /// Unspecified ``isUT`` indicators default to `false`, denoting local-time.
+      public static let isUTDefault = false
+
+      /// The offset from UTC.
+      ///
+      /// Matches `utoff` of a `time type record` in the TZif file.
+      ///
+      public var offset: Int32
+
+      /// Whether the offset represents daylight saving time.
+      ///
+      /// Matches `isdst` of a `time type record` in the TZif file.
+      ///
+      public var isDST: Bool
+
+      /// Byte Index into the designation character string table.
+      ///
+      /// Matches `desigidx` of a `time type record` in the TZif file.
+      ///
+      public var designationIndex: Int
+
+      /// Whether this time type is based on standard time (vs wall time).
+      ///
+      /// This value is populated from a TZif file's
+      /// `standar/wall-clock indicators` section.
+      ///
+      public var isStd: Bool? = nil
+
+      /// Whether this time type is based on UTC (vs local).
+      ///
+      /// This value is populated from a TZif file's
+      /// `UT/local indidcators` section.
+      ///
+      public var isUT: Bool? = nil
+    }
+
+    /// A leap second correction at a specific UTC instant.
+    public struct LeapSecond: Sendable {
+      /// The instant at which the leap second occurs.
+      public var occurrence: Int64
+      /// Total number of seconds to apply at this point (cumulative).
+      public var correction: Int32
+    }
+
+    /// Decoded `transition time records`.
+    public private(set) var transitions: [Transition]
+    /// Decoded `local time type records`.
+    public private(set) var types: [TimeType]
+    /// Decoded `time zone designations`.
+    ///
+    /// In serialized data, the `desigidx` property of `time type record`
+    /// is an _octet_ index into the buffer of strings. The decoded map is
+    /// stored as a dictionary with by `desigidx` as the key and the
+    /// parsed string as the value.
+    ///
+    public private(set) var designations: [Int: String]
+    /// Decoded `leap-second records`.
+    public private(set) var leapSeconds: [LeapSecond]
+    /// Parsed POSIX rule data, e.g., DST rules beyond last transition.
+    public var posixTZ: PosixTZ?
+    /// If this ruleset represents a  fixed offset zone, i.e., no transitions.
+    public var isFixedFormat: Bool { transitions.isEmpty && types.count == 1 }
+
+    public init(
+      transitions: [Transition],
+      types: [TimeType],
+      designations: [Int: String] = [:],
+      leapSeconds: [LeapSecond] = [],
+      posixTZ: PosixTZ? = nil
+    ) {
+      self.transitions = transitions
+      self.types = types
+      self.designations = designations
+      self.leapSeconds = leapSeconds
+      self.posixTZ = posixTZ
+    }
+  }
+
+  /// RFC, Spec., and implementation defined limits for various TZif header and
+  /// data fields that are checked during parsing.
+  ///
+  /// These implementation defined limits (e.g. ``transitionTimestampRange`` are
+  /// used a means to detect corrupt, invalid, or excessively large files that could
+  /// cause excessive memory allocation or parsing times. They should _not_
+  /// constrain any public valid TZif files.
+  ///
+  public enum Limits {
+
+    /// Range of allowed transition timestamps (from `Jan 1, 1000 UTC` to
+    /// `Jan 1, 3000 UTC`).
+    ///
+    /// - Note: This is an **implementation** defined limit to detect
+    ///   corrupt or invalid files and avoiding excessive memory allocation
+    ///   and/or processing times associated with their parsing.
+    ///
+    public static let transitionTimestampRange = Limit<Int64>(
+      "transition timestamp",
+      "transitionTimestampRange",
+      -30_610_224_000...32_503_680_000
+    )
+    /// Range of allowed transitions offsets (`±26 hours`).
+    ///
+    /// Range chosen to match RFC 9636's recommended
+    /// [-24:59:59, +25:59:59] bound.  The format itself allows
+    /// any 32-bit signed value other than -2^31.
+    ///
+    /// - Note: This is an **implementation** defined limit to detect
+    ///   corrupt or invalid files and avoiding excessive memory allocation
+    ///   and/or processing times associated with their parsing.
+    ///
+    public static let transitionOffsetRange = Limit<Int64>(
+      "transition offset",
+      "transitionOffsetRange",
+      -89_999...93_599
+    )
+    /// Range of allowed lead second occurances (from `Jan 1, 1000 UTC` to
+    /// `Jan 1, 3000 UTC`).
+    ///
+    /// - Note: This is an **implementation** defined limit to detect
+    ///   corrupt or invalid files and avoiding excessive memory allocation
+    ///   and/or processing times associated with their parsing.
+    ///
+    public static let leapSecondOccurranceRange = Limit<Int64>(
+      "leap second occurrance",
+      "leapSecondOccurranceRange",
+      -30_610_224_000...32_503_680_000
+    )
+    /// Maximum number of allowed transition times allowed in a single file.
+    ///
+    /// - Note: This is an **implementation** defined limit to detect
+    ///   corrupt or invalid files and avoiding excessive memory allocation
+    ///   and/or processing times associated with their parsing.
+    ///
+    public static let maxNumberOfTransitionTimes = Limit<Int>(
+      "transition time count",
+      "maxNumberOfTransitionTimes",
+      0...200_000    // ~4MB of 64-bit timestamps
+    )
+    /// Maximum number of local time types allowed.
+    ///
+    /// - Note: This limit is currently imposed by the TZif format
+    ///   due to the use of a single byte for the type index.
+    ///
+    public static let maxNumberOfLocalTimeTypes = Limit<Int>(
+      "local time type count",
+      "maxNumberOfLocalTimeTypes",
+      0...255    // Limit imposed by TZif format (1 byte for type index)
+    )
+    /// Maximum number of designation characters allowed.
+    ///
+    /// - Note: This is an **implementation** defined limit to detect
+    ///   corrupt or invalid files and avoiding excessive memory allocation
+    ///   and/or processing times associated with their parsing.
+    ///
+    public static let maxNumberOfDesignationCharacters = Limit<Int>(
+      "designation characters count",
+      "maxNumberOfDesignationCharacters",
+      0...16_384    // 64 characters for each of 255 time types (without overlap compression)
+    )
+    /// Maximum number of leap seconds allowed.
+    ///
+    /// - Note: This is an **implementation** defined limit to detect
+    ///   corrupt or invalid files and avoiding excessive memory allocation
+    ///   and/or processing times associated with their parsing.
+    ///
+    public static let maxNumberOfLeapSeconds = Limit<Int>(
+      "leap seconds count",
+      "maxNumberOfLeapSeconds",
+      0...2_000    // Plenty for leap‑second history
     )
 
-    // Namespaces for version-specific implementations
+  }
 
-    enum V1 {
-      public static let elementSizes: ElementSizes = (
-        version: 1,
-        count: 4,
-        time: 4,
-        index: 1,
-        timeType: 6,
-        leapSecond: 8,
-        indicator: 1
-      )
-    }
+  /// Loads a TZif file from the specified URL.
+  ///
+  /// - Parameters:
+  ///  - url: The URL of the TZif file to load.
+  /// - Returns: The parsed rules from the TZif file.
+  /// - Throws: An error if the file cannot be located or parsed.
+  ///
+  public static func load(url: URL) throws -> Rules {
 
-    enum V2 {
-      public static let elementSizes: ElementSizes = (
-        version: V1.elementSizes.version,
-        count: V1.elementSizes.count,
-        time: 8,
-        index: V1.elementSizes.index,
-        timeType: V1.elementSizes.timeType,
-        leapSecond: V1.elementSizes.leapSecond,
-        indicator: V1.elementSizes.indicator
-      )
-    }
+    let rules = try Data(contentsOf: url)
+      .withUnsafeBytes { (buffer: UnsafeRawBufferPointer) in
 
-    enum V3 {
-      public static let elementSizes = V2.elementSizes
-    }
+        var buf = ReadableRawBuffer(buffer)
 
-    enum V4 {
-      public static let elementSizes = V2.elementSizes
-    }
+        let header = try Header.parse(from: &buf)
 
-    /// TZif specific rule data for a single zone information file.
-    ///
-    /// This structure of TZif files is fairly well represented by the
-    /// ``Rules`` type, expressing all the available information
-    /// in version `1-4` of the TZif file format. It is meant to be
-    /// an input to build higer level, more efficient, structures that
-    /// are purpose built for specific use cases. For example,
-    /// ``Tempo/TzDb`` converts this information into an efficient
-    /// ``Tempo/ZoneRules`` implementation for providing the
-    /// libraries time zone functionality.
-    ///
-    public struct Rules: Sendable {
+        let verHeader: Header
 
-      /// A transition from one offset to another at a specific point in time.
-      ///
-      /// Parsed from the TZif `transition times` table. The time is in UTC
-      /// and paired with a `time type record`  via the ``typeIndex``
-      /// property that indexes into the ``Tempo/TzIf/Rules/types`` table.
-      ///
-      public struct Transition: Sendable {
-        /// The transition time in seconds since the Unix epoch (as parsed from TZif).
-        var timestamp: Int64
-        /// Index into ``Tempo/TzIf/Rules/types`` array.
-        var typeIndex: Int
-      }
+        if header.version == .v1 {
 
-      /// Represents a local time type with offset, daylight saving info, etc.
-      ///
-      /// Matches the TZif `local time type record`  structure:
-      /// - `utoff`: offset from UTC in seconds.
-      /// - `isdst`: whether this is a DST offset.
-      /// - `desigidx`: byte index into the `time zone designations` string table.
-      ///
-      public struct TimeType: Sendable {
+          verHeader = header
 
-        /// Unspecified ``isStd`` indicators default to `false`, denoting wall-clock time.
-        public static let isStdDefault = false
-        /// Unspecified ``isUT`` indicators default to `false`, denoting local-time.
-        public static let isUTDefault = false
+        } else {
 
-        /// The offset from UTC.
-        ///
-        /// Matches `utoff` of a `time type record` in the TZif file.
-        ///
-        public var offset: Int32
+          let dataSize = versionDataSize(for: header, using: V1.elementSizes)
 
-        /// Whether the offset represents daylight saving time.
-        ///
-        /// Matches `isdst` of a `time type record` in the TZif file.
-        ///
-        public var isDST: Bool
+          // Check for minimal vs. standard form
+          if try Header.checkMagic(buf, offset: dataSize) == false {
+            // Minimal form
 
-        /// Byte Index into the designation character string table.
-        ///
-        /// Matches `desigidx` of a `time type record` in the TZif file.
-        ///
-        public var designationIndex: Int
+            guard header.timeCount == 0 && header.leapCount == 0 else {
+              logger.error("Invalid TZif file: missing version data (minimal form requires no times/leap-seconds")
+              throw Error.missingVersionData
+            }
 
-        /// Whether this time type is based on standard time (vs wall time).
-        ///
-        /// This value is populated from a TZif file's
-        /// `standar/wall-clock indicators` section.
-        ///
-        public var isStd: Bool? = nil
-
-        /// Whether this time type is based on UTC (vs local).
-        ///
-        /// This value is populated from a TZif file's
-        /// `UT/local indidcators` section.
-        ///
-        public var isUT: Bool? = nil
-      }
-
-      /// A leap second correction at a specific UTC instant.
-      public struct LeapSecond: Sendable {
-        /// The instant at which the leap second occurs.
-        public var occurrence: Int64
-        /// Total number of seconds to apply at this point (cumulative).
-        public var correction: Int32
-      }
-
-      /// Decoded `transition time records`.
-      public private(set) var transitions: [Transition]
-      /// Decoded `local time type records`.
-      public private(set) var types: [TimeType]
-      /// Decoded `time zone designations`.
-      ///
-      /// In serialized data, the `desigidx` property of `time type record`
-      /// is an _octet_ index into the buffer of strings. The decoded map is
-      /// stored as a dictionary with by `desigidx` as the key and the
-      /// parsed string as the value.
-      ///
-      public private(set) var designations: [Int: String]
-      /// Decoded `leap-second records`.
-      public private(set) var leapSeconds: [LeapSecond]
-      /// Parsed POSIX rule data, e.g., DST rules beyond last transition.
-      public var posixTZ: PosixTZ?
-      /// If this ruleset represents a  fixed offset zone, i.e., no transitions.
-      public var isFixedFormat: Bool { transitions.isEmpty && types.count == 1 }
-
-      public init(
-        transitions: [Transition],
-        types: [TimeType],
-        designations: [Int: String] = [:],
-        leapSeconds: [LeapSecond] = [],
-        posixTZ: PosixTZ? = nil
-      ) {
-        self.transitions = transitions
-        self.types = types
-        self.designations = designations
-        self.leapSeconds = leapSeconds
-        self.posixTZ = posixTZ
-      }
-    }
-
-    /// RFC, Spec., and implementation defined limits for various TZif header and
-    /// data fields that are checked during parsing.
-    ///
-    /// These implementation defined limits (e.g. ``transitionTimestampRange`` are
-    /// used a means to detect corrupt, invalid, or excessively large files that could
-    /// cause excessive memory allocation or parsing times. They should _not_
-    /// constrain any public valid TZif files.
-    ///
-    public enum Limits {
-
-      /// Range of allowed transition timestamps (from `Jan 1, 1000 UTC` to
-      /// `Jan 1, 3000 UTC`).
-      ///
-      /// - Note: This is an **implementation** defined limit to detect
-      ///   corrupt or invalid files and avoiding excessive memory allocation
-      ///   and/or processing times associated with their parsing.
-      ///
-      public static let transitionTimestampRange = Limit<Int64>(
-        "transition timestamp",
-        "transitionTimestampRange",
-        -30_610_224_000...32_503_680_000
-      )
-      /// Range of allowed transitions offsets (`±26 hours`).
-      ///
-      /// Range chosen to match RFC 9636's recommended
-      /// [-24:59:59, +25:59:59] bound.  The format itself allows
-      /// any 32-bit signed value other than -2^31.
-      ///
-      /// - Note: This is an **implementation** defined limit to detect
-      ///   corrupt or invalid files and avoiding excessive memory allocation
-      ///   and/or processing times associated with their parsing.
-      ///
-      public static let transitionOffsetRange = Limit<Int64>(
-        "transition offset",
-        "transitionOffsetRange",
-        -89_999...93_599
-      )
-      /// Range of allowed lead second occurances (from `Jan 1, 1000 UTC` to
-      /// `Jan 1, 3000 UTC`).
-      ///
-      /// - Note: This is an **implementation** defined limit to detect
-      ///   corrupt or invalid files and avoiding excessive memory allocation
-      ///   and/or processing times associated with their parsing.
-      ///
-      public static let leapSecondOccurranceRange = Limit<Int64>(
-        "leap second occurrance",
-        "leapSecondOccurranceRange",
-        -30_610_224_000...32_503_680_000
-      )
-      /// Maximum number of allowed transition times allowed in a single file.
-      ///
-      /// - Note: This is an **implementation** defined limit to detect
-      ///   corrupt or invalid files and avoiding excessive memory allocation
-      ///   and/or processing times associated with their parsing.
-      ///
-      public static let maxNumberOfTransitionTimes = Limit<Int>(
-        "transition time count",
-        "maxNumberOfTransitionTimes",
-        0...200_000    // ~4MB of 64-bit timestamps
-      )
-      /// Maximum number of local time types allowed.
-      ///
-      /// - Note: This limit is currently imposed by the TZif format
-      ///   due to the use of a single byte for the type index.
-      ///
-      public static let maxNumberOfLocalTimeTypes = Limit<Int>(
-        "local time type count",
-        "maxNumberOfLocalTimeTypes",
-        0...255    // Limit imposed by TZif format (1 byte for type index)
-      )
-      /// Maximum number of designation characters allowed.
-      ///
-      /// - Note: This is an **implementation** defined limit to detect
-      ///   corrupt or invalid files and avoiding excessive memory allocation
-      ///   and/or processing times associated with their parsing.
-      ///
-      public static let maxNumberOfDesignationCharacters = Limit<Int>(
-        "designation characters count",
-        "maxNumberOfDesignationCharacters",
-        0...16_384    // 64 characters for each of 255 time types (without overlap compression)
-      )
-      /// Maximum number of leap seconds allowed.
-      ///
-      /// - Note: This is an **implementation** defined limit to detect
-      ///   corrupt or invalid files and avoiding excessive memory allocation
-      ///   and/or processing times associated with their parsing.
-      ///
-      public static let maxNumberOfLeapSeconds = Limit<Int>(
-        "leap seconds count",
-        "maxNumberOfLeapSeconds",
-        0...2_000    // Plenty for leap‑second history
-      )
-
-    }
-
-    /// Loads a TZif file from the specified URL.
-    ///
-    /// - Parameters:
-    ///  - url: The URL of the TZif file to load.
-    /// - Returns: The parsed rules from the TZif file.
-    /// - Throws: An error if the file cannot be located or parsed.
-    ///
-    public static func load(url: URL) throws -> Rules {
-
-      let rules = try Data(contentsOf: url)
-        .withUnsafeBytes { (buffer: UnsafeRawBufferPointer) in
-
-          var buf = ReadableRawBuffer(buffer)
-
-          let header = try Header.parse(from: &buf)
-
-          let verHeader: Header
-
-          if header.version == .v1 {
-
+            // Use main header
             verHeader = header
 
           } else {
+            // Standard form
 
-            let dataSize = versionDataSize(for: header, using: V1.elementSizes)
-
-            // Check for minimal vs. standard form
-            if try Header.checkMagic(buf, offset: dataSize) == false {
-              // Minimal form
-
-              guard header.timeCount == 0 && header.leapCount == 0 else {
-                logger.error("Invalid TZif file: missing version data (minimal form requires no times/leap-seconds")
-                throw Error.missingVersionData
-              }
-
-              // Use main header
-              verHeader = header
-
-            } else {
-              // Standard form
-
-              // Skip v1 header/data & parse seond header
-              try buf.skip(dataSize)
-              verHeader = try Header.parse(from: &buf)
-            }
+            // Skip v1 header/data & parse seond header
+            try buf.skip(dataSize)
+            verHeader = try Header.parse(from: &buf)
           }
-
-          let rules =
-            switch header.version {
-            case .v1: try V1.parse(data: &buf, header: verHeader)
-            case .v2: try V2.parse(from: &buf, header: verHeader)
-            case .v3: try V3.parse(from: &buf, header: verHeader)
-            case .v4: try V4.parse(from: &buf, header: verHeader)
-            }
-
-          return rules
         }
 
-      try validate(rules: rules)
+        let rules =
+          switch header.version {
+          case .v1: try V1.parse(data: &buf, header: verHeader)
+          case .v2: try V2.parse(from: &buf, header: verHeader)
+          case .v3: try V3.parse(from: &buf, header: verHeader)
+          case .v4: try V4.parse(from: &buf, header: verHeader)
+          }
 
-      return rules
+        return rules
+      }
+
+    try validate(rules: rules)
+
+    return rules
+  }
+
+  static func validate(rules: Rules) throws {
+    let transitions = rules.transitions
+    let types = rules.types
+    let designations = rules.designations
+
+    guard transitions.count > 0 || types.count == 1 else {
+      logger.error("Invalid TZif file: no transitions found data doesn't match a fixed zone")
+      throw Error.noTransitions
     }
 
-    static func validate(rules: Rules) throws {
-      let transitions = rules.transitions
-      let types = rules.types
-      let designations = rules.designations
+    // Validate all transition indices & timestamps
+    for transition in transitions {
 
-      guard transitions.count > 0 || types.count == 1 else {
-        logger.error("Invalid TZif file: no transitions found data doesn't match a fixed zone")
-        throw Error.noTransitions
-      }
+      try Limits.transitionTimestampRange.check(transition.timestamp)
 
-      // Validate all transition indices & timestamps
-      for transition in transitions {
-
-        try Limits.transitionTimestampRange.check(transition.timestamp)
-
-        guard transition.typeIndex < types.count else {
-          logger.error(
-            "Invalid TZif file: transition type index \(transition.typeIndex) out of bounds (max \(types.count - 1))"
-          )
-          throw Error.typeIndexOutOfBounds
-        }
-      }
-
-      // Validate all time type designation indices, offsets, and DST/Std/UT combinations
-      for type in types {
-
-        try Limits.transitionOffsetRange.check(type.offset)
-
-        // Validate designation
-        guard let designation = designations[type.designationIndex] else {
-          let validIndices = designations.keys.sorted()
-          logger.error(
-            """
-            Invalid TZif file: designation associated with index '\(type.designationIndex)' not found \
-            (valid indices are \(validIndices))
-            """
-          )
-          throw Error.invalidDesignation
-        }
-        guard Self.validateDesignation(designation) else {
-          logger.error("Invalid TZif file: invalid designation format '\(designation, privacy: .public)'")
-          throw Error.invalidDesignation
-        }
-
-        // Validate DST and Std/UT combinations
-        if type.isStd != nil || type.isUT != nil {
-          let isStd = type.isStd ?? Rules.TimeType.isStdDefault
-          let isUT = type.isUT ?? Rules.TimeType.isUTDefault
-
-          // All UT times must be standard as well
-          if isUT && !isStd {
-            let utSpec = type.isUT == nil ? "defaulted" : "explicitly set"
-            let stdSpec = type.isStd == nil ? "defaulted" : "explicitly set"
-            logger.error("Invalid TZif file: time type marked as UT (\(utSpec)) but not as STD (\(stdSpec))")
-            throw Error.wallStdUniversalDisagreement
-          }
-        }
-      }
-
-      // Validate transition timestamps are strictly increasing and in plausible range
-      for (transitionIdx, transition) in transitions.enumerated() {
-        let ts = transition.timestamp
-
-        try Limits.transitionTimestampRange.check(ts)
-
-        if transitionIdx > 0 {
-          let previousTs = transitions[transitionIdx - 1].timestamp
-          guard ts > previousTs else {
-            logger.error(
-              "Invalid TZif file: transition timestamp \(ts) not strictly increasing (previous: \(previousTs))"
-            )
-            throw Error.transitionsNotOrdered
-          }
-        }
-      }
-
-      // Ensure there is at least one standard time entry
-      let stdCount = types.filter { !$0.isDST }.count
-      guard stdCount > 0 else {
-        logger.error("Invalid TZif file: no standard time entries found")
-        throw Error.missingStandardTime
+      guard transition.typeIndex < types.count else {
+        logger.error(
+          "Invalid TZif file: transition type index \(transition.typeIndex) out of bounds (max \(types.count - 1))"
+        )
+        throw Error.typeIndexOutOfBounds
       }
     }
 
-    /// Validates a time zone designation string.
-    private static func validateDesignation(_ designation: String) -> Bool {
-      // Angle‑bracket form e.g. "<-05>"  or "<CST>"  (v3+)
-      let allowedChars = CharacterSet.alphanumerics
-        .union(CharacterSet(charactersIn: "-+<>"))
+    // Validate all time type designation indices, offsets, and DST/Std/UT combinations
+    for type in types {
 
-      guard designation.unicodeScalars.allSatisfy({ allowedChars.contains($0) }) else {
+      try Limits.transitionOffsetRange.check(type.offset)
+
+      // Validate designation
+      guard let designation = designations[type.designationIndex] else {
+        let validIndices = designations.keys.sorted()
+        logger.error(
+          """
+          Invalid TZif file: designation associated with index '\(type.designationIndex)' not found \
+          (valid indices are \(validIndices))
+          """
+        )
+        throw Error.invalidDesignation
+      }
+      guard Self.validateDesignation(designation) else {
+        logger.error("Invalid TZif file: invalid designation format '\(designation, privacy: .public)'")
+        throw Error.invalidDesignation
+      }
+
+      // Validate DST and Std/UT combinations
+      if type.isStd != nil || type.isUT != nil {
+        let isStd = type.isStd ?? Rules.TimeType.isStdDefault
+        let isUT = type.isUT ?? Rules.TimeType.isUTDefault
+
+        // All UT times must be standard as well
+        if isUT && !isStd {
+          let utSpec = type.isUT == nil ? "defaulted" : "explicitly set"
+          let stdSpec = type.isStd == nil ? "defaulted" : "explicitly set"
+          logger.error("Invalid TZif file: time type marked as UT (\(utSpec)) but not as STD (\(stdSpec))")
+          throw Error.wallStdUniversalDisagreement
+        }
+      }
+    }
+
+    // Validate transition timestamps are strictly increasing and in plausible range
+    for (transitionIdx, transition) in transitions.enumerated() {
+      let ts = transition.timestamp
+
+      try Limits.transitionTimestampRange.check(ts)
+
+      if transitionIdx > 0 {
+        let previousTs = transitions[transitionIdx - 1].timestamp
+        guard ts > previousTs else {
+          logger.error(
+            "Invalid TZif file: transition timestamp \(ts) not strictly increasing (previous: \(previousTs))"
+          )
+          throw Error.transitionsNotOrdered
+        }
+      }
+    }
+
+    // Ensure there is at least one standard time entry
+    let stdCount = types.filter { !$0.isDST }.count
+    guard stdCount > 0 else {
+      logger.error("Invalid TZif file: no standard time entries found")
+      throw Error.missingStandardTime
+    }
+  }
+
+  /// Validates a time zone designation string.
+  private static func validateDesignation(_ designation: String) -> Bool {
+    // Angle‑bracket form e.g. "<-05>"  or "<CST>"  (v3+)
+    let allowedChars = CharacterSet.alphanumerics
+      .union(CharacterSet(charactersIn: "-+<>"))
+
+    guard designation.unicodeScalars.allSatisfy({ allowedChars.contains($0) }) else {
+      return false
+    }
+
+    // If angle brackets used, they must wrap the string and be balanced.
+    guard designation.first == "<" else {
+      // traditional form: 3‑6 length
+      guard designation.count >= 3 && designation.count <= 6 else {
         return false
       }
+      return true
+    }
+    guard designation.last == ">", designation.count >= 3 else {
+      return false
+    }
+    let inner = designation.dropFirst().dropLast()
+    // inner part must be 1‑6 alnum / ±
+    return inner.count >= 1 && inner.count <= 6
+      && inner.allSatisfy { $0.isLetter || $0.isNumber || $0 == "-" || $0 == "+" }
+  }
 
-      // If angle brackets used, they must wrap the string and be balanced.
-      guard designation.first == "<" else {
-        // traditional form: 3‑6 length
-        guard designation.count >= 3 && designation.count <= 6 else {
-          return false
-        }
-        return true
-      }
-      guard designation.last == ">", designation.count >= 3 else {
-        return false
-      }
-      let inner = designation.dropFirst().dropLast()
-      // inner part must be 1‑6 alnum / ±
-      return inner.count >= 1 && inner.count <= 6
-        && inner.allSatisfy { $0.isLetter || $0.isNumber || $0 == "-" || $0 == "+" }
+  static func buildZoneRules(rules: Rules) throws -> any ZoneRules {
+    // Build the zone rules from parsed rules.
+    guard !rules.isFixedFormat else {
+      // Use the fixed format ZoneRules implementation.
+      return buildFixedOffsetZoneRules(rules: rules)
     }
 
-    static func buildZoneRules(rules: Rules) throws -> any ZoneRules {
-      // Build the zone rules from parsed rules.
-      guard !rules.isFixedFormat else {
-        // Use the fixed format ZoneRules implementation.
-        return buildFixedOffsetZoneRules(rules: rules)
-      }
+    return buildRegionZoneRules(rules: rules)
+  }
 
-      return buildRegionZoneRules(rules: rules)
+  static func buildFixedOffsetZoneRules(rules: Rules) -> FixedOffsetZoneRules {
+    precondition(
+      rules.transitions.isEmpty && rules.types.count == 1,
+      "Fixed offset rules should have not transitions and only a single type"
+    )
+
+    let fixedOffset = ZoneOffset(valid: .seconds(rules.types[0].offset))
+    return FixedOffsetZoneRules(offset: fixedOffset)
+  }
+
+  static func buildRegionZoneRules(rules: Rules) -> RegionZoneRules {
+    precondition(
+      !rules.isFixedFormat,
+      "Fixed offset rules should be handled by buildFixedOffsetZoneRules"
+    )
+
+    // ---------------------------------------------------------------------
+    // 1.  Build ZoneTransition array with isStandardTime populated
+    // ---------------------------------------------------------------------
+
+    var transitions: [ZoneTransition] = []
+    transitions.reserveCapacity(rules.transitions.count)
+
+    for (idx, tr) in rules.transitions.enumerated() {
+      let toType = rules.types[tr.typeIndex]
+      let fromType =
+        idx == 0
+        ? rules.types[0]    // initial type “before” first transition
+        : rules.types[rules.transitions[idx - 1].typeIndex]
+
+      let zt = ZoneTransition(
+        instant: Instant(durationSinceEpoch: .seconds(tr.timestamp)),
+        offsetBefore: ZoneOffset(valid: Int(fromType.offset)),
+        offsetAfter: ZoneOffset(valid: Int(toType.offset)),
+        designation: rules.designations[toType.designationIndex].neverNil("Previously validated"),
+        isDaylightSavingTime: toType.isDST,
+        isStandardTime: toType.isStd ?? Rules.TimeType.isStdDefault
+      )
+      transitions.append(zt)
     }
 
-    static func buildFixedOffsetZoneRules(rules: Rules) -> FixedOffsetZoneRules {
-      precondition(
-        rules.transitions.isEmpty && rules.types.count == 1,
-        "Fixed offset rules should have not transitions and only a single type"
+    // ---------------------------------------------------------------------
+    // 2.  Initial / final offsets & flags
+    // ---------------------------------------------------------------------
+
+    let initialType = rules.types[0]
+    let initialOffset = ZoneOffset(valid: Int(initialType.offset))
+    let initialIsStd = initialType.isStd ?? Rules.TimeType.isStdDefault
+
+    let finalType = rules.types[rules.types.endIndex - 1]
+    let finalOffset = ZoneOffset(valid: Int(finalType.offset))
+    let finalIsStd = finalType.isStd ?? Rules.TimeType.isStdDefault
+
+    // ---------------------------------------------------------------------
+    // 3.  Build designation map (instant → string)
+    //      – include a sentinel entry for times *before* first transition
+    // ---------------------------------------------------------------------
+    var designationMap: [Instant: String] = [:]
+    designationMap[.init(durationSinceEpoch: .min)] =
+      rules.designations[initialType.designationIndex].neverNil("Previously validated")
+
+    for tr in transitions {
+      designationMap[tr.instant] = tr.designation
+    }
+
+    // ---------------------------------------------------------------------
+    // 4.  Tail‑rule (POSIX footer) → RegionZoneRules.TailRule
+    // ---------------------------------------------------------------------
+    let tailRule: RegionZoneRules.TailRule? = rules.posixTZ.flatMap { tz in
+      let std = RegionZoneRules.TailRule.StandardTime(
+        offset: ZoneOffset(valid: tz.std.offset),
+        designation: tz.std.designation,
+        isStandardTime: true
       )
 
-      let fixedOffset = ZoneOffset(valid: .seconds(rules.types[0].offset))
-      return FixedOffsetZoneRules(offset: fixedOffset)
+      let dst: RegionZoneRules.TailRule.DaylightSavingTime? = tz.dst.map {
+        RegionZoneRules.TailRule.DaylightSavingTime(
+          offset: ZoneOffset(valid: $0.offset),
+          designation: $0.designation,
+          startRule: convertPosixRule($0.rules.start),
+          endRule: convertPosixRule($0.rules.end)
+        )
+      }
+
+      // Pre‑seed designation map so callers get names in projected years
+      designationMap[.zero] = tz.std.designation
+
+      return RegionZoneRules.TailRule(standardTime: std, daylightSavingTime: dst)
     }
 
-    static func buildRegionZoneRules(rules: Rules) -> RegionZoneRules {
-      precondition(
-        !rules.isFixedFormat,
-        "Fixed offset rules should be handled by buildFixedOffsetZoneRules"
-      )
+    // ---------------------------------------------------------------------
+    // 5.  Assemble RegionZoneRules
+    // ---------------------------------------------------------------------
+    return RegionZoneRules(
+      initial: (initialOffset, initialIsStd),
+      final: (finalOffset, finalIsStd),
+      transitions: transitions,
+      tailRule: tailRule,
+      designationMap: designationMap
+    )
+  }
 
-      // ---------------------------------------------------------------------
-      // 1.  Build ZoneTransition array with isStandardTime populated
-      // ---------------------------------------------------------------------
-
-      var transitions: [ZoneTransition] = []
-      transitions.reserveCapacity(rules.transitions.count)
-
-      for (idx, tr) in rules.transitions.enumerated() {
-        let toType = rules.types[tr.typeIndex]
-        let fromType =
-          idx == 0
-          ? rules.types[0]    // initial type “before” first transition
-          : rules.types[rules.transitions[idx - 1].typeIndex]
-
-        let zt = ZoneTransition(
-          instant: Instant(durationSinceEpoch: .seconds(tr.timestamp)),
-          offsetBefore: ZoneOffset(valid: Int(fromType.offset)),
-          offsetAfter: ZoneOffset(valid: Int(toType.offset)),
-          designation: rules.designations[toType.designationIndex].neverNil("Previously validated"),
-          isDaylightSavingTime: toType.isDST,
-          isStandardTime: toType.isStd ?? Rules.TimeType.isStdDefault
-        )
-        transitions.append(zt)
-      }
-
-      // ---------------------------------------------------------------------
-      // 2.  Initial / final offsets & flags
-      // ---------------------------------------------------------------------
-
-      let initialType = rules.types[0]
-      let initialOffset = ZoneOffset(valid: Int(initialType.offset))
-      let initialIsStd = initialType.isStd ?? Rules.TimeType.isStdDefault
-
-      let finalType = rules.types[rules.types.endIndex - 1]
-      let finalOffset = Tempo.ZoneOffset(valid: Int(finalType.offset))
-      let finalIsStd = finalType.isStd ?? Rules.TimeType.isStdDefault
-
-      // ---------------------------------------------------------------------
-      // 3.  Build designation map (instant → string)
-      //      – include a sentinel entry for times *before* first transition
-      // ---------------------------------------------------------------------
-      var designationMap: [Tempo.Instant: String] = [:]
-      designationMap[.init(durationSinceEpoch: .min)] =
-        rules.designations[initialType.designationIndex].neverNil("Previously validated")
-
-      for tr in transitions {
-        designationMap[tr.instant] = tr.designation
-      }
-
-      // ---------------------------------------------------------------------
-      // 4.  Tail‑rule (POSIX footer) → RegionZoneRules.TailRule
-      // ---------------------------------------------------------------------
-      let tailRule: RegionZoneRules.TailRule? = rules.posixTZ.flatMap { tz in
-        let std = RegionZoneRules.TailRule.StandardTime(
-          offset: Tempo.ZoneOffset(valid: tz.std.offset),
-          designation: tz.std.designation,
-          isStandardTime: true
-        )
-
-        let dst: RegionZoneRules.TailRule.DaylightSavingTime? = tz.dst.map {
-          RegionZoneRules.TailRule.DaylightSavingTime(
-            offset: Tempo.ZoneOffset(valid: $0.offset),
-            designation: $0.designation,
-            startRule: convertPosixRule($0.rules.start),
-            endRule: convertPosixRule($0.rules.end)
-          )
-        }
-
-        // Pre‑seed designation map so callers get names in projected years
-        designationMap[.zero] = tz.std.designation
-
-        return RegionZoneRules.TailRule(standardTime: std, daylightSavingTime: dst)
-      }
-
-      // ---------------------------------------------------------------------
-      // 5.  Assemble RegionZoneRules
-      // ---------------------------------------------------------------------
-      return RegionZoneRules(
-        initial: (initialOffset, initialIsStd),
-        final: (finalOffset, finalIsStd),
-        transitions: transitions,
-        tailRule: tailRule,
-        designationMap: designationMap
-      )
-    }
-
-    private static func convertPosixRule(_ rule: PosixTZ.DSTRule) -> RegionZoneRules.TailRule.DateRule {
-      guard rule.month == 0 else {
-        // Month-week-day format
-        return .monthWeekDay(
-          month: rule.month,
-          week: rule.week,
-          day: rule.day,
-          dayOffset: .seconds(Int64(rule.time))
-        )
-      }
-      // Julian day format
-      return .julianDay(
+  private static func convertPosixRule(_ rule: PosixTZ.DSTRule) -> RegionZoneRules.TailRule.DateRule {
+    guard rule.month == 0 else {
+      // Month-week-day format
+      return .monthWeekDay(
+        month: rule.month,
+        week: rule.week,
         day: rule.day,
-        leap: false,    // POSIX Jn format doesn't count leap days
         dayOffset: .seconds(Int64(rule.time))
       )
     }
+    // Julian day format
+    return .julianDay(
+      day: rule.day,
+      leap: false,    // POSIX Jn format doesn't count leap days
+      dayOffset: .seconds(Int64(rule.time))
+    )
   }
 }
 
-extension Data {
-  func hexEncodedString() -> String {
-    return map { String(format: "%02X", $0) }.joined(separator: " ")
-  }
-}
-
-extension Tempo.TzIf.Header {
+extension TzIf.Header {
 
   private typealias Counts = (
     isUTCnt: Int32, isStdCnt: Int32, leapCnt: Int32,
@@ -647,7 +638,7 @@ extension Tempo.TzIf.Header {
 
   private static let magic: [UInt8] = [0x54, 0x5A, 0x69, 0x66]
   private static let numberOfCounts = 6
-  private static let elementSizes = Tempo.TzIf.V1.elementSizes
+  private static let elementSizes = TzIf.V1.elementSizes
   private static let fieldOffsets = (
     magic: 0,    // [0..<4]
     version: 4,    // [4..<5]
@@ -664,7 +655,7 @@ extension Tempo.TzIf.Header {
     from data: inout ReadableRawBuffer<BigEndian>
   ) throws -> Self {
 
-    let logger = Tempo.TzIf.logger
+    let logger = TzIf.logger
     let hdrEnd = Self.fieldOffsets.end
 
     guard data.remaining.count >= hdrEnd else {
@@ -675,26 +666,26 @@ extension Tempo.TzIf.Header {
         (received \(dataCount, format: .byteCount), requires at least \(hdrEnd, format: .byteCount))
         """
       )
-      throw Tempo.TzIf.Error.invalidLength
+      throw TzIf.Error.invalidLength
     }
 
     let magic = try data.readBytes(count: 4)
     guard magic.elementsEqual(Self.magic) else {
-      let received = Data(magic).hexEncodedString()
-      let expected = Data(Self.magic).hexEncodedString()
+      let received = Data(magic).baseEncoded(using: .base16)
+      let expected = Data(Self.magic).baseEncoded(using: .base16)
       logger.error(
         """
         Invalid TZif file: bad magic number: \(received, privacy: .public) \
         (expected \(expected, privacy: .public))
         """
       )
-      throw Tempo.TzIf.Error.magicMismatch
+      throw TzIf.Error.magicMismatch
     }
 
     let rawVersion = try data.readInt(UInt8.self)
-    guard let version = Tempo.TzIf.Version(rawValue: rawVersion) else {
+    guard let version = TzIf.Version(rawValue: rawVersion) else {
       logger.error("Invalid TZif file: unsupported version \(rawVersion)")
-      throw Tempo.TzIf.Error.unsupportedFileVersion(version: rawVersion)
+      throw TzIf.Error.unsupportedFileVersion(version: rawVersion)
     }
 
     // Skip unused header data
@@ -709,19 +700,19 @@ extension Tempo.TzIf.Header {
     let typeCount = try data.readInt(UInt32.self, as: Int.self)
     let charCount = try data.readInt(UInt32.self, as: Int.self)
 
-    try Tempo.TzIf.Limits.maxNumberOfTransitionTimes.check(timeCount)
-    try Tempo.TzIf.Limits.maxNumberOfLocalTimeTypes.check(typeCount)
-    try Tempo.TzIf.Limits.maxNumberOfLeapSeconds.check(leapCount)
-    try Tempo.TzIf.Limits.maxNumberOfDesignationCharacters.check(charCount)
+    try TzIf.Limits.maxNumberOfTransitionTimes.check(timeCount)
+    try TzIf.Limits.maxNumberOfLocalTimeTypes.check(typeCount)
+    try TzIf.Limits.maxNumberOfLeapSeconds.check(leapCount)
+    try TzIf.Limits.maxNumberOfDesignationCharacters.check(charCount)
 
     // Validate dependencies between fields
     guard isUTCount == 0 || isUTCount == typeCount else {
       logger.error("Invalid TZif file: 'isutcnt' is \(isUTCount) (must be 0 or equal to 'typecnt' (\(typeCount))")
-      throw Tempo.TzIf.Error.stdOrUniversalCountMismatch
+      throw TzIf.Error.stdOrUniversalCountMismatch
     }
     guard isStdCount == 0 || isStdCount == typeCount else {
       logger.error("Invalid TZif file: 'isstdcnt' is \(isStdCount) (must be 0 or equal to 'typecnt' (\(typeCount))")
-      throw Tempo.TzIf.Error.stdOrUniversalCountMismatch
+      throw TzIf.Error.stdOrUniversalCountMismatch
     }
 
     return Self(
@@ -736,7 +727,7 @@ extension Tempo.TzIf.Header {
   }
 }
 
-extension Tempo.TzIf {
+extension TzIf {
 
   private static let timestampFieldIntTypes: [any (ReadableRawBuffer.Integer).Type] = [
     Int32.self, Int64.self,
@@ -761,7 +752,7 @@ extension Tempo.TzIf {
     using elementSizes: ElementSizes,
   ) throws -> Rules {
 
-    let logger = Tempo.TzIf.logger
+    let logger = TzIf.logger
 
     let dataCount = data.remaining.count
     let requiredDataCount = versionDataSize(for: header, using: elementSizes)
@@ -773,7 +764,7 @@ extension Tempo.TzIf {
         data setion requires at least \(requiredDataCount, format: .byteCount))
         """
       )
-      throw Tempo.TzIf.Error.invalidLength
+      throw TzIf.Error.invalidLength
     }
 
     // Read transition times
@@ -836,20 +827,20 @@ extension Tempo.TzIf {
         logger.error(
           "Invalid TZif file: designation index '\(designationIndex)' out of bounds (max \(desigBuf.count - 1))"
         )
-        throw Tempo.TzIf.Error.invalidDesignation
+        throw TzIf.Error.invalidDesignation
       }
       // Validate that a null-terminator (e.g. '\0') exists between designation-index
       // and the end of the designation data.
       let strStartIndex = desigBuf.index(desigBuf.startIndex, offsetBy: designationIndex)
       guard let strEndIndex = desigBuf[strStartIndex...].firstIndex(where: { $0 == 0 }) else {
         logger.error("Invalid TZif file: designation at index '\(designationIndex)' not null terminated")
-        throw Tempo.TzIf.Error.invalidDesignation
+        throw TzIf.Error.invalidDesignation
       }
       // Build a UTF-8 string from the designation data (we skip the null terminator).
       let stringData = desigBuf[strStartIndex..<strEndIndex]
       guard let string = String(bytes: stringData, encoding: .utf8) else {
         logger.error("Invalid TZif file: designation at index '\(designationIndex)' hss invalid UTF-8 data")
-        throw Tempo.TzIf.Error.invalidDesignation
+        throw TzIf.Error.invalidDesignation
       }
       designations[designationIndex] = string
     }
@@ -905,7 +896,7 @@ extension Tempo.TzIf {
       return nil
     }
 
-    return try Tempo.TzIf.PosixTZ(string: footer, allowExtended: allowExtended)
+    return try TzIf.PosixTZ(string: footer, allowExtended: allowExtended)
   }
 
   /// Parses any footer string that appears after all versioned data.
@@ -917,29 +908,29 @@ extension Tempo.TzIf {
 
     // Vaidate the would be footer is wrapped in newlines
     guard data.count > 1, data.first == 0xA && data.last == 0xA else {
-      Tempo.TzIf.logger.error("Invalid TZif file: footer not wrapped in newlines")
-      throw Tempo.TzIf.Error.invalidFooter
+      TzIf.logger.error("Invalid TZif file: footer not wrapped in newlines")
+      throw TzIf.Error.invalidFooter
     }
 
     let stringData = data.dropFirst().dropLast()
     guard let string = String(bytes: stringData, encoding: .utf8) else {
-      Tempo.TzIf.logger.error("Invalid TZif file: footer not UTF-8 encoded")
-      throw Tempo.TzIf.Error.invalidFooter
+      TzIf.logger.error("Invalid TZif file: footer not UTF-8 encoded")
+      throw TzIf.Error.invalidFooter
     }
 
     return string
   }
 }
 
-extension Tempo.TzIf.V1 {
+extension TzIf.V1 {
 
   /// Parses TZif v1 data.
   fileprivate static func parse(
     data: inout ReadableRawBuffer<BigEndian>,
-    header: Tempo.TzIf.Header,
-  ) throws -> Tempo.TzIf.Rules {
+    header: TzIf.Header,
+  ) throws -> TzIf.Rules {
 
-    return try Tempo.TzIf.parse(
+    return try TzIf.parse(
       from: &data,
       header: header,
       using: Self.elementSizes
@@ -947,21 +938,21 @@ extension Tempo.TzIf.V1 {
   }
 }
 
-extension Tempo.TzIf.V2 {
+extension TzIf.V2 {
 
   // Parses TZif v2 data.
   fileprivate static func parse(
     from data: inout ReadableRawBuffer<BigEndian>,
-    header: Tempo.TzIf.Header,
-  ) throws -> Tempo.TzIf.Rules {
+    header: TzIf.Header,
+  ) throws -> TzIf.Rules {
 
-    var rules = try Tempo.TzIf.parse(
+    var rules = try TzIf.parse(
       from: &data,
       header: header,
       using: Self.elementSizes
     )
 
-    guard let posixTZ = try Tempo.TzIf.parsePOSIXFooter(from: &data, allowExtended: false) else {
+    guard let posixTZ = try TzIf.parsePOSIXFooter(from: &data, allowExtended: false) else {
       // No footer found
       return rules
     }
@@ -971,60 +962,60 @@ extension Tempo.TzIf.V2 {
   }
 }
 
-extension Tempo.TzIf.V3 {
+extension TzIf.V3 {
 
   /// Parses TZif v3 data.
   fileprivate static func parse(
     from data: inout ReadableRawBuffer<BigEndian>,
-    header: Tempo.TzIf.Header,
-  ) throws -> Tempo.TzIf.Rules {
+    header: TzIf.Header,
+  ) throws -> TzIf.Rules {
 
-    var rules = try Tempo.TzIf.parse(
+    var rules = try TzIf.parse(
       from: &data,
       header: header,
       using: Self.elementSizes
     )
 
-    rules.posixTZ = try Tempo.TzIf.parsePOSIXFooter(from: &data, allowExtended: true)
+    rules.posixTZ = try TzIf.parsePOSIXFooter(from: &data, allowExtended: true)
 
     return rules
   }
 }
 
-extension Tempo.TzIf.V4 {
+extension TzIf.V4 {
 
   /// Parses TZif v4 data.
   fileprivate static func parse(
     from data: inout ReadableRawBuffer<BigEndian>,
-    header: Tempo.TzIf.Header,
-  ) throws -> Tempo.TzIf.Rules {
+    header: TzIf.Header,
+  ) throws -> TzIf.Rules {
 
-    let logger = Tempo.TzIf.logger
+    let logger = TzIf.logger
 
     // Parse using v2 format first
     var rules =
-      try Tempo.TzIf.parse(
+      try TzIf.parse(
         from: &data,
         header: header,
         using: Self.elementSizes
       )
 
     // Parse extended POSIX TZ string from footer, if present.
-    rules.posixTZ = try Tempo.TzIf.parsePOSIXFooter(from: &data, allowExtended: true)
+    rules.posixTZ = try TzIf.parsePOSIXFooter(from: &data, allowExtended: true)
 
     // Validate leap seconds
     for leapSecond in rules.leapSeconds {
-      let calendar: Tempo.CalendarSystem = .default
+      let calendar: CalendarSystem = .default
 
       // Ensure leap seconds are at the end of UTC calendar months
-      let instant = Tempo.Instant(durationSinceEpoch: .seconds(leapSecond.occurrence))
-      let dateTime: Tempo.LocalDateTime = calendar.components(from: instant, in: .utc)
+      let instant = Instant(durationSinceEpoch: .seconds(leapSecond.occurrence))
+      let dateTime: LocalDateTime = calendar.components(from: instant, in: .utc)
       let lastDayOfMonth = calendar.range(of: .day, at: instant).upperBound
 
       guard dateTime[.day] == lastDayOfMonth else {
         let day = dateTime[.day] ?? 0
         logger.error("Invalid TZif file: leap second not at end of month (day \(day)")
-        throw Tempo.TzIf.Error.invalidLeapSecond
+        throw TzIf.Error.invalidLeapSecond
       }
 
       guard dateTime[.hour] == 23 && dateTime[.minute] == 59 && dateTime[.second] == 59 else {
@@ -1032,7 +1023,7 @@ extension Tempo.TzIf.V4 {
         let minute = dateTime[.minute] ?? 0
         let second = dateTime[.second] ?? 0
         logger.error("Invalid TZif file: leap second not at 23:59:59 (got \(hour):\(minute):\(second))")
-        throw Tempo.TzIf.Error.invalidLeapSecond
+        throw TzIf.Error.invalidLeapSecond
       }
     }
 
@@ -1042,10 +1033,10 @@ extension Tempo.TzIf.V4 {
 
 // MARK: - POSIX TZ String Parsing
 
-extension Tempo.TzIf.PosixTZ {
+extension TzIf.PosixTZ {
 
   public init(string: String, allowExtended: Bool) throws {
-    let logger = Tempo.TzIf.logger
+    let logger = TzIf.logger
 
     // - Split into std/dst & rule sections
 
@@ -1088,7 +1079,7 @@ extension Tempo.TzIf.PosixTZ {
       dstRules = nil
     } else {
       logger.error("Invalid TZif file: transition rule specification must consist of exactly two rules")
-      throw Tempo.TzIf.Error.invalidPosixTZ
+      throw TzIf.Error.invalidPosixTZ
     }
 
     // DST must be fully specified or not at all
@@ -1096,13 +1087,13 @@ extension Tempo.TzIf.PosixTZ {
     if let dstBase {
       guard let dstRules else {
         logger.error("Invalid TZif file: POSIX TZ DST specification requires transition rules")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       dst = (dstBase.0, dstBase.1, (start: dstRules.0, end: dstRules.1))
     } else {
       guard dstRules == nil else {
         logger.error("Invalid TZif file: POSIX TZ DST specification requires a name & offset")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       dst = nil
     }
@@ -1119,7 +1110,7 @@ extension Tempo.TzIf.PosixTZ {
   /// Returns `nil` if empty and throws an error for any malformation.
   ///
   private static func parseOffset(_ s: Substring, allowExtended: Bool) throws -> Int? {
-    let logger = Tempo.TzIf.logger
+    let logger = TzIf.logger
 
     guard !s.isEmpty else {
       return nil
@@ -1132,17 +1123,17 @@ extension Tempo.TzIf.PosixTZ {
     let parts = body.split(separator: ":", omittingEmptySubsequences: false)
     guard parts.count <= 3, let h = Int(parts[0]) else {
       logger.error("Invalid TZif file: POSIX TZ offset is malformed")
-      throw Tempo.TzIf.Error.invalidPosixTZ
+      throw TzIf.Error.invalidPosixTZ
     }
     if allowExtended {
       guard h <= 167 else {
         logger.error("Invalid TZif file: POSIX TZ extended offset hours must not exceed ±167")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
     } else {
       guard h <= 24 else {
         logger.error("Invalid TZif file: POSIX TZ offset hours must not exceed ±24 unless extended form is allowed")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
     }
 
@@ -1150,7 +1141,7 @@ extension Tempo.TzIf.PosixTZ {
     let sec = parts.count > 2 ? Int(parts[2]) ?? 0 : 0
     guard m < 60, sec < 60 else {
       logger.error("Invalid TZif file: POSIX TZ offset minutes and seconds must be less than 60")
-      throw Tempo.TzIf.Error.invalidPosixTZ
+      throw TzIf.Error.invalidPosixTZ
     }
     return sign * (h * 3600 + m * 60 + sec)
   }
@@ -1182,7 +1173,7 @@ extension Tempo.TzIf.PosixTZ {
     _ rule: Substring,
     allowExtended: Bool,
   ) throws -> (month: Int, week: Int, day: Int, time: Int) {
-    let logger = Tempo.TzIf.logger
+    let logger = TzIf.logger
 
     // - Split into date and time portions
 
@@ -1197,12 +1188,12 @@ extension Tempo.TzIf.PosixTZ {
       // Allow extended format when offset is for a rule
       guard let secs = try? Self.parseOffset(timeToken[...], allowExtended: true) else {
         logger.error("Invalid TZif file: POSIX TZ transition rule '/time' is malformed")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       // Check range
       guard (-216_000...216_000).contains(secs) else {
         logger.error("Invalid TZif file: POSIX TZ '/time' value \(secs) out of range ±60h")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       timeSeconds = secs
     } else {
@@ -1221,7 +1212,7 @@ extension Tempo.TzIf.PosixTZ {
         let weekday = Int(parts[2]), (0...6).contains(weekday)
       else {
         logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid Month-week-day format")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       return (month, week, weekday, timeSeconds)
     }
@@ -1233,7 +1224,7 @@ extension Tempo.TzIf.PosixTZ {
         1...365 ~= n
       else {
         logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid Julian format")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       // month 0 denotes ordinal form
       return (0, 0, n, timeSeconds)
@@ -1243,18 +1234,18 @@ extension Tempo.TzIf.PosixTZ {
     if let n = Int(dateToken) {
       guard 0...365 ~= n else {
         logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid day-of-year format")
-        throw Tempo.TzIf.Error.invalidPosixTZ
+        throw TzIf.Error.invalidPosixTZ
       }
       return (0, 0, n, timeSeconds)
     }
 
     logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has unknown format")
-    throw Tempo.TzIf.Error.invalidPosixTZ
+    throw TzIf.Error.invalidPosixTZ
   }
 
 }
 
-extension Tempo.TzIf.Limits {
+extension TzIf.Limits {
 
   public struct Limit<Bound: Sendable & FixedWidthInteger>: Sendable {
     let specFieldName: String
@@ -1275,16 +1266,16 @@ extension Tempo.TzIf.Limits {
         range.lowerBound == 0
         ? "must be less than the allowed maximum of \(range.upperBound)"
         : "is outside the allowed range of \(range.lowerBound)...\(range.upperBound)"
-      Tempo.TzIf.logger.error(
+      TzIf.logger.error(
         """
         TzIf Parse limit exceeded: \(specFieldName, privacy: .public) value \
         '\(value, privacy: .public)' \(range, privacy: .public).
         If the value is considered valid, check it against the limit \(limitPropertyName, privacy: .public) of \
-        \(Tempo.TzIf.Limits.self, privacy: .public) (in \(#file, privacy: .public)) and adjust accordingly \
+        \(TzIf.Limits.self, privacy: .public) (in \(#file, privacy: .public)) and adjust accordingly \
         or submit an issue.
         """
       )
-      throw Tempo.TzIf.Error.fieldLimitExceeded
+      throw TzIf.Error.fieldLimitExceeded
     }
   }
 

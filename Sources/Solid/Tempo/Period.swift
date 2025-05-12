@@ -5,29 +5,26 @@
 //  Created by Kevin Wooten on 4/27/25.
 //
 
-extension Tempo {
 
-  public struct Period {
+public struct Period {
 
-    public var years: Int
-    public var months: Int
-    public var days: Int
+  public var years: Int
+  public var months: Int
+  public var days: Int
 
-    public init(years: Int, months: Int, days: Int) {
-      self.years = years
-      self.months = months
-      self.days = days
-    }
-
+  public init(years: Int, months: Int, days: Int) {
+    self.years = years
+    self.months = months
+    self.days = days
   }
 
 }
 
-extension Tempo.Period: Sendable {}
-extension Tempo.Period: Equatable {}
-extension Tempo.Period: Hashable {}
+extension Period: Sendable {}
+extension Period: Equatable {}
+extension Period: Hashable {}
 
-extension Tempo.Period: CustomStringConvertible {
+extension Period: CustomStringConvertible {
 
   public var description: String {
     guard years != 0, months != 0, days != 0 else {
@@ -40,15 +37,15 @@ extension Tempo.Period: CustomStringConvertible {
   }
 }
 
-extension Tempo.Period: Tempo.LinkedComponentContainer, Tempo.ComponentBuildable {
+extension Period: LinkedComponentContainer, ComponentBuildable {
 
-  public static let links: [any Tempo.ComponentLink<Self>] = [
-    Tempo.ComponentKeyPathLink(.years, to: \.years),
-    Tempo.ComponentKeyPathLink(.months, to: \.months),
-    Tempo.ComponentKeyPathLink(.days, to: \.days),
+  public static let links: [any ComponentLink<Self>] = [
+    ComponentKeyPathLink(.years, to: \.years),
+    ComponentKeyPathLink(.months, to: \.months),
+    ComponentKeyPathLink(.days, to: \.days),
   ]
 
-  public init(components: some Tempo.ComponentContainer) {
+  public init(components: some ComponentContainer) {
     self.years = components.value(for: .years)
     self.months = components.value(for: .months)
     self.days = components.value(for: .days)
@@ -56,12 +53,12 @@ extension Tempo.Period: Tempo.LinkedComponentContainer, Tempo.ComponentBuildable
 
 }
 
-extension Tempo.Period {
+extension Period {
 
   public func duration(
-    since start: some Tempo.DateTime,
-    in calendar: Tempo.CalendarSystem = .default
-  ) throws -> Tempo.Duration {
+    since start: some DateTime,
+    in calendar: CalendarSystem = .default
+  ) throws -> Duration {
 
     let startInstant = calendar.nearestInstant(from: start)
 
@@ -69,9 +66,9 @@ extension Tempo.Period {
   }
 
   public func duration(
-    since start: Tempo.Instant,
-    in calendar: Tempo.CalendarSystem = .default
-  ) throws -> Tempo.Duration {
+    since start: Instant,
+    in calendar: CalendarSystem = .default
+  ) throws -> Duration {
 
     let end = try start.adding(self)
 

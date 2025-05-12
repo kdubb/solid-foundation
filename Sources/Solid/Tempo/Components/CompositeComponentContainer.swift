@@ -5,24 +5,21 @@
 //  Created by Kevin Wooten on 4/30/25.
 //
 
-extension Tempo {
 
-  struct CompositeComponentContainer {
+struct CompositeComponentContainer {
 
-    public let containers: [any ComponentContainer]
+  public let containers: [any ComponentContainer]
 
-    public init(containers: [any ComponentContainer]) {
-      self.containers = containers
-    }
+  public init(containers: [any ComponentContainer]) {
+    self.containers = containers
   }
-
-
 }
 
-extension Tempo.CompositeComponentContainer: CustomStringConvertible {
+
+extension CompositeComponentContainer: CustomStringConvertible {
 
   public var description: String {
-    var entries: [Tempo.Component.Id: String] = [:]
+    var entries: [Component.Id: String] = [:]
     for container in containers {
       for componentId in container.availableComponentIds.sorted() {
         guard
@@ -39,17 +36,17 @@ extension Tempo.CompositeComponentContainer: CustomStringConvertible {
 
 }
 
-extension Tempo.CompositeComponentContainer: Tempo.ComponentContainer {
+extension CompositeComponentContainer: ComponentContainer {
 
-  public var availableComponentIds: Set<Tempo.Component.Id> {
-    var all = Set<Tempo.Component.Id>()
+  public var availableComponentIds: Set<Component.Id> {
+    var all = Set<Component.Id>()
     for container in containers {
       all.formUnion(container.availableComponentIds)
     }
     return all
   }
 
-  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Tempo.Component {
+  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
     for container in containers {
       if let value = container.valueIfPresent(for: component) {
         return value
