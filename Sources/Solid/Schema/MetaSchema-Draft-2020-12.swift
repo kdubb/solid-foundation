@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/5/25.
 //
 
+import SolidURI
+
+
 extension MetaSchema {
 
   /// The JSON Schema Draft 2020-12 meta-schema.

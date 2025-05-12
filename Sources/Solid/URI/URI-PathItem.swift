@@ -227,7 +227,7 @@ extension Array where Element == URI.PathItem {
   ///
   public var relative: Self {
     if first == .empty {
-      return dropFirst().asArray()
+      return Array(dropFirst())
     }
     return self
   }

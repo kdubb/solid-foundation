@@ -5,6 +5,8 @@
 //  Created by Kevin Wooten on 4/30/25.
 //
 
+import SolidCore
+
 extension Tempo {
 
   public protocol ComponentContainer: Sendable {

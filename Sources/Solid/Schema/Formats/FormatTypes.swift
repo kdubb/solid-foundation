@@ -5,10 +5,13 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
+import SolidData
+import SolidURI
+import SolidFormat
 import Foundation
-import ScreamURITemplate
 
-/// Local fprmat type registry.
+
+/// Local format type registry.
 ///
 public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
 

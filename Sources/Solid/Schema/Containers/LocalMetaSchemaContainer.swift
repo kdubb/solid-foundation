@@ -5,7 +5,9 @@
 //  Created by Kevin Wooten on 2/8/25.
 //
 
+import SolidURI
 import Foundation
+
 
 public class MetaSchemaContainer: MetaSchemaLocator, @unchecked Sendable {
 

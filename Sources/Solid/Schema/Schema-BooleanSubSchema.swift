@@ -5,6 +5,10 @@
 //  Created by Kevin Wooten on 2/10/25.
 //
 
+import SolidData
+import SolidURI
+
+
 extension Schema {
 
   public final class BooleanSubSchema: SubSchema {

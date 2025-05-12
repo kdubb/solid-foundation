@@ -5,7 +5,7 @@
 //  Created by Kevin Wooten on 4/16/25.
 //
 
-@testable import Solid
+@testable import SolidNumeric
 import Foundation
 import Testing
 

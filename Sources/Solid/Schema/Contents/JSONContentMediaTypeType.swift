@@ -5,6 +5,10 @@
 //  Created by Kevin Wooten on 2/11/25.
 //
 
+import SolidData
+import SolidJSON
+
+
 public struct JSONContentMediaTypeType: Schema.ContentMediaTypeType {
 
   public let identifier: String = "application/json"

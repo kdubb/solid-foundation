@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/25/25.
 //
 
+import SolidData
+
+
 public struct JSONValueWriter {
 
   public struct Options {

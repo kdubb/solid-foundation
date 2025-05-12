@@ -5,9 +5,13 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
+import SolidData
+import SolidURI
+
+
 extension Value {
 
-  var schemaTypes: [Schema.InstanceType] {
+  internal var schemaTypes: [Schema.InstanceType] {
     switch self {
     case .null: [.null]
     case .bool: [.boolean]
@@ -21,7 +25,7 @@ extension Value {
     }
   }
 
-  static func schemaEqual(_ lhs: Value, _ rhs: Value) -> Bool {
+  internal static func schemaEqual(_ lhs: Value, _ rhs: Value) -> Bool {
     switch (lhs, rhs) {
     case (.null, .null):
       return true

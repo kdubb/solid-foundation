@@ -5,6 +5,7 @@
 //  Created by Kevin Wooten on 4/26/25.
 //
 
+import SolidCore
 import Foundation
 
 extension Tempo {

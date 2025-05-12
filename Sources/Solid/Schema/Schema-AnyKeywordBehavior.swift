@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/20/25.
 //
 
+import SolidData
+
+
 extension Schema {
 
   /// Type erased ``KeywordBehavior`` implementation for any keyword.

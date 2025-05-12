@@ -5,8 +5,10 @@
 //  Created by Kevin Wooten on 2/5/25.
 //
 
+@testable import SolidData
+@testable import SolidSchema
 import Testing
-@testable import Solid
+
 
 @Suite("Schema Tests")
 public struct SchemaTests {

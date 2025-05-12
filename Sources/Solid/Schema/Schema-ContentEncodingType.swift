@@ -5,7 +5,9 @@
 //  Created by Kevin Wooten on 2/11/25.
 //
 
+import SolidData
 import Foundation
+
 
 extension Schema {
 

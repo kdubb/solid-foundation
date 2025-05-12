@@ -5,7 +5,9 @@
 //  Created by Kevin Wooten on 2/25/25.
 //
 
+import SolidFormat
 import Foundation
+
 
 extension URI {
 

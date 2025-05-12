@@ -5,7 +5,7 @@
 //  Created by Kevin Wooten on 4/24/25.
 //
 
-import Solid
+import SolidNumeric
 import ArgumentParser
 
 @main

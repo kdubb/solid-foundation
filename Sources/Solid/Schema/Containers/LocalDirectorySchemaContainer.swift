@@ -5,7 +5,10 @@
 //  Created by Kevin Wooten on 2/16/25.
 //
 
+import SolidURI
+import SolidJSON
 import Foundation
+
 
 public final class LocalDirectorySchemaContainer: SchemaLocator {
 

@@ -5,7 +5,10 @@
 //  Created by Kevin Wooten on 2/6/25.
 //
 
+import SolidData
+import SolidURI
 import OrderedCollections
+
 
 extension Schema {
 

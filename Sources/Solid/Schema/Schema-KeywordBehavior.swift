@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/18/25.
 //
 
+import SolidData
+
+
 extension Schema {
 
   public protocol KeywordBehavior: Sendable {

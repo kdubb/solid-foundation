@@ -5,9 +5,10 @@
 //  Created by Kevin Wooten on 4/27/25.
 //
 
+@testable import SolidTempo
 import Foundation
 import Testing
-@testable import Solid
+
 
 @Suite("ZonedDateTime Tests")
 struct ZonedDateTimeTests {

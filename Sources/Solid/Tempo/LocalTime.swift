@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 4/27/25.
 //
 
+import SolidCore
+
+
 extension Tempo {
 
   public struct LocalTime {

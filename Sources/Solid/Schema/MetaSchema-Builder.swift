@@ -5,8 +5,11 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
+import SolidData
+import SolidURI
 import Foundation
 import OrderedCollections
+
 
 extension MetaSchema {
 

@@ -5,8 +5,9 @@
 //  Created by Kevin Wooten on 4/17/25.
 //
 
+@testable import SolidNumeric
 import Foundation
-@testable import Solid
+
 
 /// Test data for BigUInt.
 struct BigUIntTestData: TestData, Codable, Sendable {

@@ -5,7 +5,9 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
+import SolidURI
 import OrderedCollections
+
 
 extension MetaSchema {
 

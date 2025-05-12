@@ -35,14 +35,123 @@ let package = Package(
     .target(
       name: "Solid",
       dependencies: [
+        "SolidCore",
+        "SolidNumeric",
+        "SolidURI",
+        "SolidTempo",
+        "SolidData",
+        "SolidSchema",
+        "SolidJSON",
+        "SolidYAML",
+        "SolidCBOR",
+      ],
+      path: "Sources/Solid/Root",
+    ),
+    .target(
+      name: "SolidCore",
+      dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "Collections", package: "swift-collections"),
+      ],
+      path: "Sources/Solid/Core",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidNumeric",
+      dependencies: [
+        "SolidCore",
+        .product(name: "Atomics", package: "swift-atomics"),
+        .product(name: "Collections", package: "swift-collections"),
+      ],
+      path: "Sources/Solid/Numeric",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidFormat",
+      dependencies: [
+        "SolidCore",
+        "SolidNumeric",
+      ],
+      path: "Sources/Solid/Format",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidURI",
+      dependencies: [
+        "SolidCore",
+        "SolidFormat",
         .product(name: "ScreamURITemplate", package: "uritemplate"),
       ],
+      path: "Sources/Solid/URI",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidTempo",
+      dependencies: [
+        "SolidCore",
+        .product(name: "Atomics", package: "swift-atomics"),
+        .product(name: "Collections", package: "swift-collections"),
+      ],
+      path: "Sources/Solid/Tempo",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidData",
+      dependencies: [
+        "SolidCore",
+        "SolidNumeric",
+        "SolidURI",
+      ],
+      path: "Sources/Solid/Data",
       exclude: [
         "Path/Path.g4"
       ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidSchema",
+      dependencies: [
+        "SolidData",
+        "SolidURI",
+        "SolidNumeric",
+        "SolidJSON",
+        .product(name: "Collections", package: "swift-collections"),
+      ],
+      path: "Sources/Solid/Schema",
+    ),
+    .target(
+      name: "SolidJSON",
+      dependencies: ["SolidData"],
+      path: "Sources/Solid/JSON",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidYAML",
+      dependencies: ["SolidData"],
+      path: "Sources/Solid/YAML",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
+      name: "SolidCBOR",
+      dependencies: ["SolidData"],
+      path: "Sources/Solid/CBOR",
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]

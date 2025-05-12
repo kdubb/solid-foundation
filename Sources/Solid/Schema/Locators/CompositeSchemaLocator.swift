@@ -5,6 +5,8 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
+import SolidURI
+
 public struct CompositeSchemaLocator: SchemaLocator {
 
   public static func from(locators: [SchemaLocator]) -> Self {

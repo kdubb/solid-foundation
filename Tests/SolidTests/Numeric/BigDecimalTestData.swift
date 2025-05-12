@@ -5,9 +5,10 @@
 //  Created by Kevin Wooten on 4/22/25.
 //
 
+@testable import SolidNumeric
 import Foundation
 import Testing
-@testable import Solid
+
 
 /// Test data for BigDecimal.
 struct BigDecimalTestData: TestData, Codable, Sendable {

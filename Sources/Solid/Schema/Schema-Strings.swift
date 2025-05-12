@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 1/25/25.
 //
 
+import SolidData
+
+
 extension Schema {
 
   public enum Strings {

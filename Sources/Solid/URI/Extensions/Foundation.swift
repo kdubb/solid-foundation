@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 extension URI {
 
   /// Converts the URI to a Foundation URL.
@@ -24,5 +25,14 @@ extension URI {
     components.percentEncodedFragment = fragment
     return components.url.neverNil()
   }
+
+}
+
+
+extension URL {
+
+  /// Returns a `URI` object equivalent to this URL, or `nil` if the URL is not a valid URI.
+  ///
+  public var uri: URI? { URI(encoded: absoluteString) }
 
 }

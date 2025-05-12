@@ -5,8 +5,11 @@
 //  Created by Kevin Wooten on 2/19/25.
 //
 
+import SolidData
+import SolidURI
 import Foundation
 import Atomics
+
 
 extension Schema {
 

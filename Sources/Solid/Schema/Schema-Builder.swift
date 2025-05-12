@@ -5,6 +5,10 @@
 //  Created by Kevin Wooten on 2/5/25.
 //
 
+import SolidData
+import SolidURI
+
+
 extension Schema {
 
   public enum Builder {
@@ -104,7 +108,7 @@ extension Schema {
 
       // Ensure it's _not_ an applicator keyword
       let applicatorKeywords = context.currentScope.metaSchema.applicatorKeywords
-      let pathKeyords = Set(pointer.asArray().map { Keyword(rawValue: $0.description) })
+      let pathKeyords = Set(pointer.map { Keyword(rawValue: $0.description) })
       guard pathKeyords.intersection(applicatorKeywords).isEmpty else {
         return nil
       }

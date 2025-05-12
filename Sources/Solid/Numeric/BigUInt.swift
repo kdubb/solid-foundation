@@ -5,6 +5,7 @@
 //  Created by Kevin Wooten on 4/16/25.
 //
 
+import SolidCore
 import Algorithms
 
 

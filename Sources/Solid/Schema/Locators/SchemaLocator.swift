@@ -5,7 +5,9 @@
 //  Created by Kevin Wooten on 2/6/25.
 //
 
+import SolidURI
 import Foundation
+
 
 /// Locates a schema resource by URI.
 ///

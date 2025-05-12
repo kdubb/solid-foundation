@@ -5,6 +5,10 @@
 //  Created by Kevin Wooten on 2/3/25.
 //
 
+import SolidData
+import SolidNumeric
+
+
 extension Schema {
 
   public enum Numbers {

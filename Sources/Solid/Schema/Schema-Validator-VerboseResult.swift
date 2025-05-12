@@ -5,6 +5,10 @@
 //  Created by Kevin Wooten on 2/8/25.
 //
 
+import SolidData
+import SolidURI
+
+
 extension Schema.Validator {
 
   public struct VerboseResult: Result {

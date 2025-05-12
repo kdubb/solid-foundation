@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/8/25.
 //
 
+import SolidData
+
+
 extension Schema {
 
   public enum Assertion {

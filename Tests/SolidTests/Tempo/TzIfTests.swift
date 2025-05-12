@@ -5,9 +5,10 @@
 //  Created by Kevin Wooten on 5/4/25.
 //
 
+@testable import SolidTempo
 import Foundation
 import Testing
-@testable import Solid
+
 
 @Suite("TzIf Tests")
 struct TzIfTests {

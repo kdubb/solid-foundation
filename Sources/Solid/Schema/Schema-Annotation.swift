@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/12/25.
 //
 
+import SolidData
+import SolidURI
+
 extension Schema {
 
   public struct Annotation {

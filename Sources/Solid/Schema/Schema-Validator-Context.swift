@@ -5,8 +5,11 @@
 //  Created by Kevin Wooten on 2/2/25.
 //
 
+import SolidData
+import SolidURI
 import Algorithms
 import Foundation
+
 
 extension Schema.Validator {
 

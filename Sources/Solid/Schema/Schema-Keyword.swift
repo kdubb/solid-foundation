@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/5/25.
 //
 
+import SolidData
+
+
 extension Schema {
 
   public struct Keyword: RawRepresentable, Sendable, Equatable, Hashable {

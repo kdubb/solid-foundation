@@ -5,6 +5,7 @@
 //  Created by Kevin Wooten on 2/25/25.
 //
 
+import SolidData
 import Foundation
 
 public struct JSONValueReader {
@@ -31,7 +32,7 @@ public struct JSONValueReader {
 
     case instance
 
-    typealias ValueType = Solid.Value
+    typealias ValueType = SolidData.Value
 
     func convertScalar(_ value: JSONToken.Scalar) throws -> Value {
       switch value {

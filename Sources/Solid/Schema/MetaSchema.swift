@@ -5,8 +5,10 @@
 //  Created by Kevin Wooten on 2/8/25.
 //
 
+import SolidURI
 import Foundation
 import OrderedCollections
+
 
 /// MetaSchemas are schemas that define the behavior of other schemas.
 ///

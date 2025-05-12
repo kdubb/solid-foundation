@@ -5,8 +5,9 @@
 //  Created by Kevin Wooten on 4/27/25.
 //
 
+@testable import SolidTempo
 import Testing
-@testable import Solid
+
 
 @Suite("ZoneOffset Tests")
 struct ZoneOffsetTests {

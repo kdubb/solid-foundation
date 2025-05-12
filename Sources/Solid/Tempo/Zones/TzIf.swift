@@ -5,6 +5,7 @@
 //  Created by Kevin Wooten on 5/12/25.
 //
 
+import SolidCore
 import Foundation
 import Synchronization
 import OSLog

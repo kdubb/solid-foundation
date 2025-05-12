@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/4/25.
 //
 
+import SolidData
+
+
 extension Schema {
 
   public enum Arrays {

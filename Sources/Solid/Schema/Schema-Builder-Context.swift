@@ -5,8 +5,11 @@
 //  Created by Kevin Wooten on 2/5/25.
 //
 
+import SolidData
+import SolidURI
 import Foundation
 import OrderedCollections
+
 
 extension Schema.Builder {
 

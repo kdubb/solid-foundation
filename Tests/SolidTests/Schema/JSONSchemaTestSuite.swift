@@ -5,9 +5,13 @@
 //  Created by Kevin Wooten on 2/11/25.
 //
 
+@testable import SolidSchema
+@testable import SolidData
+@testable import SolidURI
+@testable import SolidJSON
 import Foundation
 import Testing
-@testable import Solid
+
 
 @Suite("JSON Schema Test")
 public struct JSONSchemaTestSuite {

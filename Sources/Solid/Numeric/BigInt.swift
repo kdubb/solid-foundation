@@ -5,7 +5,9 @@
 //  Created by Kevin Wooten on 4/16/25.
 //
 
+import SolidCore
 import Foundation
+
 
 /// Arbitrary‑precision unsigned integer.
 ///
@@ -24,16 +26,16 @@ public struct BigInt {
     self.magnitude = BigUInt()
   }
 
-  internal init(isNegative: Bool, magnitude: Magnitude) {
+  package init(isNegative: Bool, magnitude: Magnitude) {
     self.isNegative = isNegative && !magnitude.isZero
     self.magnitude = magnitude
   }
 
-  internal init(isNegative: Bool, words: BigUInt.Words) {
+  package init(isNegative: Bool, words: BigUInt.Words) {
     self.init(isNegative: isNegative, magnitude: BigUInt(words: words))
   }
 
-  internal init<S>(isNegative: Bool, words: S) where S: Collection, S.Element == UInt {
+  package init<S>(isNegative: Bool, words: S) where S: Collection, S.Element == UInt {
     self.init(isNegative: isNegative, words: BigUInt.Words(words))
   }
 

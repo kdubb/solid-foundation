@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/20/25.
 //
 
+import SolidData
+
+
 internal extension Pointer {
 
   static func / (pointer: Pointer, relativeTokens: [KeywordLocationToken]) -> Pointer {

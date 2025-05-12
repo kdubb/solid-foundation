@@ -5,6 +5,9 @@
 //  Created by Kevin Wooten on 2/9/25.
 //
 
+import SolidURI
+
+
 public struct CompositeMetaSchemaLocator: MetaSchemaLocator {
 
   public var locators: [MetaSchemaLocator]

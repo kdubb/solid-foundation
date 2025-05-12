@@ -5,6 +5,7 @@
 //  Created by Kevin Wooten on 2/25/24.
 //
 
+import SolidData
 import Foundation
 
 enum JSONToken: Equatable {
