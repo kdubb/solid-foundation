@@ -8,14 +8,25 @@
 
 public struct Period {
 
+  public static let zero = Period(years: 0, months: 0, days: 0)
+
   public var years: Int
   public var months: Int
+  public var weeks: Int
   public var days: Int
 
   public init(years: Int, months: Int, days: Int) {
     self.years = years
     self.months = months
     self.days = days
+    self.weeks = 0
+  }
+
+  public init(weeks: Int) {
+    self.weeks = weeks
+    self.years = 0
+    self.months = 0
+    self.days = 0
   }
 
 }
@@ -40,15 +51,17 @@ extension Period: CustomStringConvertible {
 extension Period: LinkedComponentContainer, ComponentBuildable {
 
   public static let links: [any ComponentLink<Self>] = [
-    ComponentKeyPathLink(.years, to: \.years),
-    ComponentKeyPathLink(.months, to: \.months),
-    ComponentKeyPathLink(.days, to: \.days),
+    ComponentKeyPathLink(.calendarYears, to: \.years),
+    ComponentKeyPathLink(.calendarMonths, to: \.months),
+    ComponentKeyPathLink(.calendarWeeks, to: \.weeks),
+    ComponentKeyPathLink(.calendarDays, to: \.days),
   ]
 
   public init(components: some ComponentContainer) {
-    self.years = components.value(for: .years)
-    self.months = components.value(for: .months)
-    self.days = components.value(for: .days)
+    self.years = components.valueIfPresent(for: .calendarYears) ?? 0
+    self.months = components.valueIfPresent(for: .calendarMonths) ?? 0
+    self.weeks = components.valueIfPresent(for: .calendarWeeks) ?? 0
+    self.days = components.valueIfPresent(for: .calendarDays) ?? 0
   }
 
 }
@@ -60,7 +73,7 @@ extension Period {
     in calendar: CalendarSystem = .default
   ) throws -> Duration {
 
-    let startInstant = calendar.nearestInstant(from: start)
+    let startInstant = try calendar.instant(from: start, resolution: .default)
 
     return try duration(since: startInstant, in: calendar)
   }

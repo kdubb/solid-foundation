@@ -6,7 +6,7 @@
 //
 
 
-public protocol DurationComponent<Value>: Component where Value: FixedWidthInteger {
+public protocol DurationComponent<Value>: Component where Value: SignedInteger {
   func extract(from duration: Duration, rolledOver: Bool?) -> Value
 }
 
@@ -188,7 +188,7 @@ extension Components {
     }
   }
 
-  public struct DurationInteger<Value: FixedWidthInteger & SignedInteger>: DurationComponent {
+  public struct DurationInteger<Value>: DurationComponent where Value: SignedInteger {
 
     public typealias Value = Value
 

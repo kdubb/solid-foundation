@@ -5,7 +5,7 @@
 //  Created by Kevin Wooten on 2/25/25.
 //
 
-import SolidFormat
+import SolidNet
 import Foundation
 
 
@@ -397,7 +397,7 @@ extension URI {
             port = nil
           }
           let hostToken = token[token.startIndex...hostEnd]
-          guard RFC4291.IPv6Address.parse(string: String(hostToken.dropFirst().dropLast())) != nil else {
+          guard IPv6Address.parse(string: String(hostToken.dropFirst().dropLast())) != nil else {
             return nil
           }
           return .hostPort(host: String(hostToken), port: port)
@@ -421,12 +421,12 @@ extension URI {
           port = nil
         }
         guard requiredRFC == .uri else {
-          guard let host = RFC5890.IDNHostname.parse(string: String(hostToken)) else {
+          guard let host = IDNHostname.parse(string: String(hostToken)) else {
             return nil
           }
           return .hostPort(host: host.value, port: port)
         }
-        guard let host = RFC1123.Hostname.parse(string: String(hostToken)) else {
+        guard let host = Hostname.parse(string: String(hostToken)) else {
           return nil
         }
         return .hostPort(host: host.value, port: port)

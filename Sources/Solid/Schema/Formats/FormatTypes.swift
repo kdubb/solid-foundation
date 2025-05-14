@@ -7,7 +7,8 @@
 
 import SolidData
 import SolidURI
-import SolidFormat
+import SolidNet
+import SolidTempo
 import Foundation
 
 
@@ -36,9 +37,9 @@ public class FormatTypes: FormatTypeLocator, @unchecked Sendable {
     register(format: FormatTypes.TimeType.instance)
     register(format: FormatTypes.DurationType.instance)
     register(format: FormatTypes.EmailType.instance)
-    register(format: FormatTypes.IdnEmailType.instance)
+    register(format: FormatTypes.IDNEmailType.instance)
     register(format: FormatTypes.HostnameType.instance)
-    register(format: FormatTypes.IdnHostnameType.instance)
+    register(format: FormatTypes.IDNHostnameType.instance)
     register(format: FormatTypes.Ipv4Type.instance)
     register(format: FormatTypes.Ipv6Type.instance)
     register(format: FormatTypes.URIType.instance)
@@ -105,14 +106,14 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return true    // Non-string values are valid
       }
-      return RFC3339.DateTime.parse(string: string) != nil
+      return OffsetDateTime.parse(string: string) != nil
     }
 
     public func convert(_ value: Value) -> Value? {
       guard case .string(let string) = value else {
         return nil
       }
-      guard let value = RFC3339.DateTime.parse(string: string) else {
+      guard let value = OffsetDateTime.parse(string: string) else {
         return nil
       }
       return nil
@@ -135,7 +136,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return RFC3339.FullDate.parse(string: string) != nil
+      return LocalDate.parse(string: string) != nil
     }
   }
 
@@ -157,7 +158,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return RFC3339.FullTime.parse(string: string) != nil
+      return OffsetTime.parse(string: string) != nil
     }
   }
 
@@ -171,7 +172,7 @@ extension FormatTypes {
       guard case .string(let value) = value else {
         return false
       }
-      return RFC3339.Duration.parse(string: value) != nil
+      return PeriodDuration.parse(string: value) != nil
     }
   }
 
@@ -185,12 +186,12 @@ extension FormatTypes {
       guard case .string(let value) = value else {
         return false
       }
-      return RFC5321.Mailbox.parse(string: value) != nil
+      return EmailAddress.parse(string: value) != nil
     }
   }
 
   /// RFC 6531 IDN email format type.
-  public enum IdnEmailType: Schema.FormatType {
+  public enum IDNEmailType: Schema.FormatType {
     case instance
 
     public var identifier: String { "idn-email" }
@@ -199,7 +200,7 @@ extension FormatTypes {
       guard case .string(let value) = value else {
         return false
       }
-      return RFC6531.Mailbox.parse(string: value) != nil
+      return IDNEmailAddress.parse(string: value) != nil
     }
   }
 
@@ -213,12 +214,12 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return RFC1123.Hostname.parse(string: string) != nil
+      return Hostname.parse(string: string) != nil
     }
   }
 
   /// RFC 5890 IDN hostname format type.
-  public enum IdnHostnameType: Schema.FormatType {
+  public enum IDNHostnameType: Schema.FormatType {
     case instance
 
     public var identifier: String { "idn-hostname" }
@@ -227,7 +228,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return RFC5890.IDNHostname.parse(string: string) != nil
+      return IDNHostname.parse(string: string) != nil
     }
   }
 
@@ -241,7 +242,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return RFC2673.IPv4Address.parse(string: string) != nil
+      return IPv4Address.parse(string: string) != nil
     }
   }
 
@@ -255,7 +256,7 @@ extension FormatTypes {
       guard case .string(let string) = value else {
         return false
       }
-      return RFC4291.IPv6Address.parse(string: string) != nil
+      return IPv6Address.parse(string: string) != nil
     }
   }
 

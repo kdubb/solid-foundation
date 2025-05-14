@@ -25,11 +25,6 @@ public struct Zone {
     self.init(identifier: identifier, rules: rules)
   }
 
-  internal init(valid identifier: String) {
-    // swift-format-ignore: NeverUseForceTry
-    try! self.init(identifier: identifier)
-  }
-
   public init(offset: ZoneOffset) {
     self.identifier = offset.description
     self.rules = FixedOffsetZoneRules(offset: offset)
@@ -39,22 +34,23 @@ public struct Zone {
     return Self(offset: offset)
   }
 
-  public var isFixed: Bool {
-    return rules.isFixed
+  public var isFixedOffset: Bool {
+    return rules.isFixedOffset
   }
 
   public func offset(at instant: Instant) -> ZoneOffset {
     return rules.offset(at: instant)
   }
 
+  public func offset(for dateTime: LocalDateTime) -> ZoneOffset {
+    return rules.offset(for: dateTime)
+  }
+
   public var fixedOffset: ZoneOffset? {
-    guard isFixed else {
+    guard isFixedOffset else {
       return nil
     }
-    guard let offset = rules as? FixedOffsetZoneRules else {
-      return rules.offset(at: .epoch)
-    }
-    return offset.offset
+    return rules.offset(at: .epoch)
   }
 }
 
@@ -86,15 +82,11 @@ extension Zone: CustomStringConvertible {
 
 }
 
-extension Zone: LinkedComponentContainer, ComponentBuildable {
+extension Zone {
 
-  public static let links: [any ComponentLink<Self>] = [
-    ComponentKeyPathLink(.zoneId, to: \.identifier)
-  ]
-
-  public init(components: some ComponentContainer) {
+  public init(availableComponents components: some ComponentContainer) {
     do {
-      try self.init(identifier: components.value(for: .zoneId))
+      try self.init(identifier: components.valueIfPresent(for: .zoneId) ?? "UTC")
     } catch {
       fatalError("Invalid zone identifier")
     }

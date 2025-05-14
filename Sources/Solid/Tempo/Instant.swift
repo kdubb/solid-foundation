@@ -10,7 +10,6 @@
 public struct Instant: Equatable, Hashable, Sendable {
 
   public static let epoch: Self = .init(durationSinceEpoch: .zero)
-  public static let zero: Self = .init(durationSinceEpoch: .zero)
   public static let min: Self = .init(durationSinceEpoch: .min)
   public static let max: Self = .init(durationSinceEpoch: .max)
 
@@ -78,13 +77,34 @@ extension Instant: CustomStringConvertible {
 extension Instant: LinkedComponentContainer, ComponentBuildable {
 
   public static let links: [any ComponentLink<Self>] = [
-    ComponentKeyPathLink(.durationSinceEpoch, to: \.durationSinceEpoch.nanoseconds)
+    ComponentKeyPathLink(.totalNanoseconds, to: \.durationSinceEpoch.nanoseconds)
   ]
 
   public init(components: some ComponentContainer) {
-    let durationSinceEpoch = components.value(for: .durationSinceEpoch)
+    let durationSinceEpoch = components.value(for: .totalNanoseconds)
     self.init(durationSinceEpoch: Duration(nanoseconds: durationSinceEpoch))
   }
+
+}
+
+extension Instant: ComponentContainerDurationArithmetic {
+
+  public mutating func addReportingOverflow(duration components: some ComponentContainer) -> Duration {
+    let duration = Duration(components: components)
+    self = self + duration
+    return .zero
+  }
+
+}
+
+extension Instant: ComponentContainerTimeArithmetic {
+
+  public mutating func addReportingOverflow(time components: some ComponentContainer) throws -> Duration {
+    let duration = Duration(components: components)
+    self = self + duration
+    return .zero
+  }
+
 }
 
 // MARK: - Conversion Initializers

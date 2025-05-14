@@ -11,14 +11,30 @@ public struct ZonedDateTime: DateTime {
 
   /// The date and time parts.
   public var dateTime: LocalDateTime
-  /// The date part.
-  public var date: LocalDate { dateTime.date }
-  /// The time part.
-  public var time: LocalTime { dateTime.time }
   /// The time zone.
   public var zone: Zone
   /// The specific zone offset for this date and time in ``zone``.
   public var offset: ZoneOffset
+
+  /// The date part.
+  public var date: LocalDate { dateTime.date }
+  /// The time part.
+  public var time: LocalTime { dateTime.time }
+
+  /// The year component of the date.
+  public var year: Int { date.year }
+  /// The month component of the date.
+  public var month: Int { date.month }
+  /// The day component of the date.
+  public var day: Int { date.day }
+  /// The hour component of the time.
+  public var hour: Int { time.hour }
+  /// The minute component of the time.
+  public var minute: Int { time.minute }
+  /// The second component of the time.
+  public var second: Int { time.second }
+  /// The nanosecond component of the time.
+  public var nanosecond: Int { time.nanosecond }
 
   internal init(dateTime: LocalDateTime, zone: Zone, offset: ZoneOffset) {
     self.dateTime = dateTime
@@ -193,7 +209,7 @@ public struct ZonedDateTime: DateTime {
   ///   - zone: The time zone to use.
   ///   - anchor: The ``AdjustmentAnchor`` that determines whether the
   ///   instant or local-time the is preserved. Defaults to ``AdjustmentAnchor/sameInstant``.
-  ///   - resolving: The resolution strategy to use when converting the date and time
+  ///   - resolving: The resolution strategy to use when converting the date and time.
   ///   - calendarSystem: The calendar system to use.
   /// - Returns: A new instance of ``ZonedDateTime`` in the specified time zone.
   /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
@@ -238,7 +254,7 @@ extension ZonedDateTime: CustomStringConvertible {
       ? "Z"
       : "\(offset)"
     let zoneField =
-      if !zone.isFixed {
+      if !zone.isFixedOffset {
         "[\(zone.identifier)]"
       } else {
         ""
@@ -264,8 +280,8 @@ extension ZonedDateTime: LinkedComponentContainer, ComponentBuildable {
   public init(components: some ComponentContainer) {
     self.init(
       dateTime: LocalDateTime(components: components),
-      zone: Zone(components: components),
-      offset: ZoneOffset(components: components),
+      zone: Zone(availableComponents: [.zoneId(components.value(for: .zoneId))]),
+      offset: ZoneOffset(availableComponents: [.zoneOffset(components.value(for: .zoneOffset))]),
     )
   }
 
@@ -285,4 +301,46 @@ extension ZonedDateTime {
     return result
   }
 
+}
+
+extension ZonedDateTime {
+
+  /// Parses a date and time string  in the format `YYYY-MM-DDTHH:MM:SS[.sssssssss]'['ZoneID']'`.
+  ///
+  /// This is similar to extended ISO-8601 formats used in Java and RFC-3339, with the addition
+  /// of the `[ZoneID]` suffix (e.g., `2024-03-10T02:30:00[America/Los_Angeles]`).
+  ///
+  /// - Parameters:
+  ///   - string: The date-time string.
+  ///   - resolving: The resolution strategy to use when converting the date and time.
+  ///   - calendarSystem: The calendar system to use.
+  /// - Returns: Parsed `ZonedDateTime` if valid; otherwise `nil`.
+  ///
+  public static func parse(
+    string: String,
+    resolving: ResolutionStrategy.Options = [],
+    in calendarSystem: CalendarSystem = .default
+  ) -> Self? {
+
+    // Look for the zone identifier suffix in square brackets
+    guard
+      let zoneStart = string.lastIndex(of: "["),
+      let zoneEnd = string.lastIndex(of: "]"),
+      zoneEnd > zoneStart
+    else {
+      return nil
+    }
+
+    let zoneStr = String(string[string.index(after: zoneStart)..<zoneEnd])
+    let dateTimeStr = String(string[string.startIndex..<zoneStart])
+
+    guard
+      let zone = try? Zone(identifier: zoneStr),
+      let dateTime = LocalDateTime.parse(string: dateTimeStr)
+    else {
+      return nil
+    }
+
+    return try? Self(dateTime: dateTime, zone: zone, resolving: resolving)
+  }
 }

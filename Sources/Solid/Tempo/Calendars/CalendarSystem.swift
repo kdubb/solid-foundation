@@ -15,7 +15,7 @@
 ///
 public protocol CalendarSystem {
 
-  /// Converts the given `Instant` to a set of components in the specified time zone.
+  /// Computes a set of components for the given `Instant` in the specified time zone.
   ///
   /// - Parameters:
   ///   - instant: The instant to convert.
@@ -25,7 +25,7 @@ public protocol CalendarSystem {
   ///
   func components<C>(from instant: Instant, in zone: Zone, as type: C.Type) -> C where C: ComponentBuildable
 
-  /// Resolves the given components to a valid set of components.
+  /// Resolves the given components to a valid set of equivalent components.
   ///
   /// - Parameters:
   ///   - components: The components to resolve.
@@ -38,28 +38,57 @@ public protocol CalendarSystem {
     resolution: ResolutionStrategy
   ) throws -> C where S: ComponentContainer, C: ComponentBuildable
 
-  func resolve<C, S>(
+  /// Looks up or computes the a requested component from a set of components.
+  ///
+  /// - Parameters:
+  ///   - component: The component to resolve.
+  ///   - components: The set of components to resolve from.
+  ///   - resolution: The resolution strategy to use.
+  /// - Returns: The resolved component value.
+  /// - Throws: An error if the component cannot be resolved.
+  ///
+  func component<C, S>(
     _ component: C,
     from components: S,
     resolution: ResolutionStrategy
   ) throws -> C.Value where C: DateTimeComponent, S: ComponentContainer
 
-  /// Converts the given components to an `Instant` in the specified time zone.
+  /// Computes the corresponding `Instant` for the specified components.
   ///
   /// - Parameters:
   ///   - components: The components to convert.
   ///   - resolution: The resolution strategy to use.
   /// - Returns: The instant corresponding to the components.
-  /// - Throws: An error if the components cannot be converted.
+  /// - Throws: An error if the instant cannot be computed.
   ///
   func instant(from components: some ComponentContainer, resolution: ResolutionStrategy) throws -> Instant
 
-  func nearestInstant(from components: some ComponentContainer) -> Instant
+  /// Computes the corresponding `Instant` for the specified components using a specific zone offset.
+  ///
+  /// - Parameters:
+  ///   - dateTime: The date/time to convert.
+  ///   - offset: The zone offset to use for the computation.
+  /// - Returns: The instant corresponding to the date/time at the specified offset.
+  ///
+  func instant(from dateTime: some DateTime, at offset: ZoneOffset) -> Instant
 
+  /// Determines the valid range of values for the specified component at a given instant.
+  ///
+  /// - Parameters:
+  ///   - component: The component to determine the range for.
+  ///   - instant: The instant to determine the valid range at.
+  /// - Returns: A range of valid values for the specified component at the given instant.
+  ///
   func range<C>(
     of component: C,
     at instant: Instant
-  ) -> Range<C.Value> where C: DateTimeComponent, C.Value: FixedWidthInteger
+  ) -> Range<C.Value> where C: IntegerDateTimeComponent, C.Value: SignedInteger
+
+  func adding<C>(
+    components addition: some ComponentContainer,
+    to original: C,
+    resolution: ResolutionStrategy
+  ) throws -> C where C: ComponentContainer & ComponentBuildable
 }
 
 extension CalendarSystem {
@@ -76,6 +105,13 @@ extension CalendarSystem {
     in zone: Zone
   ) -> C where C: ComponentBuildable {
     return components(from: instant, in: zone, as: C.self)
+  }
+
+  public func adding<C>(
+    components addition: some ComponentContainer,
+    to original: C
+  ) throws -> C where C: ComponentContainer & ComponentBuildable {
+    return try adding(components: addition, to: original, resolution: .default)
   }
 
 }

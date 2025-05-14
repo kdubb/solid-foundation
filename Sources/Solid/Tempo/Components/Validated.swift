@@ -27,10 +27,26 @@ public struct Validated<Value>: Sendable where Value: Sendable {
     }
   }
 
-  public func assert(_ test: Bool, _ message: String) throws {
-    if !test {
-      throw Error.invalidComponentValue(component: component.id.name, reason: .unknown(reason: message))
+  public func assert(_ conditionalRange: ClosedRange<Value>, _ rangeMessage: String) throws where Value: SignedInteger {
+    guard conditionalRange.contains(wrappedValue) else {
+      throw TempoError.invalidComponentValue(
+        component: component.id.name,
+        reason: .outOfRange(
+          value: "\(wrappedValue)",
+          range: "\(rangeMessage) (\(conditionalRange))"
+        )
+      )
     }
+  }
+
+  public func assert(_ test: Bool, _ invalidReason: TempoError.ValidationFailureReason) throws {
+    if !test {
+      throw TempoError.invalidComponentValue(component: component.id.name, reason: invalidReason)
+    }
+  }
+
+  public func assert(_ test: Bool, _ reason: String) throws {
+    try assert(test, .extended(reason: reason))
   }
 }
 

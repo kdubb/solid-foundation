@@ -6,3 +6,7 @@
 //
 
 public protocol DateTimeComponent: Component {}
+
+public protocol IntegerDateTimeComponent: DateTimeComponent where Value: SignedInteger {
+  var range: ClosedRange<Value> { get }
+}

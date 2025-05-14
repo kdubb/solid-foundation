@@ -510,7 +510,7 @@ public enum TzIf {
       "Fixed offset rules should have not transitions and only a single type"
     )
 
-    let fixedOffset = ZoneOffset(valid: .seconds(rules.types[0].offset))
+    let fixedOffset = ZoneOffset(availableComponents: [.zoneOffset(Int(rules.types[0].offset))])
     return FixedOffsetZoneRules(offset: fixedOffset)
   }
 
@@ -519,6 +519,7 @@ public enum TzIf {
       !rules.isFixedFormat,
       "Fixed offset rules should be handled by buildFixedOffsetZoneRules"
     )
+    let calSys: GregorianCalendarSystem = .default
 
     // ---------------------------------------------------------------------
     // 1.  Build ZoneTransition array with isStandardTime populated
@@ -534,10 +535,22 @@ public enum TzIf {
         ? rules.types[0]    // initial type “before” first transition
         : rules.types[rules.transitions[idx - 1].typeIndex]
 
+      let instant = Instant(durationSinceEpoch: .seconds(tr.timestamp))
+      let offsetBefore = ZoneOffset(availableComponents: [.zoneOffset(Int(fromType.offset))])
+      let offsetAfter = ZoneOffset(availableComponents: [.zoneOffset(Int(toType.offset))])
+      let kind: ZoneTransition.Kind = offsetBefore < offsetAfter ? .gap : .overlap
+
+      let localBefore = calSys.localDateTime(instant: instant, at: offsetBefore)
+      let localAfter = calSys.localDateTime(instant: instant, at: offsetAfter)
+
+      let (localStart, localEnd) = kind == .gap ? (localBefore, localAfter) : (localAfter, localBefore)
+
       let zt = ZoneTransition(
-        instant: Instant(durationSinceEpoch: .seconds(tr.timestamp)),
-        offsetBefore: ZoneOffset(valid: Int(fromType.offset)),
-        offsetAfter: ZoneOffset(valid: Int(toType.offset)),
+        kind: kind,
+        instant: instant,
+        local: (localStart, localEnd),
+        offsetBefore: offsetBefore,
+        offsetAfter: offsetAfter,
         designation: rules.designations[toType.designationIndex].neverNil("Previously validated"),
         isDaylightSavingTime: toType.isDST,
         isStandardTime: toType.isStd ?? Rules.TimeType.isStdDefault
@@ -550,11 +563,11 @@ public enum TzIf {
     // ---------------------------------------------------------------------
 
     let initialType = rules.types[0]
-    let initialOffset = ZoneOffset(valid: Int(initialType.offset))
+    let initialOffset = ZoneOffset(availableComponents: [.zoneOffset(Int(initialType.offset))])
     let initialIsStd = initialType.isStd ?? Rules.TimeType.isStdDefault
 
     let finalType = rules.types[rules.types.endIndex - 1]
-    let finalOffset = ZoneOffset(valid: Int(finalType.offset))
+    let finalOffset = ZoneOffset(availableComponents: [.zoneOffset(Int(finalType.offset))])
     let finalIsStd = finalType.isStd ?? Rules.TimeType.isStdDefault
 
     // ---------------------------------------------------------------------
@@ -572,16 +585,16 @@ public enum TzIf {
     // ---------------------------------------------------------------------
     // 4.  Tail‑rule (POSIX footer) → RegionZoneRules.TailRule
     // ---------------------------------------------------------------------
-    let tailRule: RegionZoneRules.TailRule? = rules.posixTZ.flatMap { tz in
-      let std = RegionZoneRules.TailRule.StandardTime(
-        offset: ZoneOffset(valid: tz.std.offset),
+    let tailRule: ZoneTransitionRule? = rules.posixTZ.flatMap { tz in
+      let std = ZoneTransitionRule.StandardTime(
+        offset: ZoneOffset(availableComponents: [.zoneOffset(tz.std.offset)]),
         designation: tz.std.designation,
         isStandardTime: true
       )
 
-      let dst: RegionZoneRules.TailRule.DaylightSavingTime? = tz.dst.map {
-        RegionZoneRules.TailRule.DaylightSavingTime(
-          offset: ZoneOffset(valid: $0.offset),
+      let dst: ZoneTransitionRule.DaylightSavingTime? = tz.dst.map {
+        ZoneTransitionRule.DaylightSavingTime(
+          offset: ZoneOffset(availableComponents: [.zoneOffset($0.offset)]),
           designation: $0.designation,
           startRule: convertPosixRule($0.rules.start),
           endRule: convertPosixRule($0.rules.end)
@@ -589,9 +602,9 @@ public enum TzIf {
       }
 
       // Pre‑seed designation map so callers get names in projected years
-      designationMap[.zero] = tz.std.designation
+      designationMap[.min] = tz.std.designation
 
-      return RegionZoneRules.TailRule(standardTime: std, daylightSavingTime: dst)
+      return ZoneTransitionRule(standardTime: std, daylightSavingTime: dst)
     }
 
     // ---------------------------------------------------------------------
@@ -606,7 +619,7 @@ public enum TzIf {
     )
   }
 
-  private static func convertPosixRule(_ rule: PosixTZ.DSTRule) -> RegionZoneRules.TailRule.DateRule {
+  private static func convertPosixRule(_ rule: PosixTZ.DSTRule) -> ZoneTransitionRule.DateRule {
     guard rule.month == 0 else {
       // Month-week-day format
       return .monthWeekDay(
@@ -1164,7 +1177,8 @@ extension TzIf.PosixTZ {
     let nameEnd = tok.firstIndex(where: { $0 == "+" || $0 == "-" || $0.isNumber }) ?? tok.endIndex
     let name = tok[..<nameEnd]
     let rest = tok[nameEnd...]
-    let offEnd = rest.firstIndex(where: { !($0.isNumber || $0 == ":" || $0 == "+" || $0 == "-") }) ?? rest.endIndex
+    let offEnd: Substring.Index =
+      rest.firstIndex(where: { !($0.isNumber || $0 == ":" || $0 == "+" || $0 == "-") }) ?? rest.endIndex
     let offSub = rest[..<offEnd]
     return (String(name), offSub, rest[offEnd...])
   }
@@ -1247,7 +1261,7 @@ extension TzIf.PosixTZ {
 
 extension TzIf.Limits {
 
-  public struct Limit<Bound: Sendable & FixedWidthInteger>: Sendable {
+  public struct Limit<Bound: Sendable & SignedInteger>: Sendable {
     let specFieldName: String
     let limitPropertyName: String
     let range: ClosedRange<Bound>
@@ -1258,7 +1272,7 @@ extension TzIf.Limits {
       self.range = range
     }
 
-    func check<I: FixedWidthInteger>(_ value: I) throws {
+    func check<I: SignedInteger>(_ value: I) throws {
       if let checkValue = Bound(exactly: value), range.contains(checkValue) {
         return
       }

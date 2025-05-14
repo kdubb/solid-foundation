@@ -124,10 +124,6 @@ extension ComponentValue {
     return Self(component: .zoneId, value: value)
   }
 
-  public static func durationSinceEpoch(_ value: Int128) -> Self {
-    return Self(component: .durationSinceEpoch, value: value)
-  }
-
   public static func month(_ value: Int) -> Self {
     return Self(component: .month, value: value)
   }
@@ -152,20 +148,20 @@ extension ComponentValue {
     return Self(component: .nanosecond, value: value)
   }
 
-  public static func years(_ value: Int) -> Self {
-    return Self(component: .years, value: value)
+  public static func calendarYears(_ value: Int) -> Self {
+    return Self(component: .calendarYears, value: value)
   }
 
-  public static func months(_ value: Int) -> Self {
-    return Self(component: .months, value: value)
+  public static func calendarMonths(_ value: Int) -> Self {
+    return Self(component: .calendarMonths, value: value)
   }
 
-  public static func weeks(_ value: Int) -> Self {
-    return Self(component: .weeks, value: value)
+  public static func calendarWeeks(_ value: Int) -> Self {
+    return Self(component: .calendarWeeks, value: value)
   }
 
-  public static func days(_ value: Int) -> Self {
-    return Self(component: .days, value: value)
+  public static func calendarDays(_ value: Int) -> Self {
+    return Self(component: .calendarDays, value: value)
   }
 
   public static func numberOfDays(_ value: Int) -> Self {

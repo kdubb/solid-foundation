@@ -24,6 +24,7 @@ public protocol ComponentContainer: Sendable {
 public protocol MutableComponentContainer: ComponentContainer {
 
   mutating func setValue<C>(_ value: C.Value, for component: C) where C: Component
+  mutating func setValue<C>(_ value: any Sendable, for component: C) where C: Component
 
   mutating func removeValue<C>(for component: C) -> C.Value? where C: Component
   mutating func removeValues(for components: some Sequence<Component.Id>) -> ComponentArray
@@ -108,6 +109,13 @@ extension ComponentContainer {
 
 extension MutableComponentContainer {
 
+  public mutating func setValue<C>(_ value: any Sendable, for component: C) where C: Component {
+    guard let value = value as? C.Value else {
+      fatalError("Invalid value '\(value)` for component \(component.id)")
+    }
+    setValue(value, for: component)
+  }
+
   public mutating func removeValues(for componentIds: some Sequence<Component.Id>) -> ComponentArray {
 
     var extracted = ComponentArray()
@@ -151,13 +159,25 @@ extension ComponentContainer {
 extension ComponentContainer {
 
   public func adding(_ components: some ComponentContainer) throws -> Self {
+    let (result, overflow) = try addingReportingOverflow(components)
+    if overflow != .zero {
+      throw TempoError.unhandledOverflow
+    }
+    return result
+  }
+
+  public func addingReportingOverflow(
+    _ components: some ComponentContainer
+  ) throws -> (partialValue: Self, overflow: Duration) {
+
     var duration: Duration = .zero
     var hourDelta = 0, minuteDelta = 0, secondDelta = 0, nanoDelta = 0
-    var yearDelta = 0, monthDelta = 0, dayDelta = 0
 
     // Partition once
     for componentId in components.availableComponentIds {
+
       switch componentId.component {
+
       case let cvComponent as any DurationComponent:
         let cvValue = components.value(for: cvComponent)
         duration += Duration(cvValue, unit: cvComponent.unit)
@@ -171,17 +191,8 @@ extension ComponentContainer {
             (hourDelta, minuteDelta, secondDelta, nanoDelta)
           )
 
-      case let cvComponent as any DateComponent<Int>:
-        let cvValue = components.value(for: cvComponent)
-        (yearDelta, monthDelta, dayDelta) =
-          accumulateDate(
-            cvComponent,
-            cvValue,
-            (yearDelta, monthDelta, dayDelta),
-          )
-
       default:
-        throw Error.invalidComponentValue(
+        throw TempoError.invalidComponentValue(
           component: componentId.name,
           reason: .unsupportedInContainer("\(self)")
         )
@@ -191,32 +202,26 @@ extension ComponentContainer {
     var result = self
 
     // Duration first
-    if duration != .zero, let durResult = result as? DurationArithmetic {
+    if duration != .zero, let durResult = result as? ComponentContainerDurationArithmetic {
       result = knownSafeCast(try durResult.adding(duration: duration), to: Self.self)
     }
 
     // Time second – capture overflow
+    let timeChanged = (hourDelta + minuteDelta + secondDelta + nanoDelta) != 0
     var overflow: Duration = .zero
-    if (hourDelta | minuteDelta | secondDelta | nanoDelta) != 0, let timeResult = result as? TimeArithmetic {
-      let dTimeComps: ComponentArray = [
-        .hourOfDay(hourDelta), .minuteOfHour(minuteDelta), .secondOfMinute(secondDelta),
+    if timeChanged, let timeResult = result as? ComponentContainerTimeArithmetic {
+      let timeComps: ComponentArray = [
+        .hourOfDay(hourDelta),
+        .minuteOfHour(minuteDelta),
+        .secondOfMinute(secondDelta),
         .nanosecondsOfSecond(nanoDelta),
       ]
-      let sum = try timeResult.addingReportingOverflow(time: dTimeComps)
+      let sum = try timeResult.addingReportingOverflow(time: timeComps)
       overflow += sum.overflow
       result = knownSafeCast(sum.partialValue, to: Self.self)
     }
 
-    // Date third
-    if (yearDelta | monthDelta | dayDelta) != 0, var dateResult = result as? DateArithmetic {
-      let dDateComps: ComponentArray = [
-        .yearOfEra(yearDelta), .monthOfYear(monthDelta), .dayOfMonth(dayDelta),
-      ]
-      try dateResult.add(date: dDateComps)
-      result = knownSafeCast(dateResult, to: Self.self)
-    }
-
-    return result
+    return (result, overflow)
   }
 
   /// Adds one time‑of‑day component into the running h : m : s : ns total.
@@ -238,35 +243,14 @@ extension ComponentContainer {
     case .secondOfMinute:
       return (hour, minute, second + value, nanosecond)
     case .nanosecondOfSecond:
-      return (hour, minute, second, nanosecond + nanosecond)
+      return (hour, minute, second, nanosecond + value)
     default:
       return (hour, minute, second, nanosecond)
     }
   }
 
-  /// Adds one date component into the running y / mon / day total.
+  /// Rounds this component to the nearest unit.
   ///
-  /// Returns the new tuple `(y, mon, day)`.  Normalisation happens later.
-  @inline(__always)
-  private func accumulateDate<C>(
-    _ component: C,
-    _ value: Int,
-    _ date: (year: Int, month: Int, day: Int),
-  ) -> (year: Int, month: Int, day: Int) where C: Component {
-    let (year, month, day) = date
-
-    switch component.id {
-    case .yearOfEra:
-      return (year + value, month, day)
-    case .monthOfYear:
-      return (year, month + value, day)
-    case .day, .dayOfMonth, .dayOfYear:
-      return (year, month, day + value)
-    default:
-      return (year, month, day)
-    }
-  }
-
   public func rounded(to unit: Unit) throws -> Self {
     // TOOD: Implement truncation logic
     self

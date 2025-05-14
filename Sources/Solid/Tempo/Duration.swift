@@ -10,7 +10,7 @@ import Foundation
 
 /// A duration of time with nanosecond precision.
 ///
-public struct Duration: Sendable, Hashable, Codable {
+public struct Duration {
 
   public static let zero = Duration(nanoseconds: 0)
   public static let min = Duration(nanoseconds: .min)
@@ -51,6 +51,10 @@ public struct Duration: Sendable, Hashable, Codable {
   }
 }
 
+extension Duration: Sendable {}
+extension Duration: Hashable {}
+extension Duration: Equatable {}
+
 extension Duration: Comparable {
 
   public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -63,13 +67,13 @@ extension Duration: CustomStringConvertible {
 
   public var description: String {
     let days = self[.numberOfDays]
-    let daysField = days > 0 ? "\(days) days" : ""
+    let daysField = days > 0 ? "\(days) day\(days == 1 ? "" : "s")" : ""
     let hours = self[.numberOfHours, rolledOver: true]
-    let hoursField = hours > 0 ? "\(hours) hours" : ""
+    let hoursField = hours > 0 ? "\(hours) hour\(hours == 1 ? "" : "s")" : ""
     let minutes = self[.numberOfMinutes]
-    let minutesField = minutes > 0 ? "\(minutes) minutes" : ""
+    let minutesField = minutes > 0 ? "\(minutes) minute\(minutes == 1 ? "" : "s")" : ""
     let seconds = self[.numberOfSeconds]
-    let secondsField = seconds > 0 ? "\(seconds) seconds" : ""
+    let secondsField = seconds > 0 ? "\(seconds) second\(seconds == 1 ? "" : "s")" : ""
     let nanoseconds = self[.nanosecondsOfSecond]
     let nanosecondsField = nanoseconds > 0 ? "\(nanoseconds) nanoseconds" : ""
     return [daysField, hoursField, minutesField, secondsField, nanosecondsField]
@@ -145,7 +149,40 @@ extension Duration: LinkedComponentContainer, ComponentBuildable {
     if let millisecondsOfSecond = components[.millisecondsOfSecond] {
       duration += .milliseconds(millisecondsOfSecond)
     }
+    if let nanoosecondOfSecond = components[.nanosecondOfSecond] {
+      duration += .nanoseconds(nanoosecondOfSecond)
+    }
+    if let secondOfMinute = components[.secondOfMinute] {
+      duration += .seconds(secondOfMinute)
+    }
+    if let minuteOfHour = components[.minuteOfHour] {
+      duration += .minutes(minuteOfHour)
+    }
+    if let hourOfDay = components[.hourOfDay] {
+      duration += .hours(hourOfDay)
+    }
+    if let zoneOffset = components[.zoneOffset] {
+      duration += .seconds(zoneOffset)
+    }
+
     self = duration
+  }
+}
+
+extension Duration: ComponentContainerDurationArithmetic {
+
+  public mutating func addReportingOverflow(duration components: some ComponentContainer) throws -> Duration {
+    self = self + Duration(components: components)
+    return .zero
+  }
+
+}
+
+extension Duration: ComponentContainerTimeArithmetic {
+
+  public mutating func addReportingOverflow(time components: some ComponentContainer) throws -> Duration {
+    self = self + Duration(components: components)
+    return .zero
   }
 }
 
@@ -153,13 +190,13 @@ extension Duration: LinkedComponentContainer, ComponentBuildable {
 
 extension Duration {
 
-  /// Initialize a `Duration` from an integer and a ``Components/Unit``.
+  /// Initialize a `Duration` from an integer and a ``Unit``.
   ///
   /// - Parameters:
   ///   - value: The value in `unit`s.
   ///   - unit: The unit of `value`.
   ///
-  public init<I>(_ value: I, unit: Unit) where I: FixedWidthInteger {
+  public init<I>(_ value: I, unit: Unit) where I: SignedInteger {
     switch unit {
     case .days:
       self = .days(value)
@@ -202,6 +239,13 @@ extension Duration {
 // MARK: - Accessors
 
 extension Duration {
+
+  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
+    guard let durationComponent = component as? any DurationComponent else {
+      return nil
+    }
+    return durationComponent.extract(from: self, rolledOver: nil) as? C.Value
+  }
 
   public subscript<C>(_ component: C, rolledOver rolledOver: Bool? = nil) -> C.Value where C: DurationComponent {
     component.extract(from: self, rolledOver: rolledOver)
@@ -249,17 +293,17 @@ extension Duration {
     lhs = lhs * rhs
   }
 
-  public static func * <I>(lhs: I, rhs: Self) -> Self where I: BinaryInteger {
+  public static func * <I>(lhs: I, rhs: Self) -> Self where I: SignedInteger {
     let (product, overflow) = Int128(lhs).multipliedReportingOverflow(by: rhs.nanoseconds)
     assert(!overflow, "\(String(describing: self)) overflow")
     return Self(nanoseconds: product)
   }
 
-  public static func * <I>(lhs: Self, rhs: I) -> Self where I: BinaryInteger {
+  public static func * <I>(lhs: Self, rhs: I) -> Self where I: SignedInteger {
     return rhs * lhs
   }
 
-  public static func *= <I>(lhs: inout Self, rhs: I) where I: BinaryInteger {
+  public static func *= <I>(lhs: inout Self, rhs: I) where I: SignedInteger {
     lhs = lhs * rhs
   }
 
@@ -296,7 +340,7 @@ extension Duration {
     lhs = lhs / rhs
   }
 
-  public static func / <I>(lhs: Self, rhs: I) -> Self where I: BinaryInteger {
+  public static func / <I>(lhs: Self, rhs: I) -> Self where I: SignedInteger {
     let (quotient, overflow) = Int128(lhs.nanoseconds).dividedReportingOverflow(by: Int128(rhs))
     assert(!overflow, "\(String(describing: self)) overflow")
     return Self(nanoseconds: quotient)
@@ -316,7 +360,7 @@ extension Duration {
     return Self(nanoseconds: Int128(quotient))
   }
 
-  public static func /= <I>(lhs: inout Self, rhs: I) where I: BinaryInteger {
+  public static func /= <I>(lhs: inout Self, rhs: I) where I: SignedInteger {
     lhs = lhs / rhs
   }
 
@@ -326,7 +370,7 @@ extension Duration {
 
 extension Duration {
 
-  public static func days<I>(_ days: I) -> Self where I: BinaryInteger {
+  public static func days<I>(_ days: I) -> Self where I: SignedInteger {
     return days * Self.hours(24)
   }
 
@@ -334,7 +378,7 @@ extension Duration {
     return days * Self.hours(24)
   }
 
-  public static func hours<I>(_ hours: I) -> Self where I: BinaryInteger {
+  public static func hours<I>(_ hours: I) -> Self where I: SignedInteger {
     return hours * Self.minutes(60)
   }
 
@@ -342,7 +386,7 @@ extension Duration {
     return hours * Self.minutes(60)
   }
 
-  public static func minutes<I>(_ minutes: I) -> Self where I: BinaryInteger {
+  public static func minutes<I>(_ minutes: I) -> Self where I: SignedInteger {
     return minutes * Self.seconds(60)
   }
 
@@ -350,7 +394,7 @@ extension Duration {
     return minutes * Self.seconds(60)
   }
 
-  public static func seconds<I>(_ seconds: I) -> Self where I: BinaryInteger {
+  public static func seconds<I>(_ seconds: I) -> Self where I: SignedInteger {
     return seconds * Self.nanoseconds(1_000_000_000)
   }
 
@@ -358,15 +402,15 @@ extension Duration {
     return Self(seconds: Double(seconds))
   }
 
-  public static func milliseconds<I>(_ milliseconds: I) -> Self where I: BinaryInteger {
+  public static func milliseconds<I>(_ milliseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(milliseconds) * 1_000_000)
   }
 
-  public static func microseconds<I>(_ microseconds: I) -> Self where I: BinaryInteger {
+  public static func microseconds<I>(_ microseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(microseconds) * 1_000)
   }
 
-  public static func nanoseconds<I>(_ nanoseconds: I) -> Self where I: BinaryInteger {
+  public static func nanoseconds<I>(_ nanoseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(nanoseconds))
   }
 }

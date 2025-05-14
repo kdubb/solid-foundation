@@ -12,11 +12,25 @@ public struct LocalDateTime: DateTime {
   public static let min = LocalDateTime(date: .min, time: .min)
   public static let max = LocalDateTime(date: .max, time: .max)
 
+  /// The date part.
   public var date: LocalDate
+  /// The time part.
   public var time: LocalTime
 
-  public var availableZone: Zone? { nil }
-  public var availableZoneOffset: ZoneOffset? { nil }
+  /// The year component of the date.
+  public var year: Int { date.year }
+  /// The month component of the date.
+  public var month: Int { date.month }
+  /// The day component of the date.
+  public var day: Int { date.day }
+  /// The hour component of the time.
+  public var hour: Int { time.hour }
+  /// The minute component of the time.
+  public var minute: Int { time.minute }
+  /// The second component of the time.
+  public var second: Int { time.second }
+  /// The nanosecond component of the time.
+  public var nanosecond: Int { time.nanosecond }
 
   public init(date: LocalDate, time: LocalTime) {
     self.date = date
@@ -112,9 +126,34 @@ extension LocalDateTime: LinkedComponentContainer, ComponentBuildable {
   ]
 
   public init(components: some ComponentContainer) {
+
+    if let dateTime = components as? LocalDateTime {
+      self = dateTime
+      return
+    } else if let dateTime = components as? DateTime {
+      self.init(date: dateTime.date, time: dateTime.time)
+      return
+    }
+
     self.init(
       date: LocalDate(components: components),
       time: LocalTime(components: components),
+    )
+  }
+
+  public init(availableComponents components: some ComponentContainer) {
+
+    if let dateTime = components as? LocalDateTime {
+      self = dateTime
+      return
+    } else if let dateTime = components as? DateTime {
+      self.init(date: dateTime.date, time: dateTime.time)
+      return
+    }
+
+    self.init(
+      date: LocalDate(availableComponents: components),
+      time: LocalTime(availableComponents: components),
     )
   }
 
@@ -124,7 +163,7 @@ extension LocalDateTime: LinkedComponentContainer, ComponentBuildable {
 
 extension LocalDateTime {
 
-  /// Initializes an ``LocalTime`` by converting an instance of the ``DateTime`` protocol.
+  /// Initializes a local date/time by converting an instance of the ``DateTime`` protocol.
   ///
   /// - Parameter dateTime: The ``DateTime`` to convert.
   ///
@@ -132,4 +171,57 @@ extension LocalDateTime {
     self.init(date: dateTime.date, time: dateTime.time)
   }
 
+  /// Inlitializes a local date/time from a date and a duration of time.
+  ///
+  /// The time duration is converted to a local time with any duration of time over 24 hours
+  /// added to the date.
+  ///
+  /// - Parameters:
+  ///   - date: The local date.
+  ///   - timeDuration: The duration of time to convert to a local time with any overflow added to the date.
+  /// - Throws: A ``TempoError`` if the date, after applying any overflow, is invalid.
+  ///
+  public init(date: LocalDate, timeDuration: Duration) throws {
+    let time = try LocalTime(dayOffset: timeDuration)
+    let timeRollover: Duration = timeDuration - .nanoseconds(timeDuration[.nanosecondsOfDay])
+    let rolledDate = try GregorianCalendarSystem.default.adding(components: timeRollover, to: date)
+    self.init(date: rolledDate, time: time)
+  }
+
+}
+
+extension LocalDateTime {
+
+  /// Parses a date and time string per RFC-3339 (`YYYY-MM-DDTHH:MM:SS[.ssssssss]`) .
+  ///
+  /// - Parameter string: The date-time string.
+  /// - Returns: Parsed date and time instance if valid; otherwise, nil.
+  ///
+  public static func parse(string: String) -> Self? {
+
+    guard let sepIndex = string.firstIndex(where: { $0 == "T" || $0 == "t" }) else {
+      return nil
+    }
+
+    let datePart = String(string[..<sepIndex])
+    let timePart = String(string[string.index(after: sepIndex)...])
+
+    guard
+      let date = LocalDate.parse(string: datePart),
+      let (time, rollover) = LocalTime.parseReportingRollver(string: timePart)
+    else {
+      return nil
+    }
+
+    guard rollover else {
+      return Self(date: date, time: time)
+    }
+
+    guard
+      let rolloverDate = try? GregorianCalendarSystem.default.adding(components: [.numberOfDays(1)], to: date)
+    else {
+      return nil
+    }
+    return Self(date: rolloverDate, time: time)
+  }
 }

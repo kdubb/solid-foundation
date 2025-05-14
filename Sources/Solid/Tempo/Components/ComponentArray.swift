@@ -9,8 +9,8 @@ public struct ComponentArray: Equatable, Hashable, Sendable {
 
   fileprivate var values: [ComponentValue]
 
-  public init(_ values: [ComponentValue]) {
-    self.values = values
+  public init(_ values: some Sequence<ComponentValue>) {
+    self.values = Array(values)
   }
 
 }
@@ -115,6 +115,19 @@ extension ComponentArray: ExpressibleByArrayLiteral {
 
   public init(arrayLiteral elements: ComponentValue...) {
     self.init(elements)
+  }
+
+}
+
+extension Array: ComponentContainer where Element == ComponentValue {
+
+  public var availableComponentIds: Set<Components.Id> { Set(map(\.component.id)) }
+
+  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
+    guard let value = first(where: { $0.component.id == component.id }) else {
+      return nil
+    }
+    return value.value as? C.Value
   }
 
 }

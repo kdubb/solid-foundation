@@ -7,30 +7,34 @@
 
 
 public protocol DateComponent<Value>: DateTimeComponent {
+}
+
+public protocol IntegerDateComponent: DateComponent, IntegerDateTimeComponent where Value: SignedInteger {
   var unit: Unit { get }
+  var range: ClosedRange<Value> { get }
 }
 
 extension Components {
 
-  public static let era = Integer<Int>(id: .era, unit: .eras, range: 0...Int.max)
-  public static let year = Integer<Int>(id: .year, unit: .years, range: 0...Int.max)
-  public static let yearOfEra = Integer<Int>(id: .yearOfEra, unit: .years, range: 0...Int.max)
-  public static let yearForWeekOfYear = Integer<Int>(id: .yearForWeekOfYear, unit: .years, range: 0...Int.max)
-  public static let monthOfYear = Integer<Int>(id: .monthOfYear, unit: .months, range: 1...12)
-  public static let weekOfYear = Integer<Int>(id: .weekOfYear, unit: .weeks, range: 1...53)
-  public static let weekOfMonth = Integer<Int>(id: .weekOfMonth, unit: .weeks, range: 1...5)
-  public static let dayOfYear = Integer<Int>(id: .dayOfYear, unit: .days, range: 1...366)
-  public static let dayOfMonth = Integer<Int>(id: .dayOfMonth, unit: .days, range: 1...31)
-  public static let dayOfWeek = Integer<Int>(id: .dayOfWeek, unit: .days, range: 1...7)
-  public static let dayOfWeekForMonth = Integer<Int>(id: .dayOfWeekForMonth, unit: .days, range: 1...7)
+  public static let era = DateInteger<Int>(id: .era, unit: .eras, range: 0...Int.max)
+  public static let year = DateInteger<Int>(id: .year, unit: .years, range: 0...Int.max)
+  public static let yearOfEra = DateInteger<Int>(id: .yearOfEra, unit: .years, range: 0...Int.max)
+  public static let yearForWeekOfYear = DateInteger<Int>(id: .yearForWeekOfYear, unit: .years, range: 0...Int.max)
+  public static let monthOfYear = DateInteger<Int>(id: .monthOfYear, unit: .months, range: 1...12)
+  public static let weekOfYear = DateInteger<Int>(id: .weekOfYear, unit: .weeks, range: 1...53)
+  public static let weekOfMonth = DateInteger<Int>(id: .weekOfMonth, unit: .weeks, range: 1...5)
+  public static let dayOfYear = DateInteger<Int>(id: .dayOfYear, unit: .days, range: 1...366)
+  public static let dayOfMonth = DateInteger<Int>(id: .dayOfMonth, unit: .days, range: 1...31)
+  public static let dayOfWeek = DateInteger<Int>(id: .dayOfWeek, unit: .days, range: 1...7)
+  public static let dayOfWeekForMonth = DateInteger<Int>(id: .dayOfWeekForMonth, unit: .days, range: 1...7)
 
-  public static let isLeapMonth = Boolean(id: .isLeapMonth)
+  public static let isLeapMonth = DateBoolean(id: .isLeapMonth)
 
 }
 
 // MARK: - Common Component Extensions
 
-extension Component where Self == Components.Integer<Int> {
+extension Component where Self == Components.DateInteger<Int> {
 
   public static var era: Self { Components.era }
   public static var year: Self { Components.year }
@@ -52,7 +56,7 @@ extension Component where Self == Components.Integer<Int> {
 
 }
 
-extension Component where Self == Components.Boolean {
+extension Component where Self == Components.DateBoolean {
 
   public static var isLeapMonth: Self { Components.isLeapMonth }
 
@@ -60,7 +64,7 @@ extension Component where Self == Components.Boolean {
 
 // MARK: - DateComponent Extensions
 
-extension DateComponent where Self == Components.Integer<Int> {
+extension DateComponent where Self == Components.DateInteger<Int> {
 
   public static var era: Self { Components.era }
   public static var year: Self { Components.year }
@@ -82,8 +86,59 @@ extension DateComponent where Self == Components.Integer<Int> {
 
 }
 
-extension DateComponent where Self == Components.Boolean {
+extension DateComponent where Self == Components.DateBoolean {
 
   public static var isLeapMonth: Self { Components.isLeapMonth }
+
+}
+
+extension Components {
+
+  public struct DateInteger<Value>: IntegerDateComponent
+  where Value: SignedInteger & Sendable {
+
+    public typealias Value = Value
+
+    public let id: Id
+    public let unit: Unit
+    public let range: ClosedRange<Value>
+
+    public init(id: Id, unit: Unit, range: ClosedRange<Value>) {
+      self.id = id
+      self.unit = unit
+      self.range = range
+    }
+
+    public init(id: Id, unit: Unit, max: Value) {
+      self.id = id
+      self.unit = unit
+      self.range = 0...max
+    }
+
+    public var min: Value { range.lowerBound }
+    public var max: Value { range.upperBound }
+
+    public func validate(_ value: Value) throws {
+      if !range.contains(value) {
+        throw TempoError.invalidComponentValue(
+          component: id.name,
+          reason: .outOfRange(
+            value: "\(value)",
+            range: "\(range.lowerBound) - \(range.upperBound)",
+          )
+        )
+      }
+    }
+  }
+
+  public struct DateBoolean: DateComponent {
+
+    public typealias Value = Bool
+
+    public let id: Id
+    public let unit: Unit = .nan
+
+    public func validate(_ value: Bool) throws {}
+  }
 
 }

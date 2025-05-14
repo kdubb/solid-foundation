@@ -8,9 +8,10 @@
 import SolidCore
 
 
+/// Time of day unrelated to any specific date or time zone.
+///
 public struct LocalTime {
 
-  public static let zero = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
   public static let min = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
   public static let max = neverThrow(try LocalTime(hour: 23, minute: 59, second: 59, nanosecond: 999_999_999))
   public static let midnight = neverThrow(try LocalTime(hour: 0, minute: 0, second: 0, nanosecond: 0))
@@ -154,6 +155,59 @@ extension LocalTime: LinkedComponentContainer, ComponentBuildable {
     )
   }
 
+  public init(availableComponents components: some ComponentContainer) {
+
+    if let time = components as? Self {
+      self = time
+      return
+    } else if let time = components as? DateTime {
+      self = time.time
+      return
+    }
+
+    self.init(
+      storage: (
+        hour: UInt8(components.valueIfPresent(for: .hourOfDay) ?? 0),
+        minute: UInt8(components.valueIfPresent(for: .minuteOfHour) ?? 0),
+        second: UInt8(components.valueIfPresent(for: .secondOfMinute) ?? 0),
+        nanosecond: UInt32(components.valueIfPresent(for: .nanosecondOfSecond) ?? 0),
+      )
+    )
+  }
+
+}
+
+extension LocalTime: ComponentContainerDurationArithmetic {
+
+  public mutating func addReportingOverflow(
+    duration components: some ComponentContainer
+  ) throws -> Duration {
+    let totalNano = Duration(components: self) + Duration(components: components)
+    self = try LocalTime(
+      hour: totalNano[.hoursOfDay],
+      minute: totalNano[.minutesOfHour],
+      second: totalNano[.secondsOfMinute],
+      nanosecond: totalNano[.nanosecondsOfSecond],
+    )
+    return totalNano - .nanoseconds(totalNano[.nanosecondsOfDay])
+  }
+
+}
+
+extension LocalTime: ComponentContainerTimeArithmetic {
+
+  public mutating func addReportingOverflow(
+    time components: some ComponentContainer
+  ) throws -> Duration {
+    let totalNanos = Duration(components: self) + Duration(components: components)
+    self = try LocalTime(
+      hour: totalNanos[.hoursOfDay],
+      minute: totalNanos[.minutesOfHour],
+      second: totalNanos[.secondsOfMinute],
+      nanosecond: totalNanos[.nanosecondsOfSecond],
+    )
+    return totalNanos - .nanoseconds(totalNanos[.nanosecondsOfDay])
+  }
 }
 
 // MARK: - Conversion Initializers
@@ -173,20 +227,88 @@ extension LocalTime {
     )
   }
 
+  public init(dayOffset: Duration) throws {
+    self = try Self(
+      hour: dayOffset[.hoursOfDay],
+      minute: dayOffset[.minutesOfHour],
+      second: dayOffset[.secondsOfMinute],
+      nanosecond: dayOffset[.nanosecondsOfSecond],
+    )
+  }
+
 }
 
-// MARK: - Arithmentic Conformance
+extension LocalTime {
 
-extension LocalTime: DurationArithmetic {
+  private nonisolated(unsafe) static let parseRegex =
+    /^(?<hour>[01]\d|2[0-3]):(?<minute>[0-5]\d):((?<second>[0-5]\d|60)(\.(?<nanosecond>[0-9]{1,9}))?)$/
+    .asciiOnlyDigits()
+    .asciiOnlyWordCharacters()
+    .ignoresCase()
 
-  public mutating func addReportingOverflow(
-    duration components: some ComponentContainer
-  ) throws -> Duration {
-    let cal: CalendarSystem = .default
-    let instant = try cal.instant(from: components, resolution: .default)
-    let updatedInstant = instant + Duration(components: components)
-    self = cal.components(from: updatedInstant, in: .utc)
-    return .zero
+  /// Parses a time string per RFC-3339 (`HH:MM:SS[.sssssssss]`).
+  ///
+  /// If the time string represents a time in a leap second period (e.g., `23:59:60`), the time is silently rolled
+  /// over to `00:00:00.000`.
+  ///
+  /// - Parameter string: The time string.
+  /// - Returns: Parsed time instance if valid; otherwise, nil.
+  ///
+  public static func parse(string: String) -> Self? {
+
+    guard let time = parseReportingRollver(string: string)?.time else {
+      return nil
+    }
+
+    return time
+  }
+
+  /// Parses a time string per RFC-3339 (`HH:MM:SS[.fraction]`), reporting leap second rollover.
+  ///
+  /// If the time string represents a time in a leap second period (e.g., `23:59:60`), the time is rolled over to
+  /// `00:00:00.000` and the `rollover` flag wil lbe `true`.
+  ///
+  /// - Parameter string: The full-time string.
+  /// - Returns: Parsed time and flag inidicating if leap second rollover occurred.
+  ///
+  public static func parseReportingRollver(string: String) -> (time: Self, rollover: Bool)? {
+
+    guard let match = string.wholeMatch(of: parseRegex) else {
+      return nil
+    }
+
+    guard
+      var hour = Int(match.output.hour),
+      var minute = Int(match.output.minute),
+      var second = Int(match.output.second),
+      let nanosecond = Int(match.output.nanosecond.map { $0.rightPad(to: 9, with: "0") } ?? "0")
+    else {
+      return nil
+    }
+
+    // Validate second.
+    let rollover: Bool
+    if second == 60 {
+      // Leap seconds are only valid at 23:59:60
+      guard hour == 23 && minute == 59 && nanosecond == 0 else {
+        return nil
+      }
+
+      rollover = true
+      hour = 0
+      minute = 0
+      second = 0
+
+    } else {
+
+      rollover = false
+    }
+
+    guard let time = try? Self(hour: hour, minute: minute, second: second, nanosecond: nanosecond) else {
+      return nil
+    }
+
+    return (time, rollover)
   }
 
 }

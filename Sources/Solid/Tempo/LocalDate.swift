@@ -7,11 +7,14 @@
 
 import SolidCore
 
+
+/// Date in the proleptic Gregorian calendar system.
+///
 public struct LocalDate {
 
+  public static let epoch = LocalDate(storage: (year: 1970, month: 1, day: 1))
   public static let min = LocalDate(storage: (year: -999_999_999, month: 1, day: 1))
   public static let max = LocalDate(storage: (year: 999_999_999, month: 12, day: 31))
-  public static let epoch = LocalDate(storage: (year: 1970, month: 1, day: 1))
 
   internal typealias Storage = (year: Int32, month: UInt8, day: UInt8)
 
@@ -47,11 +50,21 @@ public struct LocalDate {
     @Validated(.monthOfYear) month: Int,
     @Validated(.dayOfMonth) day: Int
   ) throws {
+
+    let year = try $year.get()
+    let month = try $month.get()
+    let day = try $day.get()
+
+    // Validate the day is within the valid range for the month.
+    let cal: GregorianCalendarSystem = .default
+    let daysInMonth = cal.daysInMonth(year: year, month: month)
+    try _day.assert(1...daysInMonth, "Invalid day for month '\(month)' of year '\(year)'")
+
     self.init(
-      storage: try (
-        year: Int32($year.get()),
-        month: UInt8($month.get()),
-        day: UInt8($day.get())
+      storage: (
+        year: Int32(year),
+        month: UInt8(month),
+        day: UInt8(day)
       )
     )
   }
@@ -128,11 +141,39 @@ extension LocalDate: LinkedComponentContainer, ComponentBuildable {
   ]
 
   public init(components: some ComponentContainer) {
+
+    if let date = components as? LocalDate {
+      self = date
+      return
+    } else if let date = components as? DateTime {
+      self = date.date
+      return
+    }
+
+    self.init(
+      storage: (
+        Int32(components.value(for: .year)),
+        UInt8(components.value(for: .monthOfYear)),
+        UInt8(components.value(for: .dayOfMonth)),
+      )
+    )
+  }
+
+  public init(availableComponents components: some ComponentContainer) {
+
+    if let date = components as? LocalDate {
+      self = date
+      return
+    } else if let date = components as? DateTime {
+      self = date.date
+      return
+    }
+
     self.init(
       storage: (
         Int32(components.valueIfPresent(for: .year) ?? 0),
-        UInt8(components.valueIfPresent(for: .monthOfYear) ?? 0),
-        UInt8(components.valueIfPresent(for: .dayOfMonth) ?? 0),
+        UInt8(components.valueIfPresent(for: .monthOfYear) ?? 1),
+        UInt8(components.valueIfPresent(for: .dayOfMonth) ?? 1),
       )
     )
   }
@@ -156,27 +197,44 @@ extension LocalDate {
   /// - Throws: `Error.invalidComponentValue` if the
   ///   ordinal is outside the valid range for that year.
   public init(year: Int, ordinalDay: Int) throws {
-
-    let isLeap = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)
-    let cumDays = isLeap ? Self.cumDaysLeap : Self.cumDaysStd
-
-    let maxOrd = cumDays[12]
-    guard ordinalDay >= 1 && ordinalDay <= maxOrd else {
-      throw Error.invalidComponentValue(
-        component: "ordinalDay",
-        reason: .outOfRange(value: "\(ordinalDay)", range: "\(1...maxOrd)")
-      )
-    }
-
-    // Find month by binary search or linear scan (12 elements)
-    var month = 1
-    while month <= 12 && ordinalDay > cumDays[month] { month += 1 }
-
-    let day = ordinalDay - cumDays[month - 1]
-    try self.init(year: year, month: month, day: day)
+    self = try GregorianCalendarSystem.default.localDate(year: year, ordinalDay: ordinalDay)
   }
 
-  private static let cumDaysLeap: [Int] = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366]
-  private static let cumDaysStd: [Int] = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365]
+}
+
+extension LocalDate {
+
+  private nonisolated(unsafe) static let parseRegex =
+    /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/
+    .asciiOnlyDigits()
+
+  /// Parses a date string (`YYYY-MM-DD`) per RFC-3339.
+  ///
+  /// - Parameter string: The full-date string.
+  /// - Returns: Parsed date instance if valid; otherwise, nil.
+  ///
+  public static func parse(string: String) -> Self? {
+    let cal: GregorianCalendarSystem = .default
+
+    guard let match = string.wholeMatch(of: parseRegex) else {
+      return nil
+    }
+
+    guard
+      let year = Int(match.output.year),
+      let month = Int(match.output.month),
+      let day = Int(match.output.day),
+      let date = try? Self(year: year, month: month, day: day)
+    else {
+      return nil
+    }
+
+    let daysInMonth: Int = cal.daysInMonth(year: year, month: month)
+    guard (1...daysInMonth).contains(day) else {
+      return nil
+    }
+
+    return date
+  }
 
 }

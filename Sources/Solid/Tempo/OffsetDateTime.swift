@@ -5,15 +5,35 @@
 //  Created by Kevin Wooten on 4/27/25.
 //
 
+import SolidCore
+
 
 /// A date & time at a specific fixed zone offset.
 ///
 public struct OffsetDateTime: DateTime {
 
   public var dateTime: LocalDateTime
-  public var date: LocalDate { dateTime.date }
-  public var time: LocalTime { dateTime.time }
   public var offset: ZoneOffset
+
+  /// The date part.
+  public var date: LocalDate { dateTime.date }
+  /// The time part.
+  public var time: LocalTime { dateTime.time }
+
+  /// The year component of the date.
+  public var year: Int { date.year }
+  /// The month component of the date.
+  public var month: Int { date.month }
+  /// The day component of the date.
+  public var day: Int { date.day }
+  /// The hour component of the time.
+  public var hour: Int { time.hour }
+  /// The minute component of the time.
+  public var minute: Int { time.minute }
+  /// The second component of the time.
+  public var second: Int { time.second }
+  /// The nanosecond component of the time.
+  public var nanosecond: Int { time.nanosecond }
 
   /// Initializes an instance of ``OffsetDateTime`` with the specified date and time components
   /// at the specified zone offset.
@@ -35,7 +55,7 @@ public struct OffsetDateTime: DateTime {
   ///   - zone: The time zone used to determine the `offset`.
   ///   - resolving: The resolution strategy to use. Defaults to `.default`.
   ///   - calendarSystem: The calendar system to use. Defaults to `.default`.
-  /// - Throws: A ``Error`` if the conversion local-time is an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the local-time is unresolvable.
   ///
   public init(
     dateTime: LocalDateTime,
@@ -72,8 +92,8 @@ public struct OffsetDateTime: DateTime {
     nanosecond: Int,
     offset: ZoneOffset
   ) throws {
-    try self.init(
-      dateTime: LocalDateTime(
+    self.init(
+      dateTime: try LocalDateTime(
         year: year,
         month: month,
         day: day,
@@ -166,18 +186,17 @@ public struct OffsetDateTime: DateTime {
   ///   instant or local-time the is preserved. Defaults to ``AdjustmentAnchor/sameInstant``.
   ///   - calendarSystem: The calendar system to use. Defaults to `.default`.
   /// - Returns: A new instance of ``ZonedDateTime`` in the specified time zone.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
   ///
   public func withOffset(
     _ offset: ZoneOffset,
     anchor: AdjustmentAnchor = .sameInstant,
     in calendarSystem: CalendarSystem = .default
-  ) throws -> Self {
+  ) -> Self {
     switch anchor {
     case .sameLocalTime:
       return with(offset: offset)
     case .sameInstant:
-      let instant = try calendarSystem.instant(from: self, resolution: .default)
+      let instant = calendarSystem.instant(from: self, at: self.offset)
       return calendarSystem.components(from: instant, in: .fixed(offset: offset))
     }
   }
@@ -191,6 +210,26 @@ public struct OffsetDateTime: DateTime {
   ///
   public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) -> Self {
     return calendarSystem.components(from: clock.instant, in: clock.zone)
+  }
+
+}
+
+extension OffsetDateTime: Sendable {}
+extension OffsetDateTime: Hashable {}
+extension OffsetDateTime: Equatable {}
+
+extension OffsetDateTime: Comparable {
+
+  public static func < (lhs: Self, rhs: Self) -> Bool {
+    return lhs.dateTime < rhs.dateTime
+  }
+
+}
+
+extension OffsetDateTime: CustomStringConvertible {
+
+  public var description: String {
+    "\(dateTime)\(offset)"
   }
 }
 
@@ -208,21 +247,52 @@ extension OffsetDateTime: LinkedComponentContainer, ComponentBuildable {
   ]
 
   public init(components: some ComponentContainer) {
+
+    if let dateTime = components as? OffsetDateTime {
+      self = dateTime
+      return
+    }
+
     self.init(
       dateTime: LocalDateTime(components: components),
-      offset: ZoneOffset(components: components)
+      offset: ZoneOffset(availableComponents: components)
     )
   }
 
 }
 
-extension OffsetDateTime: Sendable {}
-extension OffsetDateTime: Hashable {}
-extension OffsetDateTime: Equatable {}
+extension OffsetDateTime {
 
-extension OffsetDateTime: CustomStringConvertible {
+  /// Parses a date and offset time string per RFC-3339 (`YYYY-MM-DDTHH:MM:SS[.ssssssss](Z|[+-]HH:MM)`) .
+  ///
+  /// - Parameter string: The date-time string.
+  /// - Returns: Parsed date and time instance if valid; otherwise, nil.
+  ///
+  public static func parse(string: String) -> Self? {
 
-  public var description: String {
-    "\(dateTime)\(offset)"
+    guard let sepIndex = string.firstIndex(where: { $0 == "T" || $0 == "t" }) else {
+      return nil
+    }
+
+    let datePart = String(string[..<sepIndex])
+    let timePart = String(string[string.index(after: sepIndex)...])
+
+    guard
+      let date = LocalDate.parse(string: datePart),
+      let (time, rollover) = OffsetTime.parseReportingRollover(string: timePart)
+    else {
+      return nil
+    }
+
+    guard rollover else {
+      return Self(dateTime: LocalDateTime(date: date, time: time.time), offset: time.offset)
+    }
+
+    guard
+      let rolloverDate = try? GregorianCalendarSystem.default.adding(components: [.numberOfDays(1)], to: date)
+    else {
+      return nil
+    }
+    return Self(dateTime: LocalDateTime(date: rolloverDate, time: time.time), offset: time.offset)
   }
 }

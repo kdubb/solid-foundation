@@ -38,23 +38,12 @@ public struct ZoneOffset {
     self.storage = storage
   }
 
-  internal init(valid totalSeconds: Int) {
-    // swift-format-ignore: NeverUseForceTry
-    try! self.init(totalSeconds: totalSeconds)
-  }
-
-  internal init(valid duration: Duration) {
-    self.init(valid: duration[.totalSeconds])
-  }
-
   public init(totalSeconds: Int) throws {
     guard totalSeconds.magnitude <= 18 * 3600 else {
-      throw
-        Error
-        .invalidComponentValue(
-          component: "totalSeconds",
-          reason: .unknown(reason: "Total offset must be less than 18 hours")
-        )
+      throw TempoError.invalidComponentValue(
+        component: "totalSeconds",
+        reason: .extended(reason: "Total offset must be less than 18 hours")
+      )
     }
     self.init(storage: Storage(totalSeconds))
   }
@@ -128,20 +117,26 @@ extension ZoneOffset: Comparable {
 
 }
 
-extension ZoneOffset: LinkedComponentContainer, ComponentBuildable {
+extension ZoneOffset {
 
-  public static let links: [any ComponentLink<Self>] = [
-    ComponentKeyPathLink(.hoursOfZoneOffset, to: \.hours),
-    ComponentKeyPathLink(.minutesOfZoneOffset, to: \.minutes),
-    ComponentKeyPathLink(.secondsOfZoneOffset, to: \.seconds),
-  ]
+  public init(availableComponents components: some ComponentContainer) {
+    if let zoneOffsetSeconds = components.valueIfPresent(for: .zoneOffset) {
+      self.init(storage: Storage(zoneOffsetSeconds))
+    } else if let totalSeconds = components.valueIfPresent(for: .totalSeconds) {
+      self.init(storage: Storage(totalSeconds))
+    } else {
+      let hours = components.value(for: .hoursOfZoneOffset)
+      let minutes = components.value(for: .minutesOfZoneOffset)
+      let seconds = components.value(for: .secondsOfZoneOffset)
+      self.init(storage: Storage(hours * 3600 + minutes * 60 + seconds))
+    }
+  }
+}
 
-  public init(components: some ComponentContainer) {
-    let hours = components.valueIfPresent(for: .hoursOfZoneOffset) ?? 0
-    let minutes = components.valueIfPresent(for: .minutesOfZoneOffset) ?? 0
-    let seconds = components.valueIfPresent(for: .secondsOfZoneOffset) ?? 0
-    let totalSeconds = hours * 3600 + minutes * 60 + seconds
-    self.init(storage: Storage(totalSeconds))
+extension ZoneOffset {
+
+  public static func hours(_ hours: Int) throws -> Self {
+    return try Self(hours: hours, minutes: 0, seconds: 0)
   }
 
 }

@@ -40,14 +40,16 @@ public enum Components: Sendable {
 
     case zoneId
 
-    case durationSinceEpoch
-
     // Period/Duration
 
-    case years
-    case months
-    case weeks
-    case days
+    // Period
+
+    case calendarYears
+    case calendarMonths
+    case calendarWeeks
+    case calendarDays
+
+    // Duration
 
     case numberOfDays
     case numberOfHours
@@ -139,12 +141,11 @@ public enum Components: Sendable {
     (.minutesOfZoneOffset, "minutesOfZoneOffset", minutesOfZoneOffset),
     (.secondsOfZoneOffset, "secondsOfZoneOffset", secondsOfZoneOffset),
     (.zoneId, "zoneId", zoneId),
-    (.durationSinceEpoch, "durationSinceEpoch", durationSinceEpoch),
     // Period/Duration
-    (.years, "years", years),
-    (.months, "months", months),
-    (.weeks, "weeks", weeks),
-    (.days, "days", days),
+    (.calendarYears, "calendarYears", calendarYears),
+    (.calendarMonths, "calendarMonths", calendarMonths),
+    (.calendarWeeks, "calendarWeeks", calendarWeeks),
+    (.calendarDays, "calendarDays", calendarDays),
     (.numberOfDays, "numberOfDays", numberOfDays),
     (.numberOfHours, "numberOfHours", numberOfHours),
     (.numberOfMinutes, "numberOfMinutes", numberOfMinutes),
@@ -197,78 +198,6 @@ extension Components.Id: Comparable {
 
   public static func < (lhs: Self, rhs: Self) -> Bool {
     lhs.rawValue < rhs.rawValue
-  }
-
-}
-
-extension Components {
-
-  public struct Integer<Value>: TimeComponent, DateComponent, PeriodComponent
-  where Value: FixedWidthInteger & Sendable {
-
-    public typealias Value = Value
-
-    public let id: Id
-    public let unit: Unit
-    public let range: ClosedRange<Value>
-
-    public init(id: Id, unit: Unit, range: ClosedRange<Value>) {
-      self.id = id
-      self.unit = unit
-      self.range = range
-    }
-
-    public init(id: Id, unit: Unit, max: Value) {
-      self.id = id
-      self.unit = unit
-      self.range = 0...max
-    }
-
-    public var min: Value { range.lowerBound }
-    public var max: Value { range.upperBound }
-
-    public func validate(_ value: Value) throws {
-      if !range.contains(value) {
-        throw Error.invalidComponentValue(
-          component: id.name,
-          reason: .outOfRange(
-            value: "\(value)",
-            range: "\(range.lowerBound) - \(range.upperBound)",
-          )
-        )
-      }
-    }
-  }
-
-  public struct Boolean: DateComponent {
-
-    public typealias Value = Bool
-
-    public let id: Id
-    public let unit: Unit = .nan
-
-    public func validate(_ value: Bool) throws {}
-  }
-
-  public struct Identifier: Component {
-
-    public typealias Value = String
-
-    public let id: Id
-    public let unit: Unit = .nan
-    public let validator: (@Sendable (String, Component.Id) throws -> Void)?
-
-    public func validate(_ value: String) throws {
-      try validator?(value, id)
-    }
-
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-      lhs.id == rhs.id
-    }
-
-    public func hash(into hasher: inout Hasher) {
-      hasher.combine(id)
-    }
   }
 
 }

@@ -7,6 +7,10 @@
 
 /// Fixed offset zone rules for zones that do not change over time.
 ///
+/// ``FixedOffsetZoneRules`` is a concrete implementation of the ``ZoneRules`` protocol that
+/// can easily construct a ``ZoneRules`` instance for a fixed offset time without relying on
+/// an existing zone definition being available via a ``ZoneRulesLoader``.
+///
 public final class FixedOffsetZoneRules: ZoneRules, Sendable {
 
   let offset: ZoneOffset
@@ -15,7 +19,7 @@ public final class FixedOffsetZoneRules: ZoneRules, Sendable {
     self.offset = offset
   }
 
-  public var isFixed: Bool {
+  public var isFixedOffset: Bool {
     return true
   }
 
@@ -32,6 +36,10 @@ public final class FixedOffsetZoneRules: ZoneRules, Sendable {
   }
 
   public func offset(at instant: Instant) -> ZoneOffset {
+    return offset
+  }
+
+  public func offset(for dateTime: LocalDateTime) -> ZoneOffset {
     return offset
   }
 

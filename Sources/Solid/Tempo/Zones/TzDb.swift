@@ -160,7 +160,7 @@ public final class TzDb: ZoneRulesLoader {
   ///
   public func load(identifier: String) throws -> any ZoneRules {
     guard let entry = zones[identifier] else {
-      throw SolidTempo.Error.invalidRegionalTimeZone(identifier: identifier)
+      throw TempoError.invalidRegionalTimeZone(identifier: identifier)
     }
     return try entry.load()
   }

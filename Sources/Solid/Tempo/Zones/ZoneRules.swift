@@ -7,42 +7,12 @@
 
 import Foundation
 
-/// The valid zone offsets for a specific local date/time.
-///
-/// The enum provides semantic meaning for the results as well
-/// as being a ``Swift/Collection`` of ``ZoneOffset``
-/// values.
-///
-public enum ValidZoneOffsets {
-  /// The associated local date/time is in a normal time period with a
-  /// single valid offset.
-  ///
-  case normal(ZoneOffset)
-  /// No offsets are valid for the associated local date/time because
-  /// it is in a skipped time gap.
-  ///
-  case skipped
-  /// The associated local date/time is in an ambiguous time
-  /// period with multiple valid offsets.
-  ///
-  /// Generally there will be two valid offsets associated with a
-  /// zone transition. Although, in some esoteric cases there _could_
-  /// be more than two valid offsets. The offsets are ordered from
-  /// earliest to latest.
-  ///
-  case ambiguous([ZoneOffset])
-}
 
 /// Rules governing transitions, their offsets, and if/when they occur.
 ///
 public protocol ZoneRules: AnyObject, Sendable {
 
-  /// Returns if the zone rules are fixed, such that the zone's offset never changes.
-  ///
-  /// - Returns: `true` if the zone rules are fixed, `false` otherwise.
-  var isFixed: Bool { get }
-
-  /// Returns whether the zone rules have a fixed offset.
+  /// Returns whether the zone rules have a fixed offset, such that the zone's offset never changes
   ///
   /// If the zone rules are fixed, this will always be `true`.
   ///
@@ -70,12 +40,19 @@ public protocol ZoneRules: AnyObject, Sendable {
   ///
   func isDaylightSavingsTime(at instant: Instant) -> Bool
 
-  /// Returns the total offset (seconds from UTC) for the given instant.
+  /// Returns the zone offset for the given instant.
   ///
-  /// - Parameter instant: The instant.
-  /// - Returns: The total offset.
+  /// - Parameter instant: The instant to get the offset for.
+  /// - Returns: The zone offset for the specified `instant`.
   ///
   func offset(at instant: Instant) -> ZoneOffset
+
+  /// Returns the zone offset (seconds from UTC) for the given date/time.
+  ///
+  /// - Parameter dateTime: The date time to get the offset for.
+  /// - Returns: The zone offset for the specified `dateTime`.
+  ///
+  func offset(for dateTime: LocalDateTime) -> ZoneOffset
 
   /// Returns the offsets for the given local date/time.
   ///
@@ -117,55 +94,4 @@ public protocol ZoneRules: AnyObject, Sendable {
   /// - Returns: The designation for the specified `instant`, or `nil` if unavailable.
   ///
   func designation(for instant: Instant) -> String?
-}
-
-extension ValidZoneOffsets: Sendable {}
-extension ValidZoneOffsets: Equatable {}
-extension ValidZoneOffsets: Hashable {}
-
-extension ValidZoneOffsets: Collection {
-
-  public typealias Element = ZoneOffset
-  public typealias Index = Int
-
-  public var startIndex: Int { 0 }
-
-  public var endIndex: Int {
-    switch self {
-    case .skipped: 0
-    case .normal: 1
-    case .ambiguous(let offsets): offsets.count
-    }
-  }
-
-  public var count: Int {
-    switch self {
-    case .skipped: 0
-    case .normal: 1
-    case .ambiguous(let offsets): offsets.count
-    }
-  }
-
-  public func index(after i: Int) -> Int {
-    precondition(i >= 0 && i < count, "Index out of bounds")
-    return i + 1
-  }
-
-  public subscript(index: Int) -> ZoneOffset {
-    switch self {
-    case .skipped:
-      preconditionFailure("No offsets in gap")
-    case .normal(let offset):
-      precondition(index == 0, "Index out of bounds")
-      return offset
-    case .ambiguous(let offsets):
-      return offsets[index]
-    }
-  }
-}
-
-extension ZoneRules {
-
-  public var isFixedOffset: Bool { isFixed }
-
 }

@@ -165,6 +165,7 @@ let package = Package(
     .target(
       name: "SolidTesting",
       dependencies: ["Solid"],
+      path: "Tests/SolidTesting",
       resources: [
         .copy("Resources")
       ],
