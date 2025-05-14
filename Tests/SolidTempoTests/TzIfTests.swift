@@ -81,7 +81,7 @@ struct TzIfTests {
       print("Loading \(zoneId)...")
       let url = URL(string: zoneId, relativeTo: loader.url)!
       do {
-        _ = try TzIf.load(url: url)
+        _ = try loader.load(identifier: zoneId)
         print("- Successful")
       } catch {
         print("- Failed: \(error)")

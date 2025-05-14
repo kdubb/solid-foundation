@@ -72,12 +72,11 @@ let package = Package(
       ]
     ),
     .target(
-      name: "SolidFormat",
+      name: "SolidNet",
       dependencies: [
         "SolidCore",
-        "SolidNumeric",
       ],
-      path: "Sources/Solid/Format",
+      path: "Sources/Solid/Net",
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]
@@ -86,7 +85,7 @@ let package = Package(
       name: "SolidURI",
       dependencies: [
         "SolidCore",
-        "SolidFormat",
+        "SolidNet",
         .product(name: "ScreamURITemplate", package: "uritemplate"),
       ],
       path: "Sources/Solid/URI",
@@ -99,7 +98,6 @@ let package = Package(
       dependencies: [
         "SolidCore",
         .product(name: "Atomics", package: "swift-atomics"),
-        .product(name: "Collections", package: "swift-collections"),
       ],
       path: "Sources/Solid/Tempo",
       plugins: [
@@ -128,6 +126,7 @@ let package = Package(
         "SolidURI",
         "SolidNumeric",
         "SolidJSON",
+        "SolidNet",
         .product(name: "Collections", package: "swift-collections"),
       ],
       path: "Sources/Solid/Schema",
@@ -163,9 +162,59 @@ let package = Package(
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
     ),
-    .testTarget(
-      name: "SolidTests",
+    .target(
+      name: "SolidTesting",
       dependencies: ["Solid"],
+      resources: [
+        .copy("Resources")
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .testTarget(
+      name: "SolidDataTests",
+      dependencies: ["SolidTesting", "SolidData"],
+      resources: [
+        .copy("Resources")
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .testTarget(
+      name: "SolidNumericTests",
+      dependencies: ["SolidTesting", "SolidNumeric"],
+      resources: [
+        .copy("Resources")
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .testTarget(
+      name: "SolidSchemaTests",
+      dependencies: ["SolidTesting", "SolidSchema"],
+      resources: [
+        .copy("Resources")
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .testTarget(
+      name: "SolidTempoTests",
+      dependencies: ["SolidTesting", "SolidTempo"],
+      resources: [
+        .copy("Resources")
+      ],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .testTarget(
+      name: "SolidURITests",
+      dependencies: ["SolidTesting", "SolidURI"],
       resources: [
         .copy("Resources")
       ],

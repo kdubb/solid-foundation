@@ -1,16 +1,16 @@
 //
-//  RFC6531Tests.swift
+//  IDNEmailAddressTests.swift
 //  SolidFoundation
 //
 //  Created by Kevin Wooten on 5/12/25.
 //
 
-@testable import SolidFormat
+@testable import SolidNet
 import Testing
 
 
-@Suite("RFC6531 Internationalized Mailbox/Address Tests")
-final class RFC6531InternationalizedMailboxAddressTests {
+@Suite("IDN EmailAddress Tests")
+final class IDNEmailAddressTests {
 
   @Test(
     "Valid ASCII email addresses",
@@ -44,7 +44,7 @@ final class RFC6531InternationalizedMailboxAddressTests {
   )
   func validAsciiEmails(local: String, domain: String, description: String) throws {
     let email = "\(local)@\(domain)"
-    let mailbox = try #require(RFC6531.Mailbox.parse(string: email))
+    let mailbox = try #require(IDNEmailAddress.parse(string: email))
     #expect(
       mailbox.local == local,
       "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'"
@@ -72,7 +72,7 @@ final class RFC6531InternationalizedMailboxAddressTests {
   )
   func validInternationalizedEmails(local: String, domain: String, description: String) throws {
     let email = "\(local)@\(domain)"
-    let mailbox = try #require(RFC6531.Mailbox.parse(string: email))
+    let mailbox = try #require(IDNEmailAddress.parse(string: email))
     #expect(
       mailbox.local == local,
       "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'"
@@ -104,7 +104,7 @@ final class RFC6531InternationalizedMailboxAddressTests {
     ]
   )
   func invalidEmails(email: String, description: String) throws {
-    #expect(RFC6531.Mailbox.parse(string: email) == nil, "Incorrectly parsed invalid email: \(email) - \(description)")
+    #expect(IDNEmailAddress.parse(string: email) == nil, "Incorrectly parsed invalid email: \(email) - \(description)")
   }
 
   @Test(
@@ -122,7 +122,7 @@ final class RFC6531InternationalizedMailboxAddressTests {
   )
   func emailComponents(local: String, domain: String, description: String) throws {
     let email = "\(local)@\(domain)"
-    let mailbox = try #require(RFC6531.Mailbox.parse(string: email))
+    let mailbox = try #require(IDNEmailAddress.parse(string: email))
     #expect(
       mailbox.local == local,
       "Local part mismatch for \(description): expected '\(local)', got '\(mailbox.local)'"

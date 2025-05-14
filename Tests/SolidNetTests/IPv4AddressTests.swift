@@ -1,22 +1,22 @@
 //
-//  RFC2673Tests.swift
+//  IPv4AddressTests.swift
 //  SolidFoundation
 //
 //  Created by Kevin Wooten on 1/31/25.
 //
 
-@testable import SolidFormat
+@testable import SolidNet
 import Testing
 
 
-@Suite("RFC2673 IPv4 Address Tests")
-final class RFC2673IPv4AddressTests {
+@Suite("IPv4 Address Tests")
+final class IPv4AddressTests {
 
   // MARK: - Initialization Tests
 
   @Test("Initialize with octets")
   func testInitWithOctets() {
-    let address = RFC2673.IPv4Address(a: 192, b: 168, c: 1, d: 1)
+    let address = IPv4Address(a: 192, b: 168, c: 1, d: 1)
     #expect(address.a == 192)
     #expect(address.b == 168)
     #expect(address.c == 1)
@@ -26,7 +26,7 @@ final class RFC2673IPv4AddressTests {
   @Test("Initialize with octet tuple")
   func testInitWithOctetTuple() {
     let octets: (UInt8, UInt8, UInt8, UInt8) = (192, 168, 1, 1)
-    let address = RFC2673.IPv4Address(octets: octets)
+    let address = IPv4Address(octets: octets)
     #expect(address.a == octets.0)
     #expect(address.b == octets.1)
     #expect(address.c == octets.2)
@@ -45,7 +45,7 @@ final class RFC2673IPv4AddressTests {
     "1.1.1.1",
   ])
   func testParseValidIPv4Address(_ string: String) {
-    #expect(RFC2673.IPv4Address.parse(string: string) != nil)
+    #expect(IPv4Address.parse(string: string) != nil)
   }
 
   @Test(arguments: [
@@ -63,20 +63,20 @@ final class RFC2673IPv4AddressTests {
     (" 192.168.1.1", "Leading space"),
   ])
   func testParseInvalidIPv4Address(_ string: String, _ description: String) {
-    #expect(RFC2673.IPv4Address.parse(string: string) == nil)
+    #expect(IPv4Address.parse(string: string) == nil)
   }
 
   @Test("Parse edge cases")
   func testParseEdgeCases() {
     // Test minimum and maximum values for each octet
-    let minAddress = RFC2673.IPv4Address.parse(string: "0.0.0.0")
+    let minAddress = IPv4Address.parse(string: "0.0.0.0")
     #expect(minAddress != nil)
     #expect(minAddress?.a == 0)
     #expect(minAddress?.b == 0)
     #expect(minAddress?.c == 0)
     #expect(minAddress?.d == 0)
 
-    let maxAddress = RFC2673.IPv4Address.parse(string: "255.255.255.255")
+    let maxAddress = IPv4Address.parse(string: "255.255.255.255")
     #expect(maxAddress != nil)
     #expect(maxAddress?.a == 255)
     #expect(maxAddress?.b == 255)
@@ -88,7 +88,7 @@ final class RFC2673IPv4AddressTests {
 
   @Test("Octets property")
   func testOctetsProperty() {
-    let address = RFC2673.IPv4Address(a: 192, b: 168, c: 1, d: 1)
+    let address = IPv4Address(a: 192, b: 168, c: 1, d: 1)
     #expect(address.a == 192)
     #expect(address.b == 168)
     #expect(address.c == 1)

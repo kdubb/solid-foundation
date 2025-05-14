@@ -1,16 +1,16 @@
 //
-//  RFC5321Tests.swift
+//  EmailAddressTests.swift
 //  SolidFoundation
 //
 //  Created by Kevin Wooten on 5/12/25.
 //
 
-@testable import SolidFormat
+@testable import SolidNet
 import Testing
 
 
-@Suite("RFC5321 Mailbox/Address Tests")
-final class RFC5321MailboxAddressTests {
+@Suite("EmailAddress Tests")
+final class EmailAddressTests {
 
   @Test(
     "Valid Mailbox Parsing",
@@ -45,7 +45,7 @@ final class RFC5321MailboxAddressTests {
     ]
   )
   func validMailboxParsing(address: String) {
-    #expect(RFC5321.Mailbox.parse(string: address) != nil, "Should parse valid address: \(address)")
+    #expect(EmailAddress.parse(string: address) != nil, "Should parse valid address: \(address)")
   }
 
   @Test(
@@ -92,7 +92,7 @@ final class RFC5321MailboxAddressTests {
     ]
   )
   func invalidMailboxParsing(address: String) {
-    #expect(RFC5321.Mailbox.parse(string: address) == nil, "Should reject invalid address: \(address)")
+    #expect(EmailAddress.parse(string: address) == nil, "Should reject invalid address: \(address)")
   }
 
   @Test(
@@ -105,7 +105,7 @@ final class RFC5321MailboxAddressTests {
     ]
   )
   func mailboxProperties(local: String, domain: String, expectedString: String) {
-    let mailbox = RFC5321.Mailbox(local: local, domain: domain)
+    let mailbox = EmailAddress(local: local, domain: domain)
     #expect(mailbox.local == local)
     #expect(mailbox.domain == domain)
     #expect("\(mailbox)" == expectedString)
@@ -125,6 +125,6 @@ final class RFC5321MailboxAddressTests {
     ]
   )
   func edgeCases(address: String) {
-    #expect(RFC5321.Mailbox.parse(string: address) != nil, "Should handle edge case: \(address)")
+    #expect(EmailAddress.parse(string: address) != nil, "Should handle edge case: \(address)")
   }
 }

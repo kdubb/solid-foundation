@@ -54,12 +54,12 @@ struct ZoneOffsetTests {
     expectedFailureReason: String?
   ) throws {
     if let expectedErrorDescription {
-      let error = try #require(throws: Error.self) {
+      let error = try #require(throws: TempoError.self) {
         try ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
       }
       #expect(error.errorDescription == expectedErrorDescription)
       #expect(error.failureReason == expectedFailureReason)
-      let error2 = try #require(throws: Error.self) {
+      let error2 = try #require(throws: TempoError.self) {
         try ZoneOffset(totalSeconds: 0).with(hours: hours, minutes: minutes, seconds: seconds)
       }
       #expect(error2.errorDescription == expectedErrorDescription)
