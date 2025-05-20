@@ -6,6 +6,7 @@
 //
 
 @testable import SolidURI
+import SolidData
 import Foundation
 import Testing
 

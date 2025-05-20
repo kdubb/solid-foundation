@@ -13,7 +13,7 @@ import Testing
 @Suite("BigDecimal Tests")
 struct BigDecimalTests {
 
-  static let testData = BigDecimalTestData.loadFromBundle()
+  static let testData = BigDecimalTestData.loadFromBundle(bundle: .module)
 
   // MARK: - Initialization Tests
 

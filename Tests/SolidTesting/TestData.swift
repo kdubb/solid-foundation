@@ -2,7 +2,7 @@ import Foundation
 
 
 /// Test data loaded from JSON in test Resources.
-protocol TestData: Decodable, Sendable {
+public protocol TestData: Decodable, Sendable {
 
   /// Load test data from a JSON file.
   static func load(from url: URL) -> Self
@@ -15,7 +15,7 @@ protocol TestData: Decodable, Sendable {
 extension TestData {
 
   /// Load test data from a JSON file.
-  static func load(from url: URL) -> Self {
+  public static func load(from url: URL) -> Self {
     do {
       let data = try Data(contentsOf: url)
       let decoder = JSONDecoder()
@@ -26,7 +26,7 @@ extension TestData {
   }
 
   /// Load test data from a bundled resource.
-  static func loadFromBundle(name: String = String(describing: Self.self), bundle: Bundle = .module) -> Self {
+  public static func loadFromBundle(name: String = String(describing: Self.self), bundle: Bundle) -> Self {
 
     guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: "Resources") else {
       fatalError("Test data for \(name) not found in bundle resources (file: \(name).json)")

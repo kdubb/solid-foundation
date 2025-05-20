@@ -7,6 +7,7 @@
 
 @testable import SolidNumeric
 import Foundation
+import SolidTesting
 
 
 /// Test data for BigUInt.

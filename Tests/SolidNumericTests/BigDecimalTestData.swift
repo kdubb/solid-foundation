@@ -8,6 +8,7 @@
 @testable import SolidNumeric
 import Foundation
 import Testing
+import SolidTesting
 
 
 /// Test data for BigDecimal.

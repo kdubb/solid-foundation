@@ -166,9 +166,6 @@ let package = Package(
       name: "SolidTesting",
       dependencies: ["Solid"],
       path: "Tests/SolidTesting",
-      resources: [
-        .copy("Resources")
-      ],
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]
@@ -176,9 +173,6 @@ let package = Package(
     .testTarget(
       name: "SolidDataTests",
       dependencies: ["SolidTesting", "SolidData"],
-      resources: [
-        .copy("Resources")
-      ],
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]
@@ -216,9 +210,6 @@ let package = Package(
     .testTarget(
       name: "SolidURITests",
       dependencies: ["SolidTesting", "SolidURI"],
-      resources: [
-        .copy("Resources")
-      ],
       plugins: [
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]

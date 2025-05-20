@@ -13,7 +13,7 @@ import Testing
 @Suite("BigUInt Tests")
 struct BigUIntTests {
 
-  static let testData = BigUIntTestData.loadFromBundle()
+  static let testData = BigUIntTestData.loadFromBundle(bundle: .module)
 
   @Test("Default initialization")
   func defaultInitialization() {

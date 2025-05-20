@@ -13,7 +13,7 @@ import Testing
 @Suite("BigInt Tests")
 struct BigIntTests {
 
-  static let testData = BigIntTestData.loadFromBundle()
+  static let testData = BigIntTestData.loadFromBundle(bundle: .module)
 
   func signum(_ int: some BinaryInteger) -> Int {
     Int(int.signum())
