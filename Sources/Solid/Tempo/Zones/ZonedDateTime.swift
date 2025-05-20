@@ -225,7 +225,7 @@ public struct ZonedDateTime: DateTime {
       return try with(zone: zone, resolving: resolving)
     case .sameInstant:
       let instant = try calendarSystem.instant(from: self, resolution: resolving.strategy)
-      return calendarSystem.components(from: instant, in: zone)
+      return try calendarSystem.components(from: instant, in: zone)
     }
   }
 
@@ -235,9 +235,10 @@ public struct ZonedDateTime: DateTime {
   ///   - clock: The clock to use. Defaults to ``Clock/system``.
   ///   - calendarSystem: The calendar system to use.
   /// - Returns: A new instance of ``ZonedDateTime`` sourced from the provided `clock`.
+  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
   ///
-  public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) -> Self {
-    return calendarSystem.components(from: clock.instant, in: clock.zone)
+  public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) throws -> Self {
+    return try calendarSystem.components(from: clock.instant, in: clock.zone)
   }
 }
 

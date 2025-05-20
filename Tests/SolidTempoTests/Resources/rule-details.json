@@ -1,0 +1,2431 @@
+[ {
+  "zone" : "America/St_Johns",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756774200000000000,
+    "localOffset" : -12600,
+    "instantOffset" : -12600,
+    "localValidOffsets" : [ -12600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16762915800000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752025800000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "NST"
+  }, {
+    "local" : [ 2501, 3, 13, 1, 59, 59, 999999999 ],
+    "instant" : 16762915799999999999,
+    "localOffset" : -12600,
+    "instantOffset" : -12600,
+    "localValidOffsets" : [ -12600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16762915800000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752025800000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "NST"
+  }, {
+    "local" : [ 2501, 3, 13, 2, 0 ],
+    "instant" : 16762915800000000000,
+    "localOffset" : -12600,
+    "instantOffset" : -9000,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16762915800000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752025800000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "NDT"
+  }, {
+    "local" : [ 2501, 3, 13, 3, 0 ],
+    "instant" : 16762915800000000000,
+    "localOffset" : -9000,
+    "instantOffset" : -9000,
+    "localValidOffsets" : [ -9000 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752025800000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "NDT"
+  }, {
+    "local" : [ 2501, 11, 6, 1, 59, 59, 999999999 ],
+    "instant" : 16783475399999999999,
+    "localOffset" : -9000,
+    "instantOffset" : -9000,
+    "localValidOffsets" : [ -9000, -12600 ],
+    "localApplicableTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16762915800000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "NDT"
+  }, {
+    "local" : [ 2501, 11, 6, 2, 0 ],
+    "instant" : 16783479000000000000,
+    "localOffset" : -12600,
+    "instantOffset" : -12600,
+    "localValidOffsets" : [ -12600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16794365400000000000,
+      "localBefore" : [ 2502, 3, 12, 2, 0 ],
+      "localAfter" : [ 2502, 3, 12, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "NST"
+  }, {
+    "local" : [ 2501, 11, 6, 1, 0 ],
+    "instant" : 16783471800000000000,
+    "localOffset" : -9000,
+    "instantOffset" : -9000,
+    "localValidOffsets" : [ -9000, -12600 ],
+    "localApplicableTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16762915800000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "NDT"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788223800000000000,
+    "localOffset" : -12600,
+    "instantOffset" : -12600,
+    "localValidOffsets" : [ -12600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16794365400000000000,
+      "localBefore" : [ 2502, 3, 12, 2, 0 ],
+      "localAfter" : [ 2502, 3, 12, 3, 0 ],
+      "offsetBefore" : -12600,
+      "offsetAfter" : -9000,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16783475400000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -9000,
+      "offsetAfter" : -12600,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "NST"
+  } ]
+}, {
+  "zone" : "America/Los_Angeles",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756790400000000000,
+    "localOffset" : -28800,
+    "instantOffset" : -28800,
+    "localValidOffsets" : [ -28800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16762932000000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752042000000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "PST"
+  }, {
+    "local" : [ 2501, 3, 13, 1, 59, 59, 999999999 ],
+    "instant" : 16762931999999999999,
+    "localOffset" : -28800,
+    "instantOffset" : -28800,
+    "localValidOffsets" : [ -28800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16762932000000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752042000000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "PST"
+  }, {
+    "local" : [ 2501, 3, 13, 2, 0 ],
+    "instant" : 16762932000000000000,
+    "localOffset" : -28800,
+    "instantOffset" : -25200,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16762932000000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752042000000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "PDT"
+  }, {
+    "local" : [ 2501, 3, 13, 3, 0 ],
+    "instant" : 16762932000000000000,
+    "localOffset" : -25200,
+    "instantOffset" : -25200,
+    "localValidOffsets" : [ -25200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752042000000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "PDT"
+  }, {
+    "local" : [ 2501, 11, 6, 1, 59, 59, 999999999 ],
+    "instant" : 16783491599999999999,
+    "localOffset" : -25200,
+    "instantOffset" : -25200,
+    "localValidOffsets" : [ -25200, -28800 ],
+    "localApplicableTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16762932000000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "PDT"
+  }, {
+    "local" : [ 2501, 11, 6, 2, 0 ],
+    "instant" : 16783495200000000000,
+    "localOffset" : -28800,
+    "instantOffset" : -28800,
+    "localValidOffsets" : [ -28800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16794381600000000000,
+      "localBefore" : [ 2502, 3, 12, 2, 0 ],
+      "localAfter" : [ 2502, 3, 12, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "PST"
+  }, {
+    "local" : [ 2501, 11, 6, 1, 0 ],
+    "instant" : 16783488000000000000,
+    "localOffset" : -25200,
+    "instantOffset" : -25200,
+    "localValidOffsets" : [ -25200, -28800 ],
+    "localApplicableTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16762932000000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "PDT"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788240000000000000,
+    "localOffset" : -28800,
+    "instantOffset" : -28800,
+    "localValidOffsets" : [ -28800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16794381600000000000,
+      "localBefore" : [ 2502, 3, 12, 2, 0 ],
+      "localAfter" : [ 2502, 3, 12, 3, 0 ],
+      "offsetBefore" : -28800,
+      "offsetAfter" : -25200,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16783491600000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -25200,
+      "offsetAfter" : -28800,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "PST"
+  } ]
+}, {
+  "zone" : "America/New_York",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756779600000000000,
+    "localOffset" : -18000,
+    "instantOffset" : -18000,
+    "localValidOffsets" : [ -18000 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16762921200000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752031200000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EST"
+  }, {
+    "local" : [ 2501, 3, 13, 1, 59, 59, 999999999 ],
+    "instant" : 16762921199999999999,
+    "localOffset" : -18000,
+    "instantOffset" : -18000,
+    "localValidOffsets" : [ -18000 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16762921200000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752031200000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EST"
+  }, {
+    "local" : [ 2501, 3, 13, 2, 0 ],
+    "instant" : 16762921200000000000,
+    "localOffset" : -18000,
+    "instantOffset" : -14400,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16762921200000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752031200000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EDT"
+  }, {
+    "local" : [ 2501, 3, 13, 3, 0 ],
+    "instant" : 16762921200000000000,
+    "localOffset" : -14400,
+    "instantOffset" : -14400,
+    "localValidOffsets" : [ -14400 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16752031200000000000,
+      "localBefore" : [ 2500, 11, 7, 2, 0 ],
+      "localAfter" : [ 2500, 11, 7, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EDT"
+  }, {
+    "local" : [ 2501, 11, 6, 1, 59, 59, 999999999 ],
+    "instant" : 16783480799999999999,
+    "localOffset" : -14400,
+    "instantOffset" : -14400,
+    "localValidOffsets" : [ -14400, -18000 ],
+    "localApplicableTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16762921200000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EDT"
+  }, {
+    "local" : [ 2501, 11, 6, 2, 0 ],
+    "instant" : 16783484400000000000,
+    "localOffset" : -18000,
+    "instantOffset" : -18000,
+    "localValidOffsets" : [ -18000 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16794370800000000000,
+      "localBefore" : [ 2502, 3, 12, 2, 0 ],
+      "localAfter" : [ 2502, 3, 12, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EST"
+  }, {
+    "local" : [ 2501, 11, 6, 1, 0 ],
+    "instant" : 16783477200000000000,
+    "localOffset" : -14400,
+    "instantOffset" : -14400,
+    "localValidOffsets" : [ -14400, -18000 ],
+    "localApplicableTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16762921200000000000,
+      "localBefore" : [ 2501, 3, 13, 2, 0 ],
+      "localAfter" : [ 2501, 3, 13, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EDT"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788229200000000000,
+    "localOffset" : -18000,
+    "instantOffset" : -18000,
+    "localValidOffsets" : [ -18000 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16794370800000000000,
+      "localBefore" : [ 2502, 3, 12, 2, 0 ],
+      "localAfter" : [ 2502, 3, 12, 3, 0 ],
+      "offsetBefore" : -18000,
+      "offsetAfter" : -14400,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16783480800000000000,
+      "localBefore" : [ 2501, 11, 6, 2, 0 ],
+      "localAfter" : [ 2501, 11, 6, 1, 0 ],
+      "offsetBefore" : -14400,
+      "offsetAfter" : -18000,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EST"
+  } ]
+}, {
+  "zone" : "Europe/London",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756761600000000000,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 2, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "GMT"
+  }, {
+    "local" : [ 2501, 3, 27, 0, 59, 59, 999999999 ],
+    "instant" : 16764109199999999999,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 2, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "GMT"
+  }, {
+    "local" : [ 2501, 3, 27, 1, 0 ],
+    "instant" : 16764109200000000000,
+    "localOffset" : 0,
+    "instantOffset" : 3600,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 2, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "BST"
+  }, {
+    "local" : [ 2501, 3, 27, 2, 0 ],
+    "instant" : 16764109200000000000,
+    "localOffset" : 3600,
+    "instantOffset" : 3600,
+    "localValidOffsets" : [ 3600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 2, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "BST"
+  }, {
+    "local" : [ 2501, 10, 30, 1, 59, 59, 999999999 ],
+    "instant" : 16782857999999999999,
+    "localOffset" : 3600,
+    "instantOffset" : 3600,
+    "localValidOffsets" : [ 3600, 0 ],
+    "localApplicableTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "BST"
+  }, {
+    "local" : [ 2501, 10, 30, 2, 0 ],
+    "instant" : 16782861600000000000,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795558800000000000,
+      "localBefore" : [ 2502, 3, 26, 1, 0 ],
+      "localAfter" : [ 2502, 3, 26, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "GMT"
+  }, {
+    "local" : [ 2501, 10, 30, 1, 0 ],
+    "instant" : 16782854400000000000,
+    "localOffset" : 3600,
+    "instantOffset" : 3600,
+    "localValidOffsets" : [ 3600, 0 ],
+    "localApplicableTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "BST"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788211200000000000,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795558800000000000,
+      "localBefore" : [ 2502, 3, 26, 1, 0 ],
+      "localAfter" : [ 2502, 3, 26, 2, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 3600,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 2, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 3600,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "GMT"
+  } ]
+}, {
+  "zone" : "Europe/Kyiv",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756754400000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 3, 0 ],
+      "localAfter" : [ 2501, 3, 27, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 4, 0 ],
+      "localAfter" : [ 2500, 10, 31, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  }, {
+    "local" : [ 2501, 3, 27, 2, 59, 59, 999999999 ],
+    "instant" : 16764109199999999999,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 3, 0 ],
+      "localAfter" : [ 2501, 3, 27, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 4, 0 ],
+      "localAfter" : [ 2500, 10, 31, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  }, {
+    "local" : [ 2501, 3, 27, 3, 0 ],
+    "instant" : 16764109200000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 3, 0 ],
+      "localAfter" : [ 2501, 3, 27, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 4, 0 ],
+      "localAfter" : [ 2500, 10, 31, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 3, 27, 4, 0 ],
+    "instant" : 16764109200000000000,
+    "localOffset" : 10800,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ 10800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 4, 0 ],
+      "localAfter" : [ 2500, 10, 31, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 10, 30, 3, 59, 59, 999999999 ],
+    "instant" : 16782857999999999999,
+    "localOffset" : 10800,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ 10800, 7200 ],
+    "localApplicableTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 3, 0 ],
+      "localAfter" : [ 2501, 3, 27, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 10, 30, 4, 0 ],
+    "instant" : 16782861600000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795558800000000000,
+      "localBefore" : [ 2502, 3, 26, 3, 0 ],
+      "localAfter" : [ 2502, 3, 26, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  }, {
+    "local" : [ 2501, 10, 30, 3, 0 ],
+    "instant" : 16782854400000000000,
+    "localOffset" : 10800,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ 10800, 7200 ],
+    "localApplicableTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 3, 0 ],
+      "localAfter" : [ 2501, 3, 27, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788204000000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795558800000000000,
+      "localBefore" : [ 2502, 3, 26, 3, 0 ],
+      "localAfter" : [ 2502, 3, 26, 4, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 4, 0 ],
+      "localAfter" : [ 2501, 10, 30, 3, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  } ]
+}, {
+  "zone" : "Asia/Gaza",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756754400000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764019200000000000,
+      "localBefore" : [ 2501, 3, 26, 2, 0 ],
+      "localAfter" : [ 2501, 3, 26, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751314800000000000,
+      "localBefore" : [ 2500, 10, 30, 2, 0 ],
+      "localAfter" : [ 2500, 10, 30, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  }, {
+    "local" : [ 2501, 3, 26, 1, 59, 59, 999999999 ],
+    "instant" : 16764019199999999999,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764019200000000000,
+      "localBefore" : [ 2501, 3, 26, 2, 0 ],
+      "localAfter" : [ 2501, 3, 26, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751314800000000000,
+      "localBefore" : [ 2500, 10, 30, 2, 0 ],
+      "localAfter" : [ 2500, 10, 30, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  }, {
+    "local" : [ 2501, 3, 26, 2, 0 ],
+    "instant" : 16764019200000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16764019200000000000,
+      "localBefore" : [ 2501, 3, 26, 2, 0 ],
+      "localAfter" : [ 2501, 3, 26, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751314800000000000,
+      "localBefore" : [ 2500, 10, 30, 2, 0 ],
+      "localAfter" : [ 2500, 10, 30, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 3, 26, 3, 0 ],
+    "instant" : 16764019200000000000,
+    "localOffset" : 10800,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ 10800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751314800000000000,
+      "localBefore" : [ 2500, 10, 30, 2, 0 ],
+      "localAfter" : [ 2500, 10, 30, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 10, 29, 1, 59, 59, 999999999 ],
+    "instant" : 16782764399999999999,
+    "localOffset" : 10800,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ 10800, 7200 ],
+    "localApplicableTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764019200000000000,
+      "localBefore" : [ 2501, 3, 26, 2, 0 ],
+      "localAfter" : [ 2501, 3, 26, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 10, 29, 2, 0 ],
+    "instant" : 16782768000000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795468800000000000,
+      "localBefore" : [ 2502, 3, 25, 2, 0 ],
+      "localAfter" : [ 2502, 3, 25, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  }, {
+    "local" : [ 2501, 10, 29, 1, 0 ],
+    "instant" : 16782760800000000000,
+    "localOffset" : 10800,
+    "instantOffset" : 10800,
+    "localValidOffsets" : [ 10800, 7200 ],
+    "localApplicableTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764019200000000000,
+      "localBefore" : [ 2501, 3, 26, 2, 0 ],
+      "localAfter" : [ 2501, 3, 26, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "EEST"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788204000000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795468800000000000,
+      "localBefore" : [ 2502, 3, 25, 2, 0 ],
+      "localAfter" : [ 2502, 3, 25, 3, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 10800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782764400000000000,
+      "localBefore" : [ 2501, 10, 29, 2, 0 ],
+      "localAfter" : [ 2501, 10, 29, 1, 0 ],
+      "offsetBefore" : 10800,
+      "offsetAfter" : 7200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "EET"
+  } ]
+}, {
+  "zone" : "Australia/Adelaide",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756723800000000000,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748958600000000000,
+      "localBefore" : [ 2500, 10, 3, 2, 0 ],
+      "localAfter" : [ 2500, 10, 3, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "ACDT"
+  }, {
+    "local" : [ 2501, 4, 3, 2, 59, 59, 999999999 ],
+    "instant" : 16764683399999999999,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800, 34200 ],
+    "localApplicableTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748958600000000000,
+      "localBefore" : [ 2500, 10, 3, 2, 0 ],
+      "localAfter" : [ 2500, 10, 3, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "ACDT"
+  }, {
+    "local" : [ 2501, 4, 3, 3, 0 ],
+    "instant" : 16764687000000000000,
+    "localOffset" : 34200,
+    "instantOffset" : 34200,
+    "localValidOffsets" : [ 34200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16780408200000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "ACST"
+  }, {
+    "local" : [ 2501, 4, 3, 2, 0 ],
+    "instant" : 16764679800000000000,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800, 34200 ],
+    "localApplicableTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748958600000000000,
+      "localBefore" : [ 2500, 10, 3, 2, 0 ],
+      "localAfter" : [ 2500, 10, 3, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "ACDT"
+  }, {
+    "local" : [ 2501, 10, 2, 1, 59, 59, 999999999 ],
+    "instant" : 16780408199999999999,
+    "localOffset" : 34200,
+    "instantOffset" : 34200,
+    "localValidOffsets" : [ 34200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16780408200000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "ACST"
+  }, {
+    "local" : [ 2501, 10, 2, 2, 0 ],
+    "instant" : 16780408200000000000,
+    "localOffset" : 34200,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16780408200000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16796133000000000000,
+      "localBefore" : [ 2502, 4, 2, 3, 0 ],
+      "localAfter" : [ 2502, 4, 2, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "ACDT"
+  }, {
+    "local" : [ 2501, 10, 2, 3, 0 ],
+    "instant" : 16780408200000000000,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16796133000000000000,
+      "localBefore" : [ 2502, 4, 2, 3, 0 ],
+      "localAfter" : [ 2502, 4, 2, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764683400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 0 ],
+      "localAfter" : [ 2501, 4, 3, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "ACDT"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788173400000000000,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16796133000000000000,
+      "localBefore" : [ 2502, 4, 2, 3, 0 ],
+      "localAfter" : [ 2502, 4, 2, 2, 0 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 34200,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16780408200000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 3, 0 ],
+      "offsetBefore" : 34200,
+      "offsetAfter" : 37800,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "ACDT"
+  } ]
+}, {
+  "zone" : "Australia/Lord_Howe",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756722000000000000,
+    "localOffset" : 39600,
+    "instantOffset" : 39600,
+    "localValidOffsets" : [ 39600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748955000000000000,
+      "localBefore" : [ 2500, 10, 3, 2, 0 ],
+      "localAfter" : [ 2500, 10, 3, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantDstDuration" : 1800000000000,
+    "designation" : "LHDT"
+  }, {
+    "local" : [ 2501, 4, 3, 1, 59, 59, 999999999 ],
+    "instant" : 16764677999999999999,
+    "localOffset" : 39600,
+    "instantOffset" : 39600,
+    "localValidOffsets" : [ 39600, 37800 ],
+    "localApplicableTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748955000000000000,
+      "localBefore" : [ 2500, 10, 3, 2, 0 ],
+      "localAfter" : [ 2500, 10, 3, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantDstDuration" : 1800000000000,
+    "designation" : "LHDT"
+  }, {
+    "local" : [ 2501, 4, 3, 2, 0 ],
+    "instant" : 16764679800000000000,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16780404600000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "LHST"
+  }, {
+    "local" : [ 2501, 4, 3, 1, 30 ],
+    "instant" : 16764676200000000000,
+    "localOffset" : 39600,
+    "instantOffset" : 39600,
+    "localValidOffsets" : [ 39600, 37800 ],
+    "localApplicableTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748955000000000000,
+      "localBefore" : [ 2500, 10, 3, 2, 0 ],
+      "localAfter" : [ 2500, 10, 3, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantDstDuration" : 1800000000000,
+    "designation" : "LHDT"
+  }, {
+    "local" : [ 2501, 10, 2, 1, 59, 59, 999999999 ],
+    "instant" : 16780404599999999999,
+    "localOffset" : 37800,
+    "instantOffset" : 37800,
+    "localValidOffsets" : [ 37800 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16780404600000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "LHST"
+  }, {
+    "local" : [ 2501, 10, 2, 2, 0 ],
+    "instant" : 16780404600000000000,
+    "localOffset" : 37800,
+    "instantOffset" : 39600,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16780404600000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16796127600000000000,
+      "localBefore" : [ 2502, 4, 2, 2, 0 ],
+      "localAfter" : [ 2502, 4, 2, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantDstDuration" : 1800000000000,
+    "designation" : "LHDT"
+  }, {
+    "local" : [ 2501, 10, 2, 2, 30 ],
+    "instant" : 16780404600000000000,
+    "localOffset" : 39600,
+    "instantOffset" : 39600,
+    "localValidOffsets" : [ 39600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16796127600000000000,
+      "localBefore" : [ 2502, 4, 2, 2, 0 ],
+      "localAfter" : [ 2502, 4, 2, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764678000000000000,
+      "localBefore" : [ 2501, 4, 3, 2, 0 ],
+      "localAfter" : [ 2501, 4, 3, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantDstDuration" : 1800000000000,
+    "designation" : "LHDT"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788171600000000000,
+    "localOffset" : 39600,
+    "instantOffset" : 39600,
+    "localValidOffsets" : [ 39600 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16796127600000000000,
+      "localBefore" : [ 2502, 4, 2, 2, 0 ],
+      "localAfter" : [ 2502, 4, 2, 1, 30 ],
+      "offsetBefore" : 39600,
+      "offsetAfter" : 37800,
+      "isGap" : false,
+      "duration" : -1800000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16780404600000000000,
+      "localBefore" : [ 2501, 10, 2, 2, 0 ],
+      "localAfter" : [ 2501, 10, 2, 2, 30 ],
+      "offsetBefore" : 37800,
+      "offsetAfter" : 39600,
+      "isGap" : true,
+      "duration" : 1800000000000
+    },
+    "instantDstDuration" : 1800000000000,
+    "designation" : "LHDT"
+  } ]
+}, {
+  "zone" : "Pacific/Chatham",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756712100000000000,
+    "localOffset" : 49500,
+    "instantOffset" : 49500,
+    "localValidOffsets" : [ 49500 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748344800000000000,
+      "localBefore" : [ 2500, 9, 26, 2, 45 ],
+      "localAfter" : [ 2500, 9, 26, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "CHADT"
+  }, {
+    "local" : [ 2501, 4, 3, 3, 44, 59, 999999999 ],
+    "instant" : 16764674399999999999,
+    "localOffset" : 49500,
+    "instantOffset" : 49500,
+    "localValidOffsets" : [ 49500, 45900 ],
+    "localApplicableTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748344800000000000,
+      "localBefore" : [ 2500, 9, 26, 2, 45 ],
+      "localAfter" : [ 2500, 9, 26, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "CHADT"
+  }, {
+    "local" : [ 2501, 4, 3, 3, 45 ],
+    "instant" : 16764678000000000000,
+    "localOffset" : 45900,
+    "instantOffset" : 45900,
+    "localValidOffsets" : [ 45900 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16779794400000000000,
+      "localBefore" : [ 2501, 9, 25, 2, 45 ],
+      "localAfter" : [ 2501, 9, 25, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "CHAST"
+  }, {
+    "local" : [ 2501, 4, 3, 2, 45 ],
+    "instant" : 16764670800000000000,
+    "localOffset" : 49500,
+    "instantOffset" : 49500,
+    "localValidOffsets" : [ 49500, 45900 ],
+    "localApplicableTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16748344800000000000,
+      "localBefore" : [ 2500, 9, 26, 2, 45 ],
+      "localAfter" : [ 2500, 9, 26, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "CHADT"
+  }, {
+    "local" : [ 2501, 9, 25, 2, 44, 59, 999999999 ],
+    "instant" : 16779794399999999999,
+    "localOffset" : 45900,
+    "instantOffset" : 45900,
+    "localValidOffsets" : [ 45900 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16779794400000000000,
+      "localBefore" : [ 2501, 9, 25, 2, 45 ],
+      "localAfter" : [ 2501, 9, 25, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "CHAST"
+  }, {
+    "local" : [ 2501, 9, 25, 2, 45 ],
+    "instant" : 16779794400000000000,
+    "localOffset" : 45900,
+    "instantOffset" : 49500,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16779794400000000000,
+      "localBefore" : [ 2501, 9, 25, 2, 45 ],
+      "localAfter" : [ 2501, 9, 25, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16796124000000000000,
+      "localBefore" : [ 2502, 4, 2, 3, 45 ],
+      "localAfter" : [ 2502, 4, 2, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "CHADT"
+  }, {
+    "local" : [ 2501, 9, 25, 3, 45 ],
+    "instant" : 16779794400000000000,
+    "localOffset" : 49500,
+    "instantOffset" : 49500,
+    "localValidOffsets" : [ 49500 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16796124000000000000,
+      "localBefore" : [ 2502, 4, 2, 3, 45 ],
+      "localAfter" : [ 2502, 4, 2, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764674400000000000,
+      "localBefore" : [ 2501, 4, 3, 3, 45 ],
+      "localAfter" : [ 2501, 4, 3, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "CHADT"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788161700000000000,
+    "localOffset" : 49500,
+    "instantOffset" : 49500,
+    "localValidOffsets" : [ 49500 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16796124000000000000,
+      "localBefore" : [ 2502, 4, 2, 3, 45 ],
+      "localAfter" : [ 2502, 4, 2, 2, 45 ],
+      "offsetBefore" : 49500,
+      "offsetAfter" : 45900,
+      "isGap" : false,
+      "duration" : -3600000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16779794400000000000,
+      "localBefore" : [ 2501, 9, 25, 2, 45 ],
+      "localAfter" : [ 2501, 9, 25, 3, 45 ],
+      "offsetBefore" : 45900,
+      "offsetAfter" : 49500,
+      "isGap" : true,
+      "duration" : 3600000000000
+    },
+    "instantDstDuration" : 3600000000000,
+    "designation" : "CHADT"
+  } ]
+}, {
+  "zone" : "Antarctica/Troll",
+  "entries" : [ {
+    "local" : [ 2501, 1, 1, 0, 0 ],
+    "instant" : 16756761600000000000,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 3, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "UTC"
+  }, {
+    "local" : [ 2501, 3, 27, 0, 59, 59, 999999999 ],
+    "instant" : 16764109199999999999,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 3, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "UTC"
+  }, {
+    "local" : [ 2501, 3, 27, 1, 0 ],
+    "instant" : 16764109200000000000,
+    "localOffset" : 0,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ ],
+    "localApplicableTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 3, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantDstDuration" : 7200000000000,
+    "designation" : "CEST"
+  }, {
+    "local" : [ 2501, 3, 27, 3, 0 ],
+    "instant" : 16764109200000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16751408400000000000,
+      "localBefore" : [ 2500, 10, 31, 3, 0 ],
+      "localAfter" : [ 2500, 10, 31, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantDstDuration" : 7200000000000,
+    "designation" : "CEST"
+  }, {
+    "local" : [ 2501, 10, 30, 2, 59, 59, 999999999 ],
+    "instant" : 16782857999999999999,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200, 0 ],
+    "localApplicableTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantDstDuration" : 7200000000000,
+    "designation" : "CEST"
+  }, {
+    "local" : [ 2501, 10, 30, 3, 0 ],
+    "instant" : 16782865200000000000,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795558800000000000,
+      "localBefore" : [ 2502, 3, 26, 1, 0 ],
+      "localAfter" : [ 2502, 3, 26, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "UTC"
+  }, {
+    "local" : [ 2501, 10, 30, 1, 0 ],
+    "instant" : 16782850800000000000,
+    "localOffset" : 7200,
+    "instantOffset" : 7200,
+    "localValidOffsets" : [ 7200, 0 ],
+    "localApplicableTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantNextTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16764109200000000000,
+      "localBefore" : [ 2501, 3, 27, 1, 0 ],
+      "localAfter" : [ 2501, 3, 27, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantDstDuration" : 7200000000000,
+    "designation" : "CEST"
+  }, {
+    "local" : [ 2501, 12, 31, 0, 0 ],
+    "instant" : 16788211200000000000,
+    "localOffset" : 0,
+    "instantOffset" : 0,
+    "localValidOffsets" : [ 0 ],
+    "localApplicableTransition" : null,
+    "instantNextTransition" : {
+      "instant" : 16795558800000000000,
+      "localBefore" : [ 2502, 3, 26, 1, 0 ],
+      "localAfter" : [ 2502, 3, 26, 3, 0 ],
+      "offsetBefore" : 0,
+      "offsetAfter" : 7200,
+      "isGap" : true,
+      "duration" : 7200000000000
+    },
+    "instantPriorTransition" : {
+      "instant" : 16782858000000000000,
+      "localBefore" : [ 2501, 10, 30, 3, 0 ],
+      "localAfter" : [ 2501, 10, 30, 1, 0 ],
+      "offsetBefore" : 7200,
+      "offsetAfter" : 0,
+      "isGap" : false,
+      "duration" : -7200000000000
+    },
+    "instantDstDuration" : 0,
+    "designation" : "UTC"
+  } ]
+} ]

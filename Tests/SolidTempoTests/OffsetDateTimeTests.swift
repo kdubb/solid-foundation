@@ -32,7 +32,7 @@ struct OffsetDateTimeTests {
     #expect(dateTime.minute == 30)
     #expect(dateTime.second == 45)
     #expect(dateTime.nanosecond == 123_456_789)
-    #expect(dateTime.offset.totalSeconds == 7200) // 2 hours in seconds
+    #expect(dateTime.offset.totalSeconds == 7200)    // 2 hours in seconds
   }
 
   @Test("OffsetDateTime with() method")
@@ -61,7 +61,7 @@ struct OffsetDateTimeTests {
     #expect(newDateTime.minute == 45)
     #expect(newDateTime.second == 45)
     #expect(newDateTime.nanosecond == 123_456_789)
-    #expect(newDateTime.offset.totalSeconds == 10800) // 3 hours in seconds
+    #expect(newDateTime.offset.totalSeconds == 10800)    // 3 hours in seconds
   }
 
   @Test("OffsetDateTime comparison")
@@ -149,7 +149,7 @@ struct OffsetDateTimeTests {
     #expect(dateTime.value(for: .minuteOfHour) == 30)
     #expect(dateTime.value(for: .secondOfMinute) == 45)
     #expect(dateTime.value(for: .nanosecondOfSecond) == 123_456_789)
-    #expect(dateTime.value(for: .zoneOffset) == 7200) // 2 hours in seconds
+    #expect(dateTime.value(for: .zoneOffset) == 7200)    // 2 hours in seconds
   }
 
   @Test("OffsetDateTime invalid initialization")
@@ -168,10 +168,11 @@ struct OffsetDateTimeTests {
       )
     }
     #expect(
-      invMonth == TempoError.invalidComponentValue(
-        component: "monthOfYear",
-        reason: .outOfRange(value: "13", range: "1 - 12")
-      )
+      invMonth
+        == TempoError.invalidComponentValue(
+          component: "monthOfYear",
+          reason: .outOfRange(value: "13", range: "1 - 12")
+        )
     )
 
     // Invalid hour
@@ -188,10 +189,11 @@ struct OffsetDateTimeTests {
       )
     }
     #expect(
-      invHour == TempoError.invalidComponentValue(
-        component: "hourOfDay",
-        reason: .outOfRange(value: "24", range: "0 - 23")
-      )
+      invHour
+        == TempoError.invalidComponentValue(
+          component: "hourOfDay",
+          reason: .outOfRange(value: "24", range: "0 - 23")
+        )
     )
 
     // Invalid minute
@@ -208,10 +210,11 @@ struct OffsetDateTimeTests {
       )
     }
     #expect(
-      invMinute == TempoError.invalidComponentValue(
-        component: "minuteOfHour",
-        reason: .outOfRange(value: "60", range: "0 - 59")
-      )
+      invMinute
+        == TempoError.invalidComponentValue(
+          component: "minuteOfHour",
+          reason: .outOfRange(value: "60", range: "0 - 59")
+        )
     )
   }
 
@@ -250,12 +253,12 @@ struct OffsetDateTimeTests {
 
     // Test same instant
     let newDateTime1 = try dateTime.withOffset(.hours(3), anchor: .sameInstant)
-    #expect(newDateTime1.offset.totalSeconds == 10800) // 3 hours in seconds
-    #expect(newDateTime1.hour == 15) // Time adjusted for new offset
+    #expect(newDateTime1.offset.totalSeconds == 10800)    // 3 hours in seconds
+    #expect(newDateTime1.hour == 15)    // Time adjusted for new offset
 
     // Test same local time
     let newDateTime2 = try dateTime.withOffset(.hours(3), anchor: .sameLocalTime)
-    #expect(newDateTime2.offset.totalSeconds == 10800) // 3 hours in seconds
-    #expect(newDateTime2.hour == 14) // Time remains the same
+    #expect(newDateTime2.offset.totalSeconds == 10800)    // 3 hours in seconds
+    #expect(newDateTime2.hour == 14)    // Time remains the same
   }
 }

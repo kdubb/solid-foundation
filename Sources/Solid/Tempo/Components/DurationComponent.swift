@@ -175,7 +175,7 @@ extension Components {
     case microseconds = 1_000
     case nanoseconds = 1
 
-    var rollover: UInt128? {
+    var rollover: Int128? {
       switch self {
       case .days: return nil
       case .hours: return 24
@@ -195,7 +195,7 @@ extension Components {
     public let id: Id
     public let unit: Unit
     public let unitSize: UInt128
-    public let rollover: UInt128?
+    public let rollover: Int128?
     public let rolledOverDefault: Bool
     public let parentUnitSize: UInt128?
     public let totalUnitSize: Int128
@@ -225,23 +225,30 @@ extension Components {
       if isTotal {
         return Value(duration.nanoseconds / totalUnitSize)
       } else if let parentUnitSize {
-        return Value((duration.nanoseconds.magnitude / unitSize) % (parentUnitSize / unitSize))
+        let ns = duration.nanoseconds
+        let pus = Int128(parentUnitSize)
+        let normalizedNs = ((ns % pus) + pus) % pus
+        return Value((normalizedNs.magnitude / unitSize) % (parentUnitSize / unitSize))
       } else {
         let rolledOver = rolledOver ?? rolledOverDefault
-        let ns = duration.nanoseconds
-        let sign = Value(ns.signum())
-        let magnitude = ns.magnitude
+        let q = floorDiv(duration.nanoseconds, unitSize)
 
-        let value = magnitude / unitSize
         let reduced =
           if rolledOver, let rollover {
-            value % rollover
+            q % rollover
           } else {
-            value
+            q
           }
 
-        return sign * Value(reduced)
+        return Value(reduced)
       }
+    }
+
+    @inline(__always)
+    private func floorDiv(_ a: Int128, _ b: UInt128) -> Int128 {
+      let q = a / Int128(b)
+      let r = a % Int128(b)
+      return (a < 0 && r != 0) ? q - 1 : q
     }
   }
 }

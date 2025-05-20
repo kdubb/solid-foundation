@@ -519,103 +519,139 @@ public enum TzIf {
       !rules.isFixedFormat,
       "Fixed offset rules should be handled by buildFixedOffsetZoneRules"
     )
-    let calSys: GregorianCalendarSystem = .default
 
-    // ---------------------------------------------------------------------
-    // 1.  Build ZoneTransition array with isStandardTime populated
-    // ---------------------------------------------------------------------
+    let allTransitions = buildZoneTransitions(rules: rules)
+    let initial = buildZoneOffset(type: rules.types[0])
+    let final = buildZoneOffset(type: rules.types[rules.types.endIndex - 1])
+    let tailRule = rules.posixTZ.map { buildZoneTransitionRule(tz: $0) }
+    let designationMap = buildDesignationMap(
+      transitions: allTransitions.map(\.transition),
+      initial: rules.designations[rules.types[0].designationIndex].neverNil("Previously validated"),
+      projectedDesignationSeed: tailRule?.standardTime.designation
+    )
 
-    var transitions: [ZoneTransition] = []
+    let transitions = allTransitions.filter(\.isRequired).map(\.transition)
+
+    return RegionZoneRules(
+      initial: initial,
+      final: final,
+      transitions: transitions,
+      tailRule: tailRule,
+      designationMap: designationMap
+    )
+  }
+
+  private static func buildZoneTransitionRule(tz: PosixTZ) -> ZoneTransitionRule {
+
+    // POSIX-TZ are inverted in comparison to TZif/ISO
+    let stdOffset = -tz.std.offset
+
+    let std = ZoneTransitionRule.StandardTime(
+      offset: ZoneOffset(availableComponents: [.zoneOffset(stdOffset)]),
+      designation: tz.std.designation,
+      isStandardTime: true
+    )
+
+    let dst: ZoneTransitionRule.DaylightSavingTime? = tz.dst.map { dst in
+      // POSIX-TZ are inverted
+      let dstOffset = -dst.offset
+
+      return ZoneTransitionRule.DaylightSavingTime(
+        offset: ZoneOffset(availableComponents: [.zoneOffset(dstOffset)]),
+        designation: dst.designation,
+        startRule: convertPosixRule(dst.rules.start),
+        endRule: convertPosixRule(dst.rules.end)
+      )
+    }
+
+    return ZoneTransitionRule(standardTime: std, daylightSavingTime: dst)
+  }
+
+  private static func buildDesignationMap(
+    transitions: [ZoneTransition],
+    initial: String,
+    projectedDesignationSeed: String?
+  ) -> [Instant: String] {
+
+    var designationMap: [Instant: String] = [:]
+    designationMap[.init(durationSinceEpoch: .min)] = initial
+
+    for transition in transitions {
+      designationMap[transition.instant] = transition.designation
+    }
+
+    // Add the projected designation if available
+    if let projectedDesignation = projectedDesignationSeed {
+      designationMap[.min] = projectedDesignation
+    }
+
+    return designationMap
+  }
+
+  private static func buildZoneOffset(type: Rules.TimeType) -> (offset: ZoneOffset, isStandardTime: Bool) {
+
+    let offset = ZoneOffset(availableComponents: [.zoneOffset(Int(type.offset))])
+    let isStandardTime = !type.isDST
+    return (offset, isStandardTime)
+  }
+
+  private static func buildZoneTransitions(
+    rules: Rules,
+  ) -> [(transition:ZoneTransition, isRequired: Bool)] {
+
+    var transitions: [(transition: ZoneTransition, isRequired: Bool)] = []
     transitions.reserveCapacity(rules.transitions.count)
 
-    for (idx, tr) in rules.transitions.enumerated() {
-      let toType = rules.types[tr.typeIndex]
+    for (idx, ruleTransition) in rules.transitions.enumerated() {
+
+      let toType = rules.types[ruleTransition.typeIndex]
       let fromType =
         idx == 0
         ? rules.types[0]    // initial type “before” first transition
         : rules.types[rules.transitions[idx - 1].typeIndex]
 
-      let instant = Instant(durationSinceEpoch: .seconds(tr.timestamp))
-      let offsetBefore = ZoneOffset(availableComponents: [.zoneOffset(Int(fromType.offset))])
-      let offsetAfter = ZoneOffset(availableComponents: [.zoneOffset(Int(toType.offset))])
-      let kind: ZoneTransition.Kind = offsetBefore < offsetAfter ? .gap : .overlap
+      let designation = rules.designations[toType.designationIndex].neverNil("Previously validated")
 
-      let localBefore = calSys.localDateTime(instant: instant, at: offsetBefore)
-      let localAfter = calSys.localDateTime(instant: instant, at: offsetAfter)
-
-      let (localStart, localEnd) = kind == .gap ? (localBefore, localAfter) : (localAfter, localBefore)
-
-      let zt = ZoneTransition(
-        kind: kind,
-        instant: instant,
-        local: (localStart, localEnd),
-        offsetBefore: offsetBefore,
-        offsetAfter: offsetAfter,
-        designation: rules.designations[toType.designationIndex].neverNil("Previously validated"),
-        isDaylightSavingTime: toType.isDST,
-        isStandardTime: toType.isStd ?? Rules.TimeType.isStdDefault
-      )
-      transitions.append(zt)
-    }
-
-    // ---------------------------------------------------------------------
-    // 2.  Initial / final offsets & flags
-    // ---------------------------------------------------------------------
-
-    let initialType = rules.types[0]
-    let initialOffset = ZoneOffset(availableComponents: [.zoneOffset(Int(initialType.offset))])
-    let initialIsStd = initialType.isStd ?? Rules.TimeType.isStdDefault
-
-    let finalType = rules.types[rules.types.endIndex - 1]
-    let finalOffset = ZoneOffset(availableComponents: [.zoneOffset(Int(finalType.offset))])
-    let finalIsStd = finalType.isStd ?? Rules.TimeType.isStdDefault
-
-    // ---------------------------------------------------------------------
-    // 3.  Build designation map (instant → string)
-    //      – include a sentinel entry for times *before* first transition
-    // ---------------------------------------------------------------------
-    var designationMap: [Instant: String] = [:]
-    designationMap[.init(durationSinceEpoch: .min)] =
-      rules.designations[initialType.designationIndex].neverNil("Previously validated")
-
-    for tr in transitions {
-      designationMap[tr.instant] = tr.designation
-    }
-
-    // ---------------------------------------------------------------------
-    // 4.  Tail‑rule (POSIX footer) → RegionZoneRules.TailRule
-    // ---------------------------------------------------------------------
-    let tailRule: ZoneTransitionRule? = rules.posixTZ.flatMap { tz in
-      let std = ZoneTransitionRule.StandardTime(
-        offset: ZoneOffset(availableComponents: [.zoneOffset(tz.std.offset)]),
-        designation: tz.std.designation,
-        isStandardTime: true
+      let transition = buildZoneTransition(
+        transition: ruleTransition,
+        fromType: fromType,
+        toType: toType,
+        designation: designation
       )
 
-      let dst: ZoneTransitionRule.DaylightSavingTime? = tz.dst.map {
-        ZoneTransitionRule.DaylightSavingTime(
-          offset: ZoneOffset(availableComponents: [.zoneOffset($0.offset)]),
-          designation: $0.designation,
-          startRule: convertPosixRule($0.rules.start),
-          endRule: convertPosixRule($0.rules.end)
-        )
-      }
+      let isRequired = transition.before.offset != transition.after.offset || fromType.isDST != toType.isDST
 
-      // Pre‑seed designation map so callers get names in projected years
-      designationMap[.min] = tz.std.designation
-
-      return ZoneTransitionRule(standardTime: std, daylightSavingTime: dst)
+      transitions.append((transition, isRequired))
     }
 
-    // ---------------------------------------------------------------------
-    // 5.  Assemble RegionZoneRules
-    // ---------------------------------------------------------------------
-    return RegionZoneRules(
-      initial: (initialOffset, initialIsStd),
-      final: (finalOffset, finalIsStd),
-      transitions: transitions,
-      tailRule: tailRule,
-      designationMap: designationMap
+    return transitions
+  }
+
+  private static func buildZoneTransition(
+    transition: Rules.Transition,
+    fromType: Rules.TimeType,
+    toType: Rules.TimeType,
+    designation: String,
+  ) -> ZoneTransition {
+    let calSys: GregorianCalendarSystem = .default
+
+    let instant = Instant(durationSinceEpoch: .seconds(transition.timestamp))
+    let offsetBefore = ZoneOffset(availableComponents: [.zoneOffset(Int(fromType.offset))])
+    let offsetAfter = ZoneOffset(availableComponents: [.zoneOffset(Int(toType.offset))])
+    let kind: ZoneTransition.Kind = offsetBefore < offsetAfter ? .gap : .overlap
+
+    let localBefore = calSys.localDateTime(instant: instant, at: offsetBefore)
+    let localAfter = calSys.localDateTime(instant: instant, at: offsetAfter)
+
+    return ZoneTransition(
+      kind: kind,
+      instant: instant,
+      offsetBefore: offsetBefore,
+      offsetAfter: offsetAfter,
+      localBefore: localBefore,
+      localAfter: localAfter,
+      designation: designation,
+      isDaylightSavingTime: toType.isDST,
     )
   }
 
@@ -1004,6 +1040,7 @@ extension TzIf.V4 {
   ) throws -> TzIf.Rules {
 
     let logger = TzIf.logger
+    let calendar: GregorianCalendarSystem = .default
 
     // Parse using v2 format first
     var rules =
@@ -1018,11 +1055,10 @@ extension TzIf.V4 {
 
     // Validate leap seconds
     for leapSecond in rules.leapSeconds {
-      let calendar: CalendarSystem = .default
 
       // Ensure leap seconds are at the end of UTC calendar months
       let instant = Instant(durationSinceEpoch: .seconds(leapSecond.occurrence))
-      let dateTime: LocalDateTime = calendar.components(from: instant, in: .utc)
+      let dateTime: LocalDateTime = calendar.localDateTime(instant: instant, at: .utc)
       let lastDayOfMonth = calendar.range(of: .day, at: instant).upperBound
 
       guard dateTime[.day] == lastDayOfMonth else {
@@ -1204,14 +1240,15 @@ extension TzIf.PosixTZ {
         logger.error("Invalid TZif file: POSIX TZ transition rule '/time' is malformed")
         throw TzIf.Error.invalidPosixTZ
       }
-      // Check range
+      // Check range (extended outside all possible by wide marging but check for sanity)
       guard (-216_000...216_000).contains(secs) else {
         logger.error("Invalid TZif file: POSIX TZ '/time' value \(secs) out of range ±60h")
         throw TzIf.Error.invalidPosixTZ
       }
       timeSeconds = secs
     } else {
-      timeSeconds = 0
+      // Rule with no `/time` defaults to `02:00:00`
+      timeSeconds = 3600 * 2
     }
 
     // - Parse the date portion

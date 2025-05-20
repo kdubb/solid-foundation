@@ -36,15 +36,6 @@ public struct LocalDate {
     self.storage = storage
   }
 
-  internal init(valid: (year: Int, month: Int, day: Int)) {
-    // swift-format-ignore: NeverUseForceTry
-    try! self.init(
-      year: valid.year,
-      month: valid.month,
-      day: valid.day
-    )
-  }
-
   public init(
     @Validated(.year) year: Int,
     @Validated(.monthOfYear) month: Int,
@@ -70,21 +61,21 @@ public struct LocalDate {
   }
 
   public func with(
-    @ValidatedOptional(.year) year: Int? = nil,
-    @ValidatedOptional(.monthOfYear) month: Int? = nil,
-    @ValidatedOptional(.dayOfMonth) day: Int? = nil,
+    year: Int? = nil,
+    month: Int? = nil,
+    day: Int? = nil,
   ) throws -> Self {
-    return Self(
-      storage: try (
-        year: Int32($year.getOrElse(self.year)),
-        month: UInt8($month.getOrElse(self.month)),
-        day: UInt8($day.getOrElse(self.day))
-      )
+    return try Self(
+      year: year ?? self.year,
+      month: month ?? self.month,
+      day: day ?? self.day
     )
   }
 
-  public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) -> Self {
-    return calendarSystem.components(from: clock.instant, in: clock.zone)
+  public static func now(clock: some Clock = .system, in calendarSystem: GregorianCalendarSystem = .default) -> Self {
+    let instant = clock.instant
+    let offset = clock.zone.offset(at: instant)
+    return calendarSystem.localDate(instant: instant, at: offset)
   }
 }
 
@@ -235,6 +226,55 @@ extension LocalDate {
     }
 
     return date
+  }
+
+}
+
+extension LocalDate: Codable {
+
+  enum CodingKeys: String, CodingKey {
+    case year
+    case month
+    case day
+  }
+
+  public init(from decoder: Decoder) throws {
+    guard let keyed = try? decoder.container(keyedBy: CodingKeys.self) else {
+      guard let values = try? decoder.singleValueContainer().decode([Int].self) else {
+        throw DecodingError.dataCorrupted(
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Must be a keyed or unkeyed container"
+          )
+        )
+      }
+      guard values.count == 3 else {
+        throw DecodingError.dataCorrupted(
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Must be exactly three values"
+          )
+        )
+      }
+      try self.init(
+        year: values[0],
+        month: values[1],
+        day: values[2]
+      )
+      return
+    }
+    try self.init(
+      year: try keyed.decode(Int.self, forKey: .year),
+      month: try keyed.decode(Int.self, forKey: .month),
+      day: try keyed.decode(Int.self, forKey: .day)
+    )
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(year, forKey: .year)
+    try container.encode(month, forKey: .month)
+    try container.encode(day, forKey: .day)
   }
 
 }

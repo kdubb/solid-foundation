@@ -107,7 +107,8 @@ extension PeriodDuration {
       if hours != nil || minutes != nil || seconds != nil {
         duration = .hours(hours ?? 0) + .minutes(minutes ?? 0) + .seconds(seconds ?? 0) + .nanoseconds(nanoseconds ?? 0)
       } else {
-        duration = nil
+        // If all time components are missing (except the seperator), the duration is invalid.
+        return nil
       }
     } else {
       duration = nil

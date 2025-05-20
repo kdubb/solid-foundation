@@ -86,8 +86,10 @@ public struct LocalDateTime: DateTime {
     )
   }
 
-  public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) -> Self {
-    return calendarSystem.components(from: clock.instant, in: clock.zone)
+  public static func now(clock: some Clock = .system, in calendarSystem: GregorianCalendarSystem = .default) -> Self {
+    let instant = clock.instant
+    let offset = clock.zone.offset(at: instant)
+    return calendarSystem.localDateTime(instant: clock.instant, at: offset)
   }
 
 }
@@ -178,13 +180,13 @@ extension LocalDateTime {
   ///
   /// - Parameters:
   ///   - date: The local date.
-  ///   - timeDuration: The duration of time to convert to a local time with any overflow added to the date.
+  ///   - time: The duration of time to convert to a local time with any overflow added to the date.
   /// - Throws: A ``TempoError`` if the date, after applying any overflow, is invalid.
   ///
-  public init(date: LocalDate, timeDuration: Duration) throws {
-    let time = try LocalTime(dayOffset: timeDuration)
-    let timeRollover: Duration = timeDuration - .nanoseconds(timeDuration[.nanosecondsOfDay])
-    let rolledDate = try GregorianCalendarSystem.default.adding(components: timeRollover, to: date)
+  public init(date: LocalDate, adding time: Duration) throws {
+    let (dateOverflow, timeOfDay) = time.divided(at: .days)
+    let time = LocalTime(durationSinceMidnight: timeOfDay)
+    let rolledDate = try GregorianCalendarSystem.default.adding(components: dateOverflow, to: date)
     self.init(date: rolledDate, time: time)
   }
 
@@ -224,4 +226,72 @@ extension LocalDateTime {
     }
     return Self(date: rolloverDate, time: time)
   }
+}
+
+extension LocalDateTime: Codable {
+
+  enum CodingKeys: String, CodingKey {
+    case year
+    case month
+    case day
+    case hour
+    case minute
+    case second
+    case nanosecond
+    case date
+    case time
+  }
+
+  public init(from decoder: any Decoder) throws {
+    guard let keyed = try? decoder.container(keyedBy: CodingKeys.self) else {
+      guard let values = try? decoder.singleValueContainer().decode([Int].self) else {
+        throw DecodingError.dataCorrupted(
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Invalid local date time, must be array of int or object"
+          )
+        )
+      }
+      guard values.count >= 4 && values.count <= 7 else {
+        throw DecodingError.dataCorrupted(
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Invalid local date time, array must contain 4-7 values"
+          )
+        )
+      }
+      try self.init(
+        year: values[0],
+        month: values[1],
+        day: values[2],
+        hour: values[3],
+        minute: values.count > 4 ? values[4] : 0,
+        second: values.count > 5 ? values[5] : 0,
+        nanosecond: values.count > 6 ? values[6] : 0
+      )
+      return
+    }
+    if keyed.contains(.date) {
+      let date = try keyed.decode(LocalDate.self, forKey: .date)
+      let time = try keyed.decode(LocalTime.self, forKey: .time)
+      self.init(date: date, time: time)
+    } else {
+      try self.init(
+        year: keyed.decode(Int.self, forKey: .year),
+        month: keyed.decode(Int.self, forKey: .month),
+        day: keyed.decode(Int.self, forKey: .day),
+        hour: keyed.decode(Int.self, forKey: .hour),
+        minute: keyed.decodeIfPresent(Int.self, forKey: .minute) ?? 0,
+        second: keyed.decodeIfPresent(Int.self, forKey: .second) ?? 0,
+        nanosecond: keyed.decodeIfPresent(Int.self, forKey: .nanosecond) ?? 0
+      )
+    }
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var keyed = encoder.container(keyedBy: CodingKeys.self)
+    try keyed.encode(date, forKey: .date)
+    try keyed.encode(time, forKey: .time)
+  }
+
 }

@@ -249,11 +249,4 @@ extension ComponentContainer {
     }
   }
 
-  /// Rounds this component to the nearest unit.
-  ///
-  public func rounded(to unit: Unit) throws -> Self {
-    // TOOD: Implement truncation logic
-    self
-  }
-
 }

@@ -128,3 +128,17 @@ extension Instant {
   }
 
 }
+
+extension Instant: Codable {
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    self.init(durationSinceEpoch: try container.decode(Duration.self))
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(durationSinceEpoch)
+  }
+
+}

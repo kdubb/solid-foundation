@@ -157,7 +157,6 @@ struct ISO8601ParsingTests {
 
     @Test(
       "Valid LocalDateTime parsing",
-      .serialized,
       arguments: [
         ("2024-04-04T12:00:00", 2024, 4, 4, 12, 0, 0, 0),
         ("2024-02-29T23:59:59", 2024, 2, 29, 23, 59, 59, 0),    // Leap year
@@ -210,7 +209,6 @@ struct ISO8601ParsingTests {
 
     @Test(
       "Valid OffsetDateTime parsing",
-      .serialized,
       arguments: [
         ("2024-04-04T12:00:00Z", (2024, 4, 4, 12, 0, 0, 0, 0)),
         ("2024-02-29T23:59:59.999Z", (2024, 2, 29, 23, 59, 59, 999_000_000, 0)),    // Leap year

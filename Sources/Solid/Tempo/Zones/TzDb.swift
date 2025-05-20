@@ -137,6 +137,9 @@ public final class TzDb: ZoneRulesLoader {
   public init(zoneInfoUrls: [URL], retainParsedRules: Bool = false) {
     do {
       let discovery = try Self.discoverZoneInfo(urls: zoneInfoUrls)
+
+      Self.logger.info("Discovered tzdb v\(discovery.version) at \(discovery.url) with \(discovery.dataUrls.count) zones")
+
       self.url = discovery.url
       self.version = discovery.version
       self.zones = Dictionary(

@@ -83,12 +83,13 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   ///   - zone: The time zone of instant.
   ///   - type: The type of container to convert to.
   /// - Returns: A set of components representing the instant in the specified time zone.
+  /// - Throws: A ``TempoError`` if the conversion fails.
   ///
   public func components<C>(
     from instant: Instant,
     in zone: Zone,
     as type: C.Type = C.self
-  ) -> C where C: ComponentBuildable {
+  ) throws -> C where C: ComponentBuildable {
 
     let offset = zone.offset(at: instant)
     let shifted = instant.durationSinceEpoch + Duration(offset)
@@ -118,7 +119,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       guard let component = componentId.component as? any DateTimeComponent else {
         fatalError("Only date/time components can be required by builders.")
       }
-      let value = try! self.component(component, from: bag, resolution: .default)
+      let value = try self.component(component, from: bag, resolution: .default)
       bag.setValue(value, for: component)
     }
 
@@ -166,24 +167,26 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       return C(components: dateTime.union(with: [.zoneId(zoneId), .zoneOffset(offset.totalSeconds)]))
 
     case .skipped(let transition):
-      let instant =
+      let duration = transition.duration
+      let (instant, off) =
         switch resolution.skippedLocalTime {
         case .nextValid:
-          Instant(durationSinceEpoch: dateTime.durationSinceEpoch) + transition.duration
+          (dateTime.instant(at: transition.after.offset) + duration, transition.after.offset)
         case .previousValid:
-          Instant(durationSinceEpoch: dateTime.durationSinceEpoch) - transition.duration
+          (dateTime.instant(at: transition.before.offset) - duration, transition.before.offset)
         case .boundary(.start):
-          transition.instant
+          (transition.instant, transition.after.offset)
         case .boundary(.end):
-          transition.instant + transition.duration
+          (transition.instant + duration, transition.after.offset)
         case .boundary(.nearest):
-          Instant(durationSinceEpoch: dateTime.durationSinceEpoch) < (transition.instant + transition.duration / 2)
-            ? transition.instant
-            : transition.instant + transition.duration
+          dateTime.instant(at: transition.before.offset) < (transition.instant + duration / 2)
+            ? (transition.instant, transition.after.offset)
+            : (transition.instant + duration, transition.after.offset)
         case .reject:
           throw TempoError.skippedTimeResolutionFailed(reason: .rejectedByStrategy)
         }
-      return self.components(from: instant, in: zone)
+      let dateTime: LocalDateTime = self.localDateTime(instant: instant, at: off)
+      return C(components: dateTime.union(with: [.zoneId(zoneId), .zoneOffset(off.totalSeconds)]))
     }
   }
 
@@ -215,7 +218,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   internal func compute<C, S>(
     _ component: C,
     from components: S,
-  ) -> C.Value where C: IntegerDateTimeComponent, S: ComponentContainer {
+  ) throws -> C.Value where C: IntegerDateTimeComponent, S: ComponentContainer {
     switch component.id {
 
     case .year, .hourOfDay, .minuteOfHour, .secondOfMinute, .nanosecondOfSecond:
@@ -255,7 +258,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
         return C.Value(offset)
       } else if let zoneId = components.valueIfPresent(for: .zoneId) {
         let zone = Zone(availableComponents: [.zoneId(zoneId)])
-        let instant = try! self.instant(from: components, resolution: .default)
+        let instant = try self.instant(from: components, resolution: .default)
         return C.Value(zone.offset(at: instant).totalSeconds)
       } else {
         return C.Value(0)
@@ -320,7 +323,6 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
 
     let avail = components.availableComponentIds
     let dateTime = LocalDateTime(availableComponents: components)
-    let instant = Instant(durationSinceEpoch: dateTime.durationSinceEpoch)
 
     if avail.contains(.zoneId) {
 
@@ -331,7 +333,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       // If the zone has a fixed offset, apply it directly
       if let fixedOffset = zone.fixedOffset {
 
-        return instant - .seconds(fixedOffset.totalSeconds)
+        return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: fixedOffset))
       }
       // If the components have a specific zone offset, validate & apply it
       else if avail.contains(.zoneOffset) {
@@ -341,23 +343,25 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
         guard zone.rules.isValidOffset(zoneOffset, for: dateTime) else {
           throw TempoError.invalidComponentValue(
             component: "zoneOffset",
-            reason: .invalidZoneId(id: "\(zoneOffset)")
+            reason: .invalidZoneOffset(offset: "\(zoneOffset)")
           )
         }
 
-        return instant + .seconds(zoneOffset.totalSeconds)
+        return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: zoneOffset))
       }
 
-      // Otherwise, we need to resolve the date time using offsets from the
+      // Otherwise, we need to resolve the date time using offsets from the zone rules
       let offsets = zone.rules.validOffsets(for: dateTime)
+      let instant = Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: .zero))
       return try offsets.apply(resolution: resolution, to: instant)
 
     } else if let off = components.valueIfPresent(for: .zoneOffset) {
       // Apply fixed offsets directly
-      return instant + .seconds(off)
+      let zoneOffset = ZoneOffset(availableComponents: [.zoneOffset(off)])
+      return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: zoneOffset))
     } else {
       // Imply UTC, no offset
-      return instant
+      return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: .utc))
     }
   }
 
@@ -370,7 +374,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   ///
   public func instant(from dateTime: some DateTime, at offset: ZoneOffset) -> Instant {
 
-    return Instant(durationSinceEpoch: dateTime.durationSinceEpoch) - .seconds(offset.totalSeconds)
+    return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: offset))
   }
 
   /// Determines the valid range of values for the specified component at a given instant.
@@ -405,7 +409,10 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     case .weekOfMonth:
       let date = localDate(instant: instant, at: .zero)
       let weekdayOfFirst = dayOfWeek(
-        for: LocalDateTime(date: LocalDate(valid: (date.year, date.month, 1)), time: .midnight)
+        for: LocalDateTime(
+          date: neverThrow(try LocalDate(year: date.year, month: date.month, day: 1)),
+          time: .midnight
+        )
       )
       // weeks spanned = ceil((weekdayOfFirst-1 + daysInMonth)/7)
       let weeksInMonth =
@@ -460,7 +467,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
 
     if calendarYears != 0 || calendarMonths != 0 || calendarWeeks != 0 || calendarDays != 0 {
       // Extract base date
-      let baseDateTime = components(from: baseInstant, in: zone, as: LocalDateTime.self)
+      let baseDateTime = try components(from: baseInstant, in: zone, as: LocalDateTime.self)
       var year = baseDateTime.year
       var month = baseDateTime.month
       var day = baseDateTime.day
@@ -508,14 +515,17 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       resultInstant += .nanoseconds(nanos)
     }
 
-    return components(from: resultInstant, in: zone, as: C.self)
+    return try components(from: resultInstant, in: zone, as: C.self)
   }
 
-  public func localDateTime(
-    instant: Instant,
-    at offset: ZoneOffset
-  ) -> LocalDateTime {
-
+  /// Computes the local date/time for the *UTC* instant adjusted by `offset`.
+  ///
+  /// - Parameters:
+  ///   - instant: The UTC instant to compute the local date/time for.
+  ///   - offset:  The fixed offset associated with the instant.
+  /// - Returns: The local date/time for the given instant.
+  ///
+  public func localDateTime(instant: Instant, at offset: ZoneOffset) -> LocalDateTime {
     let shifted = instant.durationSinceEpoch + Duration(offset)
     let daysSinceEpoch = shifted.value(for: .numberOfDays)
     let localDate = localDate(daysSinceEpoch: daysSinceEpoch)
@@ -534,15 +544,10 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   ///
   /// - Parameters:
   ///   - instant: The UTC instant.
-  ///   - offset:  The fixed offset to apply *before* extracting
-  ///   civil fields (e.g. the zone’s standard offset).
+  ///   - offset:  The fixed offset associated with the instant.
   /// - Returns: The (year, month, day) in the proleptic Gregorian calendar.
   ///
-  public func localDate(
-    instant: Instant,
-    at offset: ZoneOffset,
-  ) -> LocalDate {
-
+  public func localDate(instant: Instant, at offset: ZoneOffset) -> LocalDate {
     let shifted = instant.durationSinceEpoch + Duration(offset)
     let daysSinceEpoch = shifted.value(for: .numberOfDays)
     return localDate(daysSinceEpoch: daysSinceEpoch)
@@ -554,6 +559,29 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   /// - Returns: The corresponding date for the given number of days since the epoch.
   ///
   public func localDate(daysSinceEpoch: Int) -> LocalDate {
+    let (year, dayOfYear) = yearDayOfYear(daysSinceEpoch: daysSinceEpoch)
+
+    let marchBasedMonth = (5 * dayOfYear + 2) / Consts.daysIn5MarchMonths
+    let day = dayOfYear - (Consts.daysIn5MarchMonths * marchBasedMonth + 2) / 5 + 1
+    let month = (marchBasedMonth + 2) % 12 + 1
+    let finalYear = year + (marchBasedMonth / 10)
+
+    return neverThrow(try LocalDate(year: finalYear, month: month, day: day))
+  }
+
+  /// Computes the year for the *UTC* instant adjusted by `offset`.
+  ///
+  /// - Parameters:
+  ///   - instant: The UTC instant.
+  ///   - offset:  The fixed offset associated with the instant.
+  /// - Returns: The year for the given instant.
+  ///
+  public func year(for instant: Instant, at offset: ZoneOffset) -> Int {
+    let shifted = instant.durationSinceEpoch + Duration(offset)
+    return yearDayOfYear(daysSinceEpoch: shifted.value(for: .numberOfDays)).year
+  }
+
+  private func yearDayOfYear(daysSinceEpoch: Int) -> (year: Int, dayOfYear: Int) {
     let days = daysSinceEpoch + Consts.daysBetweenUnixEpochAndMarchZeroEpoch
 
     let era = (days >= 0 ? days : days - Consts.daysPerCycle + 1) / Consts.daysPerCycle
@@ -576,12 +604,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
 
     let year = yearOfEra + era * Consts.yearsPerCycle
     let dayOfYear = dayOfEra - startOfYear
-    let marchBasedMonth = (5 * dayOfYear + 2) / Consts.daysIn5MarchMonths
-    let day = dayOfYear - (Consts.daysIn5MarchMonths * marchBasedMonth + 2) / 5 + 1
-    let month = (marchBasedMonth + 2) % 12 + 1
-    let finalYear = year + (marchBasedMonth / 10)
-
-    return LocalDate(valid: (year: finalYear, month: month, day: day))
+    return (year, dayOfYear)
   }
 
   /// Computes the date (year, month, day) for a given proleptic year and ordinal day.
@@ -608,19 +631,26 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     while month <= 12 && ordinalDay > cumDays[month] { month += 1 }
 
     let day = ordinalDay - cumDays[month - 1]
-    return LocalDate(valid: (year, month, day))
+    return neverThrow(try LocalDate(year: year, month: month, day: day))
   }
 
   /// Computes the number of days between the epoch and a given date.
-  public func daysSinceEpoch(date: LocalDate) -> Int {
+  public func daysSinceEpoch(components: some ComponentContainer) -> Int {
     return daysSinceEpoch(
-      year: date.year,
-      month: date.month,
-      day: date.day
+      year: components.valueIfPresent(for: .year) ?? 0,
+      month: components.valueIfPresent(for: .monthOfYear) ?? 1,
+      day: components.valueIfPresent(for: .dayOfMonth) ?? 1
     )
   }
 
-  /// Computes the number of days between the epoch and the given date components.
+  /// Computes the number of days between the epoch and the given date provided as year, month, and day.
+  ///
+  /// - Parameters:
+  ///   - year: The year of the date.
+  ///   - month: The month of the date (1-based).
+  ///   - day: The day of the date.
+  /// - Returns: The number of days since the epoch.
+  ///
   public func daysSinceEpoch(year: Int, month: Int, day: Int) -> Int {
     let adjustedYear = month <= 2 ? year - 1 : year
     let adjustedMonth = month <= 2 ? month + 12 : month
@@ -645,6 +675,20 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
 
   public func weekOfMonth(for components: some ComponentContainer) -> Int {
     return variant.weekOfMonth(for: components, in: self)
+  }
+
+  public func dayOfYear(for components: some ComponentContainer) -> Int {
+    return dayOfYear(
+      year: components.valueIfPresent(for: .year) ?? 0,
+      month: components.valueIfPresent(for: .monthOfYear) ?? 1,
+      day: components.valueIfPresent(for: .dayOfMonth) ?? 1
+    )
+  }
+
+  public func dayOfYear(year: Int, month: Int, day: Int) -> Int {
+    let adjustedMonth = month <= 2 ? month + 12 : month
+
+    return (Consts.daysIn5MarchMonths * (adjustedMonth - 3) + 2) / 5 + day - 1
   }
 
   public func dayOfWeek(for components: some ComponentContainer) -> Int {
@@ -716,20 +760,24 @@ extension GregorianCalendarSystem.Variant {
 
   internal func weekOfYear(
     for components: some ComponentContainer,
-    in calendar: GregorianCalendarSystem
+    in calendarSystem: GregorianCalendarSystem
   ) -> Int {
     let year = components.valueIfPresent(for: .year) ?? 0
     let month = components.valueIfPresent(for: .monthOfYear) ?? 1
     let day = components.valueIfPresent(for: .dayOfMonth) ?? 1
 
+    return weekOfYear(year: year, month: month, day: day, in: calendarSystem)
+  }
+
+  internal func weekOfYear(year: Int, month: Int, day: Int, in calendarSystem: GregorianCalendarSystem) -> Int {
     switch self {
     case .none:
-      let doy = calendar.compute(.dayOfYear, from: components)
-      let dow = calendar.compute(.dayOfWeek, from: components)
+      let doy = calendarSystem.dayOfYear(year: year, month: month, day: day)
+      let dow = dayOfWeek(year: year, month: month, day: day, in: calendarSystem)
       return (doy + 6 - dow) / 7 + 1
     case .iso8601:
-      let days = calendar.daysSinceEpoch(year: year, month: month, day: day)
-      let jan4 = calendar.daysSinceEpoch(year: year, month: 1, day: 4)
+      let days = calendarSystem.daysSinceEpoch(year: year, month: month, day: day)
+      let jan4 = calendarSystem.daysSinceEpoch(year: year, month: 1, day: 4)
       let jan4Weekday = ((jan4 + 3) % 7 + 7) % 7
       let weekStart = jan4 - jan4Weekday
       return (days - weekStart) / 7 + 1
@@ -738,10 +786,10 @@ extension GregorianCalendarSystem.Variant {
 
   internal func weekOfMonth(
     for components: some ComponentContainer,
-    in calendar: GregorianCalendarSystem
+    in calendarSystem: GregorianCalendarSystem
   ) -> Int {
     let day = components.valueIfPresent(for: .dayOfMonth) ?? 1
-    let weekday = calendar.compute(.dayOfWeek, from: components)
+    let weekday = dayOfWeek(for: components, in: calendarSystem)
     switch self {
     case .none:
       return (day + weekday - 2) / 7 + 1
@@ -752,12 +800,18 @@ extension GregorianCalendarSystem.Variant {
 
   internal func dayOfWeek(
     for components: some ComponentContainer,
-    in calendar: GregorianCalendarSystem
+    in calendarSystem: GregorianCalendarSystem
   ) -> Int {
-    let year = components.valueIfPresent(for: .year) ?? 0
-    let month = components.valueIfPresent(for: .monthOfYear) ?? 1
-    let day = components.valueIfPresent(for: .dayOfMonth) ?? 1
-    let days = calendar.daysSinceEpoch(year: year, month: month, day: day)
+    return dayOfWeek(
+      year: components.valueIfPresent(for: .year) ?? 0,
+      month: components.valueIfPresent(for: .monthOfYear) ?? 1,
+      day: components.valueIfPresent(for: .dayOfMonth) ?? 1,
+      in: calendarSystem
+    )
+  }
+
+  internal func dayOfWeek(year: Int, month: Int, day: Int, in calendarSystem: GregorianCalendarSystem) -> Int {
+    let days = calendarSystem.daysSinceEpoch(year: year, month: month, day: day)
     switch self {
     case .none:
       // Sunday = 1 ... Saturday = 7
@@ -770,13 +824,13 @@ extension GregorianCalendarSystem.Variant {
 
   internal func yearForWeekOfYear(
     for components: some ComponentContainer,
-    in calendar: GregorianCalendarSystem
+    in calendarSystem: GregorianCalendarSystem
   ) -> Int {
     switch self {
     case .none:
       return components.valueIfPresent(for: .year) ?? 0
     case .iso8601:
-      let week = weekOfYear(for: components, in: calendar)
+      let week = weekOfYear(for: components, in: calendarSystem)
       let month = components.valueIfPresent(for: .monthOfYear) ?? 1
       let year = components.valueIfPresent(for: .year) ?? 0
       if week == 1 && month == 12 {

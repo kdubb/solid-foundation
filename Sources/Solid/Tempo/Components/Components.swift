@@ -137,9 +137,9 @@ public enum Components: Sendable {
     (.secondOfMinute, "secondOfMinute", secondOfMinute),
     (.nanosecondOfSecond, "nanosecondOfSecond", nanosecondOfSecond),
     (.zoneOffset, "zoneOffset", zoneOffset),
-    (.hoursOfZoneOffset, "hoursOfZoneOffset", hoursOfZoneOffset),
-    (.minutesOfZoneOffset, "minutesOfZoneOffset", minutesOfZoneOffset),
-    (.secondsOfZoneOffset, "secondsOfZoneOffset", secondsOfZoneOffset),
+    (.hoursOfZoneOffset, "hours", hoursOfZoneOffset),
+    (.minutesOfZoneOffset, "minutes", minutesOfZoneOffset),
+    (.secondsOfZoneOffset, "seconds", secondsOfZoneOffset),
     (.zoneId, "zoneId", zoneId),
     // Period/Duration
     (.calendarYears, "calendarYears", calendarYears),

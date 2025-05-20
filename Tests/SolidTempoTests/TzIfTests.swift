@@ -13,6 +13,8 @@ import Testing
 @Suite("TzIf Tests")
 struct TzIfTests {
 
+  let printMessages = false
+
   func zoneFileURL(_ identifier: String) -> URL {
     for url in TzDb.defaultZoneInfoUrls {
       let resolvedURL = url.resolvingSymlinksInPath()
@@ -64,8 +66,8 @@ struct TzIfTests {
     #expect(db.zones["Asia/Calcutta"] != nil)
 
     // Check that the each zone's rules are not actually loaded
-    #expect(db.zones["America/New_York"]?.state == nil)
-    #expect(db.zones["UTC"]?.state == nil)
+    #expect(db.zones["America/New_York"]?.state.load() == nil)
+    #expect(db.zones["UTC"]?.state.load() == nil)
   }
 
   @Test("Region based zone loading")
@@ -74,19 +76,24 @@ struct TzIfTests {
 
     let fZones = Set(TimeZone.knownTimeZoneIdentifiers)
     let tZones = Set(loader.zones.keys)
-    print("Zones not in TimeZone: \(fZones.subtracting(tZones))")
-    print("Zones not in TzIf: \(tZones.subtracting(fZones))")
+    echo("Zones not in TimeZone: \(fZones.subtracting(tZones))")
+    echo("Zones not in TzIf: \(tZones.subtracting(fZones))")
 
     for zoneId in loader.zones.keys {
-      print("Loading \(zoneId)...")
-      let url = URL(string: zoneId, relativeTo: loader.url)!
+      echo("Loading \(zoneId)...")
       do {
         _ = try loader.load(identifier: zoneId)
-        print("- Successful")
+        echo("- Successful")
       } catch {
-        print("- Failed: \(error)")
+        echo("- Failed: \(error)")
       }
     }
-    print("Loaded \(loader.zones.count) zones!")
+    echo("Loaded \(loader.zones.count) zones!")
+  }
+
+  func echo(_ message: String) {
+    if printMessages {
+      print(message)
+    }
   }
 }

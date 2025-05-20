@@ -190,14 +190,15 @@ public struct OffsetDateTime: DateTime {
   public func withOffset(
     _ offset: ZoneOffset,
     anchor: AdjustmentAnchor = .sameInstant,
-    in calendarSystem: CalendarSystem = .default
+    in calendarSystem: GregorianCalendarSystem = .default
   ) -> Self {
     switch anchor {
     case .sameLocalTime:
       return with(offset: offset)
     case .sameInstant:
       let instant = calendarSystem.instant(from: self, at: self.offset)
-      return calendarSystem.components(from: instant, in: .fixed(offset: offset))
+      let dateTime = calendarSystem.localDateTime(instant: instant, at: offset)
+      return Self(dateTime: dateTime, offset: offset)
     }
   }
 
@@ -208,8 +209,10 @@ public struct OffsetDateTime: DateTime {
   ///   - calendarSystem: The calendar system to use. Defaults to `.default`.
   /// - Returns: A new instance of ``OffsetDateTime`` sourced from the provided `clock`.
   ///
-  public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) -> Self {
-    return calendarSystem.components(from: clock.instant, in: clock.zone)
+  public static func now(clock: some Clock = .system, in calendarSystem: GregorianCalendarSystem = .default) -> Self {
+    let instant = clock.instant
+    let offset = clock.zone.offset(at: instant)
+    return Self(dateTime: calendarSystem.localDateTime(instant: instant, at: offset), offset: offset)
   }
 
 }

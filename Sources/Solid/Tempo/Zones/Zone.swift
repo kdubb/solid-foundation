@@ -11,7 +11,7 @@ public struct Zone {
 
   public static let utc = neverThrow(try Zone(identifier: "UTC"))
 
-  public let identifier: String
+  public var identifier: String
   public let rules: any ZoneRules
 
   public init(identifier: String, rules: any ZoneRules) {
@@ -103,4 +103,18 @@ extension Zone: ExpressibleByStringLiteral {
       fatalError("Invalid zone identifier")
     }
   }
+}
+
+extension Zone: Codable {
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    try self.init(identifier: container.decode(String.self))
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(identifier)
+  }
+
 }

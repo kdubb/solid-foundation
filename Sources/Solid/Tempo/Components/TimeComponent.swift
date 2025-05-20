@@ -25,9 +25,9 @@ extension Components {
   )
 
   public static let zoneOffset = TimeInteger<Int>(id: .zoneOffset, unit: .hours, range: -12...14)
-  public static let hoursOfZoneOffset = TimeInteger<Int>(id: .hoursOfZoneOffset, unit: .hours, range: -18...18)
-  public static let minutesOfZoneOffset = TimeInteger<Int>(id: .minutesOfZoneOffset, unit: .minutes, range: 0...59)
-  public static let secondsOfZoneOffset = TimeInteger<Int>(id: .secondsOfZoneOffset, unit: .seconds, range: 0...59)
+  public static let hoursOfZoneOffset = TimeInteger<Int>(id: .hoursOfZoneOffset, unit: .hours, range: -23...23)
+  public static let minutesOfZoneOffset = TimeInteger<Int>(id: .minutesOfZoneOffset, unit: .minutes, range: -59...59)
+  public static let secondsOfZoneOffset = TimeInteger<Int>(id: .secondsOfZoneOffset, unit: .seconds, range: -59...59)
 
   public static let zoneId = TimeIdentifier(id: .zoneId) { zoneId, componentId in
     if (try? Zone(identifier: zoneId)) == nil {

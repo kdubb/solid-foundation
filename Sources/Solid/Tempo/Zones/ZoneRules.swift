@@ -32,7 +32,7 @@ public protocol ZoneRules: AnyObject, Sendable {
   /// - Parameter instant: The instant to determine the daylight savings time for.
   /// - Returns: The amount of daylight savings time in effect at the specified `instant`.
   ///
-  func daylightSavingsTime(at instant: Instant) -> ZoneOffset
+  func daylightSavingsTime(at instant: Instant) -> Duration
 
   /// Returns whether the specified instant is in daylight savings time.
   /// - Parameter instant: The instant to check for daylight savings time.
@@ -47,10 +47,18 @@ public protocol ZoneRules: AnyObject, Sendable {
   ///
   func offset(at instant: Instant) -> ZoneOffset
 
-  /// Returns the zone offset (seconds from UTC) for the given date/time.
+  /// Returns the zone offset for the given local date/time.
   ///
-  /// - Parameter dateTime: The date time to get the offset for.
-  /// - Returns: The zone offset for the specified `dateTime`.
+  /// Determining the offset for a local date/time can be ambiguous when it occurs during a gap
+  /// or overlap. This method returns the best available value, for normal cases the only valid
+  /// offset is returned for ambiguous cases the offset **before** the transition is returned.
+  ///
+  /// - Note: If exact values are required, the ``validOffsets(for:)`` method should
+  /// be used along with the appropriate handlign of gap/overlap periods.
+  ///
+  /// - Parameter dateTime: Local date/time to determine offset for.
+  /// - Returns The specific offset for normal date/time values and the offset before for ambiguous
+  /// date/time values.
   ///
   func offset(for dateTime: LocalDateTime) -> ZoneOffset
 
@@ -78,20 +86,23 @@ public protocol ZoneRules: AnyObject, Sendable {
   /// Returns the offset transition, if any, that occurs after the given instant.
   ///
   /// - Parameter instant: The instant to start the search from.
-  /// - Returns: The offset transition, or `nil` if there is no transition after the given instant.
+  /// - Returns: The transition after to the specified instant, or nil, if none.
   ///
-  func nextTransition(after instant: Instant) -> Instant?
+  func nextTransition(after instant: Instant) -> ZoneTransition?
 
   /// Returns the offset transition, if any, that occurs before the given instant.
   ///
   /// - Parameter instant: The instant to start the search from.
-  /// - Returns: The offset transition, or `nil` if there is no transition before the given instant.
-  func previousTransition(before instant: Instant) -> Instant?
+  /// - Returns: The transition prior to the specified instant, or nil, if none.
+  ///
+  func priorTransition(before instant: Instant) -> ZoneTransition?
 
-  /// Returns the designation (e.g., "PDT", "UTC") for the specified instant in the zone, if available.
+  /// Returns the designation (e.g., "PDT", "UTC") for the specified instant in the zone.
+  ///
+  /// If a designation string is not available, the offset at the instant is returned.
   ///
   /// - Parameter instant: The instant to get the designation for.
-  /// - Returns: The designation for the specified `instant`, or `nil` if unavailable.
+  /// - Returns: The designation for the specified `instant`.
   ///
-  func designation(for instant: Instant) -> String?
+  func designation(for instant: Instant) -> String
 }

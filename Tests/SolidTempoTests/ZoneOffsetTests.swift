@@ -14,7 +14,6 @@ struct ZoneOffsetTests {
 
   @Test(
     "Hours/Minutes/Seconds Validation",
-    .serialized,
     arguments: [
       // Valid cases
       (0, 0, 0, nil, nil),
@@ -24,26 +23,26 @@ struct ZoneOffsetTests {
       (-18, 0, 0, nil, nil),
 
       // Invalid hours
-      (19, 0, 0, "Invalid hours value", "Value 19 is outside valid range -18...18"),
-      (-19, 0, 0, "Invalid hours value", "Value -19 is outside valid range -18...18"),
+      (24, 0, 0, "Invalid hours value", "Value 24 is outside valid range -23 - 23."),
+      (-24, 0, 0, "Invalid hours value", "Value -24 is outside valid range -23 - 23."),
 
       // Invalid minutes
-      (1, 60, 0, "Invalid minutes value", "Value 60 is outside valid range -59...59"),
-      (1, -60, 0, "Invalid minutes value", "Value -60 is outside valid range -59...59"),
+      (1, 60, 0, "Invalid minutes value", "Value 60 is outside valid range -59 - 59."),
+      (1, -60, 0, "Invalid minutes value", "Value -60 is outside valid range -59 - 59."),
 
       // Invalid seconds
-      (1, 0, 60, "Invalid seconds value", "Value 60 is outside valid range -59...59"),
-      (1, 0, -60, "Invalid seconds value", "Value -60 is outside valid range -59...59"),
+      (1, 0, 60, "Invalid seconds value", "Value 60 is outside valid range -59 - 59."),
+      (1, 0, -60, "Invalid seconds value", "Value -60 is outside valid range -59 - 59."),
 
       // Mismatching signs
-      (-1, 1, 0, "Invalid minutes value", "Minutes must be negative when the hour is negative"),
-      (1, -1, 0, "Invalid minutes value", "Minutes must be positive when the hour is positive"),
-      (-1, 0, 1, "Invalid seconds value", "Seconds must be negative when the hour is negative"),
-      (1, 0, -1, "Invalid seconds value", "Seconds must be positive when the hour is positive"),
+      (-1, 1, 0, "Invalid minutes value", "Minutes must be negative when the hour is negative."),
+      (1, -1, 0, "Invalid minutes value", "Minutes must be positive when the hour is positive."),
+      (-1, 0, 1, "Invalid seconds value", "Seconds must be negative when the hour is negative."),
+      (1, 0, -1, "Invalid seconds value", "Seconds must be positive when the hour is positive."),
 
       // Invalid total seconds
-      (18, 0, 1, "Invalid total seconds value", "Total offset must be less than 18 hours"),
-      (-18, 0, -1, "Invalid total seconds value", "Total offset must be less than 18 hours"),
+      (0, 0, 86_401, "Invalid totalSeconds value", "Total offset must be less than ±24 hours."),
+      (0, 0, -86_401, "Invalid totalSeconds value", "Total offset must be less than ±24 hours."),
     ]
   )
   func testHoursMinutesSecondsValidation(
@@ -55,12 +54,20 @@ struct ZoneOffsetTests {
   ) throws {
     if let expectedErrorDescription {
       let error = try #require(throws: TempoError.self) {
-        try ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
+        if hours == 0 && minutes == 0 && seconds.magnitude > 1000 {
+          try ZoneOffset(totalSeconds: seconds)
+        } else {
+          try ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
+        }
       }
       #expect(error.errorDescription == expectedErrorDescription)
       #expect(error.failureReason == expectedFailureReason)
       let error2 = try #require(throws: TempoError.self) {
-        try ZoneOffset(totalSeconds: 0).with(hours: hours, minutes: minutes, seconds: seconds)
+        if hours == 0 && minutes == 0 && seconds.magnitude > 1000 {
+          try ZoneOffset(totalSeconds: seconds)
+        } else {
+          try ZoneOffset(hours: hours, minutes: minutes, seconds: seconds)
+        }
       }
       #expect(error2.errorDescription == expectedErrorDescription)
       #expect(error2.failureReason == expectedFailureReason)

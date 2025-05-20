@@ -14,9 +14,11 @@
 public final class FixedOffsetZoneRules: ZoneRules, Sendable {
 
   let offset: ZoneOffset
+  let designation: String
 
   public init(offset: ZoneOffset) {
     self.offset = offset
+    self.designation = offset.designation
   }
 
   public var isFixedOffset: Bool {
@@ -27,7 +29,7 @@ public final class FixedOffsetZoneRules: ZoneRules, Sendable {
     return offset
   }
 
-  public func daylightSavingsTime(at instant: Instant) -> ZoneOffset {
+  public func daylightSavingsTime(at instant: Instant) -> Duration {
     return .zero
   }
 
@@ -55,15 +57,15 @@ public final class FixedOffsetZoneRules: ZoneRules, Sendable {
     return nil
   }
 
-  public func nextTransition(after instant: Instant) -> Instant? {
+  public func nextTransition(after instant: Instant) -> ZoneTransition? {
     return nil
   }
 
-  public func previousTransition(before instant: Instant) -> Instant? {
+  public func priorTransition(before instant: Instant) -> ZoneTransition? {
     return nil
   }
 
-  public func designation(for instant: Instant) -> String? {
-    return nil
+  public func designation(for instant: Instant) -> String {
+    return designation
   }
 }

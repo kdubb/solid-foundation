@@ -33,8 +33,6 @@ public enum ValidZoneOffsets {
 }
 
 extension ValidZoneOffsets: Sendable {}
-extension ValidZoneOffsets: Equatable {}
-extension ValidZoneOffsets: Hashable {}
 
 extension ValidZoneOffsets: Collection {
 
@@ -95,8 +93,9 @@ extension ValidZoneOffsets {
       case .boundary(.end):
         return transition.instant + transition.duration
       case .boundary(.nearest):
-        let midpoint = transition.instant + (transition.duration / 2)
-        return instant < midpoint ? transition.instant : transition.instant + transition.duration
+        let duration = transition.duration
+        let midpoint = transition.instant + (duration / 2)
+        return instant < midpoint ? transition.instant : transition.instant + duration
       case .reject:
         throw TempoError.skippedTimeResolutionFailed(reason: .rejectedByStrategy)
       }

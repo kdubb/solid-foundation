@@ -27,7 +27,6 @@ struct ZonedDateTimeTests {
 
   @Test(
     "Skipped Time Resolution",
-    .serialized,
     arguments: [
       (
         "Typical",

@@ -107,52 +107,78 @@ struct LocalDateTests {
     let invMonth1 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, month: 13, day: 1) }
     #expect(
       invMonth1
-        == TempoError.invalidComponentValue(component: "monthOfYear", reason: .outOfRange(value: "13", range: "1 - 12"))
+        == TempoError.invalidComponentValue(
+          component: "monthOfYear",
+          reason: .outOfRange(value: "13", range: "1 - 12")
+        )
     )
     let invMonth2 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, month: 0, day: 1) }
     #expect(
       invMonth2
-        == TempoError.invalidComponentValue(component: "monthOfYear", reason: .outOfRange(value: "0", range: "1 - 12"))
+        == TempoError.invalidComponentValue(
+          component: "monthOfYear",
+          reason: .outOfRange(value: "0", range: "1 - 12")
+        )
     )
 
     // Invalid day
-    let invDay1 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, month: 4, day: 31) }    // April has 30 days
+    let invDay1 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, month: 4, day: 31) }
     #expect(
       invDay1
-        == TempoError.invalidComponentValue(component: "dayOfMonth", reason: .outOfRange(value: "31", range: "Invalid day for month '4' of year '2024' (1...30)"))
+        == TempoError.invalidComponentValue(
+          component: "dayOfMonth",
+          reason: .outOfRange(value: "31", range: "Invalid day for month '4' of year '2024' (1...30)")
+        )
     )
-    let invDay2 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, month: 2, day: 30) }    // February has 29 days in leap year
+    let invDay2 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, month: 2, day: 30) }
     #expect(
       invDay2
-        == TempoError.invalidComponentValue(component: "dayOfMonth", reason: .outOfRange(value: "30", range: "Invalid day for month '2' of year '2024' (1...29)"))
+        == TempoError.invalidComponentValue(
+          component: "dayOfMonth",
+          reason: .outOfRange(value: "30", range: "Invalid day for month '2' of year '2024' (1...29)")
+        )
     )
-    let invDay3 = #expect(throws: TempoError.self) { try LocalDate(year: 2023, month: 2, day: 29) }    // February has 28 days in non-leap year
+    let invDay3 = #expect(throws: TempoError.self) { try LocalDate(year: 2023, month: 2, day: 29) }
     #expect(
       invDay3
-        == TempoError.invalidComponentValue(component: "dayOfMonth", reason: .outOfRange(value: "29", range: "Invalid day for month '2' of year '2023' (1...28)"))
+        == TempoError.invalidComponentValue(
+          component: "dayOfMonth",
+          reason: .outOfRange(value: "29", range: "Invalid day for month '2' of year '2023' (1...28)")
+        )
     )
 
     // Invalid ordinal day
-    let invOrdDay1 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, ordinalDay: 367) }    // Leap year has 366 days
+    let invOrdDay1 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, ordinalDay: 367) }
     #expect(
       invOrdDay1
-        == TempoError.invalidComponentValue(component: "ordinalDay", reason: .outOfRange(value: "367", range: "Invalid ordinal day for year '2024' (1...366)"))
+        == TempoError.invalidComponentValue(
+          component: "ordinalDay",
+          reason: .outOfRange(value: "367", range: "Invalid ordinal day for year '2024' (1...366)")
+        )
     )
-    let invOrdDay2 = #expect(throws: TempoError.self) { try LocalDate(year: 2023, ordinalDay: 366) }    // Non-leap year has 365 days
+    let invOrdDay2 = #expect(throws: TempoError.self) { try LocalDate(year: 2023, ordinalDay: 366) }
     #expect(
       invOrdDay2
-        == TempoError.invalidComponentValue(component: "ordinalDay", reason: .outOfRange(value: "366", range: "Invalid ordinal day for year '2023' (1...365)"))
+        == TempoError.invalidComponentValue(
+          component: "ordinalDay",
+          reason: .outOfRange(value: "366", range: "Invalid ordinal day for year '2023' (1...365)")
+        )
     )
-    let invOrdDay3 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, ordinalDay: 0) }    // Ordinal day must be positive
+    let invOrdDay3 = #expect(throws: TempoError.self) { try LocalDate(year: 2024, ordinalDay: 0) }
     #expect(
       invOrdDay3
-        == TempoError.invalidComponentValue(component: "ordinalDay", reason: .outOfRange(value: "0", range: "Invalid ordinal day for year '2024' (1...366)"))
+        == TempoError.invalidComponentValue(
+          component: "ordinalDay",
+          reason: .outOfRange(value: "0", range: "Invalid ordinal day for year '2024' (1...366)")
+        )
     )
   }
 
   @Test("LocalDate now")
   func testNow() {
-    let fdComps = Calendar.current.dateComponents([.year, .month, .day], from: .now)
+    var cal = Calendar(identifier: .iso8601)
+    cal.timeZone = .gmt
+    let fdComps = cal.dateComponents([.year, .month, .day], from: .now)
     let now = LocalDate.now()
     #expect(now.year == fdComps.year)
     #expect(now.month == fdComps.month)

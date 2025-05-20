@@ -33,7 +33,7 @@ public struct Duration {
   ///  - nanoseconds: The number of nanoseconds.
   ///
   public init(seconds: Int64, nanoseconds: Int) {
-    self.nanoseconds = Int128(seconds) * 1_000_000_000 + Int128(nanoseconds)
+    self.init(nanoseconds: Int128(seconds) * 1_000_000_000 + Int128(nanoseconds))
   }
 
   /// Initializes a `Duration` with the given number of fractional seconds.
@@ -41,13 +41,17 @@ public struct Duration {
   /// - Parameter seconds: The number of seconds.
   ///
   public init(seconds: Double) {
-    self.nanoseconds = Int128(seconds * 1_000_000_000)
+    self.init(nanoseconds: Int128(seconds * 1_000_000_000))
   }
 
   internal var integerComponents: (hi: Int64, lo: Int64) {
     let hi = nanoseconds >> Int64.bitWidth
     let lo = nanoseconds & Int128(Int64.max)
     return (hi: Int64(hi), lo: Int64(lo))
+  }
+
+  public var magnitude: Duration {
+    return Duration(nanoseconds: Int128(nanoseconds.magnitude))
   }
 }
 
@@ -67,15 +71,15 @@ extension Duration: CustomStringConvertible {
 
   public var description: String {
     let days = self[.numberOfDays]
-    let daysField = days > 0 ? "\(days) day\(days == 1 ? "" : "s")" : ""
-    let hours = self[.numberOfHours, rolledOver: true]
-    let hoursField = hours > 0 ? "\(hours) hour\(hours == 1 ? "" : "s")" : ""
-    let minutes = self[.numberOfMinutes]
-    let minutesField = minutes > 0 ? "\(minutes) minute\(minutes == 1 ? "" : "s")" : ""
-    let seconds = self[.numberOfSeconds]
-    let secondsField = seconds > 0 ? "\(seconds) second\(seconds == 1 ? "" : "s")" : ""
+    let daysField = days != 0 ? "\(days) day\(days == 1 ? "" : "s")" : ""
+    let hours = self[.hoursOfDay]
+    let hoursField = hours != 0 ? "\(hours) hour\(hours == 1 ? "" : "s")" : ""
+    let minutes = self[.minutesOfHour]
+    let minutesField = minutes != 0 ? "\(minutes) minute\(minutes == 1 ? "" : "s")" : ""
+    let seconds = self[.secondsOfMinute]
+    let secondsField = seconds != 0 ? "\(seconds) second\(seconds == 1 ? "" : "s")" : ""
     let nanoseconds = self[.nanosecondsOfSecond]
-    let nanosecondsField = nanoseconds > 0 ? "\(nanoseconds) nanoseconds" : ""
+    let nanosecondsField = nanoseconds != 0 ? "\(nanoseconds) nanoseconds" : ""
     return [daysField, hoursField, minutesField, secondsField, nanosecondsField]
       .filter { !$0.isEmpty }
       .joined(separator: ", ")
@@ -293,17 +297,17 @@ extension Duration {
     lhs = lhs * rhs
   }
 
-  public static func * <I>(lhs: I, rhs: Self) -> Self where I: SignedInteger {
+  public static func * <I>(lhs: I, rhs: Self) -> Self where I: BinaryInteger {
     let (product, overflow) = Int128(lhs).multipliedReportingOverflow(by: rhs.nanoseconds)
     assert(!overflow, "\(String(describing: self)) overflow")
     return Self(nanoseconds: product)
   }
 
-  public static func * <I>(lhs: Self, rhs: I) -> Self where I: SignedInteger {
+  public static func * <I>(lhs: Self, rhs: I) -> Self where I: BinaryInteger {
     return rhs * lhs
   }
 
-  public static func *= <I>(lhs: inout Self, rhs: I) where I: SignedInteger {
+  public static func *= <I>(lhs: inout Self, rhs: I) where I: BinaryInteger {
     lhs = lhs * rhs
   }
 
@@ -340,10 +344,14 @@ extension Duration {
     lhs = lhs / rhs
   }
 
-  public static func / <I>(lhs: Self, rhs: I) -> Self where I: SignedInteger {
+  public static func / <I>(lhs: Self, rhs: I) -> Self where I: BinaryInteger {
     let (quotient, overflow) = Int128(lhs.nanoseconds).dividedReportingOverflow(by: Int128(rhs))
     assert(!overflow, "\(String(describing: self)) overflow")
     return Self(nanoseconds: quotient)
+  }
+
+  public static func /= <I>(lhs: inout Self, rhs: I) where I: BinaryInteger {
+    lhs = lhs / rhs
   }
 
   public static func / <F>(lhs: Self, rhs: F) -> Self where F: BinaryFloatingPoint {
@@ -360,10 +368,93 @@ extension Duration {
     return Self(nanoseconds: Int128(quotient))
   }
 
-  public static func /= <I>(lhs: inout Self, rhs: I) where I: SignedInteger {
+  public static func /= <F>(lhs: inout Self, rhs: F) where F: BinaryFloatingPoint {
     lhs = lhs / rhs
   }
 
+  public static func % (lhs: Self, rhs: Self) -> Self {
+    let (remainder, overflow) = Int128(lhs.nanoseconds).remainderReportingOverflow(dividingBy: rhs.nanoseconds)
+    assert(!overflow, "\(String(describing: self)) overflow")
+    return Self(nanoseconds: remainder)
+  }
+
+  public static func %= (lhs: inout Self, rhs: Self) {
+    lhs = lhs % rhs
+  }
+
+  public static func % <I>(lhs: Self, rhs: I) -> Self where I: BinaryInteger {
+    let (remainder, overflow) = Int128(lhs.nanoseconds).remainderReportingOverflow(dividingBy: Int128(rhs))
+    assert(!overflow, "\(String(describing: self)) overflow")
+    return Self(nanoseconds: remainder)
+  }
+
+  public static func %= <I>(lhs: inout Self, rhs: I) where I: BinaryInteger {
+    lhs = lhs % rhs
+  }
+
+  public static func % <F>(lhs: Self, rhs: F) -> Self where F: BinaryFloatingPoint {
+  // Split lhs into two 64-bit integers
+    let (lhsHi, lhsLo) = lhs.integerComponents
+
+    // Convert to Double separately to maintain maximum precision
+    let lhsDouble = Double(lhsHi) * twoToThe64thDouble + Double(lhsLo)
+
+    // Remainder & round explicitly
+    let remainderDouble = lhsDouble.remainder(dividingBy: Double(rhs))
+    let remainder = remainderDouble.rounded(.toNearestOrAwayFromZero)
+
+    return Self(nanoseconds: Int128(remainder))
+  }
+
+  public static func %= <F>(lhs: inout Self, rhs: F) where F: BinaryFloatingPoint {
+    lhs = lhs % rhs
+  }
+
+  public func remainder(in unit: Unit) -> Duration {
+    switch unit {
+    case .days:
+      return self - .days(self[.totalDays])
+    case .hours:
+      return self - .hours(self[.totalHours])
+    case .minutes:
+      return self - .minutes(self[.totalMinutes])
+    case .seconds:
+      return self - .seconds(self[.totalSeconds])
+    case .milliseconds:
+      return self - .milliseconds(self[.totalMilliseconds])
+    case .microseconds:
+      return self - .microseconds(self[.totalMicroseconds])
+    case .nanoseconds:
+      return .zero
+    default:
+      preconditionFailure("Unsupported unit for remainder: \(unit)")
+    }
+  }
+
+  public func truncated(to unit: Unit) -> Duration {
+    switch unit {
+    case .days:
+      .days(self[.totalDays])
+    case .hours:
+      .hours(self[.totalHours])
+    case .minutes:
+      .minutes(self[.totalMinutes])
+    case .seconds:
+      .seconds(self[.totalSeconds])
+    case .milliseconds:
+      .milliseconds(self[.totalMilliseconds])
+    case .microseconds:
+      .microseconds(self[.totalMicroseconds])
+    case .nanoseconds:
+      self
+    default:
+      preconditionFailure("Unsupported unit for truncation: \(unit)")
+    }
+  }
+
+  public func divided(at unit: Unit) -> (quotient: Self, remainder: Self) {
+    (truncated(to: unit), remainder(in: unit))
+  }
 }
 
 // MARK: - Factory Methods
@@ -413,4 +504,18 @@ extension Duration {
   public static func nanoseconds<I>(_ nanoseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(nanoseconds))
   }
+}
+
+extension Duration: Codable {
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    self.init(nanoseconds: try container.decode(Int128.self))
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(nanoseconds)
+  }
+
 }

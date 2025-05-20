@@ -22,8 +22,9 @@ public protocol CalendarSystem {
   ///   - zone: The time zone of instant.
   ///   - type: The type of container to convert to.
   /// - Returns: A set of components representing the instant in the specified time zone.
+  /// - Throws: An error if the conversion fails or the components are invalid.
   ///
-  func components<C>(from instant: Instant, in zone: Zone, as type: C.Type) -> C where C: ComponentBuildable
+  func components<C>(from instant: Instant, in zone: Zone, as type: C.Type) throws -> C where C: ComponentBuildable
 
   /// Resolves the given components to a valid set of equivalent components.
   ///
@@ -63,7 +64,7 @@ public protocol CalendarSystem {
   ///
   func instant(from components: some ComponentContainer, resolution: ResolutionStrategy) throws -> Instant
 
-  /// Computes the corresponding `Instant` for the specified components using a specific zone offset.
+  /// Computes the corresponding `Instant` for the specified date/time components using a specific zone offset.
   ///
   /// - Parameters:
   ///   - dateTime: The date/time to convert.
@@ -99,12 +100,13 @@ extension CalendarSystem {
   ///   - instant: The instant to convert.
   ///   - zone: The time zone of instant.
   /// - Returns: A set of components representing the instant in the specified time zone.
+  /// - Throws: An error if the conversion fails or the components are invalid.
   ///
   public func components<C>(
     from instant: Instant,
     in zone: Zone
-  ) -> C where C: ComponentBuildable {
-    return components(from: instant, in: zone, as: C.self)
+  ) throws -> C where C: ComponentBuildable {
+    return try components(from: instant, in: zone, as: C.self)
   }
 
   public func adding<C>(

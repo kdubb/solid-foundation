@@ -21,16 +21,19 @@ public final class RegionZoneRules: ZoneRules, Sendable {
   /// - Note: The value is stored as both a ``ZoneOffset`` and a
   /// ``Duration`` for convenience in calculations.
   ///
-  public let initial: (offset: ZoneOffset, duration: Duration, isStandard: Bool)
+  public let initial: (offset: ZoneOffset, duration: Duration, isStandardTime: Bool)
+
   /// The final offset for the region.
   ///
   /// - Note: The value is stored as both a ``ZoneOffset`` and a
   /// ``Duration`` to avoid recalculating the duration on each access.
   ///
-  public let final: (offset: ZoneOffset, duration: Duration, isStandard: Bool)
+  public let final: (offset: ZoneOffset, duration: Duration, isStandardTime: Bool)
+
   /// The transitions for the region.
   ///
   public let transitions: [ZoneTransition]
+
   /// The tail rule for the region, if any.
   ///
   public let tailRule: ZoneTransitionRule?
@@ -48,17 +51,53 @@ public final class RegionZoneRules: ZoneRules, Sendable {
   ///   - designationMap: The designation map for the region.
   ///
   public init(
-    initial: (offset: ZoneOffset, isStandard: Bool),
-    final: (offset: ZoneOffset, isStandard: Bool),
+    initial: (offset: ZoneOffset, isStandardTime: Bool),
+    final: (offset: ZoneOffset, isStandardTime: Bool),
     transitions: [ZoneTransition],
     tailRule: ZoneTransitionRule? = nil,
     designationMap: [Instant: String] = [:]
   ) {
-    self.initial = (initial.offset, Duration(initial.offset), initial.isStandard)
-    self.final = (final.offset, Duration(final.offset), final.isStandard)
+    self.initial = (initial.offset, Duration(initial.offset), initial.isStandardTime)
+    self.final = (final.offset, Duration(final.offset), final.isStandardTime)
     self.transitions = transitions
     self.tailRule = tailRule
     self.designationMap = designationMap
+
+    // Validate transition timestamps and local date/times are strictly increasing
+    for (transitionIdx, transition) in transitions.enumerated() where transitionIdx > 0 {
+
+      let previous = transitions[transitionIdx - 1]
+      guard transition.instant > previous.instant else {
+        fatalError("Transition timestamps must be strictly increasing.")
+      }
+      guard transition.before.local > previous.before.local else {
+        fatalError("Transition timestamps must be strictly increasing.")
+      }
+      guard transition.after.local > previous.after.local else {
+        fatalError("Transition timestamps must be strictly increasing.")
+      }
+      guard transition.localBoundaries.start > previous.localBoundaries.start else {
+        fatalError("Transition timestamps must be strictly increasing.")
+      }
+      guard transition.localBoundaries.end > previous.localBoundaries.end else {
+        fatalError("Transition timestamps must be strictly increasing.")
+      }
+
+    }
+  }
+
+  private func isProjected(_ dateTime: LocalDateTime) -> Bool {
+    guard let lastTransition = transitions.last else {
+      return false
+    }
+    return dateTime >= lastTransition.localBoundaries.end
+  }
+
+  private func isProjected(_ instant: Instant) -> Bool {
+    guard let lastTransition = transitions.last else {
+      return false
+    }
+    return instant > lastTransition.instant
   }
 
   // MARK: - ZoneRules Protocol Requirements
@@ -69,35 +108,27 @@ public final class RegionZoneRules: ZoneRules, Sendable {
 
   public func standardOffset(at instant: Instant) -> ZoneOffset {
 
-    // If after the last transition, use the tail rule if available
-    if let lastTransition = transitions.last, instant > lastTransition.instant {
-      guard let tailRule else {
-        // No tail rule, so fixed final offset
-        return final.offset
-      }
-      return tailRule.standardTime.offset
+    guard !isProjected(instant) else {
+      return tailRule?.standardTime.offset ?? final.offset
     }
 
-    // If before the first transition, use the initial offset
+    // If before the first transition, use the first available standard offset
     if let firstTransition = transitions.first, instant < firstTransition.instant {
-      guard !initial.isStandard else {
-        // Initial offset is standard, so use it
+
+      guard !initial.isStandardTime else {
         return initial.offset
       }
-      // Otherwise walk *forward* to the first standard transition.
-      if let std = transitions.first(where: { $0.isStandardTime }) {
-        return std.after.offset
-      }
-      // Fallback: no standard flag in table – assume initial
-      return initial.offset
+
+      // Find a transition to standard, fallback to initial
+      return transitions.first(where: { $0.isStandardTime })?.after.offset ?? initial.offset
     }
 
     // Find last transition at or before instant
     guard let transitionIdx = transitions.lastIndex(where: { $0.instant <= instant }) else {
-      return initial.offset    // should never hit due to earlier guard
+      fatalError("No transition found for instant, should have exited via before first/after last checks")
     }
 
-    // Walk backward until we hit a transition whose *after* is standard
+    // Walk backward until we hit a transition to standard
     for checkTransitionIndx in stride(from: transitionIdx, through: 0, by: -1) {
       let checkTransition = transitions[checkTransitionIndx]
       if checkTransition.isStandardTime { return checkTransition.after.offset }
@@ -107,191 +138,144 @@ public final class RegionZoneRules: ZoneRules, Sendable {
     return initial.offset
   }
 
-  public func daylightSavingsTime(at instant: Instant) -> ZoneOffset {
-    let totalOffset = offset(at: instant)
-    let standardOffset = standardOffset(at: instant)
-    return ZoneOffset(availableComponents: [.zoneOffset(totalOffset.totalSeconds - standardOffset.totalSeconds)])
+  public func daylightSavingsTime(at instant: Instant) -> Duration {
+
+    if isProjected(instant), let tailRule = tailRule {
+      return tailRule.daylightSavingTime(for: instant, at: final.offset)
+    }
+
+    // Find last transition at or before instant
+    guard let transitionIdx = transitions.lastIndex(where: { $0.instant <= instant }) else {
+      // If initial is standard, no difference, otherwise find the first
+      // transition to standard and compute difference
+      guard
+        !initial.isStandardTime,
+        let stdTransition = transitions.first(where: { $0.isStandardTime })
+      else {
+        return .zero
+      }
+      return (Duration(stdTransition.after.offset) - Duration(initial.offset)).magnitude
+    }
+
+    let transition = transitions[transitionIdx]
+
+    // Walk backward until we hit a transition to standard
+    for curTransitionIndx in stride(from: transitionIdx, through: 0, by: -1) {
+      let curTransition = transitions[curTransitionIndx]
+      if curTransition.isStandardTime {
+        return (Duration(curTransition.after.offset) - Duration(transition.after.offset)).magnitude
+      }
+    }
+    // Walk forward until we hit a transition to standard
+    for curTransitionIndx in stride(from: transitionIdx, to: transitions.count, by: 1) {
+      let curTransition = transitions[curTransitionIndx]
+      if curTransition.isStandardTime {
+        return (Duration(transition.after.offset) - Duration(curTransition.after.offset)).magnitude
+      }
+    }
+
+    // No transition to standard, compute vs. initial
+    return (Duration(initial.offset) - Duration(transition.after.offset)).magnitude
   }
 
   public func isDaylightSavingsTime(at instant: Instant) -> Bool {
-    guard let transition = transitions.last(where: { $0.instant <= instant }) else {
-      return false
-    }
-    return transition.isDaylightSavingTime
+    return daylightSavingsTime(at: instant) > .zero
   }
 
   public func offset(at instant: Instant) -> ZoneOffset {
 
-    if let lastTransition = transitions.last, instant > lastTransition.instant, let tailRule {
+    if isProjected(instant), let tailRule {
       return tailRule.offset(at: instant)
     }
 
+    // Find last transition at or before instant
     guard let transition = transitions.last(where: { $0.instant <= instant }) else {
       return initial.offset
     }
 
-    return transition.after.offset
+    return instant >= transition.instant ? transition.after.offset : transition.before.offset
   }
 
   public func offset(for dateTime: LocalDateTime) -> ZoneOffset {
 
-    if let lastTransition = transitions.last, dateTime >= lastTransition.local.end, let tailRule {
+    if isProjected(dateTime), let tailRule {
       return tailRule.offset(for: dateTime)
     }
 
-    guard let transition = transitions.last(where: { $0.local.start <= dateTime }) else {
+    // Find last transition at or before local
+    guard let transition = transitions.last(where: { $0.localBoundaries.start <= dateTime }) else {
       return initial.offset
     }
-    guard dateTime < transition.local.end else {
+    guard dateTime < transition.localBoundaries.end else {
       return transition.after.offset
     }
 
-    switch transition.kind {
-    case .gap:
-      return transition.after.offset
-    case .overlap:
-      return transition.before.offset
-    }
+    return transition.before.offset
   }
 
   public func validOffsets(for dateTime: LocalDateTime) -> ValidZoneOffsets {
-    let cal: GregorianCalendarSystem = .default
 
-    for transition in transitions {
-      let localBefore = cal.localDateTime(
-        instant: transition.instant + transition.before.duration,
-        at: transition.before.offset
-      )
-      let localAfter = cal.localDateTime(
-        instant: transition.instant + transition.after.duration,
-        at: transition.after.offset
-      )
-
-      switch transition.kind {
-      case .gap:
-        if dateTime >= localBefore && dateTime < localAfter {
-          return .skipped(transition)
-        }
-      case .overlap:
-        var offsets: [ZoneOffset] = []
-
-        let localBeforeEnd = cal.localDateTime(
-          instant: transition.instant + transition.before.duration + transition.after.duration,
-          at: transition.before.offset
-        )
-        if dateTime >= localBefore && dateTime < localBeforeEnd {
-          offsets.append(transition.before.offset)
-        }
-
-        let localAfterEnd = cal.localDateTime(
-          instant: transition.instant + transition.after.duration + transition.before.duration,
-          at: transition.after.offset
-        )
-        if dateTime >= localAfter && dateTime < localAfterEnd {
-          offsets.append(transition.after.offset)
-        }
-
-        switch offsets.count {
-        case 2:
-          return .ambiguous(offsets)
-        case 1:
-          return .normal(offsets[0])
-        default:
-          // No valid offsets in this range
-          break
-        }
-      }
+    if isProjected(dateTime) {
+      return tailRule?.validOffsets(for: dateTime) ?? .normal(final.offset)
     }
 
-    // Normal case: exactly one valid offset
-    let instant = cal.instant(from: dateTime, at: .utc)
-    let off = offset(at: instant)
-    return .normal(off)
+    // Find last transition at or before local
+    guard let transition = transitions.last(where: { $0.localBoundaries.start <= dateTime }) else {
+      return .normal(initial.offset)
+    }
+
+    guard let transitionOffsets = transition.validOffsets(for: dateTime) else {
+      return .normal(transition.after.offset)
+    }
+
+    return transitionOffsets
   }
 
   public func isValidOffset(_ offset: ZoneOffset, for dateTime: LocalDateTime) -> Bool {
-    let validOffsets = validOffsets(for: dateTime)
-    return validOffsets.contains(offset)
+    return validOffsets(for: dateTime).contains(offset)
   }
 
   public func applicableTransition(for dateTime: LocalDateTime) -> ZoneTransition? {
-    let cal: CalendarSystem = .default
 
-    // Check each transition to see if it applies to this local date/time
-
-    for transition in transitions {
-      let localBefore: LocalDateTime = cal.components(
-        from: transition.instant + transition.before.duration,
-        in: .fixed(offset: transition.before.offset)
-      )
-      let localAfter: LocalDateTime = cal.components(
-        from: transition.instant + transition.after.duration,
-        in: .fixed(offset: transition.after.offset)
-      )
-
-      switch transition.kind {
-      case .gap:
-        if dateTime >= localBefore && dateTime < localAfter {
-          return transition
-        }
-      case .overlap:
-        // swift-format-ignore: NeverUseForceTry
-        if try! (dateTime >= localBefore && dateTime < localBefore.adding(transition.after.duration))
-          || (dateTime >= localAfter && dateTime < localAfter.adding(transition.before.duration))
-        {
-          return transition
-        }
-      }
+    if isProjected(dateTime) {
+      return tailRule?.applicableTransition(at: dateTime)
     }
 
-    return nil
+    return transitions.first { $0.contains(dateTime) }
   }
 
-  public func nextTransition(after instant: Instant) -> Instant? {
-    guard let nextSpecific = transitions.first(where: { $0.instant > instant }) else {
-      guard let tailRule else {
-        return nil
-      }
-      return tailRule.nextTransition(at: instant)
+  public func nextTransition(after instant: Instant) -> ZoneTransition? {
+    guard let next = transitions.firstIndex(where: { $0.instant > instant }) else {
+      return tailRule?.nextTransition(after: instant, at: final.offset)
     }
-    return nextSpecific.instant
+    return transitions[next]
   }
 
-  public func previousTransition(before instant: Instant) -> Instant? {
-    guard let prevSpecific = transitions.last(where: { $0.instant < instant }) else {
-      guard let tailRule else {
-        return nil
-      }
-      return tailRule.prevTransition(at: instant)
+  public func priorTransition(before instant: Instant) -> ZoneTransition? {
+
+    if isProjected(instant) {
+      return tailRule?.priorTransition(before: instant, at: final.offset) ?? transitions.last
     }
-    return prevSpecific.instant
+
+    guard let prior = transitions.last(where: { $0.instant < instant }) else {
+      return nil
+    }
+    return prior
   }
 
-  public func designation(for instant: Instant) -> String? {
+  public func designation(for instant: Instant) -> String {
 
-    // After last transition, use tail rule if available
-    if let last = transitions.last, instant > last.instant, let rule = tailRule {
-      // Decide which side of the rule we are on
-      if let dst = rule.daylightSavingTime {
-        // Tail rule has DST → evaluate offset to distinguish
-        let off = rule.offset(at: instant)
-        if off == dst.offset { return dst.designation }
-        return rule.standardTime.designation
-      }
-      // No DST in tail rule → always standard
-      return rule.standardTime.designation
+    if isProjected(instant), let tailRule {
+      return tailRule.designation(at: instant)
     }
 
-    // Between first and last transition, use the latest transition
-    if let tr = transitions.last(where: { $0.instant <= instant }) {
-      return tr.designation
+    if let transition = transitions.last(where: { $0.instant <= instant }) {
+      return transition.designation
     }
 
-    // Before the first transition → sentinel entry in designationMap
-    // ------------------------------------------------------------------
-    // `designationMap` was seeded with an entry whose key is Instant.min
+    // Maps are seeded with an entry that has a key of Instant.min,
     // so the max key ≤ instant gives the correct initial designation.
     let key = designationMap.keys.filter { $0 <= instant }.max()
-    return key.flatMap { designationMap[$0] }
+    return key.flatMap { designationMap[$0] } ?? offset(at: instant).designation
   }
 }

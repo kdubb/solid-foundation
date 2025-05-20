@@ -108,7 +108,7 @@ extension OffsetTime {
     let rolledOverLeap: Bool
     if second == 60 {
       // Leap seconds are only valid at 23:59:60
-      guard zHour == 23 && zMinute == 59 && nanosecond == 0 else {
+      guard zHour == 23 && zMinute == 59 else {
         return nil
       }
 

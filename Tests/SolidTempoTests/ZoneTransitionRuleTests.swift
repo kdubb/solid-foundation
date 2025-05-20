@@ -6,48 +6,246 @@
 //
 
 @testable import SolidTempo
+import SolidTesting
 import Testing
 import Foundation
 
 @Suite("ZoneTransitionRule Tests")
 struct ZoneTransitionRuleTests {
 
-  @Test("Check local start/end times in transitions")
-  func checkLocalStartEndTimesInTransitions() throws {
-    let zone = try Zone(identifier: "America/New_York")
-    let rule = zone.rules.applicableTransition(for: try LocalDateTime(year: 2025, month: 3, day: 9, hour: 2, minute: 0, second: 0, nanosecond: 0))
-    print(rule)
+  static let ruleDetails = ZoneTransitionRuleDetails.loadFromBundle(name: "rule-details", bundle: .module)
+
+  @Test(
+    "offset at instant",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.instant, $0.entry.instantOffset) }
+  )
+  func testOffsetAtInstant(zone: Zone, instant: Instant, expectedOffset: ZoneOffset) throws {
+    let rule = try rule(for: zone)
+    let offset = rule.offset(at: instant)
+    #expect(offset == expectedOffset)
   }
 
-  @Test("Rule with dayOffset >= 24 hours")
-  func testRuleWithOffsetGreaterThan24Hours() throws {
+  @Test(
+    "offset for local",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.local, $0.entry.localOffset) }
+  )
+  func testOffsetForLocal(zone: Zone, local: LocalDateTime, expectedOffset: ZoneOffset) throws {
+    let rule = try rule(for: zone)
+    let offset = rule.offset(for: local)
+    #expect(offset == expectedOffset)
+  }
+
+  @Test(
+    "valid offsets for local",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.local, $0.entry.localValidOffsets) }
+  )
+  func testValidOffsetsForLocal(zone: Zone, local: LocalDateTime, expectedOffsets: [ZoneOffset]) throws {
+    let rule = try rule(for: zone)
+    let validOffsets = Array(rule.validOffsets(for: local))
+    #expect(validOffsets == expectedOffsets)
+  }
+
+  @Test(
+    "applicable transition for local",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.local, $0.entry.localApplicableTransition) }
+  )
+  func testApplicableTransitionForLocal(
+    zone: Zone,
+    local: LocalDateTime,
+    expectedTransition: ZoneTransitionRuleDetails.ZoneDetails.Entry.Transition?
+  ) throws {
+    let rule = try rule(for: zone)
+    let foundTransition = rule.applicableTransition(at: local)
+    guard let expectedTransition else {
+      #expect(foundTransition == nil)
+      return
+    }
+
+    let transition = try #require(foundTransition)
+    #expect(transition.instant == expectedTransition.instant)
+    #expect(transition.before.local == expectedTransition.localBefore)
+    #expect(transition.after.local == expectedTransition.localAfter)
+    #expect(transition.before.offset == expectedTransition.offsetBefore)
+    #expect(transition.after.offset == expectedTransition.offsetAfter)
+    #expect(transition.kind == (expectedTransition.isGap ? .gap : .overlap))
+    #expect(transition.duration == expectedTransition.duration)
+  }
+
+  @Test(
+    "next transition at instant",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.instant, $0.entry.instantNextTransition) }
+  )
+  func testNextTransitionAtInstant(
+    zone: Zone,
+    instant: Instant,
+    expectedTransition: ZoneTransitionRuleDetails.ZoneDetails.Entry.Transition?
+  ) throws {
+    let rule = try rule(for: zone)
+    let finalOffset = try #require((zone.rules as? RegionZoneRules)?.final.offset)
+    let foundTransition = rule.nextTransition(after: instant, at: finalOffset)
+    guard let expectedTransition else {
+      #expect(foundTransition == nil)
+      return
+    }
+
+    let transition = try #require(foundTransition)
+    #expect(transition.instant == expectedTransition.instant)
+    #expect(transition.before.local == expectedTransition.localBefore)
+    #expect(transition.after.local == expectedTransition.localAfter)
+    #expect(transition.before.offset == expectedTransition.offsetBefore)
+    #expect(transition.after.offset == expectedTransition.offsetAfter)
+    #expect(transition.kind == (expectedTransition.isGap ? .gap : .overlap))
+    #expect(transition.duration == expectedTransition.duration)
+  }
+
+  @Test(
+    "prior transition at instant",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.instant, $0.entry.instantPriorTransition) }
+  )
+  func testPriorTransitionAtInstant(
+    zone: Zone,
+    instant: Instant,
+    expectedTransition: ZoneTransitionRuleDetails.ZoneDetails.Entry.Transition?
+  ) throws {
+    let rule = try rule(for: zone)
+    let finalOffset = try #require((zone.rules as? RegionZoneRules)?.final.offset)
+    let foundTransition = rule.priorTransition(before: instant, at: finalOffset)
+    guard let expectedTransition else {
+      #expect(foundTransition == nil)
+      return
+    }
+
+    let transition = try #require(foundTransition)
+    #expect(transition.instant == expectedTransition.instant)
+    #expect(transition.before.local == expectedTransition.localBefore)
+    #expect(transition.after.local == expectedTransition.localAfter)
+    #expect(transition.before.offset == expectedTransition.offsetBefore)
+    #expect(transition.after.offset == expectedTransition.offsetAfter)
+    #expect(transition.kind == (expectedTransition.isGap ? .gap : .overlap))
+    #expect(transition.duration == expectedTransition.duration)
+  }
+
+  @Test(
+    "designation at instant",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.instant, $0.entry.instantOffset, $0.entry.designation) }
+  )
+  func testDesignationAtInstant(
+    zone: Zone,
+    instant: Instant,
+    instantOffset: ZoneOffset,
+    expectedDesignation: String
+  ) throws {
+    let rule = try rule(for: zone)
+    let designation = rule.designation(at: instant)
+    let expected =
+      if designation.wholeMatch(of: /^(\+|\-)\d+$/) != nil {
+        instantOffset.designation
+      } else {
+        expectedDesignation
+      }
+    #expect(designation == expected)
+  }
+
+  @Test(
+    "dst duration",
+    arguments: ruleDetails.flattened.map { ($0.zone, $0.entry.instant, $0.entry.instantDstDuration[.totalSeconds]) }
+  )
+  func testDaylightSavingTime(zone: Zone, instant: Instant, expectedDstDurationSeconds: Int) throws {
+    let rule = try rule(for: zone)
+    let finalOffset = try #require((zone.rules as? RegionZoneRules)?.final.offset)
+    let dstDuration = rule.daylightSavingTime(for: instant, at: finalOffset)
+    let expectedDstDuration: Duration = .seconds(expectedDstDurationSeconds)
+    #expect(dstDuration == expectedDstDuration)
+  }
+
+  func rule(for zone: Zone) throws -> ZoneTransitionRule {
+    return try #require((zone.rules as? RegionZoneRules)?.tailRule)
+  }
+
+  /// Creates an instant/offset using Foundation.
+  ///
+  /// - Note: The nanoseconds are truncated to microseconds ot match Foundation's precision.
+  ///
+  func foundationDetails(date: LocalDateTime, zone: Zone) throws -> (instant: Int, offset: Int) {
     var cal = Calendar(identifier: .iso8601)
-    cal.timeZone = TimeZone(identifier: "Asia/Gaza")!
-
-    let zone = try Zone(identifier: "Asia/Gaza")
-
-    let dateBefore = cal.date(from: DateComponents(year: 2501, month: 3, day: 20, hour: 8, minute: 0, second: 0, nanosecond: 0))!
-    let dateAfter = cal.date(from: DateComponents(year: 2501, month: 3, day: 26, hour: 20, minute: 0, second: 0, nanosecond: 0))!
-    print(dateBefore.timeIntervalSince1970)
-    print(dateAfter.timeIntervalSince1970)
-
-    let before = try Instant(LocalDateTime(year: 2501, month: 3, day: 20, hour: 8, minute: 0, second: 0, nanosecond: 0).at(zone: zone))
-    let after = try Instant(LocalDateTime(year: 2501, month: 3, day: 26, hour: 20, minute: 0, second: 0, nanosecond: 0).at(zone: zone))
-    print(before.durationSinceEpoch[.totalSeconds])
-    print(after.durationSinceEpoch[.totalSeconds])
-
-    let dateOffsetBefore = cal.timeZone.secondsFromGMT(for: dateBefore)
-    let dateOffsetAfter = cal.timeZone.secondsFromGMT(for: dateAfter)
-
-    print(dateOffsetBefore)
-    print(dateOffsetAfter)
-
-    let offsetBefore = zone.rules.offset(at: before)
-    let offsetAfter = zone.rules.offset(at: after)
-
-    print(offsetBefore)
-    print(offsetAfter)
+    cal.timeZone = try #require(TimeZone(identifier: zone.identifier))
+    let date = try #require(
+      cal.date(
+        from: .init(
+          year: date.year,
+          month: date.month,
+          day: date.day,
+          hour: date.hour,
+          minute: date.minute,
+          second: date.second,
+          nanosecond: (date.nanosecond / 1000) * 1000,
+        )
+      )
+    )
+    let off = cal.timeZone.secondsFromGMT(for: date)
+    return (Int(date.timeIntervalSince1970.rounded(.towardZero)), off)
   }
 
+}
 
+extension LocalDateTime {
+
+  public init(
+    _ c: (year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, nanosecond: Int)
+  ) throws {
+    try self.init(
+      year: c.year,
+      month: c.month,
+      day: c.day,
+      hour: c.hour,
+      minute: c.minute,
+      second: c.second,
+      nanosecond: c.nanosecond
+    )
+  }
+
+}
+
+struct ZoneTransitionRuleDetails: TestData, Decodable {
+
+  struct ZoneDetails: Codable {
+
+    struct Entry: Codable {
+
+      struct Transition: Codable {
+        let instant: Instant
+        let localBefore: LocalDateTime
+        let localAfter: LocalDateTime
+        let offsetBefore: ZoneOffset
+        let offsetAfter: ZoneOffset
+        let isGap: Bool
+        let duration: Duration
+      }
+
+      let local: LocalDateTime
+      let instant: Instant
+      let localOffset: ZoneOffset
+      let instantOffset: ZoneOffset
+      let localValidOffsets: [ZoneOffset]
+      let localApplicableTransition: Transition?
+      let instantNextTransition: Transition?
+      let instantPriorTransition: Transition?
+      let instantDstDuration: Duration
+      let designation: String
+    }
+
+    let zone: Zone
+    let entries: [Entry]
+  }
+
+  let zones: [ZoneDetails]
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    self.zones = try container.decode([ZoneDetails].self)
+  }
+
+  var flattened: [(zone: Zone, entry: ZoneDetails.Entry)] {
+    return zones.flatMap { zone in zone.entries.map { (zone.zone, $0) } }
+  }
 }

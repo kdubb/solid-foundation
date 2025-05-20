@@ -47,23 +47,26 @@ public struct LocalTime {
   }
 
   public func with(
-    @ValidatedOptional(.hourOfDay) hour: Int? = nil,
-    @ValidatedOptional(.minuteOfHour) minute: Int? = nil,
-    @ValidatedOptional(.secondOfMinute) second: Int? = nil,
-    @ValidatedOptional(.nanosecondOfSecond) nanosecond: Int? = nil,
+    hour: Int? = nil,
+    minute: Int? = nil,
+    second: Int? = nil,
+    nanosecond: Int? = nil,
   ) throws -> Self {
-    return Self(
-      storage: try (
-        hour: UInt8($hour.getOrElse(self.hour)),
-        minute: UInt8($minute.getOrElse(self.minute)),
-        second: UInt8($second.getOrElse(self.second)),
-        nanosecond: UInt32($nanosecond.getOrElse(self.nanosecond))
-      )
+    return try Self(
+      hour: hour ?? self.hour,
+      minute: minute ?? self.minute,
+      second: second ?? self.second,
+      nanosecond: nanosecond ?? self.nanosecond
     )
   }
 
-  public static func now(clock: some Clock = .system, in calendar: CalendarSystem = .default) -> Self {
-    return calendar.components(from: clock.instant, in: clock.zone)
+  public var durationSinceMidnight: Duration {
+    return .hours(hour) + .minutes(minute) + .seconds(second) + .nanoseconds(nanosecond)
+  }
+
+  public static func now(clock: some Clock = .system, in calendar: GregorianCalendarSystem = .default) -> Self {
+    let instant = clock.instant
+    return Self(durationSinceMidnight: instant.durationSinceEpoch)
   }
 }
 
@@ -113,15 +116,34 @@ extension LocalTime: CustomStringConvertible {
     .scale(Double(1) / 1_000_000_000)
     .grouping(.never)
 
-  public var description: String {
-    let hourField = hour.formatted(Self.hourFormatter)
-    let minuteField = minute.formatted(Self.minuteFormatter)
-    let secondField = second.formatted(Self.secondFormatter)
-    let nanosecondField =
-      nanosecond != 0
-      ? "\(nanosecond.formatted(Self.nanosecondFormatter))"
+  public var description: String { description(style: .complete) }
+
+  public enum DescriptionStyle: Int, Equatable, Hashable, Comparable, Sendable {
+    case complete
+    case `default`
+    case minimal
+
+    public static func < (lhs: Self, rhs: Self) -> Bool { lhs.rawValue < rhs.rawValue }
+  }
+
+  public func description(style: DescriptionStyle) -> String {
+    let hourField =
+      style < .default
+      ? hour.formatted(Self.hourFormatter)
+      : hour.formatted()
+    let minuteField =
+      minute != 0 || second != 0 || nanosecond != 0 || style < .minimal
+      ? ":\(minute.formatted(Self.minuteFormatter))"
       : ""
-    return "\(hourField):\(minuteField):\(secondField)\(nanosecondField)"
+    let secondField =
+      second != 0 || nanosecond != 0 || style < .default
+      ? ":\(second.formatted(Self.secondFormatter))"
+      : ""
+    let nanosecondField =
+      nanosecond != 0 || style < .default
+      ? (nanosecond != 0 ? "\(nanosecond.formatted(Self.nanosecondFormatter))" : ".0")
+      : ""
+    return "\(hourField)\(minuteField)\(secondField)\(nanosecondField)"
   }
 
 }
@@ -227,12 +249,14 @@ extension LocalTime {
     )
   }
 
-  public init(dayOffset: Duration) throws {
-    self = try Self(
-      hour: dayOffset[.hoursOfDay],
-      minute: dayOffset[.minutesOfHour],
-      second: dayOffset[.secondsOfMinute],
-      nanosecond: dayOffset[.nanosecondsOfSecond],
+  public init(durationSinceMidnight duration: Duration) {
+    self = neverThrow(
+      try Self(
+        hour: duration[.hoursOfDay],
+        minute: duration[.minutesOfHour],
+        second: duration[.secondsOfMinute],
+        nanosecond: duration[.nanosecondsOfSecond],
+      )
     )
   }
 
@@ -309,6 +333,59 @@ extension LocalTime {
     }
 
     return (time, rollover)
+  }
+
+}
+
+extension LocalTime: Codable {
+
+  enum CodingKeys: String, CodingKey {
+    case hour
+    case minute
+    case second
+    case nanosecond
+  }
+
+  public init(from decoder: any Decoder) throws {
+    guard let keyed = try? decoder.container(keyedBy: CodingKeys.self) else {
+      guard let values = try? decoder.singleValueContainer().decode([Int].self) else {
+        throw DecodingError.dataCorrupted(
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "Must be a keyed or unkeyed container"
+          )
+        )
+      }
+      guard values.count >= 1 else {
+        throw DecodingError.dataCorrupted(
+          DecodingError.Context(
+            codingPath: decoder.codingPath,
+            debugDescription: "At least one value must be present"
+          )
+        )
+      }
+      try self.init(
+        hour: values[0],
+        minute: values.count > 1 ? values[1] : 0,
+        second: values.count > 2 ? values[2] : 0,
+        nanosecond: values.count > 3 ? values[3] : 0
+      )
+      return
+    }
+    try self.init(
+      hour: keyed.decodeIfPresent(Int.self, forKey: .hour) ?? 0,
+      minute: keyed.decodeIfPresent(Int.self, forKey: .minute) ?? 0,
+      second: keyed.decodeIfPresent(Int.self, forKey: .second) ?? 0,
+      nanosecond: keyed.decodeIfPresent(Int.self, forKey: .nanosecond) ?? 0
+    )
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(hour, forKey: .hour)
+    try container.encode(minute, forKey: .minute)
+    try container.encode(second, forKey: .second)
+    try container.encode(nanosecond, forKey: .nanosecond)
   }
 
 }

@@ -5,8 +5,18 @@
 //  Created by Kevin Wooten on 2/8/25.
 //
 
+public enum OptionalError: Error {
+  case nilUnwrapped(message: String)
+}
+
 extension Optional {
 
+  @inlinable
+  package func unwrap(_ message: String? = nil) throws -> Wrapped {
+    try unwrap(or: OptionalError.nilUnwrapped(message: message ?? "Attempt to unwrap nil"))
+  }
+
+  @inlinable
   package func unwrap(or error: @autoclosure () -> Error) throws -> Wrapped {
     guard let value = self else {
       throw error()
