@@ -13,7 +13,7 @@ import Testing
 @Suite("RegionZoneRules Tests")
 struct RegionZoneRulesTests {
 
-  static let details = RegionZoneRulesDetails.loadFromBundle(name: "region-details", bundle: .module)
+  static let details = RegionZoneRulesTestData.loadFromBundle(bundle: .module)
 
   @Test(
     "standard offset",
@@ -77,7 +77,7 @@ struct RegionZoneRulesTests {
   func testApplicableTransition(
     zone: Zone,
     local: LocalDateTime,
-    expectedTransition: RegionZoneRulesDetails.ZoneDetails.Entry.Transition?
+    expectedTransition: RegionZoneRulesTestData.ZoneDetails.Entry.Transition?
   ) throws {
     let foundTransition = zone.rules.applicableTransition(for: local)
     guard let expectedTransition else {
@@ -102,7 +102,7 @@ struct RegionZoneRulesTests {
   func testNextTransition(
     zone: Zone,
     instant: Instant,
-    expectedTransition: RegionZoneRulesDetails.ZoneDetails.Entry.Transition?
+    expectedTransition: RegionZoneRulesTestData.ZoneDetails.Entry.Transition?
   ) throws {
     let nextTransition = zone.rules.nextTransition(after: instant)
     guard let expectedTransition else {
@@ -127,7 +127,7 @@ struct RegionZoneRulesTests {
   func testPriorTransition(
     zone: Zone,
     instant: Instant,
-    expectedTransition: RegionZoneRulesDetails.ZoneDetails.Entry.Transition?
+    expectedTransition: RegionZoneRulesTestData.ZoneDetails.Entry.Transition?
   ) throws {
     let priorTransition = zone.rules.priorTransition(before: instant)
     guard let expectedTransition else {
@@ -165,7 +165,7 @@ struct RegionZoneRulesTests {
 
 }
 
-struct RegionZoneRulesDetails: TestData, Decodable {
+struct RegionZoneRulesTestData: TestData, Decodable {
 
   struct ZoneDetails: Codable {
 

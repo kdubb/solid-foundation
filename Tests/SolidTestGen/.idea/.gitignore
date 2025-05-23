@@ -8,3 +8,15 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+
+/libraries/
+
+aws.xml
+checkstyle-idea.xml
+compiler.xml
+gradle.xml
+kotlinc.xml
+material_theme_project_new.xml
+misc.xml
+vcs.xml
+workspace.xml

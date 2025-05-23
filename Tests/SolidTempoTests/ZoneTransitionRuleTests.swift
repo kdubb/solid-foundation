@@ -13,7 +13,7 @@ import Foundation
 @Suite("ZoneTransitionRule Tests")
 struct ZoneTransitionRuleTests {
 
-  static let ruleDetails = ZoneTransitionRuleDetails.loadFromBundle(name: "rule-details", bundle: .module)
+  static let ruleDetails = ZoneTransitionRuleTestData.loadFromBundle(bundle: .module)
 
   @Test(
     "offset at instant",
@@ -52,7 +52,7 @@ struct ZoneTransitionRuleTests {
   func testApplicableTransitionForLocal(
     zone: Zone,
     local: LocalDateTime,
-    expectedTransition: ZoneTransitionRuleDetails.ZoneDetails.Entry.Transition?
+    expectedTransition: ZoneTransitionRuleTestData.ZoneDetails.Entry.Transition?
   ) throws {
     let rule = try rule(for: zone)
     let foundTransition = rule.applicableTransition(at: local)
@@ -78,7 +78,7 @@ struct ZoneTransitionRuleTests {
   func testNextTransitionAtInstant(
     zone: Zone,
     instant: Instant,
-    expectedTransition: ZoneTransitionRuleDetails.ZoneDetails.Entry.Transition?
+    expectedTransition: ZoneTransitionRuleTestData.ZoneDetails.Entry.Transition?
   ) throws {
     let rule = try rule(for: zone)
     let finalOffset = try #require((zone.rules as? RegionZoneRules)?.final.offset)
@@ -105,7 +105,7 @@ struct ZoneTransitionRuleTests {
   func testPriorTransitionAtInstant(
     zone: Zone,
     instant: Instant,
-    expectedTransition: ZoneTransitionRuleDetails.ZoneDetails.Entry.Transition?
+    expectedTransition: ZoneTransitionRuleTestData.ZoneDetails.Entry.Transition?
   ) throws {
     let rule = try rule(for: zone)
     let finalOffset = try #require((zone.rules as? RegionZoneRules)?.final.offset)
@@ -206,7 +206,7 @@ extension LocalDateTime {
 
 }
 
-struct ZoneTransitionRuleDetails: TestData, Decodable {
+struct ZoneTransitionRuleTestData: TestData, Decodable {
 
   struct ZoneDetails: Codable {
 

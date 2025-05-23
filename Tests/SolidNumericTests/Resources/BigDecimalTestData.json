@@ -1720,7 +1720,7 @@
       "rhs": "0",
       "expected": {
         "mantissaWords": [
-          0,
+          1,
           0
         ],
         "scale": 0
@@ -1731,7 +1731,7 @@
       "rhs": "-1",
       "expected": {
         "mantissaWords": [
-          0,
+          1,
           0
         ],
         "scale": 0
@@ -4035,9 +4035,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4057,9 +4057,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4079,9 +4079,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4101,9 +4101,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4112,9 +4112,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4134,9 +4134,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4156,9 +4156,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4178,9 +4178,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          10000
+          1
         ],
-        "scale": 4
+        "scale": 0
       }
     },
     {
@@ -4398,9 +4398,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          1
+          10000
         ],
-        "scale": 2
+        "scale": 6
       }
     },
     {
@@ -4420,9 +4420,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          1
+          10000
         ],
-        "scale": 3
+        "scale": 7
       }
     },
     {
@@ -4475,9 +4475,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          1
+          10000
         ],
-        "scale": -2
+        "scale": 2
       }
     },
     {
@@ -4497,9 +4497,9 @@
       "expected": {
         "mantissaWords": [
           2,
-          1
+          10000
         ],
-        "scale": -3
+        "scale": 1
       }
     },
     {

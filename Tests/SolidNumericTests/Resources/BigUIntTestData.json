@@ -7155,7 +7155,7 @@
       ]
     },
     {
-      "floatValue": 2048.0,
+      "floatValue": 2049.0,
       "precision": 16,
       "expectedWords": [
         2048
@@ -7309,10 +7309,10 @@
       ]
     },
     {
-      "floatValue": 2048.0,
+      "floatValue": 2049.0,
       "precision": 32,
       "expectedWords": [
-        2048
+        2049
       ]
     },
     {
@@ -7386,7 +7386,7 @@
       ]
     },
     {
-      "floatValue": 16777216.0,
+      "floatValue": 16777217.0,
       "precision": 32,
       "expectedWords": [
         16777216
@@ -7534,10 +7534,10 @@
       ]
     },
     {
-      "floatValue": 2048.0,
+      "floatValue": 2049.0,
       "precision": 64,
       "expectedWords": [
-        2048
+        2049
       ]
     },
     {
@@ -7611,10 +7611,10 @@
       ]
     },
     {
-      "floatValue": 16777216.0,
+      "floatValue": 16777217.0,
       "precision": 64,
       "expectedWords": [
-        16777216
+        16777217
       ]
     },
     {
@@ -7706,7 +7706,7 @@
       ]
     },
     {
-      "floatValue": 9007199254740992.0,
+      "floatValue": 9007199254740993.0,
       "precision": 64,
       "expectedWords": [
         9007199254740992
@@ -7759,7 +7759,7 @@
       ]
     },
     {
-      "floatValue": 16777216,
+      "floatValue": 16777216.0,
       "precision": 32,
       "expectedWords": [
         16777216
