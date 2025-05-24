@@ -57,7 +57,7 @@ public protocol ZoneRules: AnyObject, Sendable {
   /// be used along with the appropriate handlign of gap/overlap periods.
   ///
   /// - Parameter dateTime: Local date/time to determine offset for.
-  /// - Returns The specific offset for normal date/time values and the offset before for ambiguous
+  /// - Returns: The specific offset for normal date/time values and the offset before for ambiguous
   /// date/time values.
   ///
   func offset(for dateTime: LocalDateTime) -> ZoneOffset

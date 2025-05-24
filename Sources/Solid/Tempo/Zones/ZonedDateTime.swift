@@ -50,7 +50,7 @@ public struct ZonedDateTime: DateTime {
   ///   - zone: The time zone to use.
   ///   - resolving: The resolution strategy to use when converting the date and time.
   ///   - calendarSystem: The calendar system to use.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
   public init(
     dateTime: LocalDateTime,
@@ -61,7 +61,7 @@ public struct ZonedDateTime: DateTime {
     if let fixedOffset = zone.fixedOffset {
       self.init(dateTime: dateTime, zone: zone, offset: fixedOffset)
     } else {
-      let dateTimeZone = dateTime.union(with: .zoneId(zone.identifier))
+      let dateTimeZone = dateTime.append(.zoneId(zone.identifier))
       self = try calendarSystem.resolve(components: dateTimeZone, resolution: resolving.strategy)
     }
   }
@@ -90,7 +90,7 @@ public struct ZonedDateTime: DateTime {
   ///   - nanosecond: The nanosecond component of the time.
   ///   - zone: The time zone to use.
   ///   - calendarSystem: The calendar system to use.
-  /// - Throws: A ``Error`` if the conversion local-time is an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion local-time is an unresolvable local-time.
   ///
   public init(
     year: Int,
@@ -122,8 +122,8 @@ public struct ZonedDateTime: DateTime {
   /// modified.
   ///
   /// - Note: Modifying the `zone` part using this function will anchor to the same local-time. If
-  ///    you want to preserve the same instant, use the `withZone(_:anchor:)` method instead,
-  ///    passing `.sameInstant` as the anchor.
+  ///    you want to preserve the same instant, use the ``with(zone:anchor:resolving:in:)``
+  ///    method instead, passing ``AdjustmentAnchor/sameInstant`` as the anchor.
   ///
   /// - Parameters:
   ///   - date: The new date to set. If `nil`, the current date is used.
@@ -132,7 +132,7 @@ public struct ZonedDateTime: DateTime {
   ///   - resolving: The resolution strategy to use when converting the date and time.
   ///   - calendarSystem: The calendar system to use.
   /// - Returns: A new instance of ``ZonedDateTime`` with the specified parts modified.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
   public func with(
     date: LocalDate? = nil,
@@ -154,8 +154,8 @@ public struct ZonedDateTime: DateTime {
   /// or the zone part modified.
   ///
   /// - Note: Modifying the `zone` part using this function will anchor to the same local-time. If
-  ///    you want to preserve the same instant, use the `withZone(_:anchor:)` method instead,
-  ///    passing `.sameInstant` as the anchor.
+  ///    you want to preserve the same instant, use the ``with(zone:anchor:resolving:in:)``
+  ///    method instead, passing ``AdjustmentAnchor/sameInstant`` as the anchor.
   ///
   /// - Parameters:
   ///   - year: The new year to set. If `nil`, the current year is used.
@@ -168,8 +168,8 @@ public struct ZonedDateTime: DateTime {
   ///   - zone: The new time zone to set, anchoring to the local-time. If `nil`, the current time zone is used.
   ///   - resolving: The resolution strategy to use when converting the date and time
   ///   - calendarSystem: The calendar system to use.
-  /// - Returns: A new instance of ``ZonedDateTime`` with the specified parts modified.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Returns: A new instance of ``ZonedDateTime`` with the specified components & parts modified.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
   public func with(
     year: Int? = nil,
@@ -212,10 +212,10 @@ public struct ZonedDateTime: DateTime {
   ///   - resolving: The resolution strategy to use when converting the date and time.
   ///   - calendarSystem: The calendar system to use.
   /// - Returns: A new instance of ``ZonedDateTime`` in the specified time zone.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
-  public func withZone(
-    _ zone: Zone,
+  public func with(
+    zone: Zone,
     anchor: AdjustmentAnchor = .sameInstant,
     resolving: ResolutionStrategy.Options = [],
     in calendarSystem: CalendarSystem = .default
@@ -235,7 +235,7 @@ public struct ZonedDateTime: DateTime {
   ///   - clock: The clock to use. Defaults to ``Clock/system``.
   ///   - calendarSystem: The calendar system to use.
   /// - Returns: A new instance of ``ZonedDateTime`` sourced from the provided `clock`.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
   public static func now(clock: some Clock = .system, in calendarSystem: CalendarSystem = .default) throws -> Self {
     return try calendarSystem.components(from: clock.instant, in: clock.zone)

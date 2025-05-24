@@ -597,7 +597,7 @@ public enum TzIf {
 
   private static func buildZoneTransitions(
     rules: Rules,
-  ) -> [(transition:ZoneTransition, isRequired: Bool)] {
+  ) -> [(transition: ZoneTransition, isRequired: Bool)] {
 
     var transitions: [(transition: ZoneTransition, isRequired: Bool)] = []
     transitions.reserveCapacity(rules.transitions.count)
@@ -1059,18 +1059,18 @@ extension TzIf.V4 {
       // Ensure leap seconds are at the end of UTC calendar months
       let instant = Instant(durationSinceEpoch: .seconds(leapSecond.occurrence))
       let dateTime: LocalDateTime = calendar.localDateTime(instant: instant, at: .utc)
-      let lastDayOfMonth = calendar.range(of: .day, at: instant).upperBound
+      let lastDayOfMonth = calendar.range(of: .dayOfMonth, at: instant).upperBound
 
-      guard dateTime[.day] == lastDayOfMonth else {
-        let day = dateTime[.day] ?? 0
+      guard dateTime[.dayOfMonth] == lastDayOfMonth else {
+        let day = dateTime[.dayOfMonth] ?? 0
         logger.error("Invalid TZif file: leap second not at end of month (day \(day)")
         throw TzIf.Error.invalidLeapSecond
       }
 
-      guard dateTime[.hour] == 23 && dateTime[.minute] == 59 && dateTime[.second] == 59 else {
-        let hour = dateTime[.hour] ?? 0
-        let minute = dateTime[.minute] ?? 0
-        let second = dateTime[.second] ?? 0
+      guard dateTime[.hourOfDay] == 23 && dateTime[.minuteOfHour] == 59 && dateTime[.secondOfMinute] == 59 else {
+        let hour = dateTime[.hourOfDay] ?? 0
+        let minute = dateTime[.minuteOfHour] ?? 0
+        let second = dateTime[.secondOfMinute] ?? 0
         logger.error("Invalid TZif file: leap second not at 23:59:59 (got \(hour):\(minute):\(second))")
         throw TzIf.Error.invalidLeapSecond
       }

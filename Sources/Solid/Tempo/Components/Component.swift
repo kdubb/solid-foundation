@@ -8,8 +8,9 @@
 import Foundation
 
 public protocol Component<Value>: Equatable, Hashable, Sendable {
+
+  typealias Id = ComponentId
   associatedtype Value: Equatable & Hashable & Sendable
-  typealias Id = Components.Id
 
   var id: Id { get }
   var name: String { get }
@@ -21,12 +22,10 @@ public protocol Component<Value>: Equatable, Hashable, Sendable {
 
 extension Component {
 
-  public var name: String {
-    Components.names[id.rawValue]
-  }
+  public var name: String { id.name }
 
   public static func `for`(id: String) -> Self {
-    guard let component = Components.idMap[id] as? Self else {
+    guard let component = ComponentId(rawValue: id)?.component as? Self else {
       fatalError("Component with id \(id) not found")
     }
     return component
@@ -50,3 +49,5 @@ extension Component {
   }
 
 }
+
+public func ~= (lhs: some Component, rhs: some Component) -> Bool { lhs.id == rhs.id }

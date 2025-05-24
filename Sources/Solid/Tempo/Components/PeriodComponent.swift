@@ -13,40 +13,23 @@ public protocol IntegerPeriodComponent<Value>: PeriodComponent where Value: Sign
   var range: ClosedRange<Value> { get }
 }
 
-extension Components {
+extension Component where Self == PeriodComponents.Integer<Int> {
 
-  public static let calendarYears = PeriodInteger<Int>(id: .calendarYears, unit: .years, max: .max)
-  public static let calendarMonths = PeriodInteger<Int>(id: .calendarMonths, unit: .months, max: .max)
-  public static let calendarWeeks = PeriodInteger<Int>(id: .calendarWeeks, unit: .weeks, max: .max)
-  public static let calendarDays = PeriodInteger<Int>(id: .calendarDays, unit: .days, max: .max)
-
-}
-
-// MARK: - Common Component Extensions
-
-extension Component where Self == Components.PeriodInteger<Int> {
-
-  public static var calendarYears: Self { Components.calendarYears }
-  public static var calendarMonths: Self { Components.calendarMonths }
-  public static var calendarWeeks: Self { Components.calendarWeeks }
-  public static var calendarDays: Self { Components.calendarDays }
+  public static var calendarYears: Self { PeriodComponents.calendarYears }
+  public static var calendarMonths: Self { PeriodComponents.calendarMonths }
+  public static var calendarWeeks: Self { PeriodComponents.calendarWeeks }
+  public static var calendarDays: Self { PeriodComponents.calendarDays }
 
 }
 
-// MARK: - PeriodComponent Extensions
+public enum PeriodComponents {
 
-extension PeriodComponent where Self == Components.PeriodInteger<Int> {
+  public static let calendarYears = Integer<Int>(id: .calendarYears, unit: .years, max: .max)
+  public static let calendarMonths = Integer<Int>(id: .calendarMonths, unit: .months, max: .max)
+  public static let calendarWeeks = Integer<Int>(id: .calendarWeeks, unit: .weeks, max: .max)
+  public static let calendarDays = Integer<Int>(id: .calendarDays, unit: .days, max: .max)
 
-  public static var calendarYears: Self { Components.calendarYears }
-  public static var calendarMonths: Self { Components.calendarMonths }
-  public static var calendarWeeks: Self { Components.calendarWeeks }
-  public static var calendarDays: Self { Components.calendarDays }
-
-}
-
-extension Components {
-
-  public struct PeriodInteger<Value>: IntegerPeriodComponent
+  public struct Integer<Value>: IntegerPeriodComponent
   where Value: SignedInteger & Sendable {
 
     public typealias Value = Value

@@ -6,30 +6,44 @@
 //
 
 
-public protocol TimeComponent<Value>: DateTimeComponent {}
+public protocol TimeComponent<Value>: Component {}
 
 public protocol IntegerTimeComponent: TimeComponent, IntegerDateTimeComponent where Value: SignedInteger {
   var unit: Unit { get }
   var range: ClosedRange<Value> { get }
 }
 
-extension Components {
+extension Component where Self == TimeComponents.Integer<Int> {
 
-  public static let hourOfDay = TimeInteger<Int>(id: .hourOfDay, unit: .hours, range: 0...23)
-  public static let minuteOfHour = TimeInteger<Int>(id: .minuteOfHour, unit: .minutes, range: 0...59)
-  public static let secondOfMinute = TimeInteger<Int>(id: .secondOfMinute, unit: .seconds, range: 0...59)
-  public static let nanosecondOfSecond = TimeInteger<Int>(
+  public static var hourOfDay: Self { TimeComponents.hourOfDay }
+  public static var minuteOfHour: Self { TimeComponents.minuteOfHour }
+  public static var secondOfMinute: Self { TimeComponents.secondOfMinute }
+  public static var nanosecondOfSecond: Self { TimeComponents.nanosecondOfSecond }
+
+  public static var zoneOffset: Self { TimeComponents.zoneOffset }
+
+}
+
+extension Component where Self == TimeComponents.Identifier {
+
+  public static var zoneId: Self { TimeComponents.zoneId }
+
+}
+
+public enum TimeComponents {
+
+  public static let hourOfDay = Integer<Int>(id: .hourOfDay, unit: .hours, range: 0...23)
+  public static let minuteOfHour = Integer<Int>(id: .minuteOfHour, unit: .minutes, range: 0...59)
+  public static let secondOfMinute = Integer<Int>(id: .secondOfMinute, unit: .seconds, range: 0...59)
+  public static let nanosecondOfSecond = Integer<Int>(
     id: .nanosecondOfSecond,
     unit: .nanoseconds,
     range: 0...999_999_999
   )
 
-  public static let zoneOffset = TimeInteger<Int>(id: .zoneOffset, unit: .hours, range: -12...14)
-  public static let hoursOfZoneOffset = TimeInteger<Int>(id: .hoursOfZoneOffset, unit: .hours, range: -23...23)
-  public static let minutesOfZoneOffset = TimeInteger<Int>(id: .minutesOfZoneOffset, unit: .minutes, range: -59...59)
-  public static let secondsOfZoneOffset = TimeInteger<Int>(id: .secondsOfZoneOffset, unit: .seconds, range: -59...59)
+  public static let zoneOffset = Integer<Int>(id: .zoneOffset, unit: .hours, range: -12...14)
 
-  public static let zoneId = TimeIdentifier(id: .zoneId) { zoneId, componentId in
+  public static let zoneId = Identifier(id: .zoneId) { zoneId, componentId in
     if (try? Zone(identifier: zoneId)) == nil {
       throw TempoError.invalidComponentValue(
         component: componentId.name,
@@ -38,69 +52,7 @@ extension Components {
     }
   }
 
-}
-
-// MARK: - Common Component Extensions
-
-extension Component where Self == Components.TimeInteger<Int> {
-
-  public static var hourOfDay: Self { Components.hourOfDay }
-  public static var minuteOfHour: Self { Components.minuteOfHour }
-  public static var secondOfMinute: Self { Components.secondOfMinute }
-  public static var nanosecondOfSecond: Self { Components.nanosecondOfSecond }
-
-  public static var zoneOffset: Self { Components.zoneOffset }
-  public static var hoursOfZoneOffset: Self { Components.hoursOfZoneOffset }
-  public static var minutesOfZoneOffset: Self { Components.minutesOfZoneOffset }
-  public static var secondsOfZoneOffset: Self { Components.secondsOfZoneOffset }
-
-  // Common shorthand
-
-  public static var hour: Self { Components.hourOfDay }
-  public static var minute: Self { Components.minuteOfHour }
-  public static var second: Self { Components.secondOfMinute }
-  public static var nanosecond: Self { Components.nanosecondOfSecond }
-
-}
-
-extension Component where Self == Components.TimeIdentifier {
-
-  public static var zoneId: Self { Components.zoneId }
-
-}
-
-// MARK: - TimeComponent Extensions
-
-extension TimeComponent where Self == Components.TimeInteger<Int> {
-
-  public static var hourOfDay: Self { Components.hourOfDay }
-  public static var minuteOfHour: Self { Components.minuteOfHour }
-  public static var secondOfMinute: Self { Components.secondOfMinute }
-  public static var nanosecondOfSecond: Self { Components.nanosecondOfSecond }
-
-  public static var zoneOffset: Self { Components.zoneOffset }
-  public static var hoursOfZoneOffset: Self { Components.hoursOfZoneOffset }
-  public static var minutesOfZoneOffset: Self { Components.minutesOfZoneOffset }
-  public static var secondsOfZoneOffset: Self { Components.secondsOfZoneOffset }
-
-  // Common shorthand
-
-  public static var hour: Self { Components.hourOfDay }
-  public static var minute: Self { Components.minuteOfHour }
-  public static var second: Self { Components.secondOfMinute }
-  public static var nanosecond: Self { Components.nanosecondOfSecond }
-
-}
-
-extension TimeComponent where Self == Components.TimeIdentifier {
-
-  public static var zoneId: Self { Components.zoneId }
-}
-
-extension Components {
-
-  public struct TimeInteger<Value>: IntegerTimeComponent
-  where Value: SignedInteger & Sendable {
+  public struct Integer<Value>: IntegerTimeComponent where Value: SignedInteger & Sendable {
 
     public typealias Value = Value
 
@@ -136,13 +88,13 @@ extension Components {
     }
   }
 
-  public struct TimeIdentifier: TimeComponent {
+  public struct Identifier: TimeComponent {
 
     public typealias Value = String
 
     public let id: Id
     public let unit: Unit = .nan
-    public let validator: (@Sendable (String, Component.Id) throws -> Void)?
+    public let validator: (@Sendable (String, Id) throws -> Void)?
 
     public func validate(_ value: String) throws {
       try validator?(value, id)

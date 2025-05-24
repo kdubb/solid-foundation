@@ -25,15 +25,15 @@ extension ComponentContainerDurationArithmetic {
   public mutating func add(duration components: some ComponentContainer) throws {
     let (result, overflow) = try addingReportingOverflow(duration: components)
     if overflow != .zero {
-      let all: [Component.Id] = [
+      let all: [any Component] = [
         .numberOfDays,
         .numberOfHours,
         .numberOfMinutes,
         .numberOfSeconds,
         .nanosecondsOfSecond,
       ]
-      let avail = components.availableComponentIds
-      let overflowed = all.reversed().drop(while: avail.contains).first ?? .calendarYears
+      let avail = components.availableComponents
+      let overflowed = all.anys.reversed().drop(while: avail.contains).first?.component ?? .calendarYears
       throw TempoError.invalidComponentValue(
         component: overflowed.name,
         reason: .unsupportedInContainer("\(self)")

@@ -115,7 +115,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     bag.setValue(zone.identifier, for: .zoneId)
 
     // Add missing required components
-    for componentId in C.requiredComponentIds.subtracting(bag.availableComponentIds) {
+    for componentId in C.requiredComponents.subtracting(bag.availableComponents) {
       guard let component = componentId.component as? any DateTimeComponent else {
         fatalError("Only date/time components can be required by builders.")
       }
@@ -152,7 +152,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     switch offsets {
 
     case .normal(let offset):
-      return C(components: dateTime.union(with: [.zoneId(zoneId), .zoneOffset(offset.totalSeconds)]))
+      return C(components: dateTime.append([.zoneId(zoneId), .zoneOffset(offset.totalSeconds)]))
 
     case .ambiguous(let offsets):
       let offset: ZoneOffset
@@ -164,7 +164,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       case .reject:
         throw TempoError.ambiguousTimeResolutionFailed(reason: .rejectedByStrategy)
       }
-      return C(components: dateTime.union(with: [.zoneId(zoneId), .zoneOffset(offset.totalSeconds)]))
+      return C(components: dateTime.append(.zoneId(zoneId), .zoneOffset(offset.totalSeconds)))
 
     case .skipped(let transition):
       let duration = transition.duration
@@ -186,7 +186,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
           throw TempoError.skippedTimeResolutionFailed(reason: .rejectedByStrategy)
         }
       let dateTime: LocalDateTime = self.localDateTime(instant: instant, at: off)
-      return C(components: dateTime.union(with: [.zoneId(zoneId), .zoneOffset(off.totalSeconds)]))
+      return C(components: dateTime.append(.zoneId(zoneId), .zoneOffset(off.totalSeconds)))
     }
   }
 
@@ -219,7 +219,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     _ component: C,
     from components: S,
   ) throws -> C.Value where C: IntegerDateTimeComponent, S: ComponentContainer {
-    switch component.id {
+    switch component {
 
     case .year, .hourOfDay, .minuteOfHour, .secondOfMinute, .nanosecondOfSecond:
       return components.valueIfPresent(for: component) ?? 0
@@ -274,7 +274,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     _ component: C,
     from components: S,
   ) -> C.Value where C: DateTimeComponent, C.Value == Bool, S: ComponentContainer {
-    switch component.id {
+    switch component {
     case .isLeapMonth:
       return false
     default:
@@ -287,7 +287,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     _ component: C,
     from components: S,
   ) -> C.Value where C: DateTimeComponent, C.Value == String, S: ComponentContainer {
-    switch component.id {
+    switch component {
     case .zoneId:
       return components.valueIfPresent(for: component) ?? "UTC"
     default:
@@ -321,10 +321,10 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     resolution: ResolutionStrategy
   ) throws -> Instant {
 
-    let avail = components.availableComponentIds
+    let avail = components.availableComponents
     let dateTime = LocalDateTime(availableComponents: components)
 
-    if avail.contains(.zoneId) {
+    if avail.contains(AnyComponent(.zoneId)) {
 
       // Resolve the date/time in the specified zone
 
@@ -336,7 +336,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
         return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: fixedOffset))
       }
       // If the components have a specific zone offset, validate & apply it
-      else if avail.contains(.zoneOffset) {
+      else if avail.contains(AnyComponent(.zoneOffset)) {
 
         let zoneOffset = ZoneOffset(availableComponents: components)
 
@@ -389,7 +389,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     at instant: Instant
   ) -> Range<C.Value> where C: IntegerDateTimeComponent {
 
-    switch component.id {
+    switch component {
 
     case .dayOfMonth:
       let date = localDate(instant: instant, at: .zero)

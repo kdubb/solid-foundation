@@ -136,14 +136,14 @@ public final class TzDb: ZoneRulesLoader {
   ///
   public init(zoneInfoUrls: [URL], retainParsedRules: Bool = false) {
     do {
-      let discovery = try Self.discoverZoneInfo(urls: zoneInfoUrls)
+      let (zoneInfoUrl, zoneInfoVersion, zoneInfoDataUrls) = try Self.discoverZoneInfo(urls: zoneInfoUrls)
 
-      Self.logger.info("Discovered tzdb v\(discovery.version) at \(discovery.url) with \(discovery.dataUrls.count) zones")
+      Self.logger.info("Discovered tzdb v\(zoneInfoUrl) at \(zoneInfoVersion) with \(zoneInfoDataUrls.count) zones")
 
-      self.url = discovery.url
-      self.version = discovery.version
+      self.url = zoneInfoUrl
+      self.version = zoneInfoVersion
       self.zones = Dictionary(
-        uniqueKeysWithValues: discovery.dataUrls.map { ($0.relativePath, ZoneEntry(url: $0)) }
+        uniqueKeysWithValues: zoneInfoDataUrls.map { ($0.relativePath, ZoneEntry(url: $0)) }
       )
     } catch {
       Self.logger.error("Failed to initialize \(Self.self): \(error)")

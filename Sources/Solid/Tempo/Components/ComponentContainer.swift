@@ -8,27 +8,86 @@
 import SolidCore
 
 
+/// Any container that can store or provide component values.
+///
 public protocol ComponentContainer: Sendable {
 
-  var availableComponentIds: Set<Component.Id> { get }
+  /// The set of components that are available in the container.
+  ///
+  /// - Returns: The set of components that are available in the container.
+  ///
+  var availableComponents: Set<AnyComponent> { get }
 
+  /// Returns the value for the given component.
+  ///
+  /// - Parameter component: The component to get the value for.
+  ///
+  /// - Returns: The value for the given component, or produces a
+  /// fatal error if the component is not present.
+  ///
   func value<C>(for component: C) -> C.Value where C: Component
+
+  /// Returns the value for the given component if it is present.
+  ///
+  /// - Returns: The value for the given component, or `nil` if the component is not present.
   func valueIfPresent<C>(for component: C) -> C.Value? where C: Component
 
-  func values(for componentsIds: some Sequence<Component.Id>) -> ComponentArray
-  func valuesIfPresent(for componentsIds: some Sequence<Component.Id>) -> ComponentArray
+  /// Returns a new container with the values for the given components.
+  ///
+  /// - Parameter components: The components to get the values for.
+  ///
+  /// - Returns: A container with the values for the given components.
+  ///
+  func values(for components: some Sequence<any Component>) -> ComponentArray
 
+  /// Returns a new container with the values for the given components that are present.
+  ///
+  /// - Parameter components: The component to get the values for.
+  ///
+  /// - Returns: A container with the values for the given components that are present.
+  ///
+  func valuesIfPresent(for components: some Sequence<any Component>) -> ComponentArray
+
+  /// Returns the value for the given component, if it is present.
+  ///
   subscript<C>(_ component: C) -> C.Value? where C: Component { get }
 }
 
 public protocol MutableComponentContainer: ComponentContainer {
 
+  /// Sets the value for the given component.
+  ///
+  /// - Parameters:
+  ///   - value: The value to set.
+  ///   - component: The component to set the value for.
+  ///
   mutating func setValue<C>(_ value: C.Value, for component: C) where C: Component
+
+  /// Sets the value for the given component.
+  ///
+  /// - Parameters:
+  ///   - value: The value to set.
+  ///   - component: The component to set the value for.
+  /// - Precondition: The value must be a value that can be stored in the component.
+  ///
   mutating func setValue<C>(_ value: any Sendable, for component: C) where C: Component
 
+  /// Removes the value for the given component.
+  ///
+  /// - Parameter component: The component to remove the value for.
+  /// - Returns: The value for the given component, or `nil` if the component is not present.
+  ///
   mutating func removeValue<C>(for component: C) -> C.Value? where C: Component
-  mutating func removeValues(for components: some Sequence<Component.Id>) -> ComponentArray
 
+  /// Removes the values for the given components.
+  ///
+  /// - Parameter components: The components to remove the values for.
+  /// - Returns: A container with the values for the removed components.
+  ///
+  mutating func removeValues(for components: some Sequence<any Component>) -> ComponentArray
+
+  /// Returns or updates the value for the given component.
+  ///
   subscript<C>(_ component: C) -> C.Value? where C: Component { get mutating set }
 }
 
@@ -42,7 +101,7 @@ extension ComponentContainer {
     return value
   }
 
-  public func values(for componentIds: some Sequence<Component.Id>) -> ComponentArray {
+  public func values(for components: some Sequence<any Component>) -> ComponentArray {
 
     var extracted = ComponentArray()
 
@@ -51,14 +110,14 @@ extension ComponentContainer {
       extracted.append(ComponentValue(component: component, value: value))
     }
 
-    for componentId in componentIds {
-      extractAndAppend(componentId.component)
+    for component in components {
+      extractAndAppend(component)
     }
 
     return extracted
   }
 
-  public func valuesIfPresent(for componentIds: some Sequence<Component.Id>) -> ComponentArray {
+  public func valuesIfPresent(for components: some Sequence<any Component>) -> ComponentArray {
 
     var extracted = ComponentArray()
 
@@ -69,7 +128,7 @@ extension ComponentContainer {
       extracted.append(ComponentValue(component: component, value: value))
     }
 
-    for component in componentIds.map(\.component) {
+    for component in components {
       extractAndAppend(component)
     }
 
@@ -81,10 +140,10 @@ extension ComponentContainer {
   }
 
   public func matches(other components: some ComponentContainer) -> Bool {
-    matches(other: components, comparing: availableComponentIds)
+    matches(other: components, comparing: availableComponents)
   }
 
-  public func matches(other components: some ComponentContainer, comparing: Set<Component.Id>) -> Bool {
+  public func matches(other components: some ComponentContainer, comparing: Set<AnyComponent>) -> Bool {
     func compare(
       component: some Component,
       in lhs: some ComponentContainer,
@@ -97,8 +156,8 @@ extension ComponentContainer {
       return lhsValue == rhsValue
     }
 
-    for id in comparing {
-      guard compare(component: id.component, in: self, and: components) else {
+    for component in comparing {
+      guard compare(component: component, in: self, and: components) else {
         return false
       }
     }
@@ -116,7 +175,7 @@ extension MutableComponentContainer {
     setValue(value, for: component)
   }
 
-  public mutating func removeValues(for componentIds: some Sequence<Component.Id>) -> ComponentArray {
+  public mutating func removeValues(for components: some Sequence<any Component>) -> ComponentArray {
 
     var extracted = ComponentArray()
 
@@ -126,7 +185,7 @@ extension MutableComponentContainer {
       }
     }
 
-    for component in componentIds.map(\.component) {
+    for component in components {
       removeAndAppend(component)
     }
 
@@ -139,17 +198,17 @@ extension MutableComponentContainer {
 
 extension ComponentContainer {
 
-  public func union(with other: some ComponentContainer) -> some ComponentContainer {
+  public func append(_ other: some ComponentContainer) -> CompositeComponentContainer {
     return CompositeComponentContainer(containers: [self, other])
   }
 
-  public func union(with array: [ComponentValue]) -> some ComponentContainer {
+  public func append(_ array: [ComponentValue]) -> CompositeComponentContainer {
     let arrayContainer = ComponentArray(array)
     return CompositeComponentContainer(containers: [self, arrayContainer])
   }
 
-  public func union(with array: ComponentValue...) -> some ComponentContainer {
-    union(with: array)
+  public func append(_ array: ComponentValue...) -> CompositeComponentContainer {
+    append(array)
   }
 
 }
@@ -174,9 +233,9 @@ extension ComponentContainer {
     var hourDelta = 0, minuteDelta = 0, secondDelta = 0, nanoDelta = 0
 
     // Partition once
-    for componentId in components.availableComponentIds {
+    for component in components.availableComponents {
 
-      switch componentId.component {
+      switch component {
 
       case let cvComponent as any DurationComponent:
         let cvValue = components.value(for: cvComponent)
@@ -193,7 +252,7 @@ extension ComponentContainer {
 
       default:
         throw TempoError.invalidComponentValue(
-          component: componentId.name,
+          component: component.name,
           reason: .unsupportedInContainer("\(self)")
         )
       }
@@ -232,7 +291,7 @@ extension ComponentContainer {
     _ component: C,
     _ value: Int,
     _ time: (hour: Int, minute: Int, second: Int, nanosecond: Int),
-  ) -> (hour: Int, minute: Int, second: Int, nanosecond: Int) where C: Component {
+  ) -> (hour: Int, minute: Int, second: Int, nanosecond: Int) where C: TimeComponent {
     let (hour, minute, second, nanosecond) = time
 
     switch component.id {

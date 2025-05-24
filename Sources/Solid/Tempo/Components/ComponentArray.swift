@@ -42,8 +42,8 @@ extension ComponentArray: CustomReflectable {
 
 extension ComponentArray: MutableComponentContainer {
 
-  public var availableComponentIds: Set<Component.Id> {
-    Set(values.map(\.component.id))
+  public var availableComponents: Set<AnyComponent> {
+    Set(values.map { $0.component }.anys)
   }
 
   public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
@@ -79,10 +79,10 @@ extension ComponentArray: MutableComponentContainer {
 
 extension ComponentArray: ComponentBuildable {
 
-  public static var requiredComponentIds: Set<Component.Id> { [] }
+  public static var requiredComponents: Set<AnyComponent> { [] }
 
   public init(components: some ComponentContainer) {
-    let values = components.values(for: Self.requiredComponentIds)
+    let values = components.values(for: Self.requiredComponents.map(\.component))
     self.init(values)
   }
 
@@ -121,7 +121,7 @@ extension ComponentArray: ExpressibleByArrayLiteral {
 
 extension Array: ComponentContainer where Element == ComponentValue {
 
-  public var availableComponentIds: Set<Components.Id> { Set(map(\.component.id)) }
+  public var availableComponents: Set<AnyComponent> { Set(map { $0.component }.anys) }
 
   public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
     guard let value = first(where: { $0.component.id == component.id }) else {

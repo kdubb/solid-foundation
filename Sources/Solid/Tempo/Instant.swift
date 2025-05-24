@@ -111,13 +111,16 @@ extension Instant: ComponentContainerTimeArithmetic {
 
 extension Instant {
 
-  /// Initializes an ``Instant`` by converting an instance of the ``DateTime`` protocol.
+  /// Initializes an ``Instant`` from a ``DateTime``.
+  ///
+  /// - Note: If the provided ``DateTime`` does not include a time zone (e.g., ``LocalDateTime``),
+  ///   the ``Zone/utc`` zone will be used.
   ///
   /// - Parameters:
-  ///   - dateTime: The ``OffsetDateTime`` to convert.
+  ///   - dateTime: The date/time to convert.
   ///   - resolving: The resolution strategy to use for converting the date-time.
   ///   - calendar: The calendar system to use for the conversion.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
   public init(
     _ dateTime: DateTime,
@@ -125,6 +128,39 @@ extension Instant {
     in calendar: CalendarSystem = .default
   ) throws {
     self = try calendar.instant(from: dateTime, resolution: resolving.strategy)
+  }
+
+  /// Initializes an ``Instant`` from a ``DateTime`` in a specified ``Zone``.
+  ///
+  /// - Parameters:
+  ///   - dateTime: The date/time to convert.
+  ///   - zone: The zone the date/time is in.
+  ///   - resolving: The resolution strategy to use for converting the date-time.
+  ///   - calendar: The calendar system to use for the conversion.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable/abmbiguous local-time.
+  ///
+  public init(
+    _ dateTime: DateTime,
+    zone: Zone,
+    resolving: ResolutionStrategy.Options = [],
+    in calendar: CalendarSystem = .default
+  ) throws {
+    self = try calendar.instant(from: [.zoneId(zone.identifier)].append(dateTime), resolution: resolving.strategy)
+  }
+
+  /// Initializes an ``Instant`` from a ``DateTime`` at a specified ``ZoneOffset``.
+  ///
+  /// - Parameters:
+  ///   - dateTime: The date/time to convert.
+  ///   - offset: The zone offset the date/time is at.
+  ///   - calendar: The calendar system to use for the conversion.
+  ///
+  public init(
+    _ dateTime: DateTime,
+    offset: ZoneOffset,
+    in calendar: CalendarSystem = .default
+  ) {
+    self = calendar.instant(from: dateTime, at: offset)
   }
 
 }

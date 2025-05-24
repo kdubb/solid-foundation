@@ -47,8 +47,8 @@ public struct OffsetDateTime: DateTime {
     self.offset = offset
   }
 
-  /// Initializes an instance of ``OffsetDateTime`` with the specified date and time components
-  /// at the offset of specified time zone.
+  /// Initializes an instance of ``OffsetDateTime`` with the specified date/time at the
+  /// offset of specified time zone.
   ///
   /// - Parameters:
   ///   - dateTime: The date and time components to use.
@@ -80,7 +80,7 @@ public struct OffsetDateTime: DateTime {
   ///   - second: The second component of the time.
   ///   - nanosecond: The nanosecond component of the time.
   ///   - offset: The time zone offset to use.
-  /// - Throws: A ``Error`` if the conversion local-time is an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion local-time is an unresolvable local-time.
   ///
   public init(
     year: Int,
@@ -135,8 +135,8 @@ public struct OffsetDateTime: DateTime {
   /// or the zone part modified.
   ///
   /// - Note: Modifying the `offset` part using this function will anchor to the same local-time. If
-  ///    you want to preserve the same instant, use the `withOffset(_:anchor:)` method instead,
-  ///    passing `.sameInstant` as the anchor.
+  ///    you want to preserve the same instant, use the ``with(offset:anchor:in:)`` method instead,
+  ///    passing ``AdjustmentAnchor/sameInstant`` as the anchor.
   ///
   /// - Parameters:
   ///   - year: The new year to set. If `nil`, the current year is used.
@@ -148,7 +148,7 @@ public struct OffsetDateTime: DateTime {
   ///   - nanosecond: The new nanosecond to set. If `nil`, the current nanosecond is used.
   ///   - offset: The new time zone offset to set, anchoring to the local-time. If `nil`, the current time zone is used.
   /// - Returns: A new instance of ``OffsetDateTime`` with the specified parts modified.
-  /// - Throws: A ``Error`` if the conversion fails due to an unresolvable local-time.
+  /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
   public func with(
     year: Int? = nil,
@@ -187,8 +187,8 @@ public struct OffsetDateTime: DateTime {
   ///   - calendarSystem: The calendar system to use. Defaults to `.default`.
   /// - Returns: A new instance of ``ZonedDateTime`` in the specified time zone.
   ///
-  public func withOffset(
-    _ offset: ZoneOffset,
+  public func with(
+    offset: ZoneOffset,
     anchor: AdjustmentAnchor = .sameInstant,
     in calendarSystem: GregorianCalendarSystem = .default
   ) -> Self {

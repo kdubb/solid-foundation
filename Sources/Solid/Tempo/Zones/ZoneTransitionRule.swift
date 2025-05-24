@@ -517,7 +517,7 @@ extension ZoneTransitionRule {
         ? (standardTime.offset, daylightSavingTime.offset, daylightSavingTime.designation)
         : (daylightSavingTime.offset, standardTime.offset, standardTime.designation)
 
-      let instant = GregorianCalendarSystem.default.instant(from: localTransition, at: offsetBefore)
+      let instant = Instant(localTransition, offset: offsetBefore)
 
       return ZoneTransition.from(
         instant: instant,

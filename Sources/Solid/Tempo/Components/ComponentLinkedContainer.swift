@@ -37,8 +37,8 @@ public struct ComponentKeyPathLink<Root, Value>: ComponentLink where Root: Senda
 
 extension LinkedComponentContainer where Self: ComponentContainer {
 
-  public var availableComponentIds: Set<Component.Id> {
-    return Set(Self.links.map { $0.component.id })
+  public var availableComponents: Set<AnyComponent> {
+    return Set(Self.links.map { $0.component.any })
   }
 
   public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {

@@ -252,12 +252,12 @@ struct OffsetDateTimeTests {
     )
 
     // Test same instant
-    let newDateTime1 = try dateTime.withOffset(.hours(3), anchor: .sameInstant)
+    let newDateTime1 = try dateTime.with(offset: .hours(3), anchor: .sameInstant)
     #expect(newDateTime1.offset.totalSeconds == 10800)    // 3 hours in seconds
     #expect(newDateTime1.hour == 15)    // Time adjusted for new offset
 
     // Test same local time
-    let newDateTime2 = try dateTime.withOffset(.hours(3), anchor: .sameLocalTime)
+    let newDateTime2 = try dateTime.with(offset: .hours(3), anchor: .sameLocalTime)
     #expect(newDateTime2.offset.totalSeconds == 10800)    // 3 hours in seconds
     #expect(newDateTime2.hour == 14)    // Time remains the same
   }

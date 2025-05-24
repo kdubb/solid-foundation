@@ -68,12 +68,38 @@ extension Period: LinkedComponentContainer, ComponentBuildable {
 
 extension Period {
 
+  public func adding<each C>(
+    _ components: repeat (each C, (each C).Value)
+  ) -> Period where repeat each C: IntegerPeriodComponent {
+    var result = self
+    for (component, value) in repeat each components {
+      switch component {
+      case .calendarYears:
+        result.years += Int(value)
+      case .calendarMonths:
+        result.months += Int(value)
+      case .calendarDays:
+        result.days += Int(value)
+      case .calendarWeeks:
+        if (result.years | result.months | result.days) == 0 {
+          result.weeks += Int(value)
+        } else {
+          result.days = Int(value) * 7
+        }
+      default:
+        fatalError("Invalid Period Component")
+      }
+    }
+    return result
+  }
+
   public func duration(
     since start: some DateTime,
+    resolving: ResolutionStrategy.Options = [],
     in calendar: CalendarSystem = .default
   ) throws -> Duration {
 
-    let startInstant = try calendar.instant(from: start, resolution: .default)
+    let startInstant = try calendar.instant(from: start, resolution: resolving.strategy)
 
     return try duration(since: startInstant, in: calendar)
   }

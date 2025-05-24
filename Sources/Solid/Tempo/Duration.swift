@@ -12,10 +12,28 @@ import Foundation
 ///
 public struct Duration {
 
-  public static let zero = Duration(nanoseconds: 0)
-  public static let min = Duration(nanoseconds: .min)
-  public static let max = Duration(nanoseconds: .max)
+  /// The zero duration.
+  ///
+  /// - Returns: A duration representing the zero duration.
+  ///
+  public static let zero = Self(nanoseconds: 0)
 
+  /// The minimum duration.
+  ///
+  /// - Returns: A duration representing the minimum duration.
+  ///
+  public static let min = Self(nanoseconds: .min)
+
+  /// The maximum duration.
+  ///
+  /// - Returns: A duration representing the maximum duration.
+  ///
+  public static let max = Self(nanoseconds: .max)
+
+  /// The number of nanoseconds in the duration.
+  ///
+  /// - Returns: The number of nanoseconds in the duration.
+  ///
   public private(set) var nanoseconds: Int128
 
   /// Initializes a `Duration` with the given number of nanoseconds.
@@ -44,14 +62,18 @@ public struct Duration {
     self.init(nanoseconds: Int128(seconds * 1_000_000_000))
   }
 
+  /// Returns the magnitude of the duration.
+  ///
+  /// - Returns: The magnitude of the duration.
+  ///
+  public var magnitude: Duration {
+    return Duration(nanoseconds: Int128(nanoseconds.magnitude))
+  }
+
   internal var integerComponents: (hi: Int64, lo: Int64) {
     let hi = nanoseconds >> Int64.bitWidth
     let lo = nanoseconds & Int128(Int64.max)
     return (hi: Int64(hi), lo: Int64(lo))
-  }
-
-  public var magnitude: Duration {
-    return Duration(nanoseconds: Int128(nanoseconds.magnitude))
   }
 }
 
@@ -194,7 +216,7 @@ extension Duration: ComponentContainerTimeArithmetic {
 
 extension Duration {
 
-  /// Initialize a `Duration` from an integer and a ``Unit``.
+  /// Initialize a duration from a specified number of units.
   ///
   /// - Parameters:
   ///   - value: The value in `unit`s.
@@ -259,7 +281,7 @@ extension Duration {
 
 // MARK: - Mathematical Operators
 
-private let twoToThe64thDouble = pow(2.0, 64.0)
+private let twoToThe64th = pow(2.0, 64.0)
 
 extension Duration {
 
@@ -312,15 +334,14 @@ extension Duration {
   }
 
   public static func * <F>(lhs: F, rhs: Self) -> Self where F: BinaryFloatingPoint {
-    // Split rhs into two 64-bit integers
-    let (rhsHi, rhsLo) = rhs.integerComponents
 
-    // Convert to Double separately to maintain maximum precision
+    // Convert to Double separately for maximum precision
+    let (rhsHi, rhsLo) = rhs.integerComponents
     let highProduct = Double(rhsHi) * Double(lhs)
     let lowProduct = Double(rhsLo) * Double(lhs)
 
     // Recombine & round explicitly
-    let combinedProduct = highProduct * twoToThe64thDouble + lowProduct
+    let combinedProduct = highProduct * twoToThe64th + lowProduct
     let product = combinedProduct.rounded(.toNearestOrAwayFromZero)
 
     return Self(nanoseconds: Int128(product))
@@ -355,11 +376,10 @@ extension Duration {
   }
 
   public static func / <F>(lhs: Self, rhs: F) -> Self where F: BinaryFloatingPoint {
-    // Split lhs into two 64-bit integers
-    let (lhsHi, lhsLo) = lhs.integerComponents
 
-    // Convert to Double separately to maintain maximum precision
-    let lhsDouble = Double(lhsHi) * twoToThe64thDouble + Double(lhsLo)
+    // Convert to Double separately for maximum precision
+    let (lhsHi, lhsLo) = lhs.integerComponents
+    let lhsDouble = Double(lhsHi) * twoToThe64th + Double(lhsLo)
 
     // Divide & round explicitly
     let quotientDouble = lhsDouble / Double(rhs)
@@ -393,11 +413,10 @@ extension Duration {
   }
 
   public static func % <F>(lhs: Self, rhs: F) -> Self where F: BinaryFloatingPoint {
-  // Split lhs into two 64-bit integers
-    let (lhsHi, lhsLo) = lhs.integerComponents
 
-    // Convert to Double separately to maintain maximum precision
-    let lhsDouble = Double(lhsHi) * twoToThe64thDouble + Double(lhsLo)
+    // Convert to Double separately for maximum precision
+    let (lhsHi, lhsLo) = lhs.integerComponents
+    let lhsDouble = Double(lhsHi) * twoToThe64th + Double(lhsLo)
 
     // Remainder & round explicitly
     let remainderDouble = lhsDouble.remainder(dividingBy: Double(rhs))
@@ -410,6 +429,12 @@ extension Duration {
     lhs = lhs % rhs
   }
 
+  /// Returns the remainder of the duration when divided by the given unit.
+  ///
+  /// - Parameter unit: The unit to divide the duration by.
+  ///
+  /// - Returns: The remainder of the duration when divided by the given unit.
+  ///
   public func remainder(in unit: Unit) -> Duration {
     switch unit {
     case .days:
@@ -431,6 +456,12 @@ extension Duration {
     }
   }
 
+  /// Returns the truncated duration when divided by the given unit.
+  ///
+  /// - Parameter unit: The unit to divide the duration by.
+  ///
+  /// - Returns: The truncated duration when divided by the given unit.
+  ///
   public func truncated(to unit: Unit) -> Duration {
     switch unit {
     case .days:
@@ -452,6 +483,12 @@ extension Duration {
     }
   }
 
+  /// Returns the quotient and remainder of the duration when divided by the given unit.
+  ///
+  /// - Parameter unit: The unit to divide the duration by.
+  ///
+  /// - Returns: The quotient and remainder of the duration when divided by the given unit.
+  ///
   public func divided(at unit: Unit) -> (quotient: Self, remainder: Self) {
     (truncated(to: unit), remainder(in: unit))
   }
@@ -461,46 +498,112 @@ extension Duration {
 
 extension Duration {
 
+  /// Returns a duration representing the given number of days.
+  ///
+  /// - Parameter days: The number of days.
+  ///
+  /// - Returns: A duration representing the given number of days.
+  ///
   public static func days<I>(_ days: I) -> Self where I: SignedInteger {
     return days * Self.hours(24)
   }
 
+  /// Returns a duration representing the given number of days.
+  ///
+  /// - Parameter days: The number of days.
+  ///
+  /// - Returns: A duration representing the given number of days.
+  ///
   public static func days<F>(_ days: F) -> Self where F: BinaryFloatingPoint {
     return days * Self.hours(24)
   }
 
+  /// Returns a duration representing the given number of hours.
+  ///
+  /// - Parameter hours: The number of hours.
+  ///
+  /// - Returns: A duration representing the given number of hours.
+  ///
   public static func hours<I>(_ hours: I) -> Self where I: SignedInteger {
     return hours * Self.minutes(60)
   }
 
+  /// Returns a duration representing the given number of hours.
+  ///
+  /// - Parameter hours: The number of hours.
+  ///
+  /// - Returns: A duration representing the given number of hours.
+  ///
   public static func hours<F>(_ hours: F) -> Self where F: BinaryFloatingPoint {
     return hours * Self.minutes(60)
   }
 
+  /// Returns a duration representing the given number of minutes.
+  ///
+  /// - Parameter minutes: The number of minutes.
+  ///
+  /// - Returns: A duration representing the given number of minutes.
+  ///
   public static func minutes<I>(_ minutes: I) -> Self where I: SignedInteger {
     return minutes * Self.seconds(60)
   }
 
+  /// Returns a duration representing the given number of minutes.
+  ///
+  /// - Parameter minutes: The number of minutes.
+  ///
+  /// - Returns: A duration representing the given number of minutes.
+  ///
   public static func minutes<F>(_ minutes: F) -> Self where F: BinaryFloatingPoint {
     return minutes * Self.seconds(60)
   }
 
+  /// Returns a duration representing the given number of seconds.
+  ///
+  /// - Parameter seconds: The number of seconds.
+  ///
+  /// - Returns: A duration representing the given number of seconds.
+  ///
   public static func seconds<I>(_ seconds: I) -> Self where I: SignedInteger {
     return seconds * Self.nanoseconds(1_000_000_000)
   }
 
+  /// Returns a duration representing the given number of seconds.
+  ///
+  /// - Parameter seconds: The number of seconds.
+  ///
+  /// - Returns: A duration representing the given number of seconds.
+  ///
   public static func seconds<F>(_ seconds: F) -> Self where F: BinaryFloatingPoint {
     return Self(seconds: Double(seconds))
   }
 
+  /// Returns a duration representing the given number of milliseconds.
+  ///
+  /// - Parameter milliseconds: The number of milliseconds.
+  ///
+  /// - Returns: A duration representing the given number of milliseconds.
+  ///
   public static func milliseconds<I>(_ milliseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(milliseconds) * 1_000_000)
   }
 
+  /// Returns a duration representing the given number of microseconds.
+  ///
+  /// - Parameter microseconds: The number of microseconds.
+  ///
+  /// - Returns: A duration representing the given number of microseconds.
+  ///
   public static func microseconds<I>(_ microseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(microseconds) * 1_000)
   }
 
+  /// Returns a duration representing the given number of nanoseconds.
+  ///
+  /// - Parameter nanoseconds: The number of nanoseconds.
+  ///
+  /// - Returns: A duration representing the given number of nanoseconds.
+  ///
   public static func nanoseconds<I>(_ nanoseconds: I) -> Self where I: SignedInteger {
     return Self(nanoseconds: Int128(nanoseconds))
   }

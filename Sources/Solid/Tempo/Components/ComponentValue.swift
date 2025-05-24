@@ -108,44 +108,8 @@ extension ComponentValue {
     return Self(component: .zoneOffset, value: value)
   }
 
-  public static func hoursOfZoneOffset(_ value: Int) -> Self {
-    return Self(component: .hoursOfZoneOffset, value: value)
-  }
-
-  public static func minutesOfZoneOffset(_ value: Int) -> Self {
-    return Self(component: .minutesOfZoneOffset, value: value)
-  }
-
-  public static func secondsOfZoneOffset(_ value: Int) -> Self {
-    return Self(component: .secondsOfZoneOffset, value: value)
-  }
-
   public static func zoneId(_ value: String) -> Self {
     return Self(component: .zoneId, value: value)
-  }
-
-  public static func month(_ value: Int) -> Self {
-    return Self(component: .month, value: value)
-  }
-
-  public static func day(_ value: Int) -> Self {
-    return Self(component: .day, value: value)
-  }
-
-  public static func hour(_ value: Int) -> Self {
-    return Self(component: .hour, value: value)
-  }
-
-  public static func minute(_ value: Int) -> Self {
-    return Self(component: .minute, value: value)
-  }
-
-  public static func second(_ value: Int) -> Self {
-    return Self(component: .second, value: value)
-  }
-
-  public static func nanosecond(_ value: Int) -> Self {
-    return Self(component: .nanosecond, value: value)
   }
 
   public static func calendarYears(_ value: Int) -> Self {

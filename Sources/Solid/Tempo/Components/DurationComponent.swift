@@ -10,185 +10,210 @@ public protocol DurationComponent<Value>: Component where Value: SignedInteger {
   func extract(from duration: Duration, rolledOver: Bool?) -> Value
 }
 
-extension Components {
+extension Component where Self == DurationComponents.Integer<Int> {
 
-  public static let numberOfDays = DurationInteger<Int>(id: .numberOfDays, unit: .days)
-  public static let numberOfHours = DurationInteger<Int>(id: .numberOfHours, unit: .hours)
-  public static let numberOfMinutes = DurationInteger<Int>(id: .numberOfMinutes, unit: .minutes)
-  public static let numberOfSeconds = DurationInteger<Int>(id: .numberOfSeconds, unit: .seconds)
-  public static let numberOfMilliseconds = DurationInteger<Int>(id: .numberOfMilliseconds, unit: .milliseconds)
-  public static let numberOfMicroseconds = DurationInteger<Int>(id: .numberOfMicroseconds, unit: .microseconds)
-  public static let numberOfNanoseconds = DurationInteger<Int>(id: .numberOfNanoseconds, unit: .nanoseconds)
+  public static var numberOfDays: Self { DurationComponents.numberOfDays }
+  public static var numberOfHours: Self { DurationComponents.numberOfHours }
+  public static var numberOfMinutes: Self { DurationComponents.numberOfMinutes }
+  public static var numberOfSeconds: Self { DurationComponents.numberOfSeconds }
+  public static var numberOfMilliseconds: Self { DurationComponents.numberOfMilliseconds }
+  public static var numberOfMicroseconds: Self { DurationComponents.numberOfMicroseconds }
+  public static var numberOfNanoseconds: Self { DurationComponents.numberOfNanoseconds }
 
-  public static let totalDays = DurationInteger<Int>(
+  public static var totalDays: Self { DurationComponents.totalDays }
+  public static var totalHours: Self { DurationComponents.totalHours }
+  public static var totalMinutes: Self { DurationComponents.totalMinutes }
+  public static var totalSeconds: Self { DurationComponents.totalSeconds }
+
+  public static var hoursOfDay: Self { DurationComponents.hoursOfDay }
+  public static var minutesOfDay: Self { DurationComponents.minutesOfDay }
+  public static var secondsOfDay: Self { DurationComponents.secondsOfDay }
+  public static var millisecondsOfDay: Self { DurationComponents.millisecondsOfSecond }
+  public static var microsecondsOfDay: Self { DurationComponents.microsecondsOfSecond }
+  public static var nanosecondsOfDay: Self { DurationComponents.nanosecondsOfDay }
+
+  public static var minutesOfHour: Self { DurationComponents.minutesOfHour }
+  public static var secondsOfHour: Self { DurationComponents.secondsOfHour }
+  public static var millisecondsOfHour: Self { DurationComponents.millisecondsOfHour }
+  public static var microsecondsOfHour: Self { DurationComponents.microsecondsOfHour }
+  public static var nanosecondsOfHour: Self { DurationComponents.nanosecondsOfHour }
+
+  public static var secondsOfMinute: Self { DurationComponents.secondsOfMinute }
+  public static var millisecondsOfMinute: Self { DurationComponents.millisecondsOfMinute }
+  public static var microsecondsOfMinute: Self { DurationComponents.microsecondsOfMinute }
+  public static var nanosecondsOfMinute: Self { DurationComponents.nanosecondsOfMinute }
+
+  public static var millisecondsOfSecond: Self { DurationComponents.millisecondsOfSecond }
+  public static var microsecondsOfSecond: Self { DurationComponents.microsecondsOfSecond }
+  public static var nanosecondsOfSecond: Self { DurationComponents.nanosecondsOfSecond }
+
+}
+
+extension Component where Self == DurationComponents.Integer<Int128> {
+
+  public static var totalMilliseconds: Self { DurationComponents.totalMilliseconds }
+  public static var totalMicroseconds: Self { DurationComponents.totalMicroseconds }
+  public static var totalNanoseconds: Self { DurationComponents.totalNanoseconds }
+
+}
+
+public enum DurationComponents {
+
+  public static let numberOfDays = Integer<Int>(id: .numberOfDays, unit: .days)
+  public static let numberOfHours = Integer<Int>(id: .numberOfHours, unit: .hours)
+  public static let numberOfMinutes = Integer<Int>(id: .numberOfMinutes, unit: .minutes)
+  public static let numberOfSeconds = Integer<Int>(id: .numberOfSeconds, unit: .seconds)
+  public static let numberOfMilliseconds = Integer<Int>(id: .numberOfMilliseconds, unit: .milliseconds)
+  public static let numberOfMicroseconds = Integer<Int>(id: .numberOfMicroseconds, unit: .microseconds)
+  public static let numberOfNanoseconds = Integer<Int>(id: .numberOfNanoseconds, unit: .nanoseconds)
+
+  public static let totalDays = Integer<Int>(
     id: .totalDays,
     unit: .days,
     rolledOverDefault: false,
     isTotal: true
   )
-  public static let totalHours = DurationInteger<Int>(
+  public static let totalHours = Integer<Int>(
     id: .totalHours,
     unit: .hours,
     rolledOverDefault: false,
     isTotal: true
   )
-  public static let totalMinutes = DurationInteger<Int>(
+  public static let totalMinutes = Integer<Int>(
     id: .totalMinutes,
     unit: .minutes,
     isTotal: true
   )
-  public static let totalSeconds = DurationInteger<Int>(
+  public static let totalSeconds = Integer<Int>(
     id: .totalSeconds,
     unit: .seconds,
     isTotal: true
   )
-  public static let totalMilliseconds = DurationInteger<Int128>(
+  public static let totalMilliseconds = Integer<Int128>(
     id: .totalMilliseconds,
     unit: .milliseconds,
     isTotal: true
   )
-  public static let totalMicroseconds = DurationInteger<Int128>(
+  public static let totalMicroseconds = Integer<Int128>(
     id: .totalMicroseconds,
     unit: .microseconds,
     isTotal: true
   )
-  public static let totalNanoseconds = DurationInteger<Int128>(
+  public static let totalNanoseconds = Integer<Int128>(
     id: .totalNanoseconds,
     unit: .nanoseconds,
     isTotal: true
   )
-  public static let hoursOfDay = DurationInteger<Int>(
+  public static let hoursOfDay = Integer<Int>(
     id: .hoursOfDay,
     unit: .hours,
     parentUnit: .days,
     rolledOverDefault: false
   )
-  public static let minutesOfDay = DurationInteger<Int>(
+  public static let minutesOfDay = Integer<Int>(
     id: .minutesOfDay,
     unit: .minutes,
     parentUnit: .days,
     rolledOverDefault: false
   )
-  public static let secondsOfDay = DurationInteger<Int>(
+  public static let secondsOfDay = Integer<Int>(
     id: .secondsOfDay,
     unit: .seconds,
     parentUnit: .days,
     rolledOverDefault: false
   )
-  public static let millisecondsOfDay = DurationInteger<Int>(
+  public static let millisecondsOfDay = Integer<Int>(
     id: .millisecondsOfDay,
     unit: .milliseconds,
     parentUnit: .days,
     rolledOverDefault: false
   )
-  public static let microsecondsOfDay = DurationInteger<Int>(
+  public static let microsecondsOfDay = Integer<Int>(
     id: .microsecondsOfDay,
     unit: .microseconds,
     parentUnit: .days,
     rolledOverDefault: false
   )
-  public static let nanosecondsOfDay = DurationInteger<Int>(
+  public static let nanosecondsOfDay = Integer<Int>(
     id: .nanosecondsOfDay,
     unit: .nanoseconds,
     parentUnit: .days,
     rolledOverDefault: false
   )
-  public static let minutesOfHour = DurationInteger<Int>(
+  public static let minutesOfHour = Integer<Int>(
     id: .minutesOfHour,
     unit: .minutes,
     parentUnit: .hours,
     rolledOverDefault: false
   )
-  public static let secondsOfHour = DurationInteger<Int>(
+  public static let secondsOfHour = Integer<Int>(
     id: .secondsOfHour,
     unit: .seconds,
     parentUnit: .hours,
     rolledOverDefault: false
   )
-  public static let millisecondsOfHour = DurationInteger<Int>(
+  public static let millisecondsOfHour = Integer<Int>(
     id: .millisecondsOfHour,
     unit: .milliseconds,
     parentUnit: .hours,
     rolledOverDefault: false
   )
-  public static let microsecondsOfHour = DurationInteger<Int>(
+  public static let microsecondsOfHour = Integer<Int>(
     id: .microsecondsOfHour,
     unit: .microseconds,
     parentUnit: .hours,
     rolledOverDefault: false
   )
-  public static let nanosecondsOfHour = DurationInteger<Int>(
+  public static let nanosecondsOfHour = Integer<Int>(
     id: .nanosecondsOfHour,
     unit: .nanoseconds,
     parentUnit: .hours,
     rolledOverDefault: false
   )
-  public static let secondsOfMinute = DurationInteger<Int>(
+  public static let secondsOfMinute = Integer<Int>(
     id: .secondsOfMinute,
     unit: .seconds,
     parentUnit: .minutes,
     rolledOverDefault: false
   )
-  public static let millisecondsOfMinute = DurationInteger<Int>(
+  public static let millisecondsOfMinute = Integer<Int>(
     id: .millisecondsOfMinute,
     unit: .milliseconds,
     parentUnit: .minutes,
     rolledOverDefault: false
   )
-  public static let microsecondsOfMinute = DurationInteger<Int>(
+  public static let microsecondsOfMinute = Integer<Int>(
     id: .microsecondsOfMinute,
     unit: .microseconds,
     parentUnit: .minutes,
     rolledOverDefault: false
   )
-  public static let nanosecondsOfMinute = DurationInteger<Int>(
+  public static let nanosecondsOfMinute = Integer<Int>(
     id: .nanosecondsOfMinute,
     unit: .nanoseconds,
     parentUnit: .minutes,
     rolledOverDefault: false
   )
-  public static let millisecondsOfSecond = DurationInteger<Int>(
+  public static let millisecondsOfSecond = Integer<Int>(
     id: .millisecondsOfSecond,
     unit: .milliseconds,
     parentUnit: .seconds,
     rolledOverDefault: false
   )
-  public static let microsecondsOfSecond = DurationInteger<Int>(
+  public static let microsecondsOfSecond = Integer<Int>(
     id: .microsecondsOfSecond,
     unit: .microseconds,
     parentUnit: .seconds,
     rolledOverDefault: false
   )
-  public static let nanosecondsOfSecond = DurationInteger<Int>(
+  public static let nanosecondsOfSecond = Integer<Int>(
     id: .nanosecondsOfSecond,
     unit: .nanoseconds,
     parentUnit: .seconds,
     rolledOverDefault: false
   )
 
-  public enum DurationUnitSize: UInt128 {
-    case days = 86_400_000_000_000
-    case hours = 3_600_000_000_000
-    case minutes = 60_000_000_000
-    case seconds = 1_000_000_000
-    case milliseconds = 1_000_000
-    case microseconds = 1_000
-    case nanoseconds = 1
-
-    var rollover: Int128? {
-      switch self {
-      case .days: return nil
-      case .hours: return 24
-      case .minutes: return 60
-      case .seconds: return 60
-      case .milliseconds: return 1_000
-      case .microseconds: return 1_000
-      case .nanoseconds: return 1_000
-      }
-    }
-  }
-
-  public struct DurationInteger<Value>: DurationComponent where Value: SignedInteger {
+  public struct Integer<Value>: DurationComponent where Value: SignedInteger {
 
     public typealias Value = Value
 
@@ -251,109 +276,34 @@ extension Components {
       return (a < 0 && r != 0) ? q - 1 : q
     }
   }
-}
 
-// MARK: - Common Component Extensions
+  internal enum UnitSize: UInt128 {
+    case days = 86_400_000_000_000
+    case hours = 3_600_000_000_000
+    case minutes = 60_000_000_000
+    case seconds = 1_000_000_000
+    case milliseconds = 1_000_000
+    case microseconds = 1_000
+    case nanoseconds = 1
 
-extension Component where Self == Components.DurationInteger<Int> {
-
-  public static var numberOfDays: Self { Components.numberOfDays }
-  public static var numberOfHours: Self { Components.numberOfHours }
-  public static var numberOfMinutes: Self { Components.numberOfMinutes }
-  public static var numberOfSeconds: Self { Components.numberOfSeconds }
-  public static var numberOfMilliseconds: Self { Components.numberOfMilliseconds }
-  public static var numberOfMicroseconds: Self { Components.numberOfMicroseconds }
-  public static var numberOfNanoseconds: Self { Components.numberOfNanoseconds }
-
-  public static var totalDays: Self { Components.totalDays }
-  public static var totalHours: Self { Components.totalHours }
-  public static var totalMinutes: Self { Components.totalMinutes }
-  public static var totalSeconds: Self { Components.totalSeconds }
-
-  public static var hoursOfDay: Self { Components.hoursOfDay }
-  public static var minutesOfDay: Self { Components.minutesOfDay }
-  public static var secondsOfDay: Self { Components.secondsOfDay }
-  public static var millisecondsOfDay: Self { Components.millisecondsOfSecond }
-  public static var microsecondsOfDay: Self { Components.microsecondsOfSecond }
-  public static var nanosecondsOfDay: Self { Components.nanosecondsOfDay }
-
-  public static var minutesOfHour: Self { Components.minutesOfHour }
-  public static var secondsOfHour: Self { Components.secondsOfHour }
-  public static var millisecondsOfHour: Self { Components.millisecondsOfHour }
-  public static var microsecondsOfHour: Self { Components.microsecondsOfHour }
-  public static var nanosecondsOfHour: Self { Components.nanosecondsOfHour }
-
-  public static var secondsOfMinute: Self { Components.secondsOfMinute }
-  public static var millisecondsOfMinute: Self { Components.millisecondsOfMinute }
-  public static var microsecondsOfMinute: Self { Components.microsecondsOfMinute }
-  public static var nanosecondsOfMinute: Self { Components.nanosecondsOfMinute }
-
-  public static var millisecondsOfSecond: Self { Components.millisecondsOfSecond }
-  public static var microsecondsOfSecond: Self { Components.microsecondsOfSecond }
-  public static var nanosecondsOfSecond: Self { Components.nanosecondsOfSecond }
-
-}
-
-extension Component where Self == Components.DurationInteger<Int128> {
-
-  public static var totalMilliseconds: Self { Components.totalMilliseconds }
-  public static var totalMicroseconds: Self { Components.totalMicroseconds }
-  public static var totalNanoseconds: Self { Components.totalNanoseconds }
-
-}
-
-// MARK: - DurationComponent Extensions
-
-extension DurationComponent where Self == Components.DurationInteger<Int> {
-
-  public static var numberOfDays: Self { Components.numberOfDays }
-  public static var numberOfHours: Self { Components.numberOfHours }
-  public static var numberOfMinutes: Self { Components.numberOfMinutes }
-  public static var numberOfSeconds: Self { Components.numberOfSeconds }
-  public static var numberOfMilliseconds: Self { Components.numberOfMilliseconds }
-  public static var numberOfMicroseconds: Self { Components.numberOfMicroseconds }
-  public static var numberOfNanoseconds: Self { Components.numberOfNanoseconds }
-
-  public static var totalDays: Self { Components.totalDays }
-  public static var totalHours: Self { Components.totalHours }
-  public static var totalMinutes: Self { Components.totalMinutes }
-  public static var totalSeconds: Self { Components.totalSeconds }
-
-  public static var hoursOfDay: Self { Components.hoursOfDay }
-  public static var minutesOfDay: Self { Components.minutesOfDay }
-  public static var secondsOfDay: Self { Components.secondsOfDay }
-  public static var millisecondsOfDay: Self { Components.millisecondsOfSecond }
-  public static var microsecondsOfDay: Self { Components.microsecondsOfSecond }
-  public static var nanosecondsOfDay: Self { Components.nanosecondsOfDay }
-
-  public static var minutesOfHour: Self { Components.minutesOfHour }
-  public static var secondsOfHour: Self { Components.secondsOfHour }
-  public static var millisecondsOfHour: Self { Components.millisecondsOfHour }
-  public static var microsecondsOfHour: Self { Components.microsecondsOfHour }
-  public static var nanosecondsOfHour: Self { Components.nanosecondsOfHour }
-
-  public static var secondsOfMinute: Self { Components.secondsOfMinute }
-  public static var millisecondsOfMinute: Self { Components.millisecondsOfMinute }
-  public static var microsecondsOfMinute: Self { Components.microsecondsOfMinute }
-  public static var nanosecondsOfMinute: Self { Components.nanosecondsOfMinute }
-
-  public static var millisecondsOfSecond: Self { Components.millisecondsOfSecond }
-  public static var microsecondsOfSecond: Self { Components.microsecondsOfSecond }
-  public static var nanosecondsOfSecond: Self { Components.nanosecondsOfSecond }
-
-}
-
-extension DurationComponent where Self == Components.DurationInteger<Int128> {
-
-  public static var totalMilliseconds: Self { Components.totalMilliseconds }
-  public static var totalMicroseconds: Self { Components.totalMicroseconds }
-  public static var totalNanoseconds: Self { Components.totalNanoseconds }
+    var rollover: Int128? {
+      switch self {
+      case .days: return nil
+      case .hours: return 24
+      case .minutes: return 60
+      case .seconds: return 60
+      case .milliseconds: return 1_000
+      case .microseconds: return 1_000
+      case .nanoseconds: return 1_000
+      }
+    }
+  }
 
 }
 
 private extension Unit {
 
-  var unitSize: Components.DurationUnitSize {
+  var unitSize: DurationComponents.UnitSize {
     switch self {
     case .days: .days
     case .hours: .hours
