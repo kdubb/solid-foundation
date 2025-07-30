@@ -1,6 +1,7 @@
 // swift-tools-version: 6.0
 
 import PackageDescription
+import class Foundation.ProcessInfo
 
 let package = Package(
   name: "SolidFoundation",
@@ -14,13 +15,7 @@ let package = Package(
     .library(
       name: "Solid",
       targets: ["Solid"]
-    ),
-    .executable(
-      name: "SolidBench",
-      targets: [
-        "SolidBench"
-      ]
-    ),
+    )
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "1.2.0")),
@@ -157,13 +152,6 @@ let package = Package(
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]
     ),
-    .executableTarget(
-      name: "SolidBench",
-      dependencies: [
-        "Solid",
-        .product(name: "ArgumentParser", package: "swift-argument-parser"),
-      ],
-    ),
     .target(
       name: "SolidTesting",
       dependencies: ["Solid"],
@@ -220,17 +208,41 @@ let package = Package(
   swiftLanguageModes: [.v6],
 )
 
-// Benchmark of SolidNumericBenchmark
-package.targets += [
-  .executableTarget(
-    name: "SolidNumericBenchmark",
-    dependencies: [
-      "Solid",
-      .product(name: "Benchmark", package: "package-benchmark"),
-    ],
-    path: "Benchmarks/SolidNumericBenchmark",
-    plugins: [
-      .plugin(name: "BenchmarkPlugin", package: "package-benchmark")
-    ]
-  )
-]
+// Benchmarking
+let benchmarkEnableEnv = ProcessInfo.processInfo.environment["BENCHMARK_ENABLE"]?.lowercased()
+let benchmarkEnbled =
+  if let benchmarkEnableEnv, benchmarkEnableEnv == "1" || benchmarkEnableEnv == "true" || benchmarkEnableEnv == "t" {
+    true
+  } else {
+    false
+  }
+if benchmarkEnbled {
+  package.products += [
+    .executable(
+      name: "SolidBench",
+      targets: [
+        "SolidBench"
+      ],
+    )
+  ]
+  package.targets += [
+    .executableTarget(
+      name: "SolidBench",
+      dependencies: [
+        "Solid",
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+      ],
+    ),
+    .executableTarget(
+      name: "SolidNumericBenchmark",
+      dependencies: [
+        "Solid",
+        .product(name: "Benchmark", package: "package-benchmark"),
+      ],
+      path: "Benchmarks/SolidNumericBenchmark",
+      plugins: [
+        .plugin(name: "BenchmarkPlugin", package: "package-benchmark")
+      ]
+    )
+  ]
+}
