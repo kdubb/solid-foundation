@@ -24,7 +24,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "1.2.0")),
-    .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.1.4")),
+    .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.2.1")),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
     .package(url: "https://github.com/StarLard/SwiftFormatPlugins.git", from: "1.1.1"),
     .package(url: "https://github.com/SwiftScream/URITemplate.git", from: "5.0.1"),
@@ -94,6 +94,7 @@ let package = Package(
       name: "SolidTempo",
       dependencies: [
         "SolidCore",
+        .product(name: "Collections", package: "swift-collections"),
       ],
       path: "Sources/Solid/Tempo",
       plugins: [
@@ -121,6 +122,7 @@ let package = Package(
         "SolidData",
         "SolidURI",
         "SolidNumeric",
+        "SolidTempo",
         "SolidJSON",
         "SolidNet",
         .product(name: "Collections", package: "swift-collections"),
@@ -210,7 +212,8 @@ let package = Package(
         .plugin(name: "Lint", package: "swiftformatplugins")
       ]
     ),
-  ]
+  ],
+  swiftLanguageModes: [.v6],
 )
 
 // Benchmark of SolidNumericBenchmark
