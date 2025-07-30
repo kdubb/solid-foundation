@@ -5,9 +5,10 @@
 //  Created by Kevin Wooten on 5/9/25.
 //
 
-import Atomics
 import Foundation
 import OSLog
+import Synchronization
+
 
 /// ``ZoneRules`` provider for `tzdb`/`zoneinfo`.
 ///
@@ -42,64 +43,64 @@ public final class TzDb: ZoneRulesLoader {
   /// Possible names for  the `zoneinfo` version stamp file.
   public static let versionFileName = "+VERSION"
 
-  struct ZoneEntry: Sendable {
+  final class ZoneEntry: Sendable {
 
-    final class StateBox: Sendable {
-      let state: State
+    final class State: Sendable {
 
-      init(_ state: State) {
-        self.state = state
-      }
+      enum Value {
+        case loaded(ZoneRules, parsed: TzIf.Rules?)
+        case failed(Swift.Error)
 
-      public var rules: ZoneRules {
-        get throws {
-          try state.rules
+        public var rules: ZoneRules {
+          get throws {
+            switch self {
+            case .loaded(let rules, parsed: _):
+              return rules
+            case .failed(let error):
+              throw error
+            }
+          }
         }
       }
-    }
 
-    enum State {
-      case loaded(ZoneRules, parsed: TzIf.Rules?)
-      case failed(Swift.Error)
+      private let value: Value
+
+      init(_ value: Value) {
+        self.value = value
+      }
 
       public var rules: ZoneRules {
         get throws {
-          switch self {
-          case .loaded(let rules, parsed: _):
-            return rules
-          case .failed(let error):
-            throw error
-          }
+          try value.rules
         }
       }
     }
 
     let url: URL
     let retainParsed: Bool
-    let loadLock = NSLock()
-    let state: ManagedAtomicLazyReference<StateBox>
+    let state: AtomicLazyReference<State>
 
     init(url: URL, retainParsed: Bool = false) {
       self.url = url
       self.retainParsed = retainParsed
-      self.state = ManagedAtomicLazyReference<StateBox>()
+      self.state = AtomicLazyReference<State>()
     }
 
     func load() throws -> ZoneRules {
       if let state = state.load() {
-        return try state.state.rules
+        return try state.rules
       }
 
       // Load rules and initialize state
-      let state: StateBox
+      let state: State
       do {
         let tzIfRules = try TzIf.load(url: url)
         let zoneRules = try TzIf.buildZoneRules(rules: tzIfRules)
-        state = self.state.storeIfNilThenLoad(.init(.loaded(zoneRules, parsed: retainParsed ? tzIfRules : nil)))
+        state = self.state.storeIfNil(.init(.loaded(zoneRules, parsed: retainParsed ? tzIfRules : nil)))
       } catch {
-        state = self.state.storeIfNilThenLoad(.init(.failed(error)))
+        state = self.state.storeIfNil(.init(.failed(error)))
       }
-      return try state.state.rules
+      return try state.rules
     }
   }
 

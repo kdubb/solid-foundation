@@ -7,7 +7,7 @@
 
 import SolidData
 import SolidURI
-import Atomics
+import Synchronization
 
 
 extension Schema {

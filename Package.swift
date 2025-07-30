@@ -23,7 +23,6 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
     .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "1.2.0")),
     .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.1.4")),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
@@ -51,7 +50,6 @@ let package = Package(
       name: "SolidCore",
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
-        .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "Collections", package: "swift-collections"),
       ],
       path: "Sources/Solid/Core",
@@ -63,7 +61,6 @@ let package = Package(
       name: "SolidNumeric",
       dependencies: [
         "SolidCore",
-        .product(name: "Atomics", package: "swift-atomics"),
         .product(name: "Collections", package: "swift-collections"),
       ],
       path: "Sources/Solid/Numeric",
@@ -97,7 +94,6 @@ let package = Package(
       name: "SolidTempo",
       dependencies: [
         "SolidCore",
-        .product(name: "Atomics", package: "swift-atomics"),
       ],
       path: "Sources/Solid/Tempo",
       plugins: [

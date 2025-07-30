@@ -1309,7 +1309,7 @@ extension TzIf.Limits {
       self.range = range
     }
 
-    func check<I: SignedInteger>(_ value: I) throws {
+    func check<I: SignedInteger & Sendable>(_ value: I) throws {
       if let checkValue = Bound(exactly: value), range.contains(checkValue) {
         return
       }
