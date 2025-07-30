@@ -5,8 +5,8 @@
 //  Created by Kevin Wooten on 5/9/25.
 //
 
+import SolidCore
 import Foundation
-import OSLog
 import Synchronization
 
 
@@ -27,7 +27,7 @@ import Synchronization
 ///
 public final class TzDb: ZoneRulesLoader {
 
-  internal static let logger = Logger(subsystem: "io.solid.tempo", category: "TzDb")
+  internal static let log = LogFactory.for(type: TzDb.self)
 
   /// Errors related to loading ``ZoneRules`` from `zoneinfo` data.
   public enum Error: Swift.Error {
@@ -139,15 +139,13 @@ public final class TzDb: ZoneRulesLoader {
     do {
       let (zoneInfoUrl, zoneInfoVersion, zoneInfoDataUrls) = try Self.discoverZoneInfo(urls: zoneInfoUrls)
 
-      Self.logger.info("Discovered tzdb v\(zoneInfoUrl) at \(zoneInfoVersion) with \(zoneInfoDataUrls.count) zones")
+      Self.log.info("Discovered tzdb v\(zoneInfoVersion) at \(zoneInfoUrl) with \(zoneInfoDataUrls.count) zones")
 
       self.url = zoneInfoUrl
       self.version = zoneInfoVersion
-      self.zones = Dictionary(
-        uniqueKeysWithValues: zoneInfoDataUrls.map { ($0.relativePath, ZoneEntry(url: $0)) }
-      )
+      self.zones = Dictionary(uniqueKeysWithValues: zoneInfoDataUrls.map { ($0.relativePath, ZoneEntry(url: $0)) })
     } catch {
-      Self.logger.error("Failed to initialize \(Self.self): \(error)")
+      Self.log.error("Failed to initialize \(Self.self): \(error)")
       self.url = URL(fileURLWithPath: "")
       self.version = ""
       self.zones = [:]
@@ -180,7 +178,7 @@ public final class TzDb: ZoneRulesLoader {
       do {
         return try discoverZoneInfo(at: url)
       } catch {
-        logger.error("Failed to discover zone info files at \(url): \(error)")
+        log.error("Failed to discover zone info files at \(url): \(error)")
         continue
       }
     }
@@ -210,7 +208,7 @@ public final class TzDb: ZoneRulesLoader {
         options: [.skipsHiddenFiles, .producesRelativePathURLs]
       )
     else {
-      Self.logger.error("Failed to enumerate zone info files at \(resolvedZoneInfoURL)")
+      Self.log.error("Failed to enumerate zone info files at \(resolvedZoneInfoURL)")
       return (resolvedZoneInfoURL, version, [])
     }
 

@@ -29,6 +29,8 @@ let package = Package(
     .package(url: "https://github.com/StarLard/SwiftFormatPlugins.git", from: "1.1.1"),
     .package(url: "https://github.com/SwiftScream/URITemplate.git", from: "5.0.1"),
     .package(url: "https://github.com/ordo-one/package-benchmark", .upToNextMajor(from: "1.0.0")),
+    .package(url: "https://github.com/apple/swift-log.git", .upToNextMajor(from: "1.6.4")),
+    .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMajor(from: "3.13.2")),
   ],
   targets: [
     .target(
@@ -51,6 +53,8 @@ let package = Package(
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
+        .product(name: "Crypto", package: "swift-crypto"),
+        .product(name: "Logging", package: "swift-log", condition: .when(platforms: [.linux])),
       ],
       path: "Sources/Solid/Core",
       plugins: [

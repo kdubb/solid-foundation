@@ -5,8 +5,6 @@
 //  Created by Kevin Wooten on 5/6/25.
 //
 
-import OSLog
-
 public struct ReadableRawBuffer<BufferEndian> where BufferEndian: Endian {
 
   public typealias Buffer = UnsafeRawBufferPointer

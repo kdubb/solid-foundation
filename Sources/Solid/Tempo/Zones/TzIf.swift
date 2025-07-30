@@ -8,13 +8,13 @@
 import SolidCore
 import Foundation
 import Synchronization
-import OSLog
+
+
+private let log = LogFactory.for(type: TzIf.self)
 
 /// TZif file parsing and validation.
 ///
 public enum TzIf {
-
-  internal static let logger = Logger(subsystem: "tempo.swift-codex.github.io", category: "TzIf")
 
   public enum Error: Swift.Error {
     case invalidFooter
@@ -351,7 +351,7 @@ public enum TzIf {
             // Minimal form
 
             guard header.timeCount == 0 && header.leapCount == 0 else {
-              logger.error("Invalid TZif file: missing version data (minimal form requires no times/leap-seconds")
+              log.error("Invalid TZif file: missing version data (minimal form requires no times/leap-seconds")
               throw Error.missingVersionData
             }
 
@@ -389,7 +389,7 @@ public enum TzIf {
     let designations = rules.designations
 
     guard transitions.count > 0 || types.count == 1 else {
-      logger.error("Invalid TZif file: no transitions found data doesn't match a fixed zone")
+      log.error("Invalid TZif file: no transitions found data doesn't match a fixed zone")
       throw Error.noTransitions
     }
 
@@ -399,7 +399,7 @@ public enum TzIf {
       try Limits.transitionTimestampRange.check(transition.timestamp)
 
       guard transition.typeIndex < types.count else {
-        logger.error(
+        log.error(
           "Invalid TZif file: transition type index \(transition.typeIndex) out of bounds (max \(types.count - 1))"
         )
         throw Error.typeIndexOutOfBounds
@@ -414,7 +414,7 @@ public enum TzIf {
       // Validate designation
       guard let designation = designations[type.designationIndex] else {
         let validIndices = designations.keys.sorted()
-        logger.error(
+        log.error(
           """
           Invalid TZif file: designation associated with index '\(type.designationIndex)' not found \
           (valid indices are \(validIndices))
@@ -423,7 +423,7 @@ public enum TzIf {
         throw Error.invalidDesignation
       }
       guard Self.validateDesignation(designation) else {
-        logger.error("Invalid TZif file: invalid designation format '\(designation, privacy: .public)'")
+        log.error("Invalid TZif file: invalid designation format '\(designation, privacy: .public)'")
         throw Error.invalidDesignation
       }
 
@@ -436,7 +436,7 @@ public enum TzIf {
         if isUT && !isStd {
           let utSpec = type.isUT == nil ? "defaulted" : "explicitly set"
           let stdSpec = type.isStd == nil ? "defaulted" : "explicitly set"
-          logger.error("Invalid TZif file: time type marked as UT (\(utSpec)) but not as STD (\(stdSpec))")
+          log.error("Invalid TZif file: time type marked as UT (\(utSpec)) but not as STD (\(stdSpec))")
           throw Error.wallStdUniversalDisagreement
         }
       }
@@ -451,7 +451,7 @@ public enum TzIf {
       if transitionIdx > 0 {
         let previousTs = transitions[transitionIdx - 1].timestamp
         guard ts > previousTs else {
-          logger.error(
+          log.error(
             "Invalid TZif file: transition timestamp \(ts) not strictly increasing (previous: \(previousTs))"
           )
           throw Error.transitionsNotOrdered
@@ -462,7 +462,7 @@ public enum TzIf {
     // Ensure there is at least one standard time entry
     let stdCount = types.filter { !$0.isDST }.count
     guard stdCount > 0 else {
-      logger.error("Invalid TZif file: no standard time entries found")
+      log.error("Invalid TZif file: no standard time entries found")
       throw Error.missingStandardTime
     }
   }
@@ -704,15 +704,14 @@ extension TzIf.Header {
     from data: inout ReadableRawBuffer<BigEndian>
   ) throws -> Self {
 
-    let logger = TzIf.logger
     let hdrEnd = Self.fieldOffsets.end
 
     guard data.remaining.count >= hdrEnd else {
       let dataCount = data.count
-      logger.error(
+      log.error(
         """
         Invalid TZif file: file too short \
-        (received \(dataCount, format: .byteCount), requires at least \(hdrEnd, format: .byteCount))
+        (received \(dataCount, format: .byteCount(.file)), requires at least \(hdrEnd, format: .byteCount(.file))
         """
       )
       throw TzIf.Error.invalidLength
@@ -722,7 +721,7 @@ extension TzIf.Header {
     guard magic.elementsEqual(Self.magic) else {
       let received = Data(magic).baseEncoded(using: .base16)
       let expected = Data(Self.magic).baseEncoded(using: .base16)
-      logger.error(
+      log.error(
         """
         Invalid TZif file: bad magic number: \(received, privacy: .public) \
         (expected \(expected, privacy: .public))
@@ -733,7 +732,7 @@ extension TzIf.Header {
 
     let rawVersion = try data.readInt(UInt8.self)
     guard let version = TzIf.Version(rawValue: rawVersion) else {
-      logger.error("Invalid TZif file: unsupported version \(rawVersion)")
+      log.error("Invalid TZif file: unsupported version \(rawVersion)")
       throw TzIf.Error.unsupportedFileVersion(version: rawVersion)
     }
 
@@ -756,11 +755,11 @@ extension TzIf.Header {
 
     // Validate dependencies between fields
     guard isUTCount == 0 || isUTCount == typeCount else {
-      logger.error("Invalid TZif file: 'isutcnt' is \(isUTCount) (must be 0 or equal to 'typecnt' (\(typeCount))")
+      log.error("Invalid TZif file: 'isutcnt' is \(isUTCount) (must be 0 or equal to 'typecnt' (\(typeCount))")
       throw TzIf.Error.stdOrUniversalCountMismatch
     }
     guard isStdCount == 0 || isStdCount == typeCount else {
-      logger.error("Invalid TZif file: 'isstdcnt' is \(isStdCount) (must be 0 or equal to 'typecnt' (\(typeCount))")
+      log.error("Invalid TZif file: 'isstdcnt' is \(isStdCount) (must be 0 or equal to 'typecnt' (\(typeCount))")
       throw TzIf.Error.stdOrUniversalCountMismatch
     }
 
@@ -801,16 +800,14 @@ extension TzIf {
     using elementSizes: ElementSizes,
   ) throws -> Rules {
 
-    let logger = TzIf.logger
-
     let dataCount = data.remaining.count
     let requiredDataCount = versionDataSize(for: header, using: elementSizes)
     guard dataCount >= requiredDataCount else {
-      logger.error(
+      log.error(
         """
         Invalid TZif file: file too short \
-        (received \(dataCount, format: .byteCount), \
-        data setion requires at least \(requiredDataCount, format: .byteCount))
+        (received \(dataCount, format: .byteCount(.file)), \
+        data setion requires at least \(requiredDataCount, format: .byteCount(.file))
         """
       )
       throw TzIf.Error.invalidLength
@@ -873,7 +870,7 @@ extension TzIf {
     for designationIndex in types.map(\.designationIndex).uniqued() {
       // Validate the designation index is within bounds
       guard designationIndex >= 0 && designationIndex < desigBuf.count else {
-        logger.error(
+        log.error(
           "Invalid TZif file: designation index '\(designationIndex)' out of bounds (max \(desigBuf.count - 1))"
         )
         throw TzIf.Error.invalidDesignation
@@ -882,13 +879,13 @@ extension TzIf {
       // and the end of the designation data.
       let strStartIndex = desigBuf.index(desigBuf.startIndex, offsetBy: designationIndex)
       guard let strEndIndex = desigBuf[strStartIndex...].firstIndex(where: { $0 == 0 }) else {
-        logger.error("Invalid TZif file: designation at index '\(designationIndex)' not null terminated")
+        log.error("Invalid TZif file: designation at index '\(designationIndex)' not null terminated")
         throw TzIf.Error.invalidDesignation
       }
       // Build a UTF-8 string from the designation data (we skip the null terminator).
       let stringData = desigBuf[strStartIndex..<strEndIndex]
       guard let string = String(bytes: stringData, encoding: .utf8) else {
-        logger.error("Invalid TZif file: designation at index '\(designationIndex)' hss invalid UTF-8 data")
+        log.error("Invalid TZif file: designation at index '\(designationIndex)' hss invalid UTF-8 data")
         throw TzIf.Error.invalidDesignation
       }
       designations[designationIndex] = string
@@ -957,13 +954,13 @@ extension TzIf {
 
     // Vaidate the would be footer is wrapped in newlines
     guard data.count > 1, data.first == 0xA && data.last == 0xA else {
-      TzIf.logger.error("Invalid TZif file: footer not wrapped in newlines")
+      log.error("Invalid TZif file: footer not wrapped in newlines")
       throw TzIf.Error.invalidFooter
     }
 
     let stringData = data.dropFirst().dropLast()
     guard let string = String(bytes: stringData, encoding: .utf8) else {
-      TzIf.logger.error("Invalid TZif file: footer not UTF-8 encoded")
+      log.error("Invalid TZif file: footer not UTF-8 encoded")
       throw TzIf.Error.invalidFooter
     }
 
@@ -1039,7 +1036,6 @@ extension TzIf.V4 {
     header: TzIf.Header,
   ) throws -> TzIf.Rules {
 
-    let logger = TzIf.logger
     let calendar: GregorianCalendarSystem = .default
 
     // Parse using v2 format first
@@ -1063,7 +1059,7 @@ extension TzIf.V4 {
 
       guard dateTime[.dayOfMonth] == lastDayOfMonth else {
         let day = dateTime[.dayOfMonth] ?? 0
-        logger.error("Invalid TZif file: leap second not at end of month (day \(day)")
+        log.error("Invalid TZif file: leap second not at end of month (day \(day)")
         throw TzIf.Error.invalidLeapSecond
       }
 
@@ -1071,7 +1067,7 @@ extension TzIf.V4 {
         let hour = dateTime[.hourOfDay] ?? 0
         let minute = dateTime[.minuteOfHour] ?? 0
         let second = dateTime[.secondOfMinute] ?? 0
-        logger.error("Invalid TZif file: leap second not at 23:59:59 (got \(hour):\(minute):\(second))")
+        log.error("Invalid TZif file: leap second not at 23:59:59 (got \(hour):\(minute):\(second))")
         throw TzIf.Error.invalidLeapSecond
       }
     }
@@ -1085,7 +1081,6 @@ extension TzIf.V4 {
 extension TzIf.PosixTZ {
 
   public init(string: String, allowExtended: Bool) throws {
-    let logger = TzIf.logger
 
     // - Split into std/dst & rule sections
 
@@ -1127,7 +1122,7 @@ extension TzIf.PosixTZ {
     } else if ruleTokens.isEmpty {
       dstRules = nil
     } else {
-      logger.error("Invalid TZif file: transition rule specification must consist of exactly two rules")
+      log.error("Invalid TZif file: transition rule specification must consist of exactly two rules")
       throw TzIf.Error.invalidPosixTZ
     }
 
@@ -1135,13 +1130,13 @@ extension TzIf.PosixTZ {
     let dst: (designation: String, offset: Int, rules: DSTRules)?
     if let dstBase {
       guard let dstRules else {
-        logger.error("Invalid TZif file: POSIX TZ DST specification requires transition rules")
+        log.error("Invalid TZif file: POSIX TZ DST specification requires transition rules")
         throw TzIf.Error.invalidPosixTZ
       }
       dst = (dstBase.0, dstBase.1, (start: dstRules.0, end: dstRules.1))
     } else {
       guard dstRules == nil else {
-        logger.error("Invalid TZif file: POSIX TZ DST specification requires a name & offset")
+        log.error("Invalid TZif file: POSIX TZ DST specification requires a name & offset")
         throw TzIf.Error.invalidPosixTZ
       }
       dst = nil
@@ -1159,7 +1154,6 @@ extension TzIf.PosixTZ {
   /// Returns `nil` if empty and throws an error for any malformation.
   ///
   private static func parseOffset(_ s: Substring, allowExtended: Bool) throws -> Int? {
-    let logger = TzIf.logger
 
     guard !s.isEmpty else {
       return nil
@@ -1171,17 +1165,17 @@ extension TzIf.PosixTZ {
 
     let parts = body.split(separator: ":", omittingEmptySubsequences: false)
     guard parts.count <= 3, let h = Int(parts[0]) else {
-      logger.error("Invalid TZif file: POSIX TZ offset is malformed")
+      log.error("Invalid TZif file: POSIX TZ offset is malformed")
       throw TzIf.Error.invalidPosixTZ
     }
     if allowExtended {
       guard h <= 167 else {
-        logger.error("Invalid TZif file: POSIX TZ extended offset hours must not exceed ±167")
+        log.error("Invalid TZif file: POSIX TZ extended offset hours must not exceed ±167")
         throw TzIf.Error.invalidPosixTZ
       }
     } else {
       guard h <= 24 else {
-        logger.error("Invalid TZif file: POSIX TZ offset hours must not exceed ±24 unless extended form is allowed")
+        log.error("Invalid TZif file: POSIX TZ offset hours must not exceed ±24 unless extended form is allowed")
         throw TzIf.Error.invalidPosixTZ
       }
     }
@@ -1189,7 +1183,7 @@ extension TzIf.PosixTZ {
     let m = parts.count > 1 ? Int(parts[1]) ?? 0 : 0
     let sec = parts.count > 2 ? Int(parts[2]) ?? 0 : 0
     guard m < 60, sec < 60 else {
-      logger.error("Invalid TZif file: POSIX TZ offset minutes and seconds must be less than 60")
+      log.error("Invalid TZif file: POSIX TZ offset minutes and seconds must be less than 60")
       throw TzIf.Error.invalidPosixTZ
     }
     return sign * (h * 3600 + m * 60 + sec)
@@ -1223,7 +1217,6 @@ extension TzIf.PosixTZ {
     _ rule: Substring,
     allowExtended: Bool,
   ) throws -> (month: Int, week: Int, day: Int, time: Int) {
-    let logger = TzIf.logger
 
     // - Split into date and time portions
 
@@ -1237,12 +1230,12 @@ extension TzIf.PosixTZ {
     if !timeToken.isEmpty {
       // Allow extended format when offset is for a rule
       guard let secs = try? Self.parseOffset(timeToken[...], allowExtended: true) else {
-        logger.error("Invalid TZif file: POSIX TZ transition rule '/time' is malformed")
+        log.error("Invalid TZif file: POSIX TZ transition rule '/time' is malformed")
         throw TzIf.Error.invalidPosixTZ
       }
       // Check range (extended outside all possible by wide marging but check for sanity)
       guard (-216_000...216_000).contains(secs) else {
-        logger.error("Invalid TZif file: POSIX TZ '/time' value \(secs) out of range ±60h")
+        log.error("Invalid TZif file: POSIX TZ '/time' value \(secs) out of range ±60h")
         throw TzIf.Error.invalidPosixTZ
       }
       timeSeconds = secs
@@ -1262,7 +1255,7 @@ extension TzIf.PosixTZ {
         let week = Int(parts[1]), (1...5).contains(week),
         let weekday = Int(parts[2]), (0...6).contains(weekday)
       else {
-        logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid Month-week-day format")
+        log.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid Month-week-day format")
         throw TzIf.Error.invalidPosixTZ
       }
       return (month, week, weekday, timeSeconds)
@@ -1274,7 +1267,7 @@ extension TzIf.PosixTZ {
         let n = Int(dateToken.dropFirst()),
         1...365 ~= n
       else {
-        logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid Julian format")
+        log.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid Julian format")
         throw TzIf.Error.invalidPosixTZ
       }
       // month 0 denotes ordinal form
@@ -1284,13 +1277,13 @@ extension TzIf.PosixTZ {
     // Day-of-year n[/time]
     if let n = Int(dateToken) {
       guard 0...365 ~= n else {
-        logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid day-of-year format")
+        log.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has invalid day-of-year format")
         throw TzIf.Error.invalidPosixTZ
       }
       return (0, 0, n, timeSeconds)
     }
 
-    logger.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has unknown format")
+    log.error("Invalid TZif file: POSIX TZ transition rule '\(rule)' has unknown format")
     throw TzIf.Error.invalidPosixTZ
   }
 
@@ -1317,7 +1310,7 @@ extension TzIf.Limits {
         range.lowerBound == 0
         ? "must be less than the allowed maximum of \(range.upperBound)"
         : "is outside the allowed range of \(range.lowerBound)...\(range.upperBound)"
-      TzIf.logger.error(
+      log.error(
         """
         TzIf Parse limit exceeded: \(specFieldName, privacy: .public) value \
         '\(value, privacy: .public)' \(range, privacy: .public).
