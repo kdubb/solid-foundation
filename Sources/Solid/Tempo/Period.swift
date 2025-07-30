@@ -70,7 +70,7 @@ extension Period {
 
   public func adding<each C>(
     _ components: repeat (each C, (each C).Value)
-  ) -> Period where repeat each C: IntegerPeriodComponent {
+  ) -> Period where repeat each C: IntegerPeriodComponentKind {
     var result = self
     for (component, value) in repeat each components {
       switch component {

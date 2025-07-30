@@ -135,7 +135,7 @@ public struct OffsetDateTime: DateTime {
   /// or the zone part modified.
   ///
   /// - Note: Modifying the `offset` part using this function will anchor to the same local-time. If
-  ///    you want to preserve the same instant, use the ``with(offset:anchor:in:)`` method instead,
+  ///    you want to preserve the same instant, use the ``at(offset:anchor:in:)`` method instead,
   ///    passing ``AdjustmentAnchor/sameInstant`` as the anchor.
   ///
   /// - Parameters:
@@ -187,7 +187,7 @@ public struct OffsetDateTime: DateTime {
   ///   - calendarSystem: The calendar system to use. Defaults to `.default`.
   /// - Returns: A new instance of ``ZonedDateTime`` in the specified time zone.
   ///
-  public func with(
+  public func at(
     offset: ZoneOffset,
     anchor: AdjustmentAnchor = .sameInstant,
     in calendarSystem: GregorianCalendarSystem = .default

@@ -1,38 +1,67 @@
 //
-//  ComponentArray.swift
+//  ComponentSet.swift
 //  SolidFoundation
 //
 //  Created by Kevin Wooten on 4/30/25.
 //
 
-public struct ComponentArray: Equatable, Hashable, Sendable {
+import SolidCore
+import Collections
 
-  fileprivate var values: [ComponentValue]
+public struct ComponentSet {
 
-  public init(_ values: some Sequence<ComponentValue>) {
-    self.values = Array(values)
+  public typealias Elements = [AnyComponentKind: any Equatable & Sendable]
+
+  fileprivate var elements: Elements
+
+  public init(_ components: some Sequence<Component>) {
+    let uniqe = components.map { (AnyComponentKind($0.kind), $0.value) }
+    self.elements = Dictionary(uniqe, uniquingKeysWith: { $1 })
   }
 
 }
 
-extension ComponentArray: CustomStringConvertible {
+extension ComponentSet: Equatable {
+
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    guard lhs.count == rhs.count else {
+      return false
+    }
+    for (lIdx, rIdx) in zip(lhs.indices, rhs.indices) where lhs[lIdx] != rhs[rIdx] {
+      return false
+    }
+    return true
+  }
+
+}
+
+extension ComponentSet: Hashable {
+
+  public func hash(into hasher: inout Hasher) {
+    for idx in indices {
+      hasher.combine(self[idx])
+    }
+  }
+
+}
+
+extension ComponentSet: CustomStringConvertible {
 
   public var description: String {
-    var entries: [String] = []
-    for value in values.sorted(by: { $0.component.id < $1.component.id }) {
-      entries.append("- (\(value.component.name)) \(value.value)")
-    }
-    return entries.joined(separator: "\n")
+    elements
+      .sorted { $0.key.id < $1.key.id }
+      .map { key, value in "- (\(key.id)) \(value)" }
+      .joined(separator: "\n")
   }
 
 }
 
-extension ComponentArray: CustomReflectable {
+extension ComponentSet: CustomReflectable {
 
   public var customMirror: Mirror {
     Mirror(
       self,
-      children: values.map { ($0.component.name, $0.value) },
+      children: elements.map { ($0.key.name, $0.value) },
       displayStyle: .struct,
       ancestorRepresentation: .suppressed
     )
@@ -40,94 +69,95 @@ extension ComponentArray: CustomReflectable {
 
 }
 
-extension ComponentArray: MutableComponentContainer {
+extension ComponentSet: MutableComponentContainer {
 
-  public var availableComponents: Set<AnyComponent> {
-    Set(values.map { $0.component }.anys)
+  public var availableComponentKinds: Set<AnyComponentKind> {
+    Set(elements.map { AnyComponentKind($0.key) })
   }
 
-  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
-    guard let value = values.first(where: { $0.component.id == component.id }) else {
+  public func valueIfPresent<K>(for kind: K) -> K.Value? where K: ComponentKind {
+    guard let value = elements.first(where: { $0.key.id == kind.id }) else {
       return nil
     }
-    return value.value as? C.Value
+    return value.value as? K.Value
   }
 
-  public mutating func setValue<C>(_ value: C.Value, for component: C) where C: Component {
-    values.removeAll { $0.component.id == component.id }
-    values.append(ComponentValue(component: component, value: value))
+  public mutating func setValue<K>(_ value: K.Value, for kind: K) where K: ComponentKind {
+    elements.updateValue(knownSafeCast(value, to: Elements.Value.self), forKey: kind.any)
   }
 
-  public mutating func removeValue<C>(for component: C) -> C.Value? where C: Component {
-    let value = valueIfPresent(for: component)
-    values.removeAll { $0.component.id == component.id }
-    return value
+  public mutating func removeValue<K>(for kind: K) -> K.Value? where K: ComponentKind {
+    guard let removed = elements.removeValue(forKey: kind.any) else {
+      return nil
+    }
+    return knownSafeCast(removed, to: K.Value.self)
   }
 
-  public subscript<C>(_ component: C) -> C.Value? where C: Component {
-    get { valueIfPresent(for: component) }
+  public subscript<K>(_ kind: K) -> K.Value? where K: ComponentKind {
+    get { valueIfPresent(for: kind) }
     set {
       if let newValue = newValue {
-        setValue(newValue, for: component)
+        setValue(newValue, for: kind)
       } else {
-        _ = removeValue(for: component)
+        _ = removeValue(for: kind)
       }
     }
   }
 
 }
 
-extension ComponentArray: ComponentBuildable {
+extension ComponentSet: ComponentBuildable {
 
-  public static var requiredComponents: Set<AnyComponent> { [] }
+  public static var requiredComponentKinds: Set<AnyComponentKind> { [] }
 
   public init(components: some ComponentContainer) {
-    let values = components.values(for: Self.requiredComponents.map(\.component))
-    self.init(values)
+    let componentValues = components.values(for: Self.requiredComponentKinds.map(\.wrapped))
+    self.init(componentValues)
   }
 
 }
 
-extension ComponentArray: RandomAccessCollection, RangeReplaceableCollection {
+extension ComponentSet: Collection {
 
-  public var startIndex: Int { values.startIndex }
-  public var endIndex: Int { values.endIndex }
+  public typealias Element = Component
 
   public init() {
-    self.values = []
+    self.elements = [:]
   }
 
-  public subscript(index: Int) -> ComponentValue {
-    get { values[index] }
-    set { values[index] = newValue }
-  }
+  public var startIndex: Elements.Index { elements.startIndex }
+  public var endIndex: Elements.Index { elements.endIndex }
+  public func index(after i: Elements.Index) -> Elements.Index { elements.index(after: i) }
 
-  public mutating func replaceSubrange<C>(
-    _ subrange: Range<Int>,
-    with newElements: C
-  ) where C: Collection, C.Element == ComponentValue {
-    values.replaceSubrange(subrange, with: newElements)
+  public subscript(index: Elements.Index) -> Component {
+    get {
+      let entry = elements[index]
+      return Component(kind: entry.key, value: knownSafeCast(entry.value, to: type(of: entry.key).Value.self))
+    }
+    mutating set {
+      elements.updateValue(newValue.value, forKey: newValue.kind.any)
+    }
   }
 
 }
 
-extension ComponentArray: ExpressibleByArrayLiteral {
+extension ComponentSet: ExpressibleByArrayLiteral {
 
-  public init(arrayLiteral elements: ComponentValue...) {
+  public init(arrayLiteral elements: Component...) {
     self.init(elements)
   }
 
 }
 
-extension Array: ComponentContainer where Element == ComponentValue {
+extension Array: ComponentContainer where Element == Component {
 
-  public var availableComponents: Set<AnyComponent> { Set(map { $0.component }.anys) }
+  public var availableComponentKinds: Set<AnyComponentKind> { Set(map { AnyComponentKind($0.kind) }) }
 
-  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
-    guard let value = first(where: { $0.component.id == component.id }) else {
+  public func valueIfPresent<K>(for kind: K) -> K.Value? where K: ComponentKind {
+    guard let component = first(where: { $0.kind.id == kind.id }) else {
       return nil
     }
-    return value.value as? C.Value
+    return component.value as? K.Value
   }
 
 }

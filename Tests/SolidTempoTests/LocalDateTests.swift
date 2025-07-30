@@ -108,7 +108,7 @@ struct LocalDateTests {
     #expect(
       invMonth1
         == TempoError.invalidComponentValue(
-          component: "monthOfYear",
+          component: .monthOfYear,
           reason: .outOfRange(value: "13", range: "1 - 12")
         )
     )
@@ -116,7 +116,7 @@ struct LocalDateTests {
     #expect(
       invMonth2
         == TempoError.invalidComponentValue(
-          component: "monthOfYear",
+          component: .monthOfYear,
           reason: .outOfRange(value: "0", range: "1 - 12")
         )
     )
@@ -126,7 +126,7 @@ struct LocalDateTests {
     #expect(
       invDay1
         == TempoError.invalidComponentValue(
-          component: "dayOfMonth",
+          component: .dayOfMonth,
           reason: .outOfRange(value: "31", range: "Invalid day for month '4' of year '2024' (1...30)")
         )
     )
@@ -134,7 +134,7 @@ struct LocalDateTests {
     #expect(
       invDay2
         == TempoError.invalidComponentValue(
-          component: "dayOfMonth",
+          component: .dayOfMonth,
           reason: .outOfRange(value: "30", range: "Invalid day for month '2' of year '2024' (1...29)")
         )
     )
@@ -142,7 +142,7 @@ struct LocalDateTests {
     #expect(
       invDay3
         == TempoError.invalidComponentValue(
-          component: "dayOfMonth",
+          component: .dayOfMonth,
           reason: .outOfRange(value: "29", range: "Invalid day for month '2' of year '2023' (1...28)")
         )
     )
@@ -152,7 +152,7 @@ struct LocalDateTests {
     #expect(
       invOrdDay1
         == TempoError.invalidComponentValue(
-          component: "ordinalDay",
+          component: .dayOfYear,
           reason: .outOfRange(value: "367", range: "Invalid ordinal day for year '2024' (1...366)")
         )
     )
@@ -160,7 +160,7 @@ struct LocalDateTests {
     #expect(
       invOrdDay2
         == TempoError.invalidComponentValue(
-          component: "ordinalDay",
+          component: .dayOfYear,
           reason: .outOfRange(value: "366", range: "Invalid ordinal day for year '2023' (1...365)")
         )
     )
@@ -168,7 +168,7 @@ struct LocalDateTests {
     #expect(
       invOrdDay3
         == TempoError.invalidComponentValue(
-          component: "ordinalDay",
+          component: .dayOfYear,
           reason: .outOfRange(value: "0", range: "Invalid ordinal day for year '2024' (1...366)")
         )
     )

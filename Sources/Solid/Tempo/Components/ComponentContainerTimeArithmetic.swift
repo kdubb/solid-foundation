@@ -23,16 +23,22 @@ extension ComponentContainerTimeArithmetic {
   public mutating func add(time components: some ComponentContainer) throws {
     let (result, overflow) = try addingReportingOverflow(time: components)
     if overflow != .zero {
-      let all: [any Component] = [
+      let allOverflows: [any ComponentKind] = [
         .hourOfDay,
         .minuteOfHour,
         .secondOfMinute,
         .nanosecondOfSecond,
       ]
-      let avail = components.availableComponents
-      let overflowed = all.anys.reversed().drop(while: avail.contains).first?.component ?? .dayOfMonth
+      let availOverflows = components.availableComponentKinds
+      let overflowed =
+        allOverflows
+        .map { AnyComponentKind($0) }
+        .reversed()
+        .drop(while: availOverflows.contains)
+        .first?
+        .wrapped ?? .dayOfMonth
       throw TempoError.invalidComponentValue(
-        component: overflowed.name,
+        component: overflowed.id,
         reason: .unsupportedInContainer("\(self)")
       )
     }

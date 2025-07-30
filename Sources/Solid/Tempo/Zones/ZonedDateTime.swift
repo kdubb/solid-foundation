@@ -122,7 +122,7 @@ public struct ZonedDateTime: DateTime {
   /// modified.
   ///
   /// - Note: Modifying the `zone` part using this function will anchor to the same local-time. If
-  ///    you want to preserve the same instant, use the ``with(zone:anchor:resolving:in:)``
+  ///    you want to preserve the same instant, use the ``at(zone:anchor:resolving:in:)``
   ///    method instead, passing ``AdjustmentAnchor/sameInstant`` as the anchor.
   ///
   /// - Parameters:
@@ -154,7 +154,7 @@ public struct ZonedDateTime: DateTime {
   /// or the zone part modified.
   ///
   /// - Note: Modifying the `zone` part using this function will anchor to the same local-time. If
-  ///    you want to preserve the same instant, use the ``with(zone:anchor:resolving:in:)``
+  ///    you want to preserve the same instant, use the ``at(zone:anchor:resolving:in:)``
   ///    method instead, passing ``AdjustmentAnchor/sameInstant`` as the anchor.
   ///
   /// - Parameters:
@@ -214,7 +214,7 @@ public struct ZonedDateTime: DateTime {
   /// - Returns: A new instance of ``ZonedDateTime`` in the specified time zone.
   /// - Throws: A ``TempoError`` if the conversion fails due to an unresolvable local-time.
   ///
-  public func with(
+  public func at(
     zone: Zone,
     anchor: AdjustmentAnchor = .sameInstant,
     resolving: ResolutionStrategy.Options = [],

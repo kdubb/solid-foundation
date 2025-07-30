@@ -41,7 +41,7 @@ public struct ZoneOffset {
   public init(totalSeconds: Int) throws {
     guard totalSeconds.magnitude <= 24 * 3600 else {
       throw TempoError.invalidComponentValue(
-        component: "totalSeconds",
+        component: .totalSeconds,
         reason: .extended(reason: "Total offset must be less than ±24 hours.")
       )
     }

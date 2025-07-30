@@ -243,17 +243,17 @@ extension Duration {
     }
   }
 
-  public init(_ componentValue: ComponentValue) {
-    guard let durationComponent = componentValue.component as? any DurationComponent else {
-      preconditionFailure("Invalid component value for initializing Duration: \(componentValue)")
+  public init(_ component: Component) {
+    guard let durationComponent = component.kind as? any DurationComponentKind else {
+      preconditionFailure("Invalid component for initializing Duration: \(component)")
     }
 
-    func unwrapInit<C>(_ component: C, value: some Sendable) -> Self where C: DurationComponent {
-      let typedValue = knownSafeCast(value, to: C.Value.self)
-      return Self(typedValue, unit: component.unit)
+    func unwrapInit<K>(_ kind: K, value: some Sendable) -> Self where K: DurationComponentKind {
+      let typedValue = knownSafeCast(value, to: K.Value.self)
+      return Self(typedValue, unit: kind.unit)
     }
 
-    self = unwrapInit(durationComponent, value: componentValue.value)
+    self = unwrapInit(durationComponent, value: component.value)
   }
 
   public init(_ zoneOffset: ZoneOffset) {
@@ -266,15 +266,15 @@ extension Duration {
 
 extension Duration {
 
-  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
-    guard let durationComponent = component as? any DurationComponent else {
+  public func valueIfPresent<K>(for kind: K) -> K.Value? where K: ComponentKind {
+    guard let durationKind = kind as? any DurationComponentKind else {
       return nil
     }
-    return durationComponent.extract(from: self, rolledOver: nil) as? C.Value
+    return durationKind.extract(from: self, forceRollOver: nil) as? K.Value
   }
 
-  public subscript<C>(_ component: C, rolledOver rolledOver: Bool? = nil) -> C.Value where C: DurationComponent {
-    component.extract(from: self, rolledOver: rolledOver)
+  public subscript<K>(_ kind: K, forceRollOver: Bool? = nil) -> K.Value where K: DurationComponentKind {
+    kind.extract(from: self, forceRollOver: forceRollOver)
   }
 
 }

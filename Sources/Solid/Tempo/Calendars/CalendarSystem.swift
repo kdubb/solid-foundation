@@ -52,7 +52,7 @@ public protocol CalendarSystem {
     _ component: C,
     from components: S,
     resolution: ResolutionStrategy
-  ) throws -> C.Value where C: DateTimeComponent, S: ComponentContainer
+  ) throws -> C.Value where C: DateTimeComponentKind, S: ComponentContainer
 
   /// Computes the corresponding `Instant` for the specified components.
   ///
@@ -83,7 +83,7 @@ public protocol CalendarSystem {
   func range<C>(
     of component: C,
     at instant: Instant
-  ) -> Range<C.Value> where C: IntegerDateTimeComponent, C.Value: SignedInteger
+  ) -> Range<C.Value> where C: IntegerDateTimeComponentKind, C.Value: SignedInteger
 
   func adding<C>(
     components addition: some ComponentContainer,

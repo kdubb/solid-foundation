@@ -81,15 +81,15 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   /// - Parameters:
   ///   - instant: The instant to convert.
   ///   - zone: The time zone of instant.
-  ///   - type: The type of container to convert to.
+  ///   - build: The type of container to return.
   /// - Returns: A set of components representing the instant in the specified time zone.
   /// - Throws: A ``TempoError`` if the conversion fails.
   ///
-  public func components<C>(
+  public func components<B>(
     from instant: Instant,
     in zone: Zone,
-    as type: C.Type = C.self
-  ) throws -> C where C: ComponentBuildable {
+    as build: B.Type = B.self
+  ) throws -> B where B: ComponentBuildable {
 
     let offset = zone.offset(at: instant)
     let shifted = instant.durationSinceEpoch + Duration(offset)
@@ -103,7 +103,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     let second = shifted.value(for: .secondsOfMinute)
     let nano = shifted.value(for: .nanosecondsOfSecond)
 
-    var bag = ComponentArray()
+    var bag = ComponentSet()
     bag.setValue(date.year, for: .year)
     bag.setValue(date.month, for: .monthOfYear)
     bag.setValue(date.day, for: .dayOfMonth)
@@ -115,15 +115,15 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     bag.setValue(zone.identifier, for: .zoneId)
 
     // Add missing required components
-    for componentId in C.requiredComponents.subtracting(bag.availableComponents) {
-      guard let component = componentId.component as? any DateTimeComponent else {
+    for componentKind in B.requiredComponentKinds.subtracting(bag.availableComponentKinds) {
+      guard let component = componentKind.wrapped as? any DateTimeComponentKind else {
         fatalError("Only date/time components can be required by builders.")
       }
       let value = try self.component(component, from: bag, resolution: .default)
       bag.setValue(value, for: component)
     }
 
-    return C(components: bag)
+    return B(components: bag)
   }
 
   /// Resolves the given components to a valid set of equivalent components.
@@ -134,15 +134,15 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   /// - Returns: A valid set of components.
   /// - Throws: A ``TempoError`` if the components cannot be resolved.
   ///
-  public func resolve<C, S>(
+  public func resolve<B, S>(
     components: S,
     resolution: ResolutionStrategy
-  ) throws -> C where S: ComponentContainer, C: ComponentBuildable {
+  ) throws -> B where S: ComponentContainer, B: ComponentBuildable {
 
     guard let zoneId = components.valueIfPresent(for: .zoneId) else {
       // Components either has a zone offset or neither
       // (defaulting to UTC)... so components are valid
-      return C(components: components)
+      return B(components: components)
     }
 
     let zone = Zone(availableComponents: [.zoneId(zoneId)])
@@ -152,7 +152,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     switch offsets {
 
     case .normal(let offset):
-      return C(components: dateTime.append([.zoneId(zoneId), .zoneOffset(offset.totalSeconds)]))
+      return B(components: dateTime.append([.zoneId(zoneId), .zoneOffset(offset.totalSeconds)]))
 
     case .ambiguous(let offsets):
       let offset: ZoneOffset
@@ -164,7 +164,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       case .reject:
         throw TempoError.ambiguousTimeResolutionFailed(reason: .rejectedByStrategy)
       }
-      return C(components: dateTime.append(.zoneId(zoneId), .zoneOffset(offset.totalSeconds)))
+      return B(components: dateTime.append(.zoneId(zoneId), .zoneOffset(offset.totalSeconds)))
 
     case .skipped(let transition):
       let duration = transition.duration
@@ -186,52 +186,52 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
           throw TempoError.skippedTimeResolutionFailed(reason: .rejectedByStrategy)
         }
       let dateTime: LocalDateTime = self.localDateTime(instant: instant, at: off)
-      return C(components: dateTime.append(.zoneId(zoneId), .zoneOffset(off.totalSeconds)))
+      return B(components: dateTime.append(.zoneId(zoneId), .zoneOffset(off.totalSeconds)))
     }
   }
 
-  /// Looks up or computes the a requested component from a set of components.
+  /// Resolves a requested component kind, by looking it up or computing it, from a set of components.
   ///
   /// - Parameters:
-  ///   - component: The component to resolve.
+  ///   - kind: The kind of component to resolve.
   ///   - components: The set of components to resolve from.
   ///   - resolution: The resolution strategy to use.
   /// - Returns: The resolved component value.
   /// - Throws: A ``TempoError`` if the component cannot be resolved.
   ///
-  public func component<C, S>(
-    _ component: C,
+  public func component<K, S>(
+    _ kind: K,
     from components: S,
     resolution: ResolutionStrategy
-  ) throws -> C.Value where C: DateTimeComponent, S: ComponentContainer {
+  ) throws -> K.Value where K: DateTimeComponentKind, S: ComponentContainer {
 
-    if let value = components.valueIfPresent(for: component) {
+    if let value = components.valueIfPresent(for: kind) {
       return value
     }
 
-    let resolved: ComponentArray = try resolve(components: components, resolution: resolution)
+    let resolved: ComponentSet = try resolve(components: components, resolution: resolution)
 
-    return compute(component, from: resolved)
+    return compute(kind, from: resolved)
   }
 
   /// Computes the value of the specified integer date/time component from the given components.
-  internal func compute<C, S>(
-    _ component: C,
+  internal func compute<K, S>(
+    _ kind: K,
     from components: S,
-  ) throws -> C.Value where C: IntegerDateTimeComponent, S: ComponentContainer {
-    switch component {
+  ) throws -> K.Value where K: IntegerDateTimeComponentKind, S: ComponentContainer {
+    switch kind.id {
 
     case .year, .hourOfDay, .minuteOfHour, .secondOfMinute, .nanosecondOfSecond:
-      return components.valueIfPresent(for: component) ?? 0
+      return components.valueIfPresent(for: kind) ?? 0
 
     case .monthOfYear, .dayOfMonth:
-      return components.valueIfPresent(for: component) ?? 1
+      return components.valueIfPresent(for: kind) ?? 1
 
     case .weekOfYear:
-      return C.Value(weekOfYear(for: components))
+      return K.Value(weekOfYear(for: components))
 
     case .weekOfMonth:
-      return C.Value(weekOfMonth(for: components))
+      return K.Value(weekOfMonth(for: components))
 
     case .dayOfYear:
       let year = components.valueIfPresent(for: .year) ?? 0
@@ -241,57 +241,57 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
       for m in 1..<month {
         total += daysInMonth(year: year, month: m)
       }
-      return C.Value(total)
+      return K.Value(total)
 
     case .dayOfWeek:
-      return C.Value(dayOfWeek(for: components))
+      return K.Value(dayOfWeek(for: components))
 
     case .dayOfWeekForMonth:
       let day = components.valueIfPresent(for: .dayOfMonth) ?? 1
-      return C.Value((day - 1) / 7 + 1)
+      return K.Value((day - 1) / 7 + 1)
 
     case .yearForWeekOfYear:
-      return C.Value(yearForWeekOfYear(for: components))
+      return K.Value(yearForWeekOfYear(for: components))
 
     case .zoneOffset:
       if let offset = components.valueIfPresent(for: .zoneOffset) {
-        return C.Value(offset)
+        return K.Value(offset)
       } else if let zoneId = components.valueIfPresent(for: .zoneId) {
         let zone = Zone(availableComponents: [.zoneId(zoneId)])
         let instant = try self.instant(from: components, resolution: .default)
-        return C.Value(zone.offset(at: instant).totalSeconds)
+        return K.Value(zone.offset(at: instant).totalSeconds)
       } else {
-        return C.Value(0)
+        return K.Value(0)
       }
 
     default:
-      fatalError("Unsupported component: \(component)")
+      fatalError("Unsupported component kind: \(kind)")
     }
   }
 
   /// Computes the value of the specified boolean date/time component from the given components.
-  internal func compute<C, S>(
-    _ component: C,
+  internal func compute<K, S>(
+    _ kind: K,
     from components: S,
-  ) -> C.Value where C: DateTimeComponent, C.Value == Bool, S: ComponentContainer {
-    switch component {
+  ) -> K.Value where K: DateTimeComponentKind, K.Value == Bool, S: ComponentContainer {
+    switch kind.id {
     case .isLeapMonth:
       return false
     default:
-      fatalError("Unsupported component: \(component)")
+      fatalError("Unsupported component kind: \(kind)")
     }
   }
 
   /// Computes the value of the specified string date/time component from the given components.
-  internal func compute<C, S>(
-    _ component: C,
+  internal func compute<K, S>(
+    _ kind: K,
     from components: S,
-  ) -> C.Value where C: DateTimeComponent, C.Value == String, S: ComponentContainer {
-    switch component {
+  ) -> K.Value where K: DateTimeComponentKind, K.Value == String, S: ComponentContainer {
+    switch kind.id {
     case .zoneId:
-      return components.valueIfPresent(for: component) ?? "UTC"
+      return components.valueIfPresent(for: kind) ?? "UTC"
     default:
-      fatalError("Unsupported component: \(component)")
+      fatalError("Unsupported component kind: \(kind)")
     }
   }
 
@@ -301,11 +301,11 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   /// should it ever get called indirectly since all date/time components should have
   /// specialized implementations.
   ///
-  internal func compute<C, S>(
-    _ component: C,
+  internal func compute<K, S>(
+    _ component: K,
     from components: S,
-  ) -> C.Value where C: DateTimeComponent, S: ComponentContainer {
-    fatalError("Unsupported component: \(component)")
+  ) -> K.Value where K: DateTimeComponentKind, S: ComponentContainer {
+    fatalError("Unsupported component kind: \(component)")
   }
 
   /// Computes the corresponding `Instant` for the specified components.
@@ -321,10 +321,10 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     resolution: ResolutionStrategy
   ) throws -> Instant {
 
-    let avail = components.availableComponents
+    let avail = components.availableComponentKinds.map(\.id)
     let dateTime = LocalDateTime(availableComponents: components)
 
-    if avail.contains(AnyComponent(.zoneId)) {
+    if avail.contains(.zoneId) {
 
       // Resolve the date/time in the specified zone
 
@@ -336,13 +336,13 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
         return Instant(durationSinceEpoch: dateTime.durationSinceEpoch(at: fixedOffset))
       }
       // If the components have a specific zone offset, validate & apply it
-      else if avail.contains(AnyComponent(.zoneOffset)) {
+      else if avail.contains(.zoneOffset) {
 
         let zoneOffset = ZoneOffset(availableComponents: components)
 
         guard zone.rules.isValidOffset(zoneOffset, for: dateTime) else {
           throw TempoError.invalidComponentValue(
-            component: "zoneOffset",
+            component: .zoneOffset,
             reason: .invalidZoneOffset(offset: "\(zoneOffset)")
           )
         }
@@ -380,31 +380,31 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
   /// Determines the valid range of values for the specified component at a given instant.
   ///
   /// - Parameters:
-  ///   - component: The component to determine the range for.
+  ///   - kind: The component to determine the range for.
   ///   - instant: The instant to determine the valid range at.
   /// - Returns: A range of valid values for the specified component at the given instant.
   ///
-  public func range<C>(
-    of component: C,
+  public func range<K>(
+    of kind: K,
     at instant: Instant
-  ) -> Range<C.Value> where C: IntegerDateTimeComponent {
+  ) -> Range<K.Value> where K: IntegerDateTimeComponentKind {
 
-    switch component {
+    switch kind.id {
 
     case .dayOfMonth:
       let date = localDate(instant: instant, at: .zero)
-      return C.Value(1)..<C.Value(daysInMonth(year: date.year, month: date.month) + 1)
+      return K.Value(1)..<K.Value(daysInMonth(year: date.year, month: date.month) + 1)
 
     case .dayOfYear:
       let date = localDate(instant: instant, at: .zero)
-      return C.Value(1)..<C.Value(daysInYear(date.year) + 1)
+      return K.Value(1)..<K.Value(daysInYear(date.year) + 1)
 
     case .weekOfYear:
       let date = localDate(instant: instant, at: .zero)
       let weekCount = weekOfYear(for: LocalDateTime(date: date, time: .midnight))
       // If the week for Jan-1 is 52, the year has 52 weeks, else 53
       let max = weekCount == 52 && date.month == 12 ? 52 : 53
-      return C.Value(1)..<C.Value(max + 1)
+      return K.Value(1)..<K.Value(max + 1)
 
     case .weekOfMonth:
       let date = localDate(instant: instant, at: .zero)
@@ -421,10 +421,10 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
             year: date.year,
             month: date.month
           ) + 6) / 7
-      return C.Value(1)..<C.Value(weeksInMonth + 1)
+      return K.Value(1)..<K.Value(weeksInMonth + 1)
 
     default:
-      return component.range.lowerBound..<(component.range.upperBound + 1)
+      return kind.range.lowerBound..<(kind.range.upperBound + 1)
     }
   }
 
@@ -621,7 +621,7 @@ public struct GregorianCalendarSystem: CalendarSystem, Sendable {
     let maxOrd = cumDays[12]
     guard ordinalDay >= 1 && ordinalDay <= maxOrd else {
       throw TempoError.invalidComponentValue(
-        component: "ordinalDay",
+        component: .dayOfYear,
         reason: .outOfRange(value: "\(ordinalDay)", range: "Invalid ordinal day for year '\(year)' (1...\(maxOrd))")
       )
     }

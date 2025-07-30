@@ -165,7 +165,7 @@ struct LocalDateTimeTests {
     #expect(
       invMonth
         == TempoError.invalidComponentValue(
-          component: "monthOfYear",
+          component: .monthOfYear,
           reason: .outOfRange(value: "13", range: "1 - 12")
         )
     )
@@ -185,7 +185,7 @@ struct LocalDateTimeTests {
     #expect(
       invHour
         == TempoError.invalidComponentValue(
-          component: "hourOfDay",
+          component: .hourOfDay,
           reason: .outOfRange(value: "24", range: "0 - 23")
         )
     )
@@ -205,7 +205,7 @@ struct LocalDateTimeTests {
     #expect(
       invMinute
         == TempoError.invalidComponentValue(
-          component: "minuteOfHour",
+          component: .minuteOfHour,
           reason: .outOfRange(value: "60", range: "0 - 59")
         )
     )

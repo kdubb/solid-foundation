@@ -7,14 +7,14 @@
 
 
 public protocol ComponentBuildable {
-  static var requiredComponents: Set<AnyComponent> { get }
+  static var requiredComponentKinds: Set<AnyComponentKind> { get }
   init(components: some ComponentContainer)
 }
 
 extension LinkedComponentContainer where Self: ComponentBuildable {
 
-  public static var requiredComponents: Set<AnyComponent> {
-    return Set(links.map { $0.component.any })
+  public static var requiredComponentKinds: Set<AnyComponentKind> {
+    return Set(links.map { AnyComponentKind($0.kind) })
   }
 
 }

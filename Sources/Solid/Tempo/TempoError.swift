@@ -37,9 +37,9 @@ public enum TempoError: Swift.Error, Equatable {
   case skippedTimeResolutionFailed(reason: SkippedLocalTimeResolutionFailureReason)
   case ambiguousTimeResolutionFailed(reason: AmbiguousLocalTimeResolutionFailureReason)
   case calendarInconsistency(details: String)
-  case missingComponent(component: String)
-  case invalidComponentValue(component: String, reason: ValidationFailureReason)
-  case componentResolutionFailed(component: String, reason: ComponentResolutionFailureReason)
+  case missingComponent(component: ComponentId)
+  case invalidComponentValue(component: ComponentId, reason: ValidationFailureReason)
+  case componentResolutionFailed(component: ComponentId, reason: ComponentResolutionFailureReason)
   case unhandledOverflow
   case invalidRegionalTimeZone(identifier: String)
   case invalidFixedOffsetTimeZone(offset: Int)
@@ -58,11 +58,11 @@ extension TempoError: LocalizedError {
     case .calendarInconsistency:
       return "Calendar inconsistency encountered"
     case .invalidComponentValue(let component, _):
-      return "Invalid \(component) value"
+      return "Invalid \(component.errorName) value"
     case .missingComponent(let component):
-      return "\(component) is missing"
+      return "\(component.errorName) is missing"
     case .componentResolutionFailed(let component, _):
-      return "Resolution of \(component) failed"
+      return "Resolution of \(component.errorName) failed"
     case .unhandledOverflow:
       return "Unhandled overflow"
     case .invalidRegionalTimeZone:
@@ -103,18 +103,18 @@ extension TempoError: LocalizedError {
       case .invalidZoneOffset(let offset):
         "The zone offset '\(offset)' is invalid for the date/time."
       case .unsupportedInContainer(let container):
-        "The component \(component) is not supported in the a \(container)."
+        "The component \(component.errorName) is not supported in the a \(container)."
       case .extended(reason: let reason):
         reason
       }
     case .missingComponent(let component):
-      "The converted date is missing the required \(component) component."
+      "The converted date is missing the required \(component.errorName) component."
     case .componentResolutionFailed(component: let component, reason: let reason):
       switch reason {
       case .invalidComponentType:
-        "The component '\(component)' is not a valid component type for calendar resolution."
+        "The component '\(component.errorName)' is not a valid component type for calendar resolution."
       case .unsupportedForOperation:
-        "The component '\(component)' is not supported for this operation."
+        "The component '\(component.errorName)' is not supported for this operation."
       }
     case .unhandledOverflow:
       "An overflow was encountered that was not handled by the operation."

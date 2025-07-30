@@ -88,7 +88,92 @@ public enum ComponentId: String {
 
   public var name: String { rawValue }
 
-  public var component: any Component {
+  public var errorName: String {
+
+    switch self {
+
+    // Date
+
+    case .era: "era"
+    case .year: "year"
+    case .yearOfEra: "year"
+    case .monthOfYear: "month"
+    case .weekOfYear: "weekOfYear"
+    case .weekOfMonth: "week"
+    case .dayOfYear: "dayOfYear"
+    case .dayOfMonth: "day"
+    case .dayOfWeek: "dayOfWeek"
+
+    case .dayOfWeekForMonth: "dayOfWeekForMonth"
+    case .yearForWeekOfYear: "yearForWeekOfYear"
+    case .isLeapMonth: "isLeapMonth"
+
+    // Time
+
+    case .hourOfDay: "hour"
+    case .minuteOfHour: "minute"
+    case .secondOfMinute: "second"
+    case .nanosecondOfSecond: "nanosecond"
+
+    case .zoneOffset: "zoneOffset"
+    case .hoursOfZoneOffset: "hours"
+    case .minutesOfZoneOffset: "minutes"
+    case .secondsOfZoneOffset: "seconds"
+
+    case .zoneId: "zoneId"
+
+    // Period/Duration
+
+    // Period
+
+    case .calendarYears: "years"
+    case .calendarMonths: "months"
+    case .calendarWeeks: "weeks"
+    case .calendarDays: "days"
+
+    // Duration
+
+    case .numberOfDays: "days"
+    case .numberOfHours: "hours"
+    case .numberOfMinutes: "minutes"
+    case .numberOfSeconds: "seconds"
+    case .numberOfMilliseconds: "milliseconds"
+    case .numberOfMicroseconds: "microseconds"
+    case .numberOfNanoseconds: "nanoseconds"
+
+    case .totalDays: "days"
+    case .totalHours: "hours"
+    case .totalMinutes: "minutes"
+    case .totalSeconds: "seconds"
+    case .totalMilliseconds: "milliseconds"
+    case .totalMicroseconds: "microseconds"
+    case .totalNanoseconds: "nanoseconds"
+
+    case .hoursOfDay: "hours"
+    case .minutesOfDay: "minutesOfDay"
+    case .secondsOfDay: "secondsOfDay"
+    case .millisecondsOfDay: "millisecondsOfDay"
+    case .microsecondsOfDay: "microsecondsOfDay"
+    case .nanosecondsOfDay: "nanosecondsOfDay"
+
+    case .minutesOfHour: "minutes"
+    case .secondsOfHour: "secondsOfHour"
+    case .millisecondsOfHour: "millisecondsOfHour"
+    case .microsecondsOfHour: "microsecondsOfHour"
+    case .nanosecondsOfHour: "nanosecondsOfHour"
+
+    case .secondsOfMinute: "seconds"
+    case .millisecondsOfMinute: "millisecondsOfMinute"
+    case .microsecondsOfMinute: "microsecondsOfMinute"
+    case .nanosecondsOfMinute: "nanosecondsOfMinute"
+
+    case .millisecondsOfSecond: "milliseconds"
+    case .microsecondsOfSecond: "microsecondsOfSecond"
+    case .nanosecondsOfSecond: "nanosecondsOfSecond"
+    }
+  }
+
+  public var kind: any ComponentKind {
     switch self {
 
     case .era: .era

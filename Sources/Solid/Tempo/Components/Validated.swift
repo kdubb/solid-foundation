@@ -10,10 +10,10 @@ import SolidCore
 @propertyWrapper
 public struct Validated<Value>: Sendable where Value: Sendable {
 
-  public var component: any Component<Value>
+  public var component: any ComponentKind<Value>
   public var wrappedValue: Value
 
-  public init(wrappedValue: Value, _ component: some Component<Value>) {
+  public init(wrappedValue: Value, _ component: some ComponentKind<Value>) {
     self.component = component
     self.wrappedValue = wrappedValue
   }
@@ -30,7 +30,7 @@ public struct Validated<Value>: Sendable where Value: Sendable {
   public func assert(_ conditionalRange: ClosedRange<Value>, _ rangeMessage: String) throws where Value: SignedInteger {
     guard conditionalRange.contains(wrappedValue) else {
       throw TempoError.invalidComponentValue(
-        component: component.id.name,
+        component: component.id,
         reason: .outOfRange(
           value: "\(wrappedValue)",
           range: "\(rangeMessage) (\(conditionalRange))"
@@ -41,7 +41,7 @@ public struct Validated<Value>: Sendable where Value: Sendable {
 
   public func assert(_ test: Bool, _ invalidReason: TempoError.ValidationFailureReason) throws {
     if !test {
-      throw TempoError.invalidComponentValue(component: component.id.name, reason: invalidReason)
+      throw TempoError.invalidComponentValue(component: component.id, reason: invalidReason)
     }
   }
 

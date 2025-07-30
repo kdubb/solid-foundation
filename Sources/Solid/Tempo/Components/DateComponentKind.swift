@@ -1,43 +1,43 @@
 //
-//  DateComponent.swift
+//  DateComponentKind.swift
 //  SolidFoundation
 //
 //  Created by Kevin Wooten on 5/1/25.
 //
 
 
-public protocol DateComponent<Value>: DateTimeComponent {
+public protocol DateComponentKind<Value>: DateTimeComponentKind {
 }
 
-public protocol IntegerDateComponent: DateComponent, IntegerDateTimeComponent where Value: SignedInteger {
+public protocol IntegerDateComponentKind: DateComponentKind, IntegerDateTimeComponentKind where Value: SignedInteger {
   var unit: Unit { get }
   var range: ClosedRange<Value> { get }
 }
 
-extension Component where Self == DateComponents.Integer<Int> {
+extension ComponentKind where Self == DateComponentKinds.Integer<Int> {
 
-  public static var era: Self { DateComponents.era }
-  public static var year: Self { DateComponents.year }
-  public static var yearOfEra: Self { DateComponents.yearOfEra }
-  public static var monthOfYear: Self { DateComponents.monthOfYear }
-  public static var weekOfYear: Self { DateComponents.weekOfYear }
-  public static var weekOfMonth: Self { DateComponents.weekOfMonth }
-  public static var dayOfYear: Self { DateComponents.dayOfYear }
-  public static var dayOfMonth: Self { DateComponents.dayOfMonth }
-  public static var dayOfWeek: Self { DateComponents.dayOfWeek }
+  public static var era: Self { DateComponentKinds.era }
+  public static var year: Self { DateComponentKinds.year }
+  public static var yearOfEra: Self { DateComponentKinds.yearOfEra }
+  public static var monthOfYear: Self { DateComponentKinds.monthOfYear }
+  public static var weekOfYear: Self { DateComponentKinds.weekOfYear }
+  public static var weekOfMonth: Self { DateComponentKinds.weekOfMonth }
+  public static var dayOfYear: Self { DateComponentKinds.dayOfYear }
+  public static var dayOfMonth: Self { DateComponentKinds.dayOfMonth }
+  public static var dayOfWeek: Self { DateComponentKinds.dayOfWeek }
 
-  public static var dayOfWeekForMonth: Self { DateComponents.dayOfWeekForMonth }
-  public static var yearForWeekOfYear: Self { DateComponents.yearForWeekOfYear }
-
-}
-
-extension Component where Self == DateComponents.Boolean {
-
-  public static var isLeapMonth: Self { DateComponents.isLeapMonth }
+  public static var dayOfWeekForMonth: Self { DateComponentKinds.dayOfWeekForMonth }
+  public static var yearForWeekOfYear: Self { DateComponentKinds.yearForWeekOfYear }
 
 }
 
-public enum DateComponents {
+extension ComponentKind where Self == DateComponentKinds.Boolean {
+
+  public static var isLeapMonth: Self { DateComponentKinds.isLeapMonth }
+
+}
+
+public enum DateComponentKinds {
 
   public static let era = Integer<Int>(id: .era, unit: .eras, range: 0...Int.max)
   public static let year = Integer<Int>(id: .year, unit: .years, range: 0...Int.max)
@@ -53,7 +53,7 @@ public enum DateComponents {
 
   public static let isLeapMonth = Boolean(id: .isLeapMonth)
 
-  public struct Integer<Value>: IntegerDateComponent where Value: SignedInteger & Sendable {
+  public struct Integer<Value>: IntegerDateComponentKind where Value: SignedInteger & Sendable {
 
     public typealias Value = Value
 
@@ -79,7 +79,7 @@ public enum DateComponents {
     public func validate(_ value: Value) throws {
       if !range.contains(value) {
         throw TempoError.invalidComponentValue(
-          component: id.name,
+          component: id,
           reason: .outOfRange(
             value: "\(value)",
             range: "\(range.lowerBound) - \(range.upperBound)",
@@ -89,7 +89,7 @@ public enum DateComponents {
     }
   }
 
-  public struct Boolean: DateComponent {
+  public struct Boolean: DateComponentKind {
 
     public typealias Value = Bool
 

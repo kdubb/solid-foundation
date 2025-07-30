@@ -21,11 +21,11 @@ extension CompositeComponentContainer: CustomStringConvertible {
 
   public var description: String {
     containers
-      .map(\.availableComponents)
+      .map(\.availableComponentKinds)
       .reduce(into: Set()) { $0.formUnion($1) }
-      .compactMap { comp in containers.firstNonNil { $0.valueIfPresent(for: comp) }.flatMap { (comp, $0) } }
+      .compactMap { kind in containers.firstNonNil { $0.valueIfPresent(for: kind) }.flatMap { (kind, $0) } }
       .sorted { $0.0 < $1.0 }
-      .map { (comp, value) in "\(comp) - \(value)" }
+      .map { (kind, value) in "\(kind) - \(value)" }
       .joined(separator: "\n")
   }
 
@@ -33,13 +33,13 @@ extension CompositeComponentContainer: CustomStringConvertible {
 
 extension CompositeComponentContainer: ComponentContainer {
 
-  public var availableComponents: Set<AnyComponent> {
-    Set(containers.flatMap(\.availableComponents))
+  public var availableComponentKinds: Set<AnyComponentKind> {
+    Set(containers.flatMap(\.availableComponentKinds))
   }
 
-  public func valueIfPresent<C>(for component: C) -> C.Value? where C: Component {
+  public func valueIfPresent<K>(for kind: K) -> K.Value? where K: ComponentKind {
     for container in containers {
-      if let value = container.valueIfPresent(for: component) {
+      if let value = container.valueIfPresent(for: kind) {
         return value
       }
     }

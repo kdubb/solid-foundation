@@ -23,16 +23,16 @@ struct ZoneOffsetTests {
       (-18, 0, 0, nil, nil),
 
       // Invalid hours
-      (24, 0, 0, "Invalid hours value", "Value 24 is outside valid range -23 - 23."),
-      (-24, 0, 0, "Invalid hours value", "Value -24 is outside valid range -23 - 23."),
+      (24, 0, 0, "Invalid hours value", "Value 24 is outside valid range -23...23."),
+      (-24, 0, 0, "Invalid hours value", "Value -24 is outside valid range -23...23."),
 
       // Invalid minutes
-      (1, 60, 0, "Invalid minutes value", "Value 60 is outside valid range -59 - 59."),
-      (1, -60, 0, "Invalid minutes value", "Value -60 is outside valid range -59 - 59."),
+      (1, 60, 0, "Invalid minutes value", "Value 60 is outside valid range -59...59."),
+      (1, -60, 0, "Invalid minutes value", "Value -60 is outside valid range -59...59."),
 
       // Invalid seconds
-      (1, 0, 60, "Invalid seconds value", "Value 60 is outside valid range -59 - 59."),
-      (1, 0, -60, "Invalid seconds value", "Value -60 is outside valid range -59 - 59."),
+      (1, 0, 60, "Invalid seconds value", "Value 60 is outside valid range -59...59."),
+      (1, 0, -60, "Invalid seconds value", "Value -60 is outside valid range -59...59."),
 
       // Mismatching signs
       (-1, 1, 0, "Invalid minutes value", "Minutes must be negative when the hour is negative."),
@@ -41,8 +41,8 @@ struct ZoneOffsetTests {
       (1, 0, -1, "Invalid seconds value", "Seconds must be positive when the hour is positive."),
 
       // Invalid total seconds
-      (0, 0, 86_401, "Invalid totalSeconds value", "Total offset must be less than ±24 hours."),
-      (0, 0, -86_401, "Invalid totalSeconds value", "Total offset must be less than ±24 hours."),
+      (0, 0, 86_401, "Invalid seconds value", "Total offset must be less than ±24 hours."),
+      (0, 0, -86_401, "Invalid seconds value", "Total offset must be less than ±24 hours."),
     ]
   )
   func testHoursMinutesSecondsValidation(

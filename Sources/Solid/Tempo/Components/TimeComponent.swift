@@ -6,31 +6,31 @@
 //
 
 
-public protocol TimeComponent<Value>: Component {}
+public protocol TimeComponentKind<Value>: ComponentKind {}
 
-public protocol IntegerTimeComponent: TimeComponent, IntegerDateTimeComponent where Value: SignedInteger {
+public protocol IntegerTimeComponentKind: TimeComponentKind, IntegerDateTimeComponentKind where Value: SignedInteger {
   var unit: Unit { get }
   var range: ClosedRange<Value> { get }
 }
 
-extension Component where Self == TimeComponents.Integer<Int> {
+extension ComponentKind where Self == TimeComponentKinds.Integer<Int> {
 
-  public static var hourOfDay: Self { TimeComponents.hourOfDay }
-  public static var minuteOfHour: Self { TimeComponents.minuteOfHour }
-  public static var secondOfMinute: Self { TimeComponents.secondOfMinute }
-  public static var nanosecondOfSecond: Self { TimeComponents.nanosecondOfSecond }
+  public static var hourOfDay: Self { TimeComponentKinds.hourOfDay }
+  public static var minuteOfHour: Self { TimeComponentKinds.minuteOfHour }
+  public static var secondOfMinute: Self { TimeComponentKinds.secondOfMinute }
+  public static var nanosecondOfSecond: Self { TimeComponentKinds.nanosecondOfSecond }
 
-  public static var zoneOffset: Self { TimeComponents.zoneOffset }
-
-}
-
-extension Component where Self == TimeComponents.Identifier {
-
-  public static var zoneId: Self { TimeComponents.zoneId }
+  public static var zoneOffset: Self { TimeComponentKinds.zoneOffset }
 
 }
 
-public enum TimeComponents {
+extension ComponentKind where Self == TimeComponentKinds.Identifier {
+
+  public static var zoneId: Self { TimeComponentKinds.zoneId }
+
+}
+
+public enum TimeComponentKinds {
 
   public static let hourOfDay = Integer<Int>(id: .hourOfDay, unit: .hours, range: 0...23)
   public static let minuteOfHour = Integer<Int>(id: .minuteOfHour, unit: .minutes, range: 0...59)
@@ -46,13 +46,13 @@ public enum TimeComponents {
   public static let zoneId = Identifier(id: .zoneId) { zoneId, componentId in
     if (try? Zone(identifier: zoneId)) == nil {
       throw TempoError.invalidComponentValue(
-        component: componentId.name,
+        component: componentId,
         reason: .invalidZoneId(id: zoneId)
       )
     }
   }
 
-  public struct Integer<Value>: IntegerTimeComponent where Value: SignedInteger & Sendable {
+  public struct Integer<Value>: IntegerTimeComponentKind where Value: SignedInteger & Sendable {
 
     public typealias Value = Value
 
@@ -78,7 +78,7 @@ public enum TimeComponents {
     public func validate(_ value: Value) throws {
       if !range.contains(value) {
         throw TempoError.invalidComponentValue(
-          component: id.name,
+          component: id,
           reason: .outOfRange(
             value: "\(value)",
             range: "\(range.lowerBound) - \(range.upperBound)",
@@ -88,7 +88,7 @@ public enum TimeComponents {
     }
   }
 
-  public struct Identifier: TimeComponent {
+  public struct Identifier: TimeComponentKind {
 
     public typealias Value = String
 

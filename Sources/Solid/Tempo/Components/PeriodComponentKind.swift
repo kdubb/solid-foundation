@@ -1,35 +1,35 @@
 //
-//  PeriodComponent.swift
+//  PeriodComponentKind.swift
 //  SolidFoundation
 //
 //  Created by Kevin Wooten on 5/1/25.
 //
 
 
-public protocol PeriodComponent<Value>: Component {}
+public protocol PeriodComponentKind<Value>: ComponentKind {}
 
-public protocol IntegerPeriodComponent<Value>: PeriodComponent where Value: SignedInteger {
+public protocol IntegerPeriodComponentKind<Value>: PeriodComponentKind where Value: SignedInteger {
   var unit: Unit { get }
   var range: ClosedRange<Value> { get }
 }
 
-extension Component where Self == PeriodComponents.Integer<Int> {
+extension ComponentKind where Self == PeriodComponentKinds.Integer<Int> {
 
-  public static var calendarYears: Self { PeriodComponents.calendarYears }
-  public static var calendarMonths: Self { PeriodComponents.calendarMonths }
-  public static var calendarWeeks: Self { PeriodComponents.calendarWeeks }
-  public static var calendarDays: Self { PeriodComponents.calendarDays }
+  public static var calendarYears: Self { PeriodComponentKinds.calendarYears }
+  public static var calendarMonths: Self { PeriodComponentKinds.calendarMonths }
+  public static var calendarWeeks: Self { PeriodComponentKinds.calendarWeeks }
+  public static var calendarDays: Self { PeriodComponentKinds.calendarDays }
 
 }
 
-public enum PeriodComponents {
+public enum PeriodComponentKinds {
 
   public static let calendarYears = Integer<Int>(id: .calendarYears, unit: .years, max: .max)
   public static let calendarMonths = Integer<Int>(id: .calendarMonths, unit: .months, max: .max)
   public static let calendarWeeks = Integer<Int>(id: .calendarWeeks, unit: .weeks, max: .max)
   public static let calendarDays = Integer<Int>(id: .calendarDays, unit: .days, max: .max)
 
-  public struct Integer<Value>: IntegerPeriodComponent
+  public struct Integer<Value>: IntegerPeriodComponentKind
   where Value: SignedInteger & Sendable {
 
     public typealias Value = Value
@@ -56,7 +56,7 @@ public enum PeriodComponents {
     public func validate(_ value: Value) throws {
       if !range.contains(value) {
         throw TempoError.invalidComponentValue(
-          component: id.name,
+          component: id,
           reason: .outOfRange(
             value: "\(value)",
             range: "\(range.lowerBound) - \(range.upperBound)",

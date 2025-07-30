@@ -30,3 +30,39 @@ package extension Sequence where Element: Hashable {
   }
 
 }
+
+public extension Sequence where Element: Hashable {
+
+  func associated<V>(with valueTransform: (Element) -> V) -> [Element: V] {
+    map { (key: $0, value: valueTransform($0)) }.associated()
+  }
+
+}
+
+public extension Sequence {
+
+  func associated<K: Hashable>(by keyTransform: (Element) -> K) -> [K: Element] {
+    map { (key: keyTransform($0), value: $0) }.associated()
+  }
+
+  func associated<K: Hashable, V>(by keyTransform: (Element) -> K, with valueTransform: (Element) -> V) -> [K: V] {
+    map { (key: keyTransform($0), value: valueTransform($0)) }.associated()
+  }
+
+}
+
+public extension Sequence {
+
+  func associated<K: Hashable, V>() -> [K: V] where Element == (K, V) {
+    return Dictionary<K, V>(uniqueKeysWithValues: self)
+  }
+
+}
+
+public extension Sequence {
+
+  func sorted<K: Comparable>(by keySelector: KeyPath<Element, K>) -> [Element] {
+    sorted { $0[keyPath: keySelector] < $1[keyPath: keySelector] }
+  }
+
+}
