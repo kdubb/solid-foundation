@@ -108,6 +108,16 @@ let package = Package(
       ]
     ),
     .target(
+      name: "SolidIO",
+      dependencies: [
+        "SolidCore"
+      ],
+      path: "Sources/Solid/IO",
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .target(
       name: "SolidData",
       dependencies: [
         "SolidCore",
