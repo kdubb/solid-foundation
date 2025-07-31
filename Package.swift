@@ -12,10 +12,17 @@ let package = Package(
     .watchOS("11"),
   ],
   products: [
-    .library(
-      name: "Solid",
-      targets: ["Solid"]
-    )
+    .library(name: "Solid", targets: ["Solid"]),
+    .library(name: "SolidCore", targets: ["SolidCore"]),
+    .library(name: "SolidIO", targets: ["SolidCore"]),
+    .library(name: "SolidNumeric", targets: ["SolidNumeric"]),
+    .library(name: "SolidTempo", targets: ["SolidTempo"]),
+    .library(name: "SolidURI", targets: ["SolidURI"]),
+    .library(name: "SolidData", targets: ["SolidData"]),
+    .library(name: "SolidSchema", targets: ["SolidSchema"]),
+    .library(name: "SolidJSON", targets: ["SolidJSON"]),
+    .library(name: "SolidYAML", targets: ["SolidYAML"]),
+    .library(name: "SolidCBOR", targets: ["SolidCBOR"]),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "1.2.0")),
