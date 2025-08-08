@@ -20,13 +20,13 @@ public enum IOError: Error, LocalizedError {
 
   /// Filter operation failed.
   /// - Parameter Error: The filter error that cause the I/O error.
-  case filterFailure(Error)
+  case filterFailed(Error)
 
   public var errorDescription: String? {
     switch self {
     case .endOfStream: return "End of Stream"
     case .streamClosed: return "Stream Closed"
-    case .filterFailure(let error): return "Filter Failed: \(error.localizedDescription)"
+    case .filterFailed(let error): return "Filter Failed: \(error.localizedDescription)"
     }
   }
 

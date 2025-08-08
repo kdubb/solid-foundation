@@ -38,7 +38,7 @@ extension Filter {
     do {
       return try await process(data: data)
     } catch {
-      throw .filterFailure(error)
+      throw .filterFailed(error)
     }
   }
 

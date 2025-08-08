@@ -185,6 +185,13 @@ let package = Package(
       ]
     ),
     .testTarget(
+      name: "SolidIOTests",
+      dependencies: ["SolidTesting", "SolidIO"],
+      plugins: [
+        .plugin(name: "Lint", package: "swiftformatplugins")
+      ]
+    ),
+    .testTarget(
       name: "SolidNumericTests",
       dependencies: ["SolidTesting", "SolidNumeric"],
       resources: [

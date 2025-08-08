@@ -119,7 +119,7 @@ public extension Source {
   /// - Parameter size: Size of buffers to produce on each iteration,
   ///   unless an end-of-stream is encountered.
   /// - Returns: An `AsyncSequence` of `Data` buffers
-  func buffers(size: Int = BufferedSource.segmentSize) -> AsyncBuffers {
+  func buffers(size: Int = BufferedSource.segmentSize) -> some AsyncSequence<Data, Error> {
     AsyncBuffers(source: self, requiredReadSize: size)
   }
 

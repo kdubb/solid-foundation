@@ -61,6 +61,10 @@ public struct AtomicOptionalReference<T: AnyObject>: ~Copyable {
     }
   }
 
+  public func nilify() -> T? {
+    storage.exchange(nil, ordering: .acquiringAndReleasing)?.takeRetainedValue()
+  }
+
 }
 
 @propertyWrapper

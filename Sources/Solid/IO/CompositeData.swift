@@ -12,6 +12,7 @@ import Foundation
 ///
 /// This allows you to efficiently treat multiple discrete DataProtocol values as a contiguous byte buffer,
 /// conforming to DataProtocol. All operations are implemented by delegating to the underlying elements.
+///
 public struct CompositeData: DataProtocol {
   private var elements: [Data]
 
